@@ -1,1 +1,15 @@
+#!/bin/bash
+usage() {
+  echo "Usage: $0 [ -d analysis depth ] [ -g patient gender ]
+  [ -s patient surname ] [ -e filter-expression of AF ]
+  [-n patient name] [-i patient id] [-a patient age]
+  [-t patient tumor, you must choose a type of tumor from disease_list.txt]
+  [-p prep_database must be yes or no]
+  [-b number of bowtie2 threads, leave 1 if you are uncertain]
+  [-i index must be hg19 or hg38]" 1>&2
+}
+exit_abnormal() {
+  usage
+  exit 1
+}
 
