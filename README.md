@@ -36,17 +36,17 @@ When you download The Cosmic file for the GRCh38 version remember to change the 
 ### File extension
 Your fastq file need to have one of the following extension:
 1.	for the liquid biopsy/only tumor analysis
-•	_R1_001.fastq.gz _R2_001.fastq.gz 
-•	_R1_001.fastq _R2_001.fastq 
-•	.bam
-•	.sam
-•	.vcf
-•	.varianttable.txt (This one is specific from vcf produced with illumina sequencer)
+-	_R1_001.fastq.gz _R2_001.fastq.gz 
+-	_R1_001.fastq _R2_001.fastq 
+-	.bam
+-	.sam
+-	.vcf
+-	.varianttable.txt (This one is specific from vcf produced with illumina sequencer)
 2.	for the tumour/normal analysis
-•	.fastq.gz 
-•	.bam
-•	.sam
-•	.vcf
+-	.fastq.gz 
+-	.bam
+-	.sam
+-	.vcf
 The Pipeline is built to be used with three different types of data, liquid biopsy sample, a tumour only sample or a tumour-normal sample. 
 When you first start the docker container you need to indicate three/four path, the path where the inputs are saved, the path were you have downloaded the cosmic files, and the path where you want to save your report. You must pay attention to leave the name of the docker folder (the names written in bold) as are written down in the examples and to change the other part with your computer path.
 Remember If you need to do an analysis with both the tumour and the normal samples you have to set two fastq folder, one where you have your normal sample and one where you have your tumour sample. If your analysis of tumor and normal sample starts from the vcf you need to set up only the input_tumor folder where the vcf is saved.
