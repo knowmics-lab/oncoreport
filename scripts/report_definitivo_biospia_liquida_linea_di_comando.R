@@ -1,95 +1,36 @@
 args=commandArgs(trailingOnly = TRUE)
 
-######################################################################################
-
-#Civic
-germ_civ<-read.csv(paste0("/txt_civic/", args[1], "_Germline.txt"), sep= "\t")
-som_civ<-read.csv(paste0("/txt_civic/", args[1], "_Somatic.txt"), sep= "\t")
-if (dim(germ_civ)[1]!=0){
-  germ_civ$Type <- "Germline"}else{germ_civ$Type <- character(0)}
-if (dim(som_civ)[1]!=0){
-  som_civ$Type <- "Somatic"
-}
-civic <- merge(som_civ, germ_civ, all=TRUE)
-write.table(civic,paste0("/civic/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-######################################################################################
-
-#CGI
-germ_cgi<-read.csv(paste0("/txt_cgi/",args[1],"_Germline.txt"), sep= "\t")
-som_cgi<-read.csv(paste0("/txt_cgi/",args[1],"_Somatic.txt"), sep= "\t")
-if (dim(germ_cgi)[1]!=0){
-  germ_cgi$Type <- "Germline"}else{germ_cgi$Type <- character(0)}
-if (dim(som_cgi)[1]!=0){
-  som_cgi$Type <- "Somatic"
-}
-cgi <- merge(som_cgi, germ_cgi, all=TRUE)
-write.table(cgi,paste0("/cgi/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-######################################################################################
-
-#PharmGKB
-germ_pha<-read.csv(paste0("/txt_pharm/",args[1],"_Germline.txt"), sep= "\t")
-som_pha<-read.csv(paste0("/txt_pharm/",args[1],"_Somatic.txt"), sep= "\t")
-if (dim(germ_pha)[1]!=0){
-  germ_pha$Type <- "Germline"}else{germ_pha$Type <- character(0)}
-if (dim(som_pha)[1]!=0){
-  som_pha$Type <- "Somatic"
-}
-pharm <- merge(som_pha, germ_pha, all=TRUE)
-write.table(pharm,paste0("/pharm/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-######################################################################################
-
-#Refgene
-germ_ex<-read.csv(paste0("/txt_refgene/",args[1],"_Germline.txt"), sep= "\t")
-som_ex<-read.csv(paste0("/txt_refgene/",args[1],"_Somatic.txt"), sep= "\t")
-if (dim(germ_ex)[1]!=0){
-  germ_ex$Type <- "Germline"}else{germ_ex$Type <- character(0)}
-if (dim(som_ex)[1]!=0){
-  som_ex$Type <- "Somatic"
-}
-ex <- merge(som_ex, germ_ex, all=TRUE)
-write.table(ex,paste0("/refgene/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-
-######################################################################################
-
-#Cosmic
-germ_cos<-read.csv(paste0("/txt_cosmic/",args[1],"_Germline.txt"), sep= "\t")
-som_cos<-read.csv(paste0("/txt_cosmic/",args[1],"_Somatic.txt"), sep= "\t")
-if (dim(germ_cos)[1]!=0){
-  germ_cos$Type <- "Germline"}else{germ_cos$Type <- character(0)}
-if (dim(som_cos)[1]!=0){
-  som_cos$Type <- "Somatic"
-}
-cosmic <- merge(som_cos, germ_cos, all=TRUE)
-write.table(cosmic,paste0("/cosmic/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-######################################################################################
-
-#Clinvar
-germ_clin<-read.csv(paste0("/txt_clinvar/",args[1],"_Germline.txt"), sep= "\t")
-som_clin<-read.csv(paste0("/txt_clinvar/",args[1],"_Somatic.txt"), sep= "\t")
-if (dim(germ_clin)[1]!=0){
-  germ_clin$Type <- "Germline"}else{germ_clin$Type <- character(0)}
-if (dim(som_clin)[1]!=0){
-  som_clin$Type <- "Somatic"
-}
-clinvar <- merge(som_clin, germ_clin, all=TRUE)
-write.table(clinvar,paste0("/clinvar/",args[1],".txt"),
-            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
-#####################################################################################
-
 library(filesstrings)
 library(data.table)
 library(dplyr)
+
+######################################################################################
+
+germ_som <- function(database, args[1]){
+germ<-read.csv(paste0("/txt_", database, "/", args[1], "_Germline.txt"), sep= "\t")
+som<-read.csv(paste0("/txt_", database, "/", args[1], "_Somatic.txt"), sep= "\t")
+if (dim(germ)[1]!=0){
+  germ$Type <- "Germline"}else{germ$Type <- character(0)}
+if (dim(som)[1]!=0){
+  som$Type <- "Somatic"
+}
+res <- merge(som, germ, all=TRUE)
+write.table(res, paste0("/", database, "/", args[1],".txt"),
+            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
+}
+
+#Civic
+germ_som(civic, args[1])
+#CGI
+germ_som(cgi, args[1])
+#PharmGKB
+germ_som(pharm, args[1])
+#Refgene
+germ_som(refgene, args[1])
+#Cosmic
+germ_som(cosmic, args[1])
+#Clinvar
+germ_som(clinvar, args[1])
 
 #####################################################################################
 
@@ -758,7 +699,7 @@ try({for(i in files_cosmic){
       cos$Genome.Coordinates..GRCh37. <- NULL
       write.table(cos, paste0("/cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
                   row.names=FALSE, col.names=TRUE, na="NA")
-      
+
 files_results <- list.files(path="/cosmic/results/",
                                  pattern="*.txt", full.names=TRUE, recursive=FALSE)
 for (i in files_cosmic) {
