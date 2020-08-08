@@ -793,17 +793,7 @@ files_pharm <- list.files(path="/pharm/",
                            pattern="*.txt", full.names=TRUE, recursive=FALSE)
 files_pharm2 <-list.files(path="/pharm/results/",
                            pattern="*.txt", full.names=TRUE, recursive=TRUE)
-try({for (i in files_pharm) {
-  setwd(paste0("/pharm/results/", tools::file_path_sans_ext(basename(i)), "/"))
-  temp<-list.files(path=paste0("/pharm/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
-  myfiles<-lapply(temp, read.delim)
-  file<-do.call("rbind", myfiles)
-  for (m in files_pharm2) {
-    unlink(paste0("/pharm/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
-  }
-  write.table(file, paste0("/pharm/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
-}
-}, silent = TRUE)
+try({for (i in files_pharm) {merging_genes(i, pharm, files_pharm2)}}, silent = TRUE)
 
 try({files_definitivi <- list.files(path="/pharm/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
@@ -980,34 +970,6 @@ write.table(pc, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") 
   }}
 
 ################################################################################
-
-#URL Clinical Trial off
-
-readUrl <- function(url) {
-  out <- tryCatch(
-    {
-      message("This is the 'try' part")
-      readLines(con=url, warn=FALSE)
-    },
-    error=function(cond) {
-      message(paste("URL does not seem to exist:", url))
-      message("Here's the original error message:")
-      message(cond)
-      return(NA)
-    },
-    warning=function(cond) {
-      message(paste("URL caused a warning:", url))
-      message("Here's the original warning message:")
-      message(cond)
-      return(NA)
-    },
-    finally={
-      message(paste("Processed URL:", url))
-      message("Ok")
-    }
-  )
-  return(out)
-}
 
 try({files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
