@@ -6,13 +6,14 @@ usage() {
   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-p prep_database must be yes or no]
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
-  [-i index must be hg19 or hg38]" 1>&2
+  [-i index must be hg19 or hg38]
+  [-f path of the mounted folder]" 1>&2
 }
 exit_abnormal() {
   usage
   exit 1
 }
-while getopts "n:s:i:g:a:t:d:e:p:h:b:c:" OPTION; do
+while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
   case "${OPTION}" in
     d)
       depth=$OPTARG
@@ -91,6 +92,14 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:" OPTION; do
         fi
       fi
         ;;
+      f)
+       folder=$OPTARG
+       echo "The value provided for folder is $OPTARG"
+       if [ ! -d "$folder" ]; then
+         echo "Error: You must pass a valid directory"
+         exit_abnormal
+       fi
+         ;;
     :)
       echo "Error: ${OPTARG} requires an argument."
       usage
@@ -113,29 +122,30 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:" OPTION; do
          exit
       fi
 
-      PATH_INDEX=index
-      PATH_FASTQ=input
-      PATH_TRIM=trim
-      PATH_SAM=sam
-      PATH_BAM_ANNO=bam_annotato
-      PATH_BAM_SORT=bam_sortato
-      PATH_BAM_ORD=bam_ordinato
-      PATH_VCF_MUT=mutect
-      PATH_VCF_FILTERED=filtered
-      PATH_VCF_PASS=pass_filtrati
-      PATH_VCF_DP=dp_filtered
-      PATH_VCF_IN_SN=in_snp
-      PATH_VCF_AF=vcf_af
-      PATH_VCF_PASS_AF=pass_finale
-      PATH_VCF_MERGE=merge
-      PATH_VCF_DA_CONVERTIRE=vcf_convertire
-      PATH_CONVERTITI=convertiti
-      PATH_TXT_CIVIC=txt_civic
-      PATH_TXT_CGI=txt_cgi
-      PATH_TXT_PHARM=txt_pharm
-      PATH_TXT_COSMIC=txt_cosmic
-      PATH_TXT_CLINVAR=txt_clinvar
-      PATH_TXT_REFGENE=txt_refgene
+      PATH_INDEX=index #Come faccio a inserire nella grande cartella se l'utente passa la sub-cartella?
+      PATH_FASTQ=$folder
+      PATH_PROJECT=$folder/project
+      PATH_TRIM=$PATH_PROJECT/trim
+      PATH_SAM=$PATH_PROJECT/sam
+      PATH_BAM_ANNO=$PATH_PROJECT/bam_annotato
+      PATH_BAM_SORT=$PATH_PROJECT/bam_sortato
+      PATH_BAM_ORD=$PATH_PROJECT/bam_ordinato
+      PATH_VCF_MUT=$PATH_PROJECT/mutect
+      PATH_VCF_FILTERED=$PATH_PROJECT/filtered
+      PATH_VCF_PASS=$PATH_PROJECT/pass_filtrati
+      PATH_VCF_DP=$PATH_PROJECT/dp_filtered
+      PATH_VCF_IN_SN=$PATH_PROJECT/in_snp
+      PATH_VCF_AF=$PATH_PROJECT/vcf_af
+      PATH_VCF_PASS_AF=$PATH_PROJECT/pass_finale
+      PATH_VCF_MERGE=$PATH_PROJECT/merge
+      PATH_VCF_DA_CONVERTIRE=$PATH_PROJECT/vcf_convertire
+      PATH_CONVERTITI=$PATH_PROJECT/convertiti
+      PATH_TXT_CIVIC=$PATH_PROJECT/txt_civic
+      PATH_TXT_CGI=$PATH_PROJECT/txt_cgi
+      PATH_TXT_PHARM=$PATH_PROJECT/txt_pharm
+      PATH_TXT_COSMIC=$PATH_PROJECT/txt_cosmic
+      PATH_TXT_CLINVAR=$PATH_PROJECT/txt_clinvar
+      PATH_TXT_REFGENE=$PATH_PROJECT/txt_refgene
 
       echo "Removing old folders"
 
@@ -185,7 +195,8 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:" OPTION; do
       rm -r /Food/
       fi
 
-
+      mkidr $PATH_INDEX
+      mkdir $PATH_PROJECT
       mkdir $PATH_SAM
       mkdir $PATH_BAM_ANNO
       mkdir $PATH_BAM_ORD
@@ -432,5 +443,3 @@ rm -r $PATH_TXT_CLINVAR
 rm -r $PATH_TXT_REFGENE
 
 echo "Done"
-
-
