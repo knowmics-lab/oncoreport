@@ -4,6 +4,8 @@ library(filesstrings)
 library(data.table)
 library(dplyr)
 
+setwd("args[3]") #Controlla se va bene con le virgolette
+#c'è un altro setwd sotto vedi se si può togliere, sennò si deve reimpostare il path dopo
 ######################################################################################
 
 germ_som <- function(database, args[1]){

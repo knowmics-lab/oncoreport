@@ -6,14 +6,15 @@ usage() {
   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-p prep_database must be yes or no]
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
-  [-i index must be hg19 or hg38]
-  [-f path of the mounted folder]" 1>&2
+  [-c index must be hg19 or hg38]
+  [-f path of the sample]
+  [-o path of COSMIC]" 1>&2
 }
 exit_abnormal() {
   usage
   exit 1
 }
-while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
+while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
   case "${OPTION}" in
     d)
       depth=$OPTARG
@@ -100,6 +101,14 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
          exit_abnormal
        fi
          ;;
+      o)
+      cosmic=$OPTARG
+      echo "The value provided for cosmic is $OPTARG"
+      if [ ! -d "$cosmic" ]; then
+        echo "Error: You must pass a valid cosmic directory"
+        exit_abnormal
+      fi
+        ;;
     :)
       echo "Error: ${OPTARG} requires an argument."
       usage
@@ -116,7 +125,7 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
         esac
       done
 
-      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]]; then
+      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]]; then
          echo "all parameters must be passed"
          usage
          exit
@@ -146,6 +155,16 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
       PATH_TXT_COSMIC=$PATH_PROJECT/txt_cosmic
       PATH_TXT_CLINVAR=$PATH_PROJECT/txt_clinvar
       PATH_TXT_REFGENE=$PATH_PROJECT/txt_refgene
+      PATH_CIVIC=$PATH_PROJECT/civic
+      PATH_CGI=$PATH_PROJECT/cgi
+      PATH_PHARM=$PATH_PROJECT/pharm
+      PATH_CLINVAR=$PATH_PROJECT/clinvar
+      PATH_COSMIC=$PATH_PROJECT/cosmic
+      PATH_REFGENE=$PATH_PROJECT/refgene
+      PATH_DEFINITIVE=$PATH_PROJECT/definitive
+      PATH_TRIAL=$PATH_PROJECT/Trial
+      PATH_REFERENCE=$PATH_PROJECT/Reference
+      PATH_FOOD=$PATH_PROJECT/Food
 
       echo "Removing old folders"
 
@@ -164,35 +183,35 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
       if [[ -d $PATH_VCF_MUT ]]; then
       rm -r $PATH_VCF_MUT
       fi
-      if [[ -d /civic/ ]]; then
-      rm -r /civic/
+      if [[ -d $PATH_CIVIC ]]; then
+      rm -r $PATH_CIVIC
       fi
-      if [[ -d /cgi/ ]]; then
-      rm -r /cgi/
+      if [[ -d $PATH_CGI ]]; then
+      rm -r $PATH_CGI
       fi
-      if [[ -d /pharm/ ]]; then
-      rm -r /pharm/
+      if [[ -d $PATH_PHARM ]]; then
+      rm -r $PATH_PHARM
       fi
-      if [[ -d /clinvar/ ]]; then
-      rm -r /clinvar/
+      if [[ -d $PATH_CLINVAR ]]; then
+      rm -r $PATH_CLINVAR
       fi
-      if [[ -d /cosmic/ ]]; then
-      rm -r /cosmic/
+      if [[ -d $PATH_COSMIC ]]; then
+      rm -r $PATH_COSMIC
       fi
-      if [[ -d /refgene/ ]]; then
-      rm -r /refgene/
+      if [[ -d $PATH_REFGENE ]]; then
+      rm -r $PATH_REFGENE
       fi
-      if [[ -d /definitive/ ]]; then
-      rm -r /definitive/
+      if [[ -d $PATH_DEFINITIVE ]]; then
+      rm -r $PATH_DEFINITIVE
       fi
-      if [[ -d /Trial/ ]]; then
-      rm -r /Trial/
+      if [[ -d $PATH_TRIAL ]]; then
+      rm -r $PATH_TRIAL
       fi
-      if [[ -d /Reference/ ]]; then
-      rm -r /Reference/
+      if [[ -d $PATH_REFERENCE ]]; then
+      rm -r $PATH_REFERENCE
       fi
-      if [[ -d /Food/ ]]; then
-      rm -r /Food/
+      if [[ -d $PATH_FOOD ]]; then
+      rm -r $PATH_FOOD
       fi
 
       mkidr $PATH_INDEX
@@ -218,21 +237,21 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:" OPTION; do
       mkdir $PATH_TXT_COSMIC
       mkdir $PATH_TXT_REFGENE
       mkdir $PATH_TRIM
-      mkdir /civic
-      mkdir /cgi
-      mkdir /pharm
-      mkdir /cosmic
-      mkdir /refgene
-      mkdir /clinvar
-      mkdir /civic/results
-      mkdir /cgi/results
-      mkdir /cosmic/results
-      mkdir /pharm/results
-      mkdir /definitive
-      mkdir /Trial
-      mkdir /Reference
-      mkdir /Food
-      mkdir /output
+      mkdir $PATH_CIVIC
+      mkdir $PATH_CGI
+      mkdir $PATH_PHARM
+      mkdir $PATH_COSMIC
+      mkdir $PATH_REFGENE
+      mkdir $PATH_CLINVAR
+      mkdir $PATH_CIVIC/results
+      mkdir $PATH_CGI/results
+      mkdir $PATH_COSMIC/results
+      mkdir $PATH_PHARM/results
+      mkdir $PATH_DEFINITIVE
+      mkdir $PATH_TRIAL
+      mkdir $PATH_REFERENCE
+      mkdir $PATH_FOOD
+      mkdir $PATH_PROJECT/output
 
 if [[ "$prep_databases" = "yes" ]] && [[ "$index" = "hg19" ]]; then
 bash prep_banche_dati.bash
@@ -314,7 +333,7 @@ for FASTQ in $(ls $PATH_FASTQ)
          echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
          echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
          echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor"
+         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT
          R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
         fi
     elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
