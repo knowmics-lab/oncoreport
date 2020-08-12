@@ -8,7 +8,8 @@ usage() {
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
   [-c index must be hg19 or hg38]
   [-f path of the sample]
-  [-o path of COSMIC]" 1>&2
+  [-o path of COSMIC]
+  [-h database path]" 1>&2
 }
 exit_abnormal() {
   usage
@@ -109,6 +110,14 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
         exit_abnormal
       fi
         ;;
+      o)
+      database=$OPTARG
+      echo "The value provided for database path is $OPTARG"
+      if [ ! -d "$database" ]; then
+        echo "Error: You must pass a valid database directory"
+        exit_abnormal
+      fi
+        ;;
     :)
       echo "Error: ${OPTARG} requires an argument."
       usage
@@ -125,7 +134,7 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
         esac
       done
 
-      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]]; then
+      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
          echo "all parameters must be passed"
          usage
          exit
@@ -319,7 +328,7 @@ for FASTQ in $(ls $PATH_FASTQ)
          sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
          cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
          cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
-         Rscript merge_database.R $index
+         Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
          echo "Report creation"
          echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
          echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
@@ -371,7 +380,7 @@ for FASTQ in $(ls $PATH_FASTQ)
       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
-      Rscript merge_database.R $index
+      Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
       echo "Report creation"
       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
@@ -410,7 +419,7 @@ for FASTQ in $(ls $PATH_FASTQ)
       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
-      Rscript merge_database.R $index
+      Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
       echo "Report creation"
       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
@@ -436,9 +445,9 @@ for FASTQ in $(ls $PATH_FASTQ)
     if [ ${FASTQ: -17} == ".varianttable.txt" ]; then
     FASTQ_NAME=$(basename $FASTQ ".varianttable.txt")
     echo "Annotation vcf illumina"
-    Rscript illumina_vcf.R $depth $AF $FASTQ_NAME $index
+    Rscript illumina_vcf.R $depth $AF $FASTQ_NAME $index $PATH_PROJECT $database
     echo "Report generation"
-    Rscript report_definitivo_vcf_illumina.R $FASTQ_NAME "$tumor"
+    Rscript report_definitivo_vcf_illumina.R $FASTQ_NAME "$tumor" $PATH_PROJECT 
     R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
   fi
 done

@@ -91,11 +91,11 @@ split_civic<- function(n){
   f3$Chromosome.11<-NULL
   f3$Evidence_statement<-gsub(f3$Evidence_statement, pattern="ï¿½", replace="-")
   colnames(f3)[11] <- "Database"
-  write.table(f3, paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
+  write.table(f3, paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/civic/",
+files_results <- list.files(path=paste0(args[3], "/civic/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 
@@ -110,8 +110,8 @@ for(i in files_results){
     hgx<-split(x1, paste(x$Gene, x$Variant))
     xa<-hgx[1:length(hgx)]
     for (n in xa) { split_civic(n)}
-    
-    files_results1 <- list.files(path="/civic/results/",
+
+    files_results1 <- list.files(path=paste0(args[3],"/civic/results/"),
                                  pattern="*.txt", full.names=TRUE, recursive=TRUE)
     for(i in files_results1){
       t<-read.csv(i, sep="\t")
@@ -128,7 +128,7 @@ for(i in files_results){
       r<-gsub(t$Drug, pattern="\\\\x2c", replace=",")
       t["Drug"]<-r
       r<-gsub(t$Evidence_statement, pattern="\\\\x2c", replace=",")
-      t["Evidence_statement"]<-r
+      t["Evidence_statement"] <- r
       v<-gsub(t$Citation, pattern="\\\\x2c", replace=",")
       t["Citation"]<-v
       u<-gsub(t$Variant_summary, pattern="\\\\x2c", replace=",")
@@ -136,20 +136,20 @@ for(i in files_results){
       colnames(t)[12]<-"PMID"
       write.table(t, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
     }
-    
-    files_civic <- list.files(path="/civic/",
+
+    files_civic <- list.files(path=paste0(args[3], "/civic/"),
                               pattern="*.txt", full.names=TRUE, recursive=FALSE)
-    files_civic2 <-list.files(path="/civic/results/",
+    files_civic2 <-list.files(path=paste0(args[3], "/civic/results/"),
                               pattern="*.txt", full.names=TRUE, recursive=TRUE)
     for (i in files_civic) {
-      dir.create(paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+      dir.create(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
       for (m in files_civic2) {
         if (tools::file_path_sans_ext(basename(word(m, 1, sep = "__"))) == tools::file_path_sans_ext(basename(i))){
-          file.move(paste0("/civic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-                    paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+          file.move(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+                    paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
         } else next()
       }
-    }}else {file.rename(i , paste0("/civic/results/",args[1],".txt"))
+    }}else {file.rename(i , paste0(args[3], "/civic/results/",args[1],".txt"))
     }}
 
 
@@ -260,11 +260,11 @@ split_cgi<- function(n){
   f3$Chromosome.13<-NULL
   f3$Chromosome.14<-NULL
   f3$Chromosome.15<-NULL
-  write.table(f3, paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
+  write.table(f3, paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/cgi/",
+files_results <- list.files(path=paste0(args[3], "/cgi/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 for(i in files_results){
@@ -277,10 +277,10 @@ for(i in files_results){
     hgx<-split(x1, paste(x$Gene, x$individual_mutation))
     xa<-hgx[1:length(hgx)]
     for (n in xa) { split_cgi(n)}
-    
-    
-    
-    files_cgi <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+
+
+
+    files_cgi <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
     for (i in files_cgi) {
       n<-read.csv(i, sep="\t")
       if(dim(n)[1]!=0){
@@ -307,19 +307,19 @@ for(i in files_results){
         n["PMID"]<-nx
         write.table(n, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
       }}
-    
-    
-    files_cgi <- list.files(path="/cgi/", pattern="*.txt", full.names=TRUE, recursive=FALSE)
-    files_cgi2 <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+
+
+    files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
+    files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
     for (i in files_cgi) {
-      dir.create(paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
+      dir.create(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
       for (m in files_cgi2) {
         if (tools::file_path_sans_ext(basename(word(m, 1, sep = "__"))) == tools::file_path_sans_ext(basename(i))){
-          file.move(paste0("/cgi/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-                    paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
+          file.move(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+                    paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
         }else next()
       }
-    }}else {file.rename(i , paste0("/cgi/results/",args[1],".txt"))
+    }}else {file.rename(i , paste0(args[3], "/cgi/results/",args[1],".txt"))
     }}
 
 
@@ -328,40 +328,40 @@ for(i in files_results){
 #Merging file genes
 #Civic
 
-files_civic <- list.files(path="/civic/",
+files_civic <- list.files(path=paste0(args[3], "/civic/",
                           pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_civic2 <-list.files(path="/civic/results/",
+files_civic2 <-list.files(path=paste0(args[3], "/civic/results/",
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 try({for (i in files_civic) {
-  setwd(paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
-  temp<-list.files(path=paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
+  setwd(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+  temp<-list.files(path=paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
   myfiles<-lapply(temp, read.delim)
   file<-do.call("rbind", myfiles)
   for (m in files_civic2) {
-    unlink(paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
+    unlink(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
   }
-  write.table(file, paste0("/civic/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
+  write.table(file, paste0(args[3], "/civic/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
 }}, silent = TRUE)
 
 #CGI
 
-files_cgi <- list.files(path="/cgi/", pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_cgi2 <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
+files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 try({for (i in files_cgi) {
-  setwd(paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
-  temp<-list.files(path=paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"),pattern="*.txt")
+  setwd(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
+  temp<-list.files(path=paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"),pattern="*.txt")
   myfiles<-lapply(temp, read.delim)
   file2<-do.call("rbind", myfiles)
   for (m in files_cgi2) {
-    unlink(paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
+    unlink(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
   }
-  write.table(file2, paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
+  write.table(file2, paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
 }
 }, silent = TRUE)
 
-
+#SONO ARRIVATA QUI
 ###########################################################################################
 #merging civic and cgi
 
@@ -566,8 +566,8 @@ for (m in files_definitivi) {
         }
       }
     }
-    
-    
+
+
     for (t in 1:length(link$Clinical_trial)){
       url <- as.character(link$Clinical_trial[t])
       y <- lapply(url, readUrl)
@@ -627,7 +627,7 @@ for (m in files_definitivi) {
           df <- data.frame(Citation = n$Citation[i], Gene=n$Gene[i], PMID=a, Cod=n$PMID[i], Reference= n$Reference[i])
           link <- rbind(link,df)
         }}}
-    
+
     for (t in 1:length(link$PMID)){
       url <- as.character(link$PMID[t])
       y <- lapply(url, readUrl)
@@ -672,7 +672,7 @@ try({for(i in files_cosmic){
     cos$Genome.Coordinates..GRCh37. <- NULL
     write.table(cos, paste0("/cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
                 row.names=FALSE, col.names=TRUE, na="NA")
-    
+
     files_results <- list.files(path="/cosmic/results/",
                                 pattern="*.txt", full.names=TRUE, recursive=FALSE)
     for (i in files_cosmic) {
@@ -686,7 +686,7 @@ try({for(i in files_cosmic){
     }}else {dir.create(paste0("/cosmic/results/", args[1], "/"))
       file.rename(i , paste0("/cosmic/results/",args[1],"/",args[1],".txt"))
     }}
-  
+
 }, silent = TRUE)
 
 #URL documents
@@ -848,7 +848,7 @@ for(i in files_results){
     hgx<-split(x1, paste(x$Gene))
     xa<-hgx[1:length(hgx)]
     for (n in xa) { split_pharm(n)}
-    
+
     files_pharm2 <-list.files(path="/pharm/results/",
                               pattern="*.txt", full.names=TRUE, recursive=TRUE)
     for(i in files_pharm2){
@@ -862,7 +862,7 @@ for(i in files_results){
       x$Evidence_statement<-gsub(x$Evidence_statement, pattern="\\\\x2c", replace=",")
       write.table(x, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
     }
-    
+
     files_pharm <- list.files(path="/pharm/",
                               pattern="*.txt", full.names=TRUE, recursive=FALSE)
     files_pharm2 <-list.files(path="/pharm/results/",
@@ -875,7 +875,7 @@ for(i in files_results){
                     paste0("/pharm/results/", tools::file_path_sans_ext(basename(i)), "/"))
         }else next()
       }
-      
+
     }}else{file.rename(i , paste0("/pharm/results/",args[1],".txt"))
     }}
 

@@ -4,20 +4,18 @@ library(filesstrings)
 library(data.table)
 library(dplyr)
 
-setwd("args[3]") #Controlla se va bene con le virgolette
-#c'è un altro setwd sotto vedi se si può togliere, sennò si deve reimpostare il path dopo
 ######################################################################################
 
 germ_som <- function(database, args[1]){
-germ<-read.csv(paste0("/txt_", database, "/", args[1], "_Germline.txt"), sep= "\t")
-som<-read.csv(paste0("/txt_", database, "/", args[1], "_Somatic.txt"), sep= "\t")
+germ<-read.csv(paste0(args[3], "/txt_", database, "/", args[1], "_Germline.txt"), sep= "\t")
+som<-read.csv(paste0(args[3], "/txt_", database, "/", args[1], "_Somatic.txt"), sep= "\t")
 if (dim(germ)[1]!=0){
   germ$Type <- "Germline"}else{germ$Type <- character(0)}
 if (dim(som)[1]!=0){
   som$Type <- "Somatic"
 }
 res <- merge(som, germ, all=TRUE)
-write.table(res, paste0("/", database, "/", args[1],".txt"),
+write.table(res, paste0(args[3], "/", database, "/", args[1],".txt"),
             quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 }
 
@@ -120,11 +118,11 @@ split_civic<- function(n){
   f3$Chromosome.11<-NULL
   f3$Evidence_statement<-gsub(f3$Evidence_statement, pattern="ï¿½", replace="-")
   colnames(f3)[11] <- "Database"
-  write.table(f3, paste0("/civic/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
+  write.table(f3, paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/civic/",
+files_results <- list.files(path=paste0(args[3], "/civic/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 
@@ -140,7 +138,7 @@ for(i in files_results){
   xa<-hgx[1:length(hgx)]
   for (n in xa) {split_civic(n)}
 
-files_results1 <- list.files(path="/civic/results/",
+files_results1 <- list.files(path=paste0(args[3],"/civic/results/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for(i in files_results1){
   t<-read.csv(i, sep="\t")
@@ -167,22 +165,22 @@ for(i in files_results1){
 }
 
 rename <- function(i, database, files, args[1]){
-dir.create(paste0("/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
+dir.create(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
 for (m in files) {
   if (tools::file_path_sans_ext(basename(word(m, 1, sep = "__"))) == tools::file_path_sans_ext(basename(i))){
-    file.move(paste0("/", database, "/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-              paste0("/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
+    file.move(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+              paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
   } else next()
 }
 } } else {
-  file.rename(i , paste0("/", database, "/results/",args[1],".txt"))
+  file.rename(i , paste0(args[3], "/", database, "/results/", args[1], ".txt"))
   }
 }
 
 
-files_civic <- list.files(path="/civic/",
+files_civic <- list.files(path=paste0(args[3], "/civic/"),
                           pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_civic2 <-list.files(path="/civic/results/",
+files_civic2 <-list.files(path=paste0(args[3], "/civic/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 
@@ -295,11 +293,11 @@ split_cgi<- function(n){
   f3$Chromosome.13<-NULL
   f3$Chromosome.14<-NULL
   f3$Chromosome.15<-NULL
-  write.table(f3, paste0("/cgi/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
+  write.table(f3, paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/cgi/",
+files_results <- list.files(path=paste0(args[3], "/cgi/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 for(i in files_results){
@@ -315,7 +313,7 @@ for(i in files_results){
 
 
 
-files_cgi <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_cgi <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (i in files_cgi) {
   n<-read.csv(i, sep="\t")
   if(dim(n)[1]!=0){
@@ -344,8 +342,8 @@ for (i in files_cgi) {
 }}
 
 
-  files_cgi <- list.files(path="/cgi/", pattern="*.txt", full.names=TRUE, recursive=FALSE)
-  files_cgi2 <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+  files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
+  files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
   for (i in files_cgi) {rename(i, cgi, files_cgi2, args[1])}
 
 
@@ -354,25 +352,25 @@ for (i in files_cgi) {
 #Merging file genes
 
 merging_genes <- function(i, database, files){
-setwd(paste0("/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
-temp <- list.files(path=paste0("/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
+setwd(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
+temp <- list.files(path=paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
 myfiles <- lapply(temp, read.delim)
 file <- do.call("rbind", myfiles)
 for(m in files) {
-  unlink(paste0("/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
+  unlink(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
 }
-write.table(file, paste0("/", database, "/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
+write.table(file, paste0(args[3], "/", database, "/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
 }
 
 #Civic
-files_civic <- list.files(path="/civic/",
+files_civic <- list.files(path=paste0(args[3], "/civic/"),
                           pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_civic2 <-list.files(path="/civic/results/",
+files_civic2 <-list.files(path=paste0(args[3], "/civic/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 try({for(i in files_civic) {merging_genes(i, civic, files_civic2)}}, silent = TRUE)
 #CGI
-files_cgi <- list.files(path="/cgi/", pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_cgi2 <- list.files(path="/cgi/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
+files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 try({for(i in files_cgi) {merging_genes(i, cgi, files_cgi2)}}, silent = TRUE)
 
 
@@ -408,9 +406,9 @@ colnames(e1)[val_cit] <- "citation"
   e4 <<- e4
 }
 
-files_civic_results <- list.files(path="/civic/results/",
+files_civic_results <- list.files(path=paste0(args[3], "/civic/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
-files_cgi_results <- list.files(path="/cgi/results/",
+files_cgi_results <- list.files(path=paste0(args[3], "/cgi/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 for(i in files_civic_results){
@@ -436,7 +434,7 @@ for (m in files_cgi_results){
                  Clinical_significance, Evidence_direction, Disease, Variant_summary,
                  Database.x, Database.y, Type, Citation, PMID, Evidence_statement))
 definitive(19, 21, 20)
-write.table(e4,paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 } else if (dim(cgi)[1]==0 && dim(civic[1])!=0){
 s <- gsub(",([A-Za-z])", ", \\1", civic$Drug)
@@ -452,7 +450,7 @@ e1 <- subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Var
                          Clinical_significance, Evidence_direction, Disease, Variant_summary,
                          Database, Citation, PMID, Type, Evidence_statement))
 definitive(17, 20, 19)
-write.table(e4, paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 } else if (dim(cgi)[1]!=0 && dim(civic[1])==0){
   s<- gsub(",([A-Za-z])", ", \\1", cgi$Drug)
@@ -470,9 +468,9 @@ write.table(e4, paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,"
   definitive(15, 18, 17)
   e4$Drug_interaction_type <- " "
   e4$Variant_summary<- " "
-  write.table(e4,paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+  write.table(e4,paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-} else if(dim(cgi)[1]==0 && dim(civic[1])==0){file.copy(i, "/definitive/")}
+} else if(dim(cgi)[1]==0 && dim(civic[1])==0){file.copy(i, paste0(args[3], "/definitive/"))}
 }}}
 
 #########################################################################################
@@ -509,10 +507,10 @@ readUrl <- function(url) {
 ## URL PMID and Clinical Trial
 
 try({
-files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_definitivi <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
   x <- read.csv(m, sep="\t")
-  dis<-read.csv("/Disease.txt", sep= "\t")
+  dis<-read.csv(paste0("/Disease.txt"), sep= "\t") #path parametro database
   attach(x)
   if(dim(x)[1]!=0){
   x <- merge(dis, x, by= "Disease")
@@ -569,7 +567,7 @@ for (m in files_definitivi) {
         urls_pmid <- rbind(urls_pmid,df)
         }
   }
-write.table(urls_pmid, paste0("/Reference/",tools::file_path_sans_ext(basename(m)),".txt"), quote=FALSE,
+write.table(urls_pmid, paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),".txt"), quote=FALSE,
             row.names = FALSE, na= "NA", sep = "\t")
 
     urls_cli <- data.frame()
@@ -582,7 +580,7 @@ write.table(urls_pmid, paste0("/Reference/",tools::file_path_sans_ext(basename(m
         urls_cli <- rbind(urls_cli,df)
         }
     }
-write.table(urls_cli ,paste0("/Trial/",tools::file_path_sans_ext(basename(m)) ,".txt"), quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
+write.table(urls_cli ,paste0(args[3], "/Trial/",tools::file_path_sans_ext(basename(m)) ,".txt"), quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 }}
 }, silent = TRUE)
 
@@ -590,7 +588,7 @@ write.table(urls_cli ,paste0("/Trial/",tools::file_path_sans_ext(basename(m)) ,"
 #################################################################################################
 #Cosmic
 
-files_cosmic <- list.files(path="/cosmic/",
+files_cosmic <- list.files(path=paste0(args[3], "/cosmic/"),
                             pattern="*.txt", full.names=TRUE, recursive=FALSE)
 try({for(i in files_cosmic){
   cos<-read.csv(i, sep="\t")
@@ -615,21 +613,21 @@ try({for(i in files_cosmic){
       colnames(cos)[1] <- "Gene"
       colnames(cos)[2] <- "Drug"
       cos$Genome.Coordinates..GRCh37. <- NULL
-      write.table(cos, paste0("/cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
+      write.table(cos, paste0(args[3], "/cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
                   row.names=FALSE, col.names=TRUE, na="NA")
 
-files_results <- list.files(path="/cosmic/results/",
+files_results <- list.files(path=paste0(args[3], "/cosmic/results/"),
                                  pattern="*.txt", full.names=TRUE, recursive=FALSE)
 for (i in files_cosmic) {
-  dir.create(paste0("/cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+  dir.create(paste0(args[3], "/cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
   for (m in files_results) {
     if (tools::file_path_sans_ext(basename(m)) == tools::file_path_sans_ext(basename(i))){
-      file.move(paste0("/cosmic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-                paste0("/cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+      file.move(paste0(args[3], "/cosmic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+                paste0(args[3], "/cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
     }else next()
   }
-    }}else {dir.create(paste0("/cosmic/results/", args[1], "/"))
-      file.rename(i , paste0("/cosmic/results/",args[1],"/",args[1],".txt"))
+    }}else {dir.create(paste0(args[3], "/cosmic/results/", args[1], "/"))
+      file.rename(i , paste0(args[3], "/cosmic/results/",args[1],"/",args[1],".txt"))
 }}
 
 }, silent = TRUE)
@@ -637,7 +635,7 @@ for (i in files_cosmic) {
 #URL documents
 
 try({
-files_definitivi_cosmic <- list.files(path="/cosmic/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_definitivi_cosmic <- list.files(path=paste0(args[3], "/cosmic/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi_cosmic) {
   x <- read.csv(m, sep="\t")
   attach(x)
@@ -675,7 +673,7 @@ for (m in files_definitivi_cosmic) {
     urls <- rbind(urls,df)
     }
   }
-  write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_cosmic.txt"), quote=FALSE,
+  write.table(urls,paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_cosmic.txt"), quote=FALSE,
               row.names = FALSE, na= "NA", sep = "\t")
 }
 }, silent = TRUE)
@@ -752,11 +750,11 @@ split_pharm<- function(n){
   f3$Drug<-gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
   f3$Gene<-gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
   f3$Variant_summary<-gsub(f3$Variant_summary, pattern="\\\\x2c", replace=",")
-  write.table(f3, paste0("/pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
+  write.table(f3, paste0(args[3], "/pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/pharm/",
+files_results <- list.files(path=paste0(args[3], "/pharm/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for(i in files_results){
   x <- read.csv(i, sep="\t")
@@ -769,7 +767,7 @@ for(i in files_results){
   xa <- hgx[1:length(hgx)]
   for (n in xa) {split_pharm(n)}
 
-files_pharm2 <- list.files(path="/pharm/results/",
+files_pharm2 <- list.files(path=paste0(args[3], "/pharm/results/"),
                            pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for(i in files_pharm2){
     x <- read.csv(i, sep="\t", stringsAsFactors = FALSE)
@@ -782,22 +780,16 @@ for(i in files_pharm2){
   write.table(x, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_pharm <- list.files(path="/pharm/",
+files_pharm <- list.files(path=paste0(args[3], "/pharm/"),
                            pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_pharm2 <-list.files(path="/pharm/results/",
+files_pharm2 <-list.files(path=paste0(args[3], "/pharm/results/"),
                            pattern="*.txt", full.names=TRUE, recursive=FALSE)
 for (i in files_pharm) {rename(i, pharm, files_pharm2, args[1])}
-
-
 #merge genes PharmGKB
-
-files_pharm <- list.files(path="/pharm/",
-                           pattern="*.txt", full.names=TRUE, recursive=FALSE)
-files_pharm2 <-list.files(path="/pharm/results/",
-                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 try({for (i in files_pharm) {merging_genes(i, pharm, files_pharm2)}}, silent = TRUE)
 
-try({files_definitivi <- list.files(path="/pharm/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+try({
+files_definitivi <- list.files(path=paste0(args[3], "/pharm/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
   x <- read.csv(m, sep="\t")
   attach(x)
@@ -835,7 +827,7 @@ for (m in files_definitivi) {
     urls <- rbind(urls,df)
     }
   }
-  write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_pharm.txt"), quote=FALSE,
+  write.table(urls, paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_pharm.txt"), quote=FALSE,
               row.names = FALSE, na= "NA", sep = "\t")
 }
 }, silent = TRUE)
@@ -844,8 +836,8 @@ for (m in files_definitivi) {
 
 #Food interactions
 
-files_food <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
-files_food_p <- list.files(path="/pharm/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_food <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_food_p <- list.files(path=paste0(args[3], "/pharm/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (i in files_food) {
 z<-read.csv(i, sep="\t")
   for (m in files_food_p) {
@@ -912,7 +904,7 @@ if(dim(d)[1]==0){
   colnames(pc)[2] <- "drugbank_id"
   colnames(pc)[3] <- "food_interaction"
 }
-write.table(pc, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+write.table(pc, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
             row.names=FALSE, col.names=TRUE, na="NA")
 }else if (dim(z)[1]!=0){
   a<-unique(z$Drug)
@@ -934,9 +926,9 @@ write.table(pc, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") 
   colnames(a)[1]<- "name2"
   a$name2 <- trimws(a$name2)
   a <- unique(a)
-  y<-read.csv("/Drug_food.txt", sep="\t")
+  y<-read.csv("/Drug_food.txt", sep="\t") #path_database
   c <- merge(a,y, by="name2")
-  write.table(c, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+  write.table(c, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }else if(dim(u)[1]!=0){
   b<-unique(u$Drug)
@@ -965,7 +957,7 @@ write.table(pc, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") 
   b$name2<-firstup(b$name2)
   y<-read.csv("/Drug_food.txt", sep="\t")
   d <- merge(b,y, by="name2")
-  write.table(d, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+  write.table(d, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }else if(dim(z)[1]==0 && dim(u)[1]==0){ break
 }
@@ -975,7 +967,7 @@ write.table(pc, paste0("/Food/", tools::file_path_sans_ext(basename(i)),".txt") 
 #URL PMID/Clinical Trial off
 
 try({
-files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_definitivi <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
   x <- read.csv(m, sep="\t")
   dis <- read.csv("/Disease.txt", sep= "\t")
@@ -1035,7 +1027,7 @@ for (m in files_definitivi) {
                              Drug=link_cltr$Drug[t], Disease=link_cltr$Disease[t], Gene= link_cltr$Gene[t], Variant= link_cltr$Variant[t])
     urls_cltr <- rbind(urls_cltr,df_pm)
     }
-  write.table(urls_cltr,paste0("/Trial/",tools::file_path_sans_ext(basename(m)),"_off",".txt"), quote=FALSE,
+  write.table(urls_cltr,paste0(args[3], "/Trial/",tools::file_path_sans_ext(basename(m)),"_off",".txt"), quote=FALSE,
               row.names = FALSE, na= "NA", sep = "\t")
 }
 link_pm$Disease <- as.character(link_pm$Disease , levels=(link_pm$Disease))
@@ -1049,7 +1041,7 @@ for (t in 1:length(link_pm$PMID)){
   df <- data.frame(PMID=url, Cod=link_pm$Cod[t], Disease=link_pm$Disease[t], Citation=link_pm$Citation[t], Reference=link_pm$Reference[t])
   urls_pm <- rbind(urls_pm,df)
   }
-write.table(urls_pm,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_off.txt"),
+write.table(urls_pm,paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_off.txt"),
             quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 
 }

@@ -1,13 +1,13 @@
 args=commandArgs(trailingOnly = TRUE)
+
 #merging database
 library(dplyr)
 library(data.table)
 library(filesstrings)
 
 #################################################################################
-##banche
 #Civic
-civ <- read.csv(paste0("/civic_database", args[1], ".txt"), sep="\t", quote="")
+civ <- read.csv(paste0(args[2], "/civic_database", args[1], ".txt"), sep="\t", quote="")
 colnames(civ)[1] <- "Chromosome"
 colnames(civ)[2] <- "Start"
 colnames(civ)[3] <- "Stop"
@@ -34,7 +34,7 @@ civ$Var_base<-as.character(civ$Var_base)
 civ$Database<- "generic"
 
 #Clinvar
-cli <- fread(paste0("/clinvar_database", args[1],".vcf"))
+cli <- fread(paste0(args[2], "/clinvar_database", args[1],".vcf"))
 colnames(cli)[1] <- "Chromosome"
 colnames(cli)[2] <- "Stop"
 colnames(cli)[4] <- "Ref_base"
@@ -50,12 +50,12 @@ colnames(cli)[6]<-"info"
 cli$FILTER <-NULL
 
 #Cosmic
-c <- fread(paste0("/cosmic_database",args[1],".txt"))
-c$Chromosome<-paste0("chr", c$Chromosome) 
+c <- fread(paste0(args[3], "/cosmic_database", args[1], ".txt"))
+c$Chromosome <- paste0("chr", c$Chromosome)
 c$Stop <- as.character(c$Stop)
 
 #PharmaGKB
-pharm <- read.csv(paste0("/pharm_database", args[1], ".txt"), sep="\t")
+pharm <- read.csv(paste0(args[2], "/pharm_database", args[1], ".txt"), sep="\t")
 colnames(pharm)[4] <- "Ref_base"
 colnames(pharm)[5] <- "Var_base"
 colnames(pharm)[12] <- "Drug"
@@ -68,10 +68,10 @@ pharm$Var_base<-as.character(pharm$Var_base)
 pharm$Database<-"generic"
 
 #Refgene
-b <- fread(paste0("/refgene_database", args[1], ".txt"))
+b <- fread(paste0(args[2], "/refgene_database", args[1], ".txt"))
 
 #Cancer Genome Interpreter
-cgi <- read.csv(paste0("/cgi_database", args[1], ".txt"), sep="\t")
+cgi <- read.csv(paste0(args[2], "/cgi_database", args[1], ".txt"), sep="\t")
 colnames(cgi)[4] <- "Ref_base"
 colnames(cgi)[5] <- "Var_base"
 colnames(cgi)[3] <- "Stop"
@@ -90,7 +90,7 @@ cgi$Var_base<-as.character(cgi$Var_base)
 cgi$Database<-"generic"
 
 
-files_patients<- list.files(path="/convertiti/",
+files_patients<- list.files(path=paste0(args[4], "/convertiti/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 for(i in files_patients){
@@ -103,21 +103,21 @@ for(i in files_patients){
   pat$Stop<-as.character(pat$Stop)
   pat$Ref_base<-as.character(pat$Ref_base)
   pat$Var_base<-as.character(pat$Var_base)
-  
-  
+
+
   ################################################################################
-  
+
   #civic
   civic <- semi_join(civ, pat, by = NULL, copy = FALSE)
   civic1<-subset(civic,select= c(Database, Gene, Variant, Disease, Drug, Drug_interaction_type,
                                  Evidence_type, Evidence_level, Evidence_direction, Clinical_significance,
                                  Evidence_statement, Variant_summary, Citation_id, Citation, Chromosome, Start, Stop,
                                  Ref_base, Var_base))
-  write.table(civic1,paste0("/txt_civic/",tools::file_path_sans_ext(basename(i)),".txt"),
+  write.table(civic1, paste0(args[4], "/txt_civic/",tools::file_path_sans_ext(basename(i)),".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-  
+
   ########################################################
-  
+
   #clinvar
   clinvar <- semi_join(cli, pat, by = NULL, copy = FALSE)
   clinvar$info1<-sub(".*CLNSIG= *(.*?) *;CLNVC.*", "\\1", clinvar$info)
@@ -125,10 +125,10 @@ for(i in files_patients){
   clinvar$`Clinical Significance`<-sub(";CLNSIGCONF.*", "\\1", clinvar$`Clinical Significance`)
   clinvar$info<-sub(".*\\| *(.*?) *;ORIGIN.*", "\\1", clinvar$info)
   colnames(clinvar)[5] <- "Change type"
-  write.table(clinvar,paste0("/txt_clinvar/",tools::file_path_sans_ext(basename(i)),".txt"),
+  write.table(clinvar, paste0(args[4], "/txt_clinvar/",tools::file_path_sans_ext(basename(i)),".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-  
-  
+
+
   ###################################################################################
   #cgi
   cgi2 <- semi_join(cgi, pat, by = NULL, copy = FALSE)
@@ -137,22 +137,22 @@ for(i in files_patients){
                               Disease, PMID, Targeting, info, region, Transcript, strand,
                               Evidence_statement, Citation, Chromosome,
                               Start, Stop, Ref_base, Var_base))
-  write.table(cgi3,paste0("/txt_cgi/",tools::file_path_sans_ext(basename(i)),".txt"),
+  write.table(cgi3, paste0(args[4], "/txt_cgi/",tools::file_path_sans_ext(basename(i)),".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-  
+
   ####################################################################################
   #PharmGKB
   pharm1 <- semi_join(pharm, pat, by = NULL, copy = FALSE)
   colnames(pharm1)[14] <- "ID"
-  pharm2<-subset(pharm1, select= c(Database,  Gene, Sentence, Notes,  
-                                   Significance, Phenotype.Category, 
+  pharm2<-subset(pharm1, select= c(Database,  Gene, Sentence, Notes,
+                                   Significance, Phenotype.Category,
                                    PMID, Drug, Annotation, ID, Chromosome, Start, Stop, Ref_base, Var_base))
-  write.table(pharm2,paste0("/txt_pharm/",tools::file_path_sans_ext(basename(i)),".txt"),
+  write.table(pharm2, paste0(args[4], "/txt_pharm/",tools::file_path_sans_ext(basename(i)),".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-  
-  
+
+
   ####################################################################################
-  #refgene 
+  #refgene
   df <- pat %>% left_join(b, by = c("Chromosome")) %>% filter(Stop >= ExonStarts & Stop <= ExonEnds)
   df$name <- NULL
   df$txEnd <- NULL
@@ -166,13 +166,13 @@ for(i in files_patients){
   df$strand <- NULL
   df$score <- NULL
   df<-unique(df)
-  write.table(df,paste0("/txt_refgene/",tools::file_path_sans_ext(basename(i)),".txt"),
+  write.table(df, paste0(args[4], "/txt_refgene/",tools::file_path_sans_ext(basename(i)),".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-  
+
   #####################################################################################################
   #cosmic
   e <- inner_join(c,pat,by = NULL, copy = FALSE)
-  write.table(e, paste0("/txt_cosmic/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t", quote=FALSE,
+  write.table(e, paste0(args[4], "/txt_cosmic/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
-  
+
 }
