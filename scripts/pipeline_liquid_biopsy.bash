@@ -110,7 +110,7 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
         exit_abnormal
       fi
         ;;
-      o)
+      h)
       database=$OPTARG
       echo "The value provided for database path is $OPTARG"
       if [ ! -d "$database" ]; then
@@ -342,7 +342,7 @@ for FASTQ in $(ls $PATH_FASTQ)
          echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
          echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
          echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT
+         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
          R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
         fi
     elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
@@ -394,7 +394,7 @@ for FASTQ in $(ls $PATH_FASTQ)
       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor"
+      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
       R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
     elif [ ${FASTQ: -4} == ".vcf" ]; then
       echo "vcf analysis"
@@ -433,7 +433,7 @@ for FASTQ in $(ls $PATH_FASTQ)
       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor"
+      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
       R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
     fi
 done
@@ -447,7 +447,7 @@ for FASTQ in $(ls $PATH_FASTQ)
     echo "Annotation vcf illumina"
     Rscript illumina_vcf.R $depth $AF $FASTQ_NAME $index $PATH_PROJECT $database
     echo "Report generation"
-    Rscript report_definitivo_vcf_illumina.R $FASTQ_NAME "$tumor" $PATH_PROJECT 
+    Rscript report_definitivo_vcf_illumina.R $FASTQ_NAME "$tumor" $PATH_PROJECT
     R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
   fi
 done

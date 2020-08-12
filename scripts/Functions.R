@@ -85,6 +85,30 @@ split_civic <- function(n){
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
+evidence_level <- function(i){
+  t <- read.csv(i, sep="\t")
+  d <- gsub(t$Evidence_level, pattern = "C", replace="Case study")
+  t["Evidence_level"] <- d
+  e <- gsub(t$Evidence_level, pattern = "D", replace="Preclinical evidence")
+  t["Evidence_level"] <- e
+  f <- gsub(t$Evidence_level, pattern = "A", replace="Validated association")
+  t["Evidence_level"] <- f
+  g <- gsub(t$Evidence_level, pattern = "B", replace="Clinical evidence")
+  t["Evidence_level"] <- g
+  h <- gsub(t$Evidence_level, pattern = "E", replace="Inferential association")
+  t["Evidence_level"] <- h
+  r <- gsub(t$Drug, pattern="\\\\x2c", replace=",")
+  t["Drug"] <- r
+  r <- gsub(t$Evidence_statement, pattern="\\\\x2c", replace=",")
+  t["Evidence_statement"] <- r
+  v <- gsub(t$Citation, pattern="\\\\x2c", replace=",")
+  t["Citation"] <- v
+  u <- gsub(t$Variant_summary, pattern="\\\\x2c", replace=",")
+  t["Variant_summary"] <- u
+  colnames(t)[12] <- "PMID"
+  write.table(t, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
+}
+
 #Rename
 
 rename <- function(i, database, files, args[1]){
@@ -342,11 +366,116 @@ split_pharm<- function(n){
   f3$Chromosome.5 <- NULL
   f3$Chromosome.6 <- NULL
   f3$Chromosome.7 <- NULL
-  f3$Chromosome.8<-NULL
-  f3$Drug<-gsub(f3$Drug, pattern="\\\\x2c", replace=",")
-  f3$Drug<-gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
-  f3$Gene<-gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
-  f3$Variant_summary<-gsub(f3$Variant_summary, pattern="\\\\x2c", replace=",")
+  f3$Chromosome.8 <- NULL
+  f3$Drug <- gsub(f3$Drug, pattern="\\\\x2c", replace=",")
+  f3$Drug <- gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
+  f3$Gene <- gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
+  f3$Variant_summary <-gsub (f3$Variant_summary, pattern="\\\\x2c", replace=",")
   write.table(f3, paste0(args[3], "/pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
+}
+
+#Food_interaction
+
+food_definitive <- function(a){
+    t1 <- strsplit(as.character(a$name2), ",", fixed = T)
+    e1 <- cbind(a[rep(1:nrow(a), lengths(t1)), 1], name2 = unlist(t1))
+    e1 <- data.frame(name2=e1)
+    e1 <- na.omit(e1)
+    e1$name2.V1 <- NULL
+    colnames(e1)[1] <- "name2"
+    t2 <- strsplit(as.character(e1$name2), "+", fixed = T)
+    e2 <- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1], name2 = unlist(t2))
+    a <- data.frame(name2=e2)
+    a$name2.V1 <- NULL
+    colnames(a)[1] <- "name2"
+    a$name2 <- trimws(a$name2)
+    a <- unique(a)
+    a <<- a
+  }
+
+  food_pharm <- function(u){
+  b <- unique(u$Drug)
+  b <- as.data.frame(b)
+  colnames(b)[1] <- "name2"
+  b <- gsub(b$name2, pattern=" *\\(.*?\\) *", replace=" ")
+  b <- as.data.frame(b)
+  colnames(b)[1] <- "name2"
+  t1 <- strsplit(as.character(b$name2), ",", fixed = T)
+  e1 <- cbind(b[rep(1:nrow(b), lengths(t1)), 1], name2 = unlist(t1))
+  e1 <- data.frame(name2=e1)
+  e1 <- na.omit(e1)
+  e1$name2.V1 <- NULL
+  colnames(e1)[1] <- "name2"
+  t2 <- strsplit(as.character(e1$name2), "+", fixed = T)
+  e2 <- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1], name2 = unlist(t2))
+  b <- data.frame(name2=e2)
+  b$name2.V1 <- NULL
+  colnames(b)[1] <- "name2"
+  b$name2 <- trimws(b$name2)
+  b <- unique(b)
+  b <<- b
+  }
+
+food_interaction <- function(i, files){
+z <- read.csv(i, sep="\t")
+  for (m in files) {
+  u <- read.csv(m, sep="\t")
+    if(dim(z)[1]!=0 && dim(u)[1]!=0){
+    a <- unique(z$Drug)
+    a <- as.data.frame(a)
+    colnames(a)[1]<- "name2"
+    a <- gsub(a$name2, pattern=" *\\(.*?\\) *", replace=" ")
+    a <- as.data.frame(a)
+    colnames(a)[1] <- "name2"
+      if (!is.na(a$name2)){food_definitive(a)}
+    #pharm
+    food_pharm(u)
+      firstup <- function(x) {
+      substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+      x
+      }
+    b$name2 <- firstup(b$name2)
+    y <- read.csv(paste0(args[4], "/Drug_food.txt"), sep="\t")
+    c <- merge(a, y, by="name2")
+    d <- merge(b, y, by="name2")
+    pc <- merge (c, d, by="name2", all=TRUE)
+      if(dim(d)[1]==0){
+      pc$drugbank_id.y <- NULL
+      pc$food_interaction.y <- NULL
+      colnames(pc)[2] <- "drugbank_id"
+      colnames(pc)[3] <- "food_interaction"
+      }else if(dim(c)[1]==0){
+      pc$drugbank_id.x <- NULL
+      pc$food_interaction.x <- NULL
+      colnames(pc)[2] <- "drugbank_id"
+      colnames(pc)[3] <- "food_interaction"
+      }
+    write.table(pc, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+            row.names=FALSE, col.names=TRUE, na="NA")
+    }else if (dim(z)[1]!=0){
+    a <- unique(z$Drug)
+    a <- as.data.frame(a)
+    colnames(a)[1] <- "name2"
+    a <- gsub(a$name2, pattern=" *\\(.*?\\) *", replace=" ")
+    a <- as.data.frame(a)
+    colnames(a)[1] <- "name2"
+    food_definitive(a)
+    y <- read.csv(paste0(args[4], "/Drug_food.txt"), sep="\t") #path_database
+    c <- merge(a, y, by="name2")
+    write.table(c, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+              row.names=FALSE, col.names=TRUE, na="NA")
+    }else if(dim(u)[1]!=0){
+    food_pharm(u)
+      firstup <- function(x) {
+      substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+      x
+      }
+    b$name2 <- firstup(b$name2)
+    y <- read.csv(paste0(args[4], "/Drug_food.txt"), sep="\t")
+    d <- merge(b,y, by="name2")
+    write.table(d, paste0(args[3], "/Food/", tools::file_path_sans_ext(basename(i)),".txt") , sep="\t", quote=FALSE,
+              row.names=FALSE, col.names=TRUE, na="NA")
+    }else if(dim(z)[1]==0 && dim(u)[1]==0){break}
+  }
 }

@@ -5,13 +5,16 @@ usage() {
   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-p prep_database must be yes or no]
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
-  [-i index must be hg19 or hg38]" 1>&2
+  [-i index must be hg19 or hg38]
+  [-f path of the sample]
+  [-o path of COSMIC]
+  [-h database path]" 1>&2
 }
 exit_abnormal() {
   usage
   exit 1
 }
-while getopts "n:s:i:g:a:t:p:h:b:c:" OPTION; do
+while getopts "n:s:i:g:a:t:p:h:b:c:f:o:h:" OPTION; do
   case "${OPTION}" in
     n)
       name=$OPTARG
@@ -82,6 +85,30 @@ while getopts "n:s:i:g:a:t:p:h:b:c:" OPTION; do
         fi
       fi
         ;;
+     f)
+      folder=$OPTARG
+      echo "The value provided for folder is $OPTARG"
+      if [ ! -d "$folder" ]; then
+        echo "Error: You must pass a valid directory"
+        exit_abnormal
+      fi
+        ;;
+     o)
+     cosmic=$OPTARG
+     echo "The value provided for cosmic is $OPTARG"
+     if [ ! -d "$cosmic" ]; then
+       echo "Error: You must pass a valid cosmic directory"
+       exit_abnormal
+     fi
+       ;;
+     h)
+     database=$OPTARG
+     echo "The value provided for database path is $OPTARG"
+     if [ ! -d "$database" ]; then
+       echo "Error: You must pass a valid database directory"
+       exit_abnormal
+     fi
+       ;;
     :)
       echo "Error: ${OPTARG} requires an argument."
       usage
@@ -98,7 +125,7 @@ while getopts "n:s:i:g:a:t:p:h:b:c:" OPTION; do
         esac
       done
 
-      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]]; then
+      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
          echo "all parameters must be passed"
          usage
          exit
@@ -129,6 +156,10 @@ PATH_TXT_PHARM=txt_pharm
 PATH_TXT_COSMIC=txt_cosmic
 PATH_TXT_CLINVAR=txt_clinvar
 PATH_TXT_REFGENE=txt_refgene
+PATH_DEFINITIVE=$PATH_PROJECT/definitive
+PATH_TRIAL=$PATH_PROJECT/Trial
+PATH_REFERENCE=$PATH_PROJECT/Reference
+PATH_FOOD=$PATH_PROJECT/Food
 
 echo "Removing old folders"
 
@@ -144,20 +175,18 @@ fi
 if [[ -d $PATH_VCF_PASS ]]; then
 rm -r $PATH_VCF_PASS
 fi
-if [[ -d /definitive/ ]]; then
-rm -r /definitive/
+if [[ -d $PATH_DEFINITIVE ]]; then
+rm -r $PATH_DEFINITIVE
 fi
-if [[ -d /Trial/ ]]; then
-rm -r /Trial/
+if [[ -d $PATH_TRIAL ]]; then
+rm -r $PATH_TRIAL
 fi
-if [[ -d /Reference/ ]]; then
-rm -r /Reference/
+if [[ -d $PATH_REFERENCE ]]; then
+rm -r $PATH_REFERENCE
 fi
-if [[ -d /Food/ ]]; then
-rm -r /Food/
+if [[ -d $PATH_FOOD ]]; then
+rm -r $PATH_FOOD
 fi
-
-
 
 mkdir $PATH_TRIM_TUMOR
 mkdir $PATH_TRIM_BLOOD
@@ -181,6 +210,11 @@ mkdir $PATH_TXT_PHARM
 mkdir $PATH_TXT_CLINVAR
 mkdir $PATH_TXT_COSMIC
 mkdir $PATH_TXT_REFGENE
+mkdir $PATH_DEFINITIVE
+mkdir $PATH_TRIAL
+mkdir $PATH_REFERENCE
+mkdir $PATH_FOOD
+mkdir $PATH_PROJECT/output
 
 echo "Index download"
 
@@ -307,11 +341,6 @@ do
 		mkdir /txt_cgi/results
 		mkdir /txt_cosmic/results
 		mkdir /txt_pharm/results
-		mkdir /definitive
-		mkdir /Trial
-		mkdir /Reference
-		mkdir /Food
-		mkdir /output
 
 		echo >> $PATH_TXT_CIVIC/$FASTQ_NAME_T.txt
 		echo >> $PATH_TXT_CGI/$FASTQ_NAME_T.txt
@@ -321,7 +350,7 @@ do
 		echo >> $PATH_TXT_REFGENE/$FASTQ_NAME_T.txt
 
 
-		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor"
+		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor" $PATH_PROJECT
 		R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='/output/report_$FASTQ_NAME_T.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME_T
 
 
@@ -355,7 +384,7 @@ do
         		echo >> $PATH_TXT_REFGENE/$FASTQ_NAME_T.txt
 
 
-        		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor"
+        		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor" $PATH_PROJECT
         		R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='/output/report_$FASTQ_NAME_T.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME_T
         fi
       done
