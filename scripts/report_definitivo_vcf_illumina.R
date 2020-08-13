@@ -8,22 +8,22 @@ library(dplyr)
 source(paste0(args[3], "/Functions.R")) #Vedi se così funziona
 #####################################################################################
 
-#CIVIc
+#CIViC
 
 files_results <- list.files(path=paste0(args[3], "/civic/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 
 for(i in files_results){
-  x<-read.csv(i, sep="\t", stringsAsFactors = FALSE)
+  x <- read.csv(i, sep="\t", stringsAsFactors = FALSE)
   if (dim(x)[1]!=0){
     attach(x)
-    x1<-subset(x, select= c(Database, Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Type, Disease, Drug,
+    x1 <- subset(x, select= c(Database, Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Type, Disease, Drug,
                             Drug_interaction_type, Evidence_type, Evidence_level, Evidence_direction,
                             Clinical_significance, Evidence_statement, Variant_summary,
                             Citation_id, Citation))
-    hgx<-split(x1, paste(x$Gene, x$Variant))
-    xa<-hgx[1:length(hgx)]
+    hgx <- split(x1, paste(x$Gene, x$Variant))
+    xa <- hgx[1:length(hgx)]
     for (n in xa) { split_civic(n)}
 
     files_results1 <- list.files(path=paste0(args[3], "/civic/results/"),
@@ -61,46 +61,11 @@ for(i in files_results){
 
     files_cgi <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
-    for (i in files_cgi) {
-      n<-read.csv(i, sep="\t")
-      if(dim(n)[1]!=0){
-        Variant<-gsub(".*:(.*)", "\\1", n$individual_mutation)
-        n$Variant<-Variant
-        n$individual_mutation<-NULL
-        a<-gsub(n$Drug, pattern=" *\\[.*?\\] *", replace=" ")
-        n["Drug"]<-a
-        n$info<-NULL
-        n$Evidence_type<-"Predictive"
-        n$Drug<- NULL
-        colnames(n)[12]<-"Drug"
-        n$strand <- NULL
-        n$Transcript <- NULL
-        n$region <- NULL
-        n$Biomarker <- NULL
-        n$Targeting <- NULL
-        n$Drug.status <- NULL
-        n$Drug.family <- NULL
-        n$Evidence_direction<-"Supports"
-        a<-gsub(n$Drug, pattern=" *\\(.*?\\) *", replace=" ")
-        n["Drug"]<-a
-        nx<-gsub(n$PMID, pattern="PMID:", replace=" ")
-        n["PMID"]<-nx
-        write.table(n, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
-      }}
-
+    for (i in files_cgi) {cgi(i)}
 
     files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
     files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
-    for (i in files_cgi) {
-      dir.create(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
-      for (m in files_cgi2) {
-        if (tools::file_path_sans_ext(basename(word(m, 1, sep = "__"))) == tools::file_path_sans_ext(basename(i))){
-          file.move(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-                    paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
-        }else next()
-      }
-    }}else {file.rename(i , paste0(args[3], "/cgi/results/",args[1],".txt"))
-    }}
+    for (i in files_cgi) {rename(i, cgi, files_cgi2, args[1])}
 
 
 ########################################################################################
@@ -112,34 +77,14 @@ files_civic <- list.files(path=paste0(args[3], "/civic/",
                           pattern="*.txt", full.names=TRUE, recursive=FALSE)
 files_civic2 <-list.files(path=paste0(args[3], "/civic/results/",
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
-
-try({for (i in files_civic) {
-  setwd(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"))
-  temp<-list.files(path=paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/"), pattern="*.txt")
-  myfiles<-lapply(temp, read.delim)
-  file<-do.call("rbind", myfiles)
-  for (m in files_civic2) {
-    unlink(paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
-  }
-  write.table(file, paste0(args[3], "/civic/results/",  tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
-}}, silent = TRUE)
+try({for(i in files_civic) {merging_genes(i, civic, files_civic2)}}, silent = TRUE)
 
 #CGI
 
 files_cgi <- list.files(path=paste0(args[3], "/cgi/"), pattern="*.txt", full.names=TRUE, recursive=FALSE)
 files_cgi2 <- list.files(path=paste0(args[3], "/cgi/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
-try({for (i in files_cgi) {
-  setwd(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"))
-  temp<-list.files(path=paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/"),pattern="*.txt")
-  myfiles<-lapply(temp, read.delim)
-  file2<-do.call("rbind", myfiles)
-  for (m in files_cgi2) {
-    unlink(paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(m)), ".txt"))
-  }
-  write.table(file2, paste0(args[3], "/cgi/results/", tools::file_path_sans_ext(basename(i)), "/", tools::file_path_sans_ext(basename(i)), ".txt"), sep="\t",quote=FALSE, row.names=FALSE, na="NA")
-}
-}, silent = TRUE)
+try({for(i in files_cgi) {merging_genes(i, cgi, files_cgi2)}}, silent = TRUE)
 
 ###########################################################################################
 #merging civic and cgi
@@ -159,108 +104,51 @@ for(i in files_civic_results){
                                  "Variant", "Type", "Evidence_level", "Evidence_type","PMID", "Disease",
                                  "Clinical_significance", "Evidence_direction",
                                  "Citation", "Evidence_statement"), all=TRUE)
-        s<- gsub(",([A-Za-z])", ", \\1", z$Drug)
+        s <- gsub(",([A-Za-z])", ", \\1", z$Drug)
         z["Drug"]<-s
         attach(z)
-        z<-subset(z, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
+        z <- subset(z, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
                                Evidence_level, Evidence_type,
                                PMID, Clinical_significance, Evidence_direction, Evidence_statement, Variant_summary,
                                Database.x, Database.y, Type, Citation,Disease))
-        t1<-strsplit(as.character(z$Disease), ";", fixed = T)
-        e1<- cbind(z[rep(1:nrow(z), lengths(t1)), 1:20], Disease = unlist(t1))
-        e1 <- data.frame(e1)
-        r<-gsub(e1$Evidence_statement, pattern="\\\\x2c", replace=",")
-        e1["Evidence_statement"]<-r
-        t<-gsub(e1$Citation, pattern="\\\\x2c", replace=",")
-        e1["Citation"]<-t
-        attach(e1)
-        e1<-subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
+        disease(z, 20)
+        e1 <- subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
                                  Evidence_level, Evidence_type,
                                  Clinical_significance, Evidence_direction, Disease, Variant_summary,
                                  Database.x, Database.y, Type, Citation,PMID, Evidence_statement))
-        colnames(e1)[19] <- "citation"
-        t2<-strsplit(as.character(e1$citation), ",,", fixed = T)
-        e2<- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1:21], Citation = unlist(t2))
-        e2$citation <- NULL
-        colnames(e2)[20] <- "Evidence_Statement"
-        t3<-strsplit(as.character(e2$Evidence_Statement), ",,", fixed = T)
-        e3<- cbind(e2[rep(1:nrow(e2), lengths(t3)), 1:21], Evidence_statement = unlist(t3))
-        e3$Evidence_Statement <- NULL
-        colnames(e3)[19] <- "pmid"
-        t4<-strsplit(as.character(e3$pmid), ";", fixed = T)
-        e4<- cbind(e3[rep(1:nrow(e3), lengths(t4)), 1:21], PMID = unlist(t4))
-        e4$pmid <- NULL
-        e4 <- unique(e4)
+        definitive(19, 21, 20)
         write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
                     quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
       }else if (dim(cgi)[1]==0 && dim(civic[1])!=0){
         s<- gsub(",([A-Za-z])", ", \\1", civic$Drug)
-        civic["Drug"]<-s
+        civic["Drug"] <- s
         attach(civic)
-        civic<-subset(civic, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
+        civic <- subset(civic, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
                                        Evidence_level, Evidence_type,
                                        PMID, Clinical_significance, Evidence_direction, Evidence_statement, Variant_summary,
                                        Database, Citation, Type, Disease))
-        t1<-strsplit(as.character(civic$Disease), ";", fixed = T)
-        e1<- cbind(civic[rep(1:nrow(civic), lengths(t1)), 1:19], Disease = unlist(t1))
-        e1 <- data.frame(e1)
-        r<-gsub(e1$Evidence_statement, pattern="\\\\x2c", replace=",")
-        e1["Evidence_statement"]<-r
-        t<-gsub(e1$Citation, pattern="\\\\x2c", replace=",")
-        e1["Citation"]<-t
-        attach(e1)
-        e1<-subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
+        disease(civic, 19)
+        e1 <- subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug, Drug_interaction_type,
                                  Evidence_level, Evidence_type,
                                  Clinical_significance, Evidence_direction, Disease, Variant_summary,
                                  Database, Citation, PMID, Type, Evidence_statement))
-        colnames(e1)[17] <- "citation"
-        t2<-strsplit(as.character(e1$citation), ",,", fixed = T)
-        e2<- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1:20], Citation = unlist(t2))
-        e2$citation <- NULL
-        colnames(e2)[19] <- "Evidence_Statement"
-        t3<-strsplit(as.character(e2$Evidence_Statement), ",,", fixed = T)
-        e3<- cbind(e2[rep(1:nrow(e2), lengths(t3)), 1:20], Evidence_statement = unlist(t3))
-        e3$Evidence_Statement <- NULL
-        colnames(e3)[17] <- "pmid"
-        t4<-strsplit(as.character(e3$pmid), ";", fixed = T)
-        e4<- cbind(e3[rep(1:nrow(e3), lengths(t4)), 1:20], PMID = unlist(t4))
-        e4$pmid <- NULL
-        e4 <- unique(e4)
+        definitive(17, 20, 19)
         write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
                     quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
       } else if (dim(cgi)[1]!=0 && dim(civic[1])==0){
         s<- gsub(",([A-Za-z])", ", \\1", cgi$Drug)
         cgi["Drug"]<-s
         attach(cgi)
-        cgi<-subset(cgi, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug,
+        cgi <- subset(cgi, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug,
                                    Evidence_level, Evidence_type,
                                    PMID, Clinical_significance, Evidence_direction, Evidence_statement,
                                    Database,Citation, Type, Disease))
-        t1<-strsplit(as.character(cgi$Disease), ";", fixed = T)
-        e1<- cbind(cgi[rep(1:nrow(cgi), lengths(t1)), 1:17], Disease = unlist(t1))
-        e1 <- data.frame(e1)
-        r<-gsub(e1$Evidence_statement, pattern="\\\\x2c", replace=",")
-        e1["Evidence_statement"]<-r
-        t<-gsub(e1$Citation, pattern="\\\\x2c", replace=",")
-        e1["Citation"]<-t
-        attach(e1)
-        e1<-subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug,
+        disease(cgi, 17)
+        e1 <- subset(e1, select= c(Chromosome,Start, Stop, Ref_base, Var_base, Gene, Variant, Drug,
                                  Evidence_level, Evidence_type,
                                  Clinical_significance, Evidence_direction, Disease,
                                  Database, Citation,PMID, Type, Evidence_statement))
-        colnames(e1)[15] <- "citation"
-        t2<-strsplit(as.character(e1$citation), ",,", fixed = T)
-        e2<- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1:18], Citation = unlist(t2))
-        e2$citation <- NULL
-        colnames(e2)[17] <- "Evidence_Statement"
-        t3<-strsplit(as.character(e2$Evidence_Statement), ",,", fixed = T)
-        e3<- cbind(e2[rep(1:nrow(e2), lengths(t3)), 1:18], Evidence_statement = unlist(t3))
-        e3$Evidence_Statement <- NULL
-        colnames(e3)[15] <- "pmid"
-        t4<-strsplit(as.character(e3$pmid), ";", fixed = T)
-        e4<- cbind(e3[rep(1:nrow(e3), lengths(t4)), 1:18], PMID = unlist(t4))
-        e4$pmid <- NULL
-        e4 <- unique(e4)
+        definitive(15, 18, 17)
         e4$Drug_interaction_type <- " "
         e4$Variant_summary<- " "
         write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),

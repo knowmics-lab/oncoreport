@@ -232,6 +232,33 @@ split_cgi<- function(n){
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
+cgi <- function(i){
+    n <- read.csv(i, sep="\t")
+    if(dim(n)[1]!=0){
+      Variant <- gsub(".*:(.*)", "\\1", n$individual_mutation)
+      n$Variant <- Variant
+      n$individual_mutation <- NULL
+      a <- gsub(n$Drug, pattern=" *\\[.*?\\] *", replace=" ")
+      n["Drug"] <- a
+      n$info <- NULL
+      n$Evidence_type <- "Predictive"
+      n$Drug <- NULL
+      colnames(n)[12] <- "Drug"
+      n$strand <- NULL
+      n$Transcript <- NULL
+      n$region <- NULL
+      n$Biomarker <- NULL
+      n$Targeting <- NULL
+      n$Drug.status <- NULL
+      n$Drug.family <- NULL
+      n$Evidence_direction <- "Supports"
+      a <- gsub(n$Drug, pattern=" *\\(.*?\\) *", replace=" ")
+      n["Drug"] <- a
+      nx <- gsub(n$PMID, pattern="PMID:", replace=" ")
+      n["PMID"] <- nx
+      write.table(n, i , sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, na="NA")
+    }}
+
 #Merging genes
 
 merging_genes <- function(i, database, files){
@@ -258,7 +285,7 @@ e1 <<- e1
 }
 
 definitive <- function(val_cit, len_dat, val_ev){
-colnames(e1)[val_cit] <- "citation"
+  colnames(e1)[val_cit] <- "citation"
   t2 <- strsplit(as.character(e1$citation), ",,", fixed = T)
   e2 <- cbind(e1[rep(1:nrow(e1), lengths(t2)), 1:len_dat], Citation = unlist(t2))
   e2$citation <- NULL
