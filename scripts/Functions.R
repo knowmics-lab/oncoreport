@@ -397,11 +397,89 @@ split_pharm<- function(n){
   f3$Drug <- gsub(f3$Drug, pattern="\\\\x2c", replace=",")
   f3$Drug <- gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
   f3$Gene <- gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
-  f3$Variant_summary <-gsub (f3$Variant_summary, pattern="\\\\x2c", replace=",")
+  f3$Variant_summary <- gsub (f3$Variant_summary, pattern="\\\\x2c", replace=",")
   write.table(f3, paste0(args[3], "/pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
+#Url leading disease
+
+URL_creation <- function(m){
+  x <- read.csv(m, sep="\t")
+  dis <- read.csv(paste0(args[4], "/Disease.txt"), sep= "\t")
+  attach(x)
+  if(dim(x)[1]!=0){
+  x <- merge(dis, x, by= "Disease")
+  x$Disease <- NULL
+  colnames(x)[1] <- "Disease"
+  x <- sapply(x, as.character)
+  x[is.na(x)] <- " "
+  x <- as.data.frame(x)
+  x <- subset.data.frame(x,subset = x$Evidence_direction=="Supports")
+  x <- subset.data.frame(x,subset = x$Disease==args[2])
+    x$Drug <- as.character(x$Drug , levels=(x$Drug))
+    x<-x[order(x$Drug), ]
+    x$Evidence_type <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
+    x <- x[order(x$Evidence_type), ]
+    x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
+    x <- x[order(x$Evidence_level), ]
+    x$Disease <- as.character(x$Disease , levels=(x$Disease))
+    x <- x[order(x$Disease), ]
+    x <- data.frame(x, Reference=1:length(x$Disease))
+    row.names(x) <- NULL
+    hgx <- split(x, paste(x$Gene, x$Variant, x$Disease==args[2]))
+    xa <- hgx[1:length(hgx)]
+    link_pmid <- data.frame()
+    link_cli <- data.frame()
+    for(n in xa){
+      n <- subset.data.frame(n,subset = n$Evidence_direction=="Supports")
+        if (dim(n)[1]!=0){
+        row.names(n) <- NULL
+        n$Drug <- as.character(n$Drug , levels=(n$Drug))
+        n<-n[order(n$Drug), ]
+        n$Evidence_type  <- factor(n$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
+        n <- n[order(n$Evidence_type), ]
+        n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
+        n <- n[order(n$Evidence_level), ]
+          for (i in 1:length(n$PMID)) {
+          a <- paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$PMID[i])
+          df_pm <- data.frame(Citation = n$Citation[i], Gene=n$Gene[i], PMID=a, Cod=n$PMID[i], Reference= n$Reference[i])
+          link_pmid <- rbind(link_pmid, df_pm)
+          }
+          for (i in 1:length(n$Drug)) {
+          cltr <- paste0("https://clinicaltrials.gov/ct2/results?cond=", n$Variant[i],"&term=", gsub(" ", "", n$Drug[i], fixed = TRUE), "&cntry=&state=&city=&dist=")
+          df_cli <- data.frame(Drug = n$Drug[i], Gene= n$Gene[i], Variant= n$Variant[i], Clinical_trial=cltr, Reference= n$Reference[i])
+          link_cli <- rbind(link_cli, df_cli)
+          }
+    }
+  }
+  urls_pmid <- data.frame()
+  for (t in 1:length(link_pmid$PMID)){
+    url <- as.character(link_pmid$PMID[t])
+    y <- lapply(url, readUrl)
+      if (is.na(y)){next()
+      } else {
+        df <- data.frame(PMID=url, Cod=link_pmid$Cod[t], Gene=link_pmid$Gene[t], Citation=link_pmid$Citation[t], Reference=link_pmid$Reference[t])
+        urls_pmid <- rbind(urls_pmid,df)
+        }
+  }
+write.table(urls_pmid, paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),".txt"), quote=FALSE,
+            row.names = FALSE, na= "NA", sep = "\t")
+
+    urls_cli <- data.frame()
+    for (t in 1:length(link_cli$Clinical_trial)){
+      url <- as.character(link_cli$Clinical_trial[t])
+      y <- lapply(url, readUrl)
+        if (is.na(y)){next()
+        } else {
+        df <- data.frame(Clinical_trial=url, Gene= n$Gene[t], Variant= n$Variant[t], Reference=link_cli$Reference[t], Drug=link_cli$Drug[t])
+        urls_cli <- rbind(urls_cli,df)
+        }
+    }
+write.table(urls_cli, paste0(args[3], "/Trial/",tools::file_path_sans_ext(basename(m)) ,".txt"), quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
+}}
+
+#Funzione per off label clinical trial
 #Food_interaction
 
 food_definitive <- function(a){

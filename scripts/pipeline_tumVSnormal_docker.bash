@@ -50,7 +50,7 @@ while getopts "n:s:i:g:a:t:p:h:b:c:f:o:h:" OPTION; do
       echo "The value provided for patient tumor is $OPTARG"
       if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
       command;
-    else echo "Error: Tumor must be a value from the list disease_list.txt";
+      else echo "Error: Tumor must be a value from the list disease_list.txt";
       exit_abnormal
       exit 1
       fi
@@ -351,7 +351,7 @@ do
 		echo >> $PATH_TXT_REFGENE/$FASTQ_NAME_T.txt
 
 
-		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor" $PATH_PROJECT
+		Rscript report_definitivo_docker_tmVSnm.R $FASTQ_NAME_T "$tumor" $PATH_PROJECT $database
 		R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='/output/report_$FASTQ_NAME_T.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME_T
 
 

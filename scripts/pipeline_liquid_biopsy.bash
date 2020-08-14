@@ -4,7 +4,7 @@ usage() {
   [ -s patient surname ] [ -e filter-expression of AF ]
   [-n patient name] [-i patient id] [-a patient age]
   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
-  [-p prep_database must be yes or no]
+  [-p index path]
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
   [-c index must be hg19 or hg38]
   [-f path of the sample]
@@ -65,11 +65,10 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
       fi
       ;;
     p)
-      prep_databases=$OPTARG
-      echo "The value provided for database_preparation is $OPTARG"
-      if ! [ $prep_databases = "yes" ] ; then
-        if !  [ $prep_databases = "no" ] ; then
-        echo "Error: prep_database must be equal to yes or no."
+      path_index=$OPTARG
+      echo "The value provided for path index is $OPTARG"
+      if [ ! -d "$path_index" ]; then
+        echo "Error: You must pass a valid directory"
         exit_abnormal
         exit 1
         fi
@@ -134,13 +133,13 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
         esac
       done
 
-      if [[ -z "$prep_databases" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
+      if [[ -z "$path_index" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
          echo "all parameters must be passed"
          usage
          exit
       fi
 
-      PATH_INDEX=index #Come faccio a inserire nella grande cartella se l'utente passa la sub-cartella?
+      PATH_INDEX=$path_index
       PATH_FASTQ=$folder
       PATH_PROJECT=$folder/project
       PATH_TRIM=$PATH_PROJECT/trim
@@ -262,17 +261,12 @@ while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
       mkdir $PATH_FOOD
       mkdir $PATH_PROJECT/output
 
-if [[ "$prep_databases" = "yes" ]] && [[ "$index" = "hg19" ]]; then
-bash prep_banche_dati.bash
-  elif [[ "$prep_databases" = "yes" ]] && [[ "$index" = "hg38" ]]; then
-  bash prep_banche_dati_hg38.bash
-fi
-
-if [[ "$prep_databases" = "yes" ]]; then
-  echo "Creation of the index"
-  java -jar picard.jar CreateSequenceDictionary REFERENCE=$PATH_INDEX/${index}.fa OUTPUT=$PATH_INDEX/${index}.dict
-  samtools faidx $PATH_INDEX/${index}.fa
-fi
+# if [[ "$prep_databases" = "yes" ]]; then
+#   echo "Creation of the index"
+#   java -jar picard.jar CreateSequenceDictionary REFERENCE=$PATH_INDEX/${index}.fa OUTPUT=$PATH_INDEX/${index}.dict
+#   samtools faidx $PATH_INDEX/${index}.fa
+# fi
+#Questi si devono fare creare dall'applicazione
 
 for FASTQ in $(ls $PATH_FASTQ)
   do

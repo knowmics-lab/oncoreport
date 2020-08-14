@@ -4,34 +4,33 @@ library(filesstrings)
 
 source(paste0(args[3], "/Functions.R")) #Vedi se così funziona
 ###################################################################################
-
 #Civic
 #lines division
 
-split_civic<- function(n){
-  t1<-strsplit(as.character(n$Drug), ";;", fixed = T)
-  t2<-strsplit(as.character(n$Disease), ";;", fixed = T)
-  t3<-strsplit(as.character(n$Drug_interaction_type), ";;", fixed = T)
-  t4<-strsplit(as.character(n$Evidence_type), ";;", fixed = T)
-  t5<-strsplit(as.character(n$Evidence_level), ";;", fixed = T)
-  t6<-strsplit(as.character(n$Evidence_direction), ";;", fixed = T)
-  t7<-strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
-  t8<-strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
-  t9<-strsplit(as.character(n$Variant_summary), ";;", fixed = T)
-  t10<-strsplit(as.character(n$Citation_id), ";;", fixed = T)
-  t11<-strsplit(as.character(n$Citation), ";;", fixed = T)
-  e1<- cbind(n[rep(1:nrow(n), lengths(t1)), 1:2], Drug = unlist(t1))
-  e2<- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Disease = unlist(t2))
-  e3<- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Drug_interaction_type = unlist(t3))
-  e4<- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Evidence_type = unlist(t4))
-  e5<- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Evidence_level = unlist(t5))
-  e6<- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Evidence_direction = unlist(t6))
-  e7<- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Clinical_significance = unlist(t7))
-  e8<- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Evidence_statement = unlist(t8))
-  e9<- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], Variant_summary = unlist(t9))
-  e10<- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Citation_id = unlist(t10))
-  e11<- cbind(n[rep(1:nrow(n), lengths(t11)), 1:8], Citation = unlist(t11))
-  m<-max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
+split_civic <- function(n){
+  t1 <- strsplit(as.character(n$Drug), ";;", fixed = T)
+  t2 <- strsplit(as.character(n$Disease), ";;", fixed = T)
+  t3 <- strsplit(as.character(n$Drug_interaction_type), ";;", fixed = T)
+  t4 <- strsplit(as.character(n$Evidence_type), ";;", fixed = T)
+  t5 <- strsplit(as.character(n$Evidence_level), ";;", fixed = T)
+  t6 <- strsplit(as.character(n$Evidence_direction), ";;", fixed = T)
+  t7 <- strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
+  t8 <- strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
+  t9 <- strsplit(as.character(n$Variant_summary), ";;", fixed = T)
+  t10 <- strsplit(as.character(n$Citation_id), ";;", fixed = T)
+  t11 <- strsplit(as.character(n$Citation), ";;", fixed = T)
+  e1 <- cbind(n[rep(1:nrow(n), lengths(t1)), 1:2], Drug = unlist(t1))
+  e2 <- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Disease = unlist(t2))
+  e3 <- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Drug_interaction_type = unlist(t3))
+  e4 <- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Evidence_type = unlist(t4))
+  e5 <- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Evidence_level = unlist(t5))
+  e6 <- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Evidence_direction = unlist(t6))
+  e7 <- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Clinical_significance = unlist(t7))
+  e8 <- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Evidence_statement = unlist(t8))
+  e9 <- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], Variant_summary = unlist(t9))
+  e10 <- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Citation_id = unlist(t10))
+  e11 <- cbind(n[rep(1:nrow(n), lengths(t11)), 1:8], Citation = unlist(t11))
+  m <- max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
          nrow(e7),nrow(e8),nrow(e9),nrow(e10),nrow(e11))
   if (nrow(e1)<m) e1[nrow(e1)+(m-nrow(e1)),] <- NA
   if (nrow(e2)<m) e2[nrow(e2)+(m-nrow(e2)),] <- NA
@@ -267,9 +266,9 @@ try({for (i in files_cgi) {merging_genes(i, txt_cgi, files_cgi2)}}, silent = TRU
 ###########################################################################################
 #merging civic e cgi
 
-files_civic_results <- list.files(path="/txt_civic/results/",
+files_civic_results <- list.files(path=paste0(args[3], "/txt_civic/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
-files_cgi_results <- list.files(path="/txt_cgi/results/",
+files_cgi_results <- list.files(path=paste0(args[3], "/txt_cgi/results/"),
                           pattern="*.txt", full.names=TRUE, recursive=TRUE)
 
 for(i in files_civic_results){
@@ -295,7 +294,7 @@ for (m in files_cgi_results){
                  Clinical_significance, Evidence_direction, Disease, Variant_summary,
                  Database.x, Database.y, Citation,PMID, Evidence_statement))
   definitive(18, 20, 19)
-  write.table(e4,paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+  write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
               quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
   }else if (dim(cgi)[1]==0 && dim(civic[1])!=0){
     s<- gsub(",([A-Za-z])", ", \\1", civic$Drug)
@@ -311,7 +310,7 @@ for (m in files_cgi_results){
                              Clinical_significance, Evidence_direction, Disease, Variant_summary,
                              Database, Citation, PMID, Evidence_statement))
     definitive(17, 19, 18)
-    write.table(e4,paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+    write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
                 quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
   } else if (dim(cgi)[1]!=0 && dim(civic[1])==0){
     s<- gsub(",([A-Za-z])", ", \\1", cgi$Drug)
@@ -329,7 +328,7 @@ for (m in files_cgi_results){
     definitive(15, 17, 17)
     e4$Drug_interaction_type <- " "
     e4$Variant_summary<- " "
-    write.table(e4,paste0("/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
+    write.table(e4, paste0(args[3], "/definitive/", tools::file_path_sans_ext(basename(i)) ,".txt"),
                 quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
   } else if(dim(cgi)[1]==0 && dim(civic[1])==0){file.copy(i, "/definitive/")}
   }}}
@@ -337,217 +336,106 @@ for (m in files_cgi_results){
 
 
 #########################################################################################
+#URL clincal Trial and PMID
 #Leading disease
 
-
-try({files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
-for (m in files_definitivi) {
-  x <- read.csv(m, sep="\t")
-  dis<-read.csv("/Disease.txt", sep= "\t")
-attach(x)
-  if(dim(x)[1]!=0){
-x<- merge(dis, x, by= "Disease")
-x$Disease <- NULL
-colnames(x)[1] <- "Disease"
-x <- sapply(x, as.character)
-x[is.na(x)] <- " "
-x <- as.data.frame(x)
-x<-subset.data.frame(x,subset = x$Evidence_direction=="Supports")
-x <- subset.data.frame(x,subset = x$Disease==args[2])
-x$Drug <- as.character(x$Drug , levels=(x$Drug))
-x<-x[order(x$Drug), ]
-x$Evidence_type  <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-x<-x[order(x$Evidence_type), ]
-x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-x<-x[order(x$Evidence_level), ]
-x$Disease <- as.character(x$Disease , levels=(x$Disease))
-x<-x[order(x$Disease), ]
-x<-data.frame(x, Reference=1:length(x$Disease))
-row.names(x)<-NULL
-hgx<-split(x, paste(x$Gene, x$Variant, x$Disease==args[2]))
-xa<-hgx[1:length(hgx)]
-link <- data.frame()
-urls <- data.frame()
-#i <- 1
-for (n in xa){
-    n<-subset.data.frame(n,subset = n$Evidence_direction=="Supports")
-    if (dim(n)[1]!=0){
-      row.names(n)<-NULL
-      n$Drug <- as.character(n$Drug , levels=(n$Drug))
-      n<-n[order(n$Drug), ]
-      n$Evidence_type  <- factor(n$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-      n<-n[order(n$Evidence_type), ]
-      n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-      n<-n[order(n$Evidence_level), ]
-      for (i in 1:length(n$Drug)) {
-        a <-paste0("https://clinicaltrials.gov/ct2/results?cond=", n$Variant[i],"&term=", gsub(" ", "", n$Drug[i], fixed = TRUE), "&cntry=&state=&city=&dist=")
-        df <- data.frame(Drug = n$Drug[i], Gene= n$Gene[i], Variant= n$Variant[i], Clinical_trial=a, Reference= n$Reference[i])
-        link <- rbind(link,df)
-        #i <- i+1
-      }}}}
-for (t in 1:length(link$Clinical_trial)){
-  url <- as.character(link$Clinical_trial[t])
-  y <- lapply(url, readUrl)
-  if (is.na(y)){next()
-  }else { df <- data.frame(Clinical_trial=url, Gene= n$Gene[t], Variant= n$Variant[t], Reference=link$Reference[t], Drug=link$Drug[t])
-  urls <- rbind(urls,df)
-  }}
-  write.table(urls,paste0("/Trial/",tools::file_path_sans_ext(basename(m)) ,".txt"), quote=FALSE,
-              row.names = FALSE, na= "NA", sep = "\t")
-}
+try({
+files_definitivi <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
+for (m in files_definitivi) {URL_creation(m)}
 }, silent = TRUE)
 
 
 #off
 
-try({files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+try({
+files_definitivi <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
-  x <- read.csv(m, sep="\t")
-dis<-read.csv("/Disease.txt", sep= "\t")
-attach(x)
-x<- merge(dis, x, by= "Disease")
-x$Disease <- NULL
-colnames(x)[1] <- "Disease"
-x <- sapply(x, as.character)
-x[is.na(x)] <- " "
-x <- as.data.frame(x)
-x<-subset.data.frame(x,subset = x$Evidence_direction=="Supports")
-x <- subset.data.frame(x,subset = x$Disease!=args[2])
-x$Drug <- as.character(x$Drug , levels=(x$Drug))
-x<-x[order(x$Drug), ]
-x$Evidence_type  <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-x<-x[order(x$Evidence_type), ]
-x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-x<-x[order(x$Evidence_level), ]
-x$Disease <- as.character(x$Disease , levels=(x$Disease))
-x<-x[order(x$Disease), ]
-x<-data.frame(x, Reference=1:length(x$Disease))
-row.names(x)<-NULL
-hgx<-split(x, paste(x$Gene, x$Variant, x$Disease!=args[2]))
-xa<-hgx[1:length(hgx)]
-link <- data.frame()
-urls <- data.frame()
-for (n in xa){
-    n<-subset.data.frame(n,subset = n$Evidence_direction=="Supports")
-    if (dim(n)[1]!=0){
-      row.names(n)<-NULL
-      n$Drug <- as.character(n$Drug , levels=(n$Drug))
-      n<-n[order(n$Drug), ]
-      n$Evidence_type  <- factor(n$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-      n<-n[order(n$Evidence_type), ]
-      n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-      n<-n[order(n$Evidence_level), ]
-      for (i in 1:length(n$Drug)) {
-        a <-paste0("https://clinicaltrials.gov/ct2/results?cond=", n$Variant[i],"&term=", gsub(" ", "", n$Drug[i], fixed = TRUE), "&cntry=&state=&city=&dist=")
-        df <- data.frame(Drug = n$Drug[i], Clinical_trial=a,
-                         Reference= n$Reference[i], Disease=n$Disease[i], Gene= n$Gene[i], Variant= n$Variant[i]) #Aggiungi il Reference
-        link <- rbind(link,df)
-      }}}
+ x <- read.csv(m, sep="\t")
+ dis <- read.csv(args[4], "/Disease.txt", sep= "\t")
+ attach(x)
+ x<- merge(dis, x, by= "Disease")
+ x$Disease <- NULL
+ colnames(x)[1] <- "Disease"
+ x <- sapply(x, as.character)
+ x[is.na(x)] <- " "
+ x <- as.data.frame(x)
+ x<-subset.data.frame(x,subset = x$Evidence_direction=="Supports")
+ x <- subset.data.frame(x,subset = x$Disease!=args[2])
+ x$Drug <- as.character(x$Drug , levels=(x$Drug))
+ x <- x[order(x$Drug), ]
+ x$Evidence_type  <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
+ x <- x[order(x$Evidence_type), ]
+ x$Evidence_level <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
+ x <- x[order(x$Evidence_level), ]
+ x$Disease <- as.character(x$Disease , levels=(x$Disease))
+ x <- x[order(x$Disease), ]
+ x <- data.frame(x, Reference=1:length(x$Disease))
+ row.names(x)<-NULL
+ hgx <- split(x, paste(x$Gene, x$Variant, x$Disease!=args[2]))
+ xa <- hgx[1:length(hgx)]
+ link <- data.frame()
+ urls <- data.frame()
+ for (n in xa){
+  n <- subset.data.frame(n,subset = n$Evidence_direction=="Supports")
+  if (dim(n)[1]!=0){
+    row.names(n)<-NULL
+    n$Drug <- as.character(n$Drug , levels=(n$Drug))
+    n <- n[order(n$Drug), ]
+    n$Evidence_type  <- factor(n$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
+    n<-n[order(n$Evidence_type), ]
+    n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
+    n <- n[order(n$Evidence_level), ]
+    for (i in 1:length(n$Drug)) {
+      a <-paste0("https://clinicaltrials.gov/ct2/results?cond=", n$Variant[i],"&term=", gsub(" ", "", n$Drug[i], fixed = TRUE), "&cntry=&state=&city=&dist=")
+      df <- data.frame(Drug = n$Drug[i], Clinical_trial=a, Reference= n$Reference[i], Disease=n$Disease[i], Gene= n$Gene[i], Variant= n$Variant[i])
+      link <- rbind(link,df)
+    }
+  }
+}
 for (t in 1:length(link$Clinical_trial)){
   url <- as.character(link$Clinical_trial[t])
   y <- lapply(url, readUrl)
-  if (is.na(y)){next()
-  }else { df <- data.frame(Clinical_trial=url, Reference=link$Reference[t],
-                           Drug=link$Drug[t], Disease=link$Disease[t], Gene= link$Gene[t], Variant= link$Variant[t])
-  urls <- rbind(urls,df)
+    if (is.na(y)){next()
+    } else { df <- data.frame(Clinical_trial=url, Reference=link$Reference[t], Drug=link$Drug[t], Disease=link$Disease[t], Gene= link$Gene[t], Variant= link$Variant[t])
+    urls <- rbind(urls,df)
+    }
   }
-}
-write.table(urls,paste0("/Trial/",tools::file_path_sans_ext(basename(m)),"_off.txt"), quote=FALSE,
-            row.names = FALSE, na= "NA", sep = "\t")
-}
-}, silent = TRUE)
-
-## Url PMID
-
-try({
-files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
-for (m in files_definitivi) {
-  x <- read.csv(m, sep="\t")
-dis<-read.csv("/Disease.txt", sep= "\t")
-attach(x)
-x<- merge(dis, x, by= "Disease")
-x$Disease <- NULL
-colnames(x)[1] <- "Disease"
-x <- sapply(x, as.character)
-x[is.na(x)] <- " "
-x <- as.data.frame(x)
-x<-subset.data.frame(x,subset = x$Evidence_direction=="Supports")
-x <- subset.data.frame(x,subset = x$Disease==args[2])
-x$Drug <- as.character(x$Drug , levels=(x$Drug))
-x<-x[order(x$Drug), ]
-x$Evidence_type  <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-x<-x[order(x$Evidence_type), ]
-x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-x<-x[order(x$Evidence_level), ]
-x$Disease <- as.character(x$Disease , levels=(x$Disease))
-x<-x[order(x$Disease), ]
-x<-data.frame(x, Reference=1:length(x$Disease))
-row.names(x)<-NULL
-hgx<-split(x, paste(x$Gene, x$Variant, x$Disease==args[2]))
-xa<-hgx[1:length(hgx)]
-link <- data.frame()
-urls <- data.frame()
-for (n in xa){
-    n<-subset.data.frame(n,subset = n$Evidence_direction=="Supports")
-    if (dim(n)[1]!=0){
-      row.names(n)<-NULL
-      n$Drug <- as.character(n$Drug , levels=(n$Drug))
-      n<-n[order(n$Drug), ]
-      n$Evidence_type  <- factor(n$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-      n<-n[order(n$Evidence_type), ]
-      n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-      n<-n[order(n$Evidence_level), ]
-      for (i in 1:length(n$PMID)) {
-        a <-paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$PMID[i])
-        df <- data.frame(Citation = n$Citation[i], Gene=n$Gene[i], PMID=a, Cod=n$PMID[i], Reference= n$Reference[i])
-        link <- rbind(link,df)
-        #i <- i+1
-      }}}
-#link<-data.frame(link, Reference=1:length(link$Clinical_trial))
-for (t in 1:length(link$PMID)){
-  url <- as.character(link$PMID[t])
-  y <- lapply(url, readUrl)
-  if (is.na(y)){next()
-  }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Gene=link$Gene[t], Citation=link$Citation[t], Reference=link$Reference[t])
-  urls <- rbind(urls,df)
-  }
-}
-write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),".txt"), quote=FALSE,
+write.table(urls, paste0(args[3], "/Trial/",tools::file_path_sans_ext(basename(m)),"_off.txt"), quote=FALSE,
             row.names = FALSE, na= "NA", sep = "\t")
 }
 }, silent = TRUE)
 
 #URL PMID off
 
-try({files_definitivi <- list.files(path="/definitive/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+try({
+files_definitivi <- list.files(path=paste0(args[3], "/definitive/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi) {
   x <- read.csv(m, sep="\t")
-dis<-read.csv("/Disease.txt", sep= "\t")
-attach(x)
-x<- merge(dis, x, by= "Disease")
-x$Disease <- NULL
-colnames(x)[1] <- "Disease"
-x <- sapply(x, as.character)
-x[is.na(x)] <- " "
-x <- as.data.frame(x)
-x<-subset.data.frame(x,subset = x$Evidence_direction=="Supports")
-x <- subset.data.frame(x,subset = x$Disease!=args[2])
-x$Drug <- as.character(x$Drug , levels=(x$Drug))
-x<-x[order(x$Drug), ]
-x$Evidence_type  <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
-x<-x[order(x$Evidence_type), ]
-x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-x<-x[order(x$Evidence_level), ]
-x$Disease <- as.character(x$Disease , levels=(x$Disease))
-x<-x[order(x$Disease), ]
-x<-data.frame(x, Reference=1:length(x$Disease))
-x$PMID<- gsub(" ", "", x$PMID, fixed = TRUE)
-row.names(x)<-NULL
-hgx<-split(x, paste(x$Gene, x$Variant, x$Disease!=args[2]))
-xa<-hgx[1:length(hgx)]
-link <- data.frame()
-#i <- 1
-for (n in xa){
+  dis <- read.csv(args[4], "/Disease.txt", sep= "\t")
+  attach(x)
+  x <- merge(dis, x, by= "Disease")
+  x$Disease <- NULL
+  colnames(x)[1] <- "Disease"
+  x <- sapply(x, as.character)
+  x[is.na(x)] <- " "
+  x <- as.data.frame(x)
+  x <- subset.data.frame(x,subset = x$Evidence_direction=="Supports")
+  x <- subset.data.frame(x,subset = x$Disease!=args[2])
+  x$Drug <- as.character(x$Drug , levels=(x$Drug))
+  x <- x[order(x$Drug), ]
+  x$Evidence_type <- factor(x$Evidence_type , levels = c("Diagnostic", "Prognostic","Predisposing","Predictive"))
+  x <- x[order(x$Evidence_type), ]
+  x$Evidence_level  <- factor(x$Evidence_level , levels = c("Validated association","FDA guidelines", "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
+  x <- x[order(x$Evidence_level), ]
+  x$Disease <- as.character(x$Disease , levels=(x$Disease))
+  x <- x[order(x$Disease), ]
+  x <- data.frame(x, Reference=1:length(x$Disease))
+  x$PMID <- gsub(" ", "", x$PMID, fixed = TRUE)
+  row.names(x) <- NULL
+  hgx <- split(x, paste(x$Gene, x$Variant, x$Disease!=args[2]))
+  xa <- hgx[1:length(hgx)]
+  link <- data.frame()
+  for (n in xa){
     n<-subset.data.frame(n,subset = n$Evidence_direction=="Supports")
     if (dim(n)[1]!=0){
       row.names(n)<-NULL
@@ -557,24 +445,26 @@ for (n in xa){
       n<-n[order(n$Evidence_type), ]
       n$Evidence_level  <- factor(n$Evidence_level , levels = c("Validated association","FDA guidelines",
                                                                 "NCCN guidelines", "Clinical evidence","Late trials", "Early trials",  "Case study","Case report","Preclinical evidence", "Pre-clinical", "Inferential association"))
-      n<-n[order(n$Evidence_level), ]
+      n <- n[order(n$Evidence_level), ]
       for (i in 1:length(n$PMID)) {
         a <-paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$PMID[i])
         df <- data.frame(Citation = n$Citation[i], Disease=n$Disease[i], PMID=a, Cod=n$PMID[i], Reference= n$Reference[i])
         link <- rbind(link,df)
-      }}}
-link$Disease <- as.character(link$Disease , levels=(link$Disease))
-link<-link[order(link$Disease), ]
-urls <- data.frame()
-for (t in 1:length(link$PMID)){
+      }
+    }
+  }
+  link$Disease <- as.character(link$Disease , levels=(link$Disease))
+  link <- link[order(link$Disease), ]
+  urls <- data.frame()
+  for (t in 1:length(link$PMID)){
   url <- as.character(link$PMID[t])
   y <- lapply(url, readUrl)
-  if (is.na(y)){next()
-  }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Disease=link$Disease[t], Citation=link$Citation[t], Reference=link$Reference[t])
-  urls <- rbind(urls,df)
+    if (is.na(y)){next()
+    }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Disease=link$Disease[t], Citation=link$Citation[t], Reference=link$Reference[t])
+    urls <- rbind(urls,df)
+    }
   }
-}
-write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_off",".txt"),
+write.table(urls,paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_off",".txt"),
             quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
 }
 }, silent = TRUE)
@@ -582,52 +472,51 @@ write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_o
 #################################################################################################
 #Cosmic
 
-files_cosmic <- list.files(path="/txt_cosmic/",
+files_cosmic <- list.files(path=paste0(args[3], "/txt_cosmic/"),
                            pattern="*.txt", full.names=TRUE, recursive=FALSE)
 try({for(i in files_cosmic){
   cos<-read.csv(i, sep="\t")
   if(nrow(cos)!=0){
-    cos$Sample.Name<-NULL
-    cos$Sample.ID<-NULL
-    cos$Transcript<-NULL
-    cos$Census.Gene<-NULL
-    cos$MUTATION_ID<-NULL
-    cos$ID<-NULL
-    cos$LEGACY_MUTATION_ID<-NULL
-    cos$CDS.Mutation<-NULL
-    cos$CGP.Study<-NULL
-    cos$Tier<-NULL
-    cos$Variant<-gsub(cos$AA.Mutation, pattern="p.", replace="")
-    cos$AA.Mutation<-NULL
-    colnames(cos)[9]<- "Pubmed"
-    cos$Stop<-NULL
-    cos$Stop<-sub('.*\\.', '', cos$Genome.Coordinates..GRCh37.)
-    a<-sub('.*\\:', '', cos$Genome.Coordinates..GRCh37.)
-    cos$Start<-gsub("\\..*","",a)
-    colnames(cos)[1]<-"Gene"
-    colnames(cos)[2]<-"Drug"
+    cos$Sample.Name <- NULL
+    cos$Sample.ID <- NULL
+    cos$Transcript <- NULL
+    cos$Census.Gene <- NULL
+    cos$MUTATION_ID <- NULL
+    cos$ID <- NULL
+    cos$LEGACY_MUTATION_ID <- NULL
+    cos$CDS.Mutation <- NULL
+    cos$CGP.Study <- NULL
+    cos$Tier <- NULL
+    cos$Variant <- gsub(cos$AA.Mutation, pattern="p.", replace="")
+    cos$AA.Mutation <- NULL
+    colnames(cos)[9] <- "Pubmed"
+    cos$Stop <- NULL
+    cos$Stop <- sub('.*\\.', '', cos$Genome.Coordinates..GRCh37.)
+    a <- sub('.*\\:', '', cos$Genome.Coordinates..GRCh37.)
+    cos$Start <- gsub("\\..*","",a)
+    colnames(cos)[1] <- "Gene"
+    colnames(cos)[2] <- "Drug"
     cos$Genome.Coordinates..GRCh37. <- NULL
-    write.table(cos, paste0("/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
+    write.table(cos, paste0(args[3], "/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
                 row.names=FALSE, col.names=TRUE, na="NA")
 
-    files_results <- list.files(path="/txt_cosmic/results/",
+    files_results <- list.files(path=paste0(args[3], "/txt_cosmic/results/"),
                                 pattern="*.txt", full.names=TRUE, recursive=FALSE)
     for (i in files_cosmic) {
-      dir.create(paste0("/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+      dir.create(paste0(args[3], "/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
       for (m in files_results) {
         if (tools::file_path_sans_ext(basename(m)) == tools::file_path_sans_ext(basename(i))){
-          file.move(paste0("/txt_cosmic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
-                    paste0("/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
+          file.move(paste0(args[3], "/txt_cosmic/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+                    paste0(args[3], "/txt_cosmic/results/", tools::file_path_sans_ext(basename(i)), "/"))
         }else next()
       }
-    }}else {dir.create(paste0("/txt_cosmic/results/", args[1], "/"))
-      file.rename(i , paste0("/txt_cosmic/results/",args[1],"/",args[1],".txt"))
+    }}else {dir.create(paste0(args[3], "/txt_cosmic/results/", args[1], "/"))
+      file.rename(i , paste0(args[3], "/txt_cosmic/results/",args[1],"/",args[1],".txt"))
     }}
-
 }, silent = TRUE)
 
 try({
-files_definitivi_cosmic <- list.files(path="/txt_cosmic/results/", pattern="*.txt", full.names=TRUE, recursive=TRUE)
+files_definitivi_cosmic <- list.files(path=paste0(args[3], "/txt_cosmic/results/"), pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for (m in files_definitivi_cosmic) {
   x <- read.csv(m, sep="\t")
   attach(x)
@@ -635,37 +524,38 @@ for (m in files_definitivi_cosmic) {
   x$Drug <- as.character(x$Drug , levels=(x$Drug))
   x<-x[order(x$Drug), ]
   x$Gene <- as.character(x$Gene , levels=(x$Gene))
-  x<-x[order(x$Gene), ]
-  x<-data.frame(x, Reference=1:length(x$Drug))
-  row.names(x)<-NULL
-  hgx<-split(x, paste(x$Gene))
-  xa<-hgx[1:length(hgx)]
+  x <- x[order(x$Gene), ]
+  x <- data.frame(x, Reference=1:length(x$Drug))
+  row.names(x) <- NULL
+  hgx <- split(x, paste(x$Gene))
+  xa <- hgx[1:length(hgx)]
   link <- data.frame()
   urls <- data.frame()
-  #i <- 1
   for (n in xa){
     if (dim(n)[1]!=0){
-      row.names(n)<-NULL
+      row.names(n) <- NULL
       n$Drug <- as.character(n$Drug , levels=(n$Drug))
-      n<-n[order(n$Drug), ]
+      n <- n[order(n$Drug), ]
       n$Gene <- as.character(n$Gene , levels=(n$Gene))
-      n<-n[order(n$Gene), ]
+      n <- n[order(n$Gene), ]
       n$Pubmed <- as.character(n$Pubmed , levels=(n$Pubmed))
-      n<-n[order(n$Pubmed),]
+      n <- n[order(n$Pubmed),]
       for (i in 1:length(n$Pubmed)) {
         a <-paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$Pubmed[i])
         df <- data.frame(Gene=n$Gene[i], PMID=a, Cod=n$Pubmed[i], Reference= n$Reference[i])
         link <- rbind(link,df)
-      }}}
+      }
+    }
+  }
   for (t in 1:length(link$PMID)){
     url <- as.character(link$PMID[t])
     y <- lapply(url, readUrl)
     if (is.na(y)){next()
-    }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Gene=link$Gene[t], Reference=link$Reference[t])
-    urls <- rbind(urls,df)
+      }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Gene=link$Gene[t], Reference=link$Reference[t])
+      urls <- rbind(urls,df)
     }
   }
-  write.table(urls,paste0("/Reference/",tools::file_path_sans_ext(basename(m)),"_cosmic.txt"), quote=FALSE,
+write.table(urls, paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_cosmic.txt"), quote=FALSE,
               row.names = FALSE, na= "NA", sep = "\t")
 }
 }, silent = TRUE)
@@ -706,43 +596,43 @@ split_pharm<- function(n){
     for(i in seq_along(x)[-1]) if(is.na(x[i])) x[i] <- x[i-1]
     x
   }
-  Chromosome<-f2(f3$Chromosome)
-  Start<-f2(f3$Start)
-  Stop<-f2(f3$Stop)
-  Ref_base<-f2(f3$Ref_base)
-  Var_base<-f2(f3$Var_base)
-  Gene<-f2(f3$Gene)
-  f3$Chromosome<-Chromosome
-  f3$Start<-Start
-  f3$Stop<-Stop
-  f3$Ref_base<-Ref_base
-  f3$Var_base<-Var_base
-  f3$Gene<-Gene
-  f3$Database.1<-NULL
-  f3$Database.2<-NULL
-  f3$Database.3<-NULL
-  f3$Database.4<-NULL
-  f3$Database.5<-NULL
-  f3$Database.6<-NULL
-  f3$Database.7<-NULL
-  f3$Database.8<-NULL
-  f3$Chromosome.1<-NULL
-  f3$Chromosome.2<-NULL
-  f3$Chromosome.3<-NULL
-  f3$Chromosome.4<-NULL
-  f3$Chromosome.5<-NULL
-  f3$Chromosome.6<-NULL
-  f3$Chromosome.7<-NULL
-  f3$Chromosome.8<-NULL
-  f3$Drug<-gsub(f3$Drug, pattern="\\\\x2c", replace=",")
-  f3$Drug<-gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
-  f3$Gene<-gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
-  f3$Variant_summary<-gsub(f3$Variant_summary, pattern="\\\\x2c", replace=",")
-  write.table(f3, paste0("/txt_pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
+  Chromosome <- f2(f3$Chromosome)
+  Start <- f2(f3$Start)
+  Stop <- f2(f3$Stop)
+  Ref_base <- f2(f3$Ref_base)
+  Var_base <- f2(f3$Var_base)
+  Gene <- f2(f3$Gene)
+  f3$Chromosome <- Chromosome
+  f3$Start <- Start
+  f3$Stop <- Stop
+  f3$Ref_base <- Ref_base
+  f3$Var_base <- Var_base
+  f3$Gene <- Gene
+  f3$Database.1 <- NULL
+  f3$Database.2 <- NULL
+  f3$Database.3 <- NULL
+  f3$Database.4 <- NULL
+  f3$Database.5 <- NULL
+  f3$Database.6 <- NULL
+  f3$Database.7 <- NULL
+  f3$Database.8 <- NULL
+  f3$Chromosome.1 <- NULL
+  f3$Chromosome.2 <- NULL
+  f3$Chromosome.3 <- NULL
+  f3$Chromosome.4 <- NULL
+  f3$Chromosome.5 <- NULL
+  f3$Chromosome.6 <- NULL
+  f3$Chromosome.7 <- NULL
+  f3$Chromosome.8 <- NULL
+  f3$Drug <- gsub(f3$Drug, pattern="\\\\x2c", replace=",")
+  f3$Drug <- gsub(f3$Drug, pattern="*\\(.*?\\) *", replace="")
+  f3$Gene <- gsub(f3$Gene, pattern="*\\(.*?\\) *", replace="")
+  f3$Variant_summary <- gsub(f3$Variant_summary, pattern="\\\\x2c", replace=",")
+  write.table(f3, paste0(args[3], "/txt_pharm/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene[1], ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
-files_results <- list.files(path="/txt_pharm/",
+files_results <- list.files(path=paste0(args[3], "/txt_pharm/"),
                             pattern="*.txt", full.names=TRUE, recursive=TRUE)
 for(i in files_results){
   x<-read.csv(i, sep="\t")
