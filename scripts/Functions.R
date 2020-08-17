@@ -1,28 +1,28 @@
 #Civic
 split_civic <- function(n){
-  t1<-strsplit(as.character(n$Drug), ";;", fixed = T)
-  t2<-strsplit(as.character(n$Disease), ";;", fixed = T)
-  t3<-strsplit(as.character(n$Drug_interaction_type), ";;", fixed = T)
-  t4<-strsplit(as.character(n$Evidence_type), ";;", fixed = T)
-  t5<-strsplit(as.character(n$Evidence_level), ";;", fixed = T)
-  t6<-strsplit(as.character(n$Evidence_direction), ";;", fixed = T)
-  t7<-strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
-  t8<-strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
-  t9<-strsplit(as.character(n$Variant_summary), ";;", fixed = T)
-  t10<-strsplit(as.character(n$Citation_id), ";;", fixed = T)
-  t11<-strsplit(as.character(n$Citation), ";;", fixed = T)
-  e1<- cbind(n[rep(1:nrow(n), lengths(t1)), 1:2], Drug = unlist(t1))
-  e2<- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Disease = unlist(t2))
-  e3<- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Drug_interaction_type = unlist(t3))
-  e4<- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Evidence_type = unlist(t4))
-  e5<- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Evidence_level = unlist(t5))
-  e6<- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Evidence_direction = unlist(t6))
-  e7<- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Clinical_significance = unlist(t7))
-  e8<- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Evidence_statement = unlist(t8))
-  e9<- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], Variant_summary = unlist(t9))
-  e10<- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Citation_id = unlist(t10))
-  e11<- cbind(n[rep(1:nrow(n), lengths(t11)), 1:9], Citation = unlist(t11))
-  m<-max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
+  t1 <- strsplit(as.character(n$Drug), ";;", fixed = T)
+  t2 <- strsplit(as.character(n$Disease), ";;", fixed = T)
+  t3 <- strsplit(as.character(n$Drug_interaction_type), ";;", fixed = T)
+  t4 <- strsplit(as.character(n$Evidence_type), ";;", fixed = T)
+  t5 <- strsplit(as.character(n$Evidence_level), ";;", fixed = T)
+  t6 <- strsplit(as.character(n$Evidence_direction), ";;", fixed = T)
+  t7 <- strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
+  t8 <- strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
+  t9 <- strsplit(as.character(n$Variant_summary), ";;", fixed = T)
+  t10 <- strsplit(as.character(n$Citation_id), ";;", fixed = T)
+  t11 <- strsplit(as.character(n$Citation), ";;", fixed = T)
+  e1 <- cbind(n[rep(1:nrow(n), lengths(t1)), 1:2], Drug = unlist(t1))
+  e2 <- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Disease = unlist(t2))
+  e3 <- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Drug_interaction_type = unlist(t3))
+  e4 <- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Evidence_type = unlist(t4))
+  e5 <- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Evidence_level = unlist(t5))
+  e6 <- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Evidence_direction = unlist(t6))
+  e7 <- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Clinical_significance = unlist(t7))
+  e8 <- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Evidence_statement = unlist(t8))
+  e9 <- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], Variant_summary = unlist(t9))
+  e10 <- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Citation_id = unlist(t10))
+  e11 <- cbind(n[rep(1:nrow(n), lengths(t11)), 1:9], Citation = unlist(t11))
+  m <- max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
          nrow(e7),nrow(e8),nrow(e9),nrow(e10),nrow(e11))
   if (nrow(e1)<m) e1[nrow(e1)+(m-nrow(e1)),] <- NA
   if (nrow(e2)<m) e2[nrow(e2)+(m-nrow(e2)),] <- NA
@@ -79,7 +79,7 @@ split_civic <- function(n){
   f3$Chromosome.9 <- NULL
   f3$Chromosome.10 <- NULL
   f3$Chromosome.11 <- NULL
-  f3$Evidence_statement <-gsub (f3$Evidence_statement, pattern="ï¿½", replace="-")
+  f3$Evidence_statement <- gsub (f3$Evidence_statement, pattern="ï¿½", replace="-")
   colnames(f3)[11] <- "Database"
   write.table(f3, paste0(args[3], "/civic/results/", tools::file_path_sans_ext(basename(i)), "__", n$Gene, ".txt") , sep="\t", quote=FALSE,
               row.names=FALSE, col.names=TRUE, na="NA")
@@ -125,41 +125,41 @@ for (m in files) {
 }
 
 #CGI
-split_cgi<- function(n){
-  n$ann1<- NULL
-  n$ann2<-NULL
-  n$het<- NULL
-  t1<-strsplit(as.character(n$Drug), ";;", fixed = T)
-  t2<-strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
-  t3<-strsplit(as.character(n$Biomarker), ";;", fixed = T)
-  t4<-strsplit(as.character(n$Drug.family), ";;", fixed = T)
-  t5<-strsplit(as.character(n$Drug.full.name), ";;", fixed = T)
-  t6<-strsplit(as.character(n$Drug.status), ";;", fixed = T)
-  t7<-strsplit(as.character(n$Evidence_level), ";;", fixed = T)
-  t8<-strsplit(as.character(n$Disease), ";;", fixed = T)
-  t9<-strsplit(as.character(n$PMID), ";;", fixed = T)
-  t10<-strsplit(as.character(n$Targeting), ";;", fixed = T)
-  t11<-strsplit(as.character(n$info), ";;", fixed = T)
-  t12<-strsplit(as.character(n$region), ";;", fixed = T)
-  t13<-strsplit(as.character(n$strand), ";;", fixed = T)
-  t14<-strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
-  t15<-strsplit(as.character(n$Citation), ";;", fixed = T)
-  e1<- cbind(n[rep(1:nrow(n), lengths(t1)), 1:9], Drug = unlist(t1))
-  e2<- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Clinical_significance = unlist(t2))
-  e3<- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Biomarker = unlist(t3))
-  e4<- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Drug.family = unlist(t4))
-  e5<- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Drug.full.name = unlist(t5))
-  e6<- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Drug.status = unlist(t6))
-  e7<- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Evidence_level = unlist(t7))
-  e8<- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Disease = unlist(t8))
-  e9<- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], PMID = unlist(t9))
-  e10<- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Targeting = unlist(t10))
-  e11<- cbind(n[rep(1:nrow(n), lengths(t11)), 1:2], info = unlist(t11))
-  e12<- cbind(n[rep(1:nrow(n), lengths(t12)), 1:2], region = unlist(t12))
-  e13<- cbind(n[rep(1:nrow(n), lengths(t13)), 1:2],  strand= unlist(t13))
-  e14<- cbind(n[rep(1:nrow(n), lengths(t14)), 1:2], Evidence_statement = unlist(t14))
-  e15<- cbind(n[rep(1:nrow(n), lengths(t15)), 1:2],  Citation= unlist(t15))
-  m<-max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
+split_cgi <- function(n){
+  n$ann1 <- NULL
+  n$ann2 <-NULL
+  n$het <- NULL
+  t1 <- strsplit(as.character(n$Drug), ";;", fixed = T)
+  t2 <- strsplit(as.character(n$Clinical_significance), ";;", fixed = T)
+  t3 <- strsplit(as.character(n$Biomarker), ";;", fixed = T)
+  t4 <- strsplit(as.character(n$Drug.family), ";;", fixed = T)
+  t5 <- strsplit(as.character(n$Drug.full.name), ";;", fixed = T)
+  t6 <- strsplit(as.character(n$Drug.status), ";;", fixed = T)
+  t7 <- strsplit(as.character(n$Evidence_level), ";;", fixed = T)
+  t8 <- strsplit(as.character(n$Disease), ";;", fixed = T)
+  t9 <- strsplit(as.character(n$PMID), ";;", fixed = T)
+  t10 <- strsplit(as.character(n$Targeting), ";;", fixed = T)
+  t11 <- strsplit(as.character(n$info), ";;", fixed = T)
+  t12 <- strsplit(as.character(n$region), ";;", fixed = T)
+  t13 <- strsplit(as.character(n$strand), ";;", fixed = T)
+  t14 <- strsplit(as.character(n$Evidence_statement), ";;", fixed = T)
+  t15 <- strsplit(as.character(n$Citation), ";;", fixed = T)
+  e1 <- cbind(n[rep(1:nrow(n), lengths(t1)), 1:9], Drug = unlist(t1))
+  e2 <- cbind(n[rep(1:nrow(n), lengths(t2)), 1:2], Clinical_significance = unlist(t2))
+  e3 <- cbind(n[rep(1:nrow(n), lengths(t3)), 1:2], Biomarker = unlist(t3))
+  e4 <- cbind(n[rep(1:nrow(n), lengths(t4)), 1:2], Drug.family = unlist(t4))
+  e5 <- cbind(n[rep(1:nrow(n), lengths(t5)), 1:2], Drug.full.name = unlist(t5))
+  e6 <- cbind(n[rep(1:nrow(n), lengths(t6)), 1:2], Drug.status = unlist(t6))
+  e7 <- cbind(n[rep(1:nrow(n), lengths(t7)), 1:2], Evidence_level = unlist(t7))
+  e8 <- cbind(n[rep(1:nrow(n), lengths(t8)), 1:2], Disease = unlist(t8))
+  e9 <- cbind(n[rep(1:nrow(n), lengths(t9)), 1:2], PMID = unlist(t9))
+  e10 <- cbind(n[rep(1:nrow(n), lengths(t10)), 1:2], Targeting = unlist(t10))
+  e11 <- cbind(n[rep(1:nrow(n), lengths(t11)), 1:2], info = unlist(t11))
+  e12 <- cbind(n[rep(1:nrow(n), lengths(t12)), 1:2], region = unlist(t12))
+  e13 <- cbind(n[rep(1:nrow(n), lengths(t13)), 1:2],  strand= unlist(t13))
+  e14 <- cbind(n[rep(1:nrow(n), lengths(t14)), 1:2], Evidence_statement = unlist(t14))
+  e15 <- cbind(n[rep(1:nrow(n), lengths(t15)), 1:2],  Citation= unlist(t15))
+  m <- max(nrow(e1),nrow(e2),nrow(e3),nrow(e4),nrow(e5),nrow(e6),
          nrow(e7),nrow(e8),nrow(e9),nrow(e10),nrow(e11), nrow(e12), nrow(e13))
   if (nrow(e1)<m) e1[nrow(e1)+(m-nrow(e1)),] <- NA
   if (nrow(e2)<m) e2[nrow(e2)+(m-nrow(e2)),] <- NA
@@ -402,6 +402,130 @@ split_pharm<- function(n){
               row.names=FALSE, col.names=TRUE, na="NA")
 }
 
+pharm_url <- function(m){
+  x <- read.csv(m, sep="\t")
+  attach(x)
+  x <- sapply(x, as.character)
+  x[is.na(x)] <- " "
+  x <- as.data.frame(x)
+  x$Drug <- as.character(x$Drug , levels=(x$Drug))
+  x <- x[order(x$Drug), ]
+  x$Gene <- as.character(x$Gene , levels=(x$Gene))
+  x <- x[order(x$Gene), ]
+  x <- data.frame(x, Reference=1:length(x$Drug))
+  row.names(x) <- NULL
+  hgx <- split(x, paste(x$Gene))
+  xa <- hgx[1:length(hgx)]
+  link <- data.frame()
+  urls <- data.frame()
+  for (n in xa){
+    if (dim(n)[1]!=0){
+      row.names(n)<-NULL
+      n$Drug <- as.character(n$Drug , levels=(n$Drug))
+      n<-n[order(n$Drug), ]
+      n$Gene <- as.character(n$Gene , levels=(n$Gene))
+      n<-n[order(n$Gene), ]
+      for (i in 1:length(n$PMID)) {
+        a <-paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$PMID[i])
+        df <- data.frame(Gene=n$Gene[i], PMID=a, Cod=n$PMID[i], Reference= n$Reference[i])
+        link <- rbind(link,df)
+      }}}
+  for (t in 1:length(link$PMID)){
+    url <- as.character(link$PMID[t])
+    y <- lapply(url, readUrl)
+    if (is.na(y)){next()
+    }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Gene=link$Gene[t], Reference=link$Reference[t])
+    urls <- rbind(urls,df)
+    }
+  }
+  write.table(urls, paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_pharm.txt"), quote=FALSE,
+              row.names = FALSE, na= "NA", sep = "\t")
+}
+
+#COSMIC
+
+cosmic <- function(i, database)
+  cos <- read.csv(i, sep="\t")
+  if(nrow(cos)!=0){
+      cos$Sample.Name <- NULL
+      cos$Sample.ID <- NULL
+      cos$Transcript <- NULL
+      cos$Census.Gene <- NULL
+      cos$MUTATION_ID <- NULL
+      cos$ID <- NULL
+      cos$LEGACY_MUTATION_ID <- NULL
+      cos$CDS.Mutation <- NULL
+      cos$CGP.Study <- NULL
+      cos$Tier <- NULL
+      cos$Variant <- gsub(cos$AA.Mutation, pattern="p.", replace="")
+      cos$AA.Mutation <- NULL
+      colnames(cos)[9] <- "Pubmed"
+      cos$Stop <- NULL
+      cos$Stop <- sub('.*\\.', '', cos$Genome.Coordinates..GRCh37.)
+      a <- sub('.*\\:', '', cos$Genome.Coordinates..GRCh37.)
+      cos$Start <- gsub("\\..*","",a)
+      colnames(cos)[1] <- "Gene"
+      colnames(cos)[2] <- "Drug"
+      cos$Genome.Coordinates..GRCh37. <- NULL
+      write.table(cos, paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), ".txt") , sep="\t", quote=FALSE,
+                  row.names=FALSE, col.names=TRUE, na="NA")
+
+files_results <- list.files(path=paste0(args[3], "/", database, "/results/"),
+                                 pattern="*.txt", full.names=TRUE, recursive=FALSE)
+for (i in files_cosmic) {
+  dir.create(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
+  for (m in files_results) {
+    if (tools::file_path_sans_ext(basename(m)) == tools::file_path_sans_ext(basename(i))){
+      file.move(paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(m)), ".txt"),
+                paste0(args[3], "/", database, "/results/", tools::file_path_sans_ext(basename(i)), "/"))
+    }else next()
+  }
+    }}else {dir.create(paste0(args[3], "/", database, "/results/", args[1], "/"))
+      file.rename(i , paste0(args[3], "/", database, "/results/",args[1],"/",args[1],".txt"))
+}}
+
+function <- cosmic_url(m){
+  x <- read.csv(m, sep="\t")
+  attach(x)
+  x[is.na(x)] <- " "
+  x$Drug <- as.character(x$Drug , levels=(x$Drug))
+  x <- x[order(x$Drug), ]
+  x$Gene <- as.character(x$Gene , levels=(x$Gene))
+  x <- x[order(x$Gene), ]
+  x$Pubmed <- as.character(x$Pubmed , levels=(x$Pubmed))
+  x <- x[order(x$Pubmed),]
+  x <- data.frame(x, Reference=1:length(x$Drug))
+  row.names(x) <- NULL
+  hgx <- split(x, paste(x$Gene))
+  xa <- hgx[1:length(hgx)]
+  link <- data.frame()
+  urls <- data.frame()
+  for (n in xa){
+    if (dim(n)[1]!=0){
+      row.names(n)<-NULL
+      n$Drug <- as.character(n$Drug , levels=(n$Drug))
+      n<- n[order(n$Drug), ]
+      n$Gene <- as.character(n$Gene , levels=(n$Gene))
+      n<-n[order(n$Gene), ]
+      for (i in 1:length(n$Pubmed)) {
+        a <-paste0("https://www.ncbi.nlm.nih.gov/pubmed/", n$Pubmed[i])
+        df <- data.frame(Gene=n$Gene[i], PMID=a, Cod=n$Pubmed[i], Reference= n$Reference[i])
+        link <- rbind(link,df)
+      }}}
+  for (t in 1:length(link$PMID)){
+    url <- as.character(link$PMID[t])
+    y <- lapply(url, readUrl)
+    if (is.na(y)){next()
+    }else { df <- data.frame(PMID=url, Cod=link$Cod[t], Gene=link$Gene[t], Reference=link$Reference[t])
+    urls <- rbind(urls,df)
+    }
+  }
+  write.table(urls,paste0(args[3], "/Reference/",tools::file_path_sans_ext(basename(m)),"_cosmic.txt"), quote=FALSE,
+              row.names = FALSE, na= "NA", sep = "\t")
+}
+
+
+
 #Url leading disease
 
 URL_creation <- function(m){
@@ -480,7 +604,7 @@ write.table(urls_cli, paste0(args[3], "/Trial/",tools::file_path_sans_ext(basena
 }}
 
 #URLs off label
-URL_off <- function(m)
+URL_off <- function(m){
   x <- read.csv(m, sep="\t")
   dis <- read.csv(args[4], "/Disease.txt", sep= "\t")
   attach(x)
@@ -558,10 +682,6 @@ write.table(urls_pm,paste0(args[3], "/Reference/",tools::file_path_sans_ext(base
 
 }
 }}
-
-
-
-
 
 #Food_interaction
 
