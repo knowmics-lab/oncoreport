@@ -7,7 +7,8 @@ usage() {
   [-p index path]
   [-b number of bowtie2 threads, leave 1 if you are uncertain]
   [-c index must be hg19 or hg38]
-  [-f path of the sample]
+  [-f first sample]
+  [-a second sample]
   [-o path of COSMIC]
   [-h database path]" 1>&2
 }
