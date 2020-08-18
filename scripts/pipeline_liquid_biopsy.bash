@@ -1,144 +1,266 @@
 #!/bin/bash
+# usage() {
+#   echo "Usage: $0 [ -d analysis depth ] [ -g patient gender ]
+#   [ -s patient surname ] [ -e filter-expression of AF ]
+#   [-n patient name] [-i patient id] [-a patient age]
+#   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
+#   [-p index path]
+#   [-b number of bowtie2 threads, leave 1 if you are uncertain]
+#   [-c index must be hg19 or hg38]
+#   [-f first sample]
+#   [-a second sample]
+#   [-o path of COSMIC]
+#   [-h database path]" 1>&2
+# }
 usage() {
-  echo "Usage: $0 [ -d analysis depth ] [ -g patient gender ]
-  [ -s patient surname ] [ -e filter-expression of AF ]
-  [-n patient name] [-i patient id] [-a patient age]
-  [-t patient tumor, you must choose a type of tumor from disease_list.txt]
-  [-p index path]
-  [-b number of bowtie2 threads, leave 1 if you are uncertain]
-  [-c index must be hg19 or hg38]
-  [-f first sample]
-  [-a second sample]
-  [-o path of COSMIC]
-  [-h database path]" 1>&2
+  echo "Usage: $0 [-depth/-d analysis depth ] [-gender/-g patient gender ]
+  [-surname/-s patient surname ] [-af filter-expression of AF ]
+  [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
+  [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
+  [-idx_path/-ip index path]
+  [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
+  [-index/-idx index must be hg19 or hg38]
+  [-fastq1/-fq1 first fastq sample]
+  [-fastq2/-fq2 second fastq sample]
+  [-bam/-b bam sample]
+  [-vcf/-v vcf sample]
+  [-cosmic/-c path of COSMIC]
+  [-database/-d database path]" 1>&2
 }
 exit_abnormal() {
   usage
   exit 1
 }
-while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
-  case "${OPTION}" in
-    d)
-      depth=$OPTARG
-      echo "The value provided for filter-expression of DP is $OPTARG"
-      ;;
-		e)
-      AF=$OPTARG
-      echo "The value provided for filter-expression of AF is $OPTARG"
-      ;;
-    n)
-      name=$OPTARG
-      echo "The value provided for patient name is $OPTARG"
-      ;;
-    s)
-     surname=$OPTARG
-     echo "The value provided for patient surname is $OPTARG"
-     ;;
-    i)
-      id=$OPTARG
-      echo "The value provided for patient ID is $OPTARG"
-      ;;
-    g)
-      gender=$OPTARG
-      echo "The value provided for patient gender is $OPTARG"
-      ;;
-    a)
-      age=$OPTARG
-      re_isanum='^[0-9]+$'
-      echo "The value provided for patient age is $OPTARG"
-      if ! [[ $age =~ $re_isanum ]] ; then
-        echo "Error: Age must be a positive, whole number."
-        exit_abnormal
-        exit 1
-      elif [ $age -eq "0" ]; then
-        echo "Error: Age must be greater than zero."
-        exit_abnormal
-      fi
-      ;;
-    t)
-      tumor=$OPTARG
-      echo "The value provided for patient tumor is $OPTARG"
-      if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
-      command;
+# while getopts "n:s:i:g:a:t:d:e:p:h:b:c:f:o:" OPTION; do
+#   case "${OPTION}" in
+#     d)
+#       depth=$OPTARG
+#       echo "The value provided for filter-expression of DP is $OPTARG"
+#       ;;
+# 		e)
+#       AF=$OPTARG
+#       echo "The value provided for filter-expression of AF is $OPTARG"
+#       ;;
+#     n)
+#       name=$OPTARG
+#       echo "The value provided for patient name is $OPTARG"
+#       ;;
+#     s)
+#      surname=$OPTARG
+#      echo "The value provided for patient surname is $OPTARG"
+#      ;;
+#     i)
+#       id=$OPTARG
+#       echo "The value provided for patient ID is $OPTARG"
+#       ;;
+#     g)
+#       gender=$OPTARG
+#       echo "The value provided for patient gender is $OPTARG"
+#       ;;
+#     a)
+#       age=$OPTARG
+#       re_isanum='^[0-9]+$'
+#       echo "The value provided for patient age is $OPTARG"
+#       if ! [[ $age =~ $re_isanum ]] ; then
+#         echo "Error: Age must be a positive, whole number."
+#         exit_abnormal
+#         exit 1
+#       elif [ $age -eq "0" ]; then
+#         echo "Error: Age must be greater than zero."
+#         exit_abnormal
+#       fi
+#       ;;
+#     t)
+#       tumor=$OPTARG
+#       echo "The value provided for patient tumor is $OPTARG"
+#       if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
+#       command;
+#     else echo "Error: Tumor must be a value from the list disease_list.txt";
+#       exit_abnormal
+#       exit 1
+#       fi
+#       ;;
+#     p)
+#       path_index=$OPTARG
+#       echo "The value provided for path index is $OPTARG"
+#       if [ ! -d "$path_index" ]; then
+#         echo "Error: You must pass a valid directory"
+#         exit_abnormal
+#         exit 1
+#         fi
+#         ;;
+#     b)
+#       threads=$OPTARG
+#       echo "The value provided for threads is $OPTARG"
+#       if [ $threads -eq "0" ]; then
+#         echo "Error: Threads must be greater than zero."
+#         exit_abnormal
+#       fi
+#         ;;
+#     c)
+#       index=$OPTARG
+#       echo "The value provided for index is $OPTARG"
+#       if ! [ $index = "hg19" ] ; then
+#         if !  [ $index = "hg38" ] ; then
+#         echo "Error: index must be equal to hg19 or hg38."
+#         exit_abnormal
+#         exit 1
+#         fi
+#       fi
+#         ;;
+#       f)
+#        folder=$OPTARG
+#        echo "The value provided for folder is $OPTARG"
+#        if [ ! -d "$folder" ]; then
+#          echo "Error: You must pass a valid directory"
+#          exit_abnormal
+#        fi
+#          ;;
+#       o)
+#       cosmic=$OPTARG
+#       echo "The value provided for cosmic is $OPTARG"
+#       if [ ! -d "$cosmic" ]; then
+#         echo "Error: You must pass a valid cosmic directory"
+#         exit_abnormal
+#       fi
+#         ;;
+#       h)
+#       database=$OPTARG
+#       echo "The value provided for database path is $OPTARG"
+#       if [ ! -d "$database" ]; then
+#         echo "Error: You must pass a valid database directory"
+#         exit_abnormal
+#       fi
+#         ;;
+#     :)
+#       echo "Error: ${OPTARG} requires an argument."
+#       usage
+#       exit_abnormal
+#         ;;
+#     *)
+#       exit_abnormal
+#         ;;
+#     /? | h)
+#       echo "ERROR: Invalid option $OPTARG"
+#       usage
+#       exit 1
+#         ;;
+#         esac
+#       done
+while [ -n "$1" ]
+do
+  case "$1" in
+    -fastq1 | -fq1) fastq1="$2"
+    shift;;
+    -fastq2 | -fq2) fast2="$2"
+    shift;;
+    -bam | -b) bam="$2"
+    shift;;
+    -vcf | -v) vcf="$2"
+    shift;;
+    -depth | -d) depth="$2"
+    echo "The value provided for filter-expression of DP is $depth"
+    shift;;
+    -af) AF="$2"
+    echo "The value provided for filter-expression of AF is $AF"
+    shift;;
+    -name | -n) name="$2"
+    echo "The value provided for patient name is $name"
+    shift;;
+    -surname | -s) surname="$2"
+    echo "The value provided for patient surname is $surname"
+    shift;;
+    -id | -i) id="$2"
+    echo "The value provided for patient ID is $id"
+    shift;;
+    -gender | -g) gender="$2"
+    echo "The value provided for patient gender is $OPTARG"
+    shift;;
+    -age | -a) age="$2"
+    re_isanum='^[0-9]+$'
+    echo "The value provided for patient age is $age"
+    if ! [[ $age =~ $re_isanum ]] ; then
+      echo "Error: Age must be a positive, whole number."
+      exit_abnormal
+      exit 1
+    elif [ $age -eq "0" ]; then
+      echo "Error: Age must be greater than zero."
+      exit_abnormal
+      exit 1
+    fi
+    shift;;
+    -tumor | -t) tumor="$2"
+    echo "The value provided for patient tumor is $tumor"
+    if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
+    command;
     else echo "Error: Tumor must be a value from the list disease_list.txt";
+    exit_abnormal
+    exit 1
+    fi
+    shift;;
+    -idx_path | -ip) index_path="$2"
+    echo "The value provided for path index is $OPTARG"
+    if [ ! -d "$path_index" ]; then
+      echo "Error: You must pass a valid directory"
       exit_abnormal
       exit 1
       fi
-      ;;
-    p)
-      path_index=$OPTARG
-      echo "The value provided for path index is $OPTARG"
-      if [ ! -d "$path_index" ]; then
-        echo "Error: You must pass a valid directory"
-        exit_abnormal
-        exit 1
-        fi
-      fi
-        ;;
-    b)
-      threads=$OPTARG
-      echo "The value provided for threads is $OPTARG"
-      if [ $threads -eq "0" ]; then
-        echo "Error: Threads must be greater than zero."
-        exit_abnormal
-      fi
-        ;;
-    c)
-      index=$OPTARG
-      echo "The value provided for index is $OPTARG"
-      if ! [ $index = "hg19" ] ; then
-        if !  [ $index = "hg38" ] ; then
-        echo "Error: index must be equal to hg19 or hg38."
-        exit_abnormal
-        exit 1
-        fi
-      fi
-        ;;
-      f)
-       folder=$OPTARG
-       echo "The value provided for folder is $OPTARG"
-       if [ ! -d "$folder" ]; then
-         echo "Error: You must pass a valid directory"
-         exit_abnormal
-       fi
-         ;;
-      o)
-      cosmic=$OPTARG
-      echo "The value provided for cosmic is $OPTARG"
-      if [ ! -d "$cosmic" ]; then
-        echo "Error: You must pass a valid cosmic directory"
-        exit_abnormal
-      fi
-        ;;
-      h)
-      database=$OPTARG
-      echo "The value provided for database path is $OPTARG"
-      if [ ! -d "$database" ]; then
-        echo "Error: You must pass a valid database directory"
-        exit_abnormal
-      fi
-        ;;
-    :)
-      echo "Error: ${OPTARG} requires an argument."
-      usage
+    shift;;
+    -threads | -th) threads="$2"
+    echo "The value provided for threads is $OPTARG"
+    if [ $threads -eq "0" ]; then
+      echo "Error: Threads must be greater than zero."
       exit_abnormal
-        ;;
+    fi
+    shift;;
+    -index | -idx) index="$2"
+    echo "The value provided for index is $OPTARG"
+    if ! [ $index = "hg19" ] ; then
+      if !  [ $index = "hg38" ] ; then
+      echo "Error: index must be equal to hg19 or hg38."
+      exit_abnormal
+      exit 1
+      fi
+    fi
+    shift;;
+    -cosmic | -c) cosmic="$2"
+    echo "The value provided for cosmic is $OPTARG"
+    if [ ! -d "$cosmic" ]; then
+      echo "Error: You must pass a valid cosmic directory"
+      exit_abnormal
+    fi
+    shift;;
+    -database | -d) database="$2"
+    echo "The value provided for database path is $OPTARG"
+    if [ ! -d "$database" ]; then
+      echo "Error: You must pass a valid database directory"
+      exit_abnormal
+    fi
+    shift;;
     *)
       exit_abnormal
-        ;;
-    /? | h)
-      echo "ERROR: Invalid option $OPTARG"
+    shift;;
+    #Questo non so se lasciarlo perché non so se funziona come su getopts
+    --help | -h) help="$2"
       usage
+      exit_abnormal
       exit 1
-        ;;
-        esac
-      done
+      shift;;
+  esac
+  shift
+done
 
-      if [[ -z "$path_index" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$folder" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
-         echo "all parameters must be passed"
-         usage
-         exit
-      fi
+if [[ -z "$fastq1" ]] || [[ -z "$fastq2" ]] || [[ -z "$bam" ]] || [[ -z "$vcf" ]]; then
+  echo "At least one parameter between \$fastq1, \$fastq2, \$bam or \$vcf must be passed"
+  usage
+  exit
+fi
+
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] ||    [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
+  echo "all parameters must be passed"
+  usage
+  exit
+fi
 
       PATH_INDEX=$path_index
       PATH_FASTQ=$folder
@@ -288,8 +410,9 @@ for FASTQ in $(ls $PATH_FASTQ)
 		  #Setting cutadapt path
 		     export PATH=/root/.local/bin/:$PATH
 		     echo "Trimming"
-		     TrimGalore-0.6.0/trim_galore -paired $PATH_FASTQ/*R1_001.fastq $PATH_FASTQ/*R2_001.fastq -o $PATH_TRIM/
+		     TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM/
 		     echo "Alignment"
+         #basename dal path per nomi su path_trim?
 		     bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/*R1_001_val_1.fq -2 $PATH_TRIM/*R2_001_val_2.fq -S $PATH_SAM/$FASTQ_NAME.sam
          echo "Adding Read Group"
   		   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ_NAME.sam O=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ_NAME
