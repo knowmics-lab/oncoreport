@@ -22,7 +22,7 @@ usage() {
   [-index/-idx index must be hg19 or hg38]
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
-  [-bam/-b bam sample]
+  [-bam/-b bam or sam sample]
   [-vcf/-v vcf sample]
   [-cosmic/-c path of COSMIC]
   [-database/-d database path]" 1>&2
@@ -147,6 +147,7 @@ exit_abnormal() {
 #         ;;
 #         esac
 #       done
+#Manca da impostare la cartella principale
 while [ -n "$1" ]
 do
   case "$1" in
@@ -263,7 +264,6 @@ if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$
 fi
 
       PATH_INDEX=$path_index
-      PATH_FASTQ=$folder
       PATH_PROJECT=$folder/project
       PATH_TRIM=$PATH_PROJECT/trim
       PATH_SAM=$PATH_PROJECT/sam
@@ -345,7 +345,7 @@ fi
       rm -r $PATH_FOOD
       fi
 
-      mkidr $PATH_INDEX
+      #mkidr $PATH_INDEX
       mkdir $PATH_PROJECT
       mkdir $PATH_SAM
       mkdir $PATH_BAM_ANNO
@@ -391,184 +391,208 @@ fi
 # fi
 #Questi si devono fare creare dall'applicazione
 
-for FASTQ in $(ls $PATH_FASTQ)
-  do
-    if [ ${FASTQ: -9} == ".fastq.gz" ]; then
+# for FASTQ in $(ls $PATH_FASTQ)
+#   do
+    #if [ ${FASTQ: -9} == ".fastq.gz" ]; then
+if [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
+  FQ1=$(basename "$fastq1")
+  FQ2=$(basename "$fastq2")
+  if [ ${FQ1: -9} == ".fastq.gz" ] && [ ${FQ2: -9} == ".fastq.gz" ] ; then
     echo "Fastq extraction"
-    gunzip $PATH_FASTQ/*R1_001.fastq.gz
-    gunzip $PATH_FASTQ/*R2_001.fastq.gz
+    gunzip $fastq1
+    gunzip $fastq2
   fi
-done
+fi
+#done
 
 echo "Starting the analysis"
-for FASTQ in $(ls $PATH_FASTQ)
-  do
-    if [ ${FASTQ: -6} == ".fastq" ]; then
-      if [ ${FASTQ: -13} == "_R1_001.fastq" ]; then
-		     FASTQ_NAME=$(basename $FASTQ "_R1_001.fastq")
+# for FASTQ in $(ls $PATH_FASTQ)
+#   do
+#     if [ ${FASTQ: -6} == ".fastq" ]; then
+#       if [ ${FASTQ: -13} == "_R1_001.fastq" ]; then
+         #FASTQ_NAME=$(basename $FASTQ ".fastq")
+         #Aggiustare qua con || per farlo partire in ogni caso
+         if [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
+		     FASTQ1_NAME=$(basename "${FQ1%.*}")
+         FASTQ2_NAME=$(basename "${FQ2%.*}")
          echo "The file loaded is a fastq"
 		  #Setting cutadapt path
 		     export PATH=/root/.local/bin/:$PATH
 		     echo "Trimming"
 		     TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM/
 		     echo "Alignment"
-         #basename dal path per nomi su path_trim?
-		     bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/*R1_001_val_1.fq -2 $PATH_TRIM/*R2_001_val_2.fq -S $PATH_SAM/$FASTQ_NAME.sam
-         echo "Adding Read Group"
-  		   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ_NAME.sam O=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ_NAME
-  		   echo "Sorting"
-  		   java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam SORT_ORDER=coordinate
-  		   echo "Reordering"
-  		   java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam O=$PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-  		   echo "Variant Calling"
-  		   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam -tumor $FASTQ_NAME -O $PATH_VCF_MUT/$FASTQ_NAME.vcf -mbq 25
-         echo "Variant Filtration"
-  		   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ_NAME.vcf
-  		   echo "PASS Selection"
-  		   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ_NAME.vcf > $PATH_VCF_PASS/$FASTQ_NAME.vcf
-  		   echo "DP Filtering"
-  		   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_PASS/$FASTQ_NAME.vcf -O $PATH_VCF_DP/$FASTQ_NAME.vcf --filter-name "LowDP" --filter-expression $depth
+		     bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM/$FASTQ1_NAME.sam
+         fi
+         if [ -z "$bam"] && [ -z "$vcf"]; then
+           echo "Adding Read Group"
+    		   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ1_NAME.sam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+         elif [ ! -z "$bam" ]; then
+           FASTQ1_NAME=$(basename "${bam%.*}")
+           echo "Adding Read Group"
+  		     java -jar picard.jar AddOrReplaceReadGroups I=$bam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+         fi
+         if [ ! -z "$fastq1"] || [ ! -z "$bam"]; then
+           echo "Sorting"
+  		     java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ1_NAME}_sortato.bam SORT_ORDER=coordinate
+  		     echo "Reordering"
+  		     java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ1_NAME}_sortato.bam O=$PATH_BAM_ORD/${FASTQ1_NAME}_ordinato.bam   SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  		     echo "Variant Calling"
+  		     java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ1_NAME}_ordinato.bam -tumor   $FASTQ1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
+           echo "Variant Filtration"
+  		     java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
+  		     echo "PASS Selection"
+  		     awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+         fi
+         if [ ! -z "$vcf"]; then
+           VCF_NAME=$(basename "$vcf")
+           if [ ${VCF_NAME: -17} != ".varianttable.txt" ]; then
+             FASTQ1_NAME=$(basename "${vcf%.*}")
+  		       echo "DP Filtering"
+             java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $vcf -O $PATH_VCF_DP/$FASTQ1_NAME.vcf --filter-name "LowDP" --filter-expression $depth
+           fi
+         else
+           echo "DP Filtering"
+  		     java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_PASS/$FASTQ1_NAME.vcf -O $PATH_VCF_DP/$FASTQ1_NAME.vcf --filter-name "LowDP" --filter-expression $depth
+         fi
   		   echo "Splitting indel and snp"
-  		   java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf STRICT=false
+  		   java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ1_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf STRICT=false
   		   echo "AF Filtering"
-  	     java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
+  	     java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ1_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
   		   echo "Merge indel and snp"
-         java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ_NAME.vcf
+         java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ1_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ1_NAME.vcf
   		   echo "PASS Selection"
-  		   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf
+  		   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
   		   echo "Germline"
-  		   grep Germline $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
+  		   grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf
   	     echo "Somatic"
-  		   grep Germline -v $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+  		   grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
          echo "Annotation"
-         sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-         sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
-         sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-         cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
-         cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
+         sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
+         sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf
+         sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
+         cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Somatic.txt
+         cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Germline.txt
          Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
          echo "Report creation"
-         echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
-         echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Germline.txt
-         echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Germline.txt
-         echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Germline.txt
-         echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
-         echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
-         echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
-         R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
-        fi
-    elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
-      echo "bam/sam analysis"
-      FASTQ_NAME="${FASTQ%.*}"
-  		echo "Adding Read Group"
-  		java -jar picard.jar AddOrReplaceReadGroups I=$PATH_FASTQ/$FASTQ O=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ_NAME
-  		echo "Sorting"
-  		java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam SORT_ORDER=coordinate
-  		echo "Reordering"
-  		java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam O=$PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-  		echo "Variant Calling"
-  		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam -tumor $FASTQ_NAME -O $PATH_VCF_MUT/$FASTQ_NAME.vcf -mbq 25
-      echo "Variant Filtration"
-  		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ_NAME.vcf
-  		echo "PASS Selection"
-  		awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ_NAME.vcf > $PATH_VCF_PASS/$FASTQ_NAME.vcf
-  		echo "DP Filtering"
-      java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_PASS/$FASTQ_NAME.vcf -O $PATH_VCF_DP/$FASTQ_NAME.vcf --filter-name "LowDP" --filter-expression $depth
-  		echo "Splitting indel and snp"
-  		java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf STRICT=false
-  		echo "AF Filtration"
-  		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
-  		echo "Merge indel and snp"
-      java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ_NAME.vcf
-  		echo "PASS Selection"
-  		awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf
-  		echo "Germline"
-  		grep Germline $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
-  		echo "Somatic"
-  		grep Germline -v $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      echo "Annotation"
-      sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
-      sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
-      cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
-      Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
-      echo "Report creation"
-      echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
-      R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
-    elif [ ${FASTQ: -4} == ".vcf" ]; then
-      echo "vcf analysis"
-      FASTQ_NAME=$(basename $FASTQ ".vcf")
-      echo "DP Filtering"
-      java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_FASTQ/$FASTQ_NAME.vcf -O $PATH_VCF_DP/$FASTQ_NAME.vcf --filter-name "LowDP" --filter-expression $depth
-    	echo "Splitting indel and snp"
-  		java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf STRICT=false
-    	echo "AF Filtration"
-  		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
-  		echo "Merge indel and snp"
-      java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ_NAME.vcf
-    	echo "PASS Selection"
-    	awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf
-    	echo "Germline"
-    	grep Germline $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
-    	echo "Somatic"
-    	grep Germline -v $PATH_VCF_PASS_AF/$FASTQ_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      echo "Annotation"
-      sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
-      sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
-      cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
-      cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
-      Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
-      echo "Report creation"
-      echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
-      echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
-      echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
-      Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ_NAME "$tumor" $PATH_PROJECT $database
-      R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
-    fi
-done
-
-
-
-for FASTQ in $(ls $PATH_FASTQ)
-  do
-    if [ ${FASTQ: -17} == ".varianttable.txt" ]; then
-    FASTQ_NAME=$(basename $FASTQ ".varianttable.txt")
+         echo >> $PATH_TXT_CIVIC/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_CIVIC/${FASTQ1_NAME}_Germline.txt
+         echo >> $PATH_TXT_CGI/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_CGI/${FASTQ1_NAME}_Germline.txt
+         echo >> $PATH_TXT_COSMIC/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_COSMIC/${FASTQ1_NAME}_Germline.txt
+         echo >> $PATH_TXT_PHARM/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_PHARM/${FASTQ1_NAME}_Germline.txt
+         echo >> $PATH_TXT_CLINVAR/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_CLINVAR/${FASTQ1_NAME}_Germline.txt
+         echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Somatic.txt
+         echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Germline.txt
+         Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
+         R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
+#     elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
+#       echo "bam/sam analysis"
+#       FASTQ_NAME="${FASTQ%.*}"
+#   		echo "Adding Read Group"
+#   		java -jar picard.jar AddOrReplaceReadGroups I=$PATH_FASTQ/$FASTQ O=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+#   		echo "Sorting"
+#   		java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam SORT_ORDER=coordinate
+#   		echo "Reordering"
+#   		java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ_NAME}_sortato.bam O=$PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+#   		echo "Variant Calling"
+#   		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ_NAME}_ordinato.bam -tumor $FASTQ1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
+#       echo "Variant Filtration"
+#   		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
+#   		echo "PASS Selection"
+#   		awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+#   		echo "DP Filtering"
+#       java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_PASS/$FASTQ1_NAME.vcf -O $PATH_VCF_DP/$FASTQ1_NAME.vcf --filter-name "LowDP" --filter-expression $depth
+#   		echo "Splitting indel and snp"
+#   		java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ1_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf STRICT=false
+#   		echo "AF Filtration"
+#   		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ1_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
+#   		echo "Merge indel and snp"
+#       java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ1_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ1_NAME.vcf
+#   		echo "PASS Selection"
+#   		awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
+#   		echo "Germline"
+#   		grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
+#   		echo "Somatic"
+#   		grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       echo "Annotation"
+#       sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
+#       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
+#       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
+#       Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
+#       echo "Report creation"
+#       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
+#       Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
+#       R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
+#     elif [ ${FASTQ: -4} == ".vcf" ]; then
+#       echo "vcf analysis"
+#       FASTQ_NAME=$(basename $FASTQ ".vcf")
+#       echo "DP Filtering"
+#       java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_FASTQ/$FASTQ1_NAME.vcf -O $PATH_VCF_DP/$FASTQ1_NAME.vcf --filter-name "LowDP" --filter-expression $depth
+#     	echo "Splitting indel and snp"
+#   		java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ1_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf STRICT=false
+#     	echo "AF Filtration"
+#   		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar VariantFiltration -R $PATH_INDEX/${index}.fa -V $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf -O $PATH_VCF_AF/$FASTQ1_NAME.vcf --genotype-filter-name "Germline" --genotype-filter-expression $AF
+#   		echo "Merge indel and snp"
+#       java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ1_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ1_NAME.vcf
+#     	echo "PASS Selection"
+#     	awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
+#     	echo "Germline"
+#     	grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
+#     	echo "Somatic"
+#     	grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       echo "Annotation"
+#       sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf
+#       sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf
+#       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Somatic.txt
+#       cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ_NAME}_Germline.txt
+#       Rscript merge_database.R $index $database $cosmic $PATH_PROJECT
+#       echo "Report creation"
+#       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CIVIC/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CGI/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_COSMIC/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_PHARM/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_CLINVAR/${FASTQ_NAME}_Germline.txt
+#       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Somatic.txt
+#       echo >> $PATH_TXT_REFGENE/${FASTQ_NAME}_Germline.txt
+#       Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
+#       R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
+#     fi
+# done
+# for FASTQ in $(ls $PATH_FASTQ)
+#   do
+if [ ! -z "$vcf"]; then
+  VCF_NAME=$(basename "$vcf")
+    if [ ${VCF_NAME: -17} == ".varianttable.txt" ]; then
+    FASTQ1_NAME=$(basename $vcf ".varianttable.txt")
     echo "Annotation vcf illumina"
-    Rscript illumina_vcf.R $depth $AF $FASTQ_NAME $index $PATH_PROJECT $database
+    Rscript illumina_vcf.R $depth $AF $FASTQ1_NAME $index $PATH_PROJECT $database
     echo "Report generation"
-    Rscript report_definitivo_vcf_illumina.R $FASTQ_NAME "$tumor" $PATH_PROJECT
-    R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ_NAME
+    Rscript report_definitivo_vcf_illumina.R $FASTQ1_NAME "$tumor" $PATH_PROJECT
+    R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
   fi
-done
+#done
 
 echo "Removing folders"
 rm -r $PATH_TRIM
