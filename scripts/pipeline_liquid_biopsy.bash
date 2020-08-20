@@ -1,4 +1,6 @@
 #!/bin/bash
+#CAMBIA I NOMI DEI FILE R
+#Crea Cartella Tools sul docker file, oppure dopo
 # usage() {
 #   echo "Usage: $0 [ -d analysis depth ] [ -g patient gender ]
 #   [ -s patient surname ] [ -e filter-expression of AF ]
@@ -18,6 +20,7 @@ usage() {
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-idx_path/-ip index path]
+  [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
   [-index/-idx index must be hg19 or hg38]
   [-fastq1/-fq1 first fastq sample]
@@ -175,7 +178,7 @@ do
     echo "The value provided for patient ID is $id"
     shift;;
     -gender | -g) gender="$2"
-    echo "The value provided for patient gender is $OPTARG"
+    echo "The value provided for patient gender is $gender"
     shift;;
     -age | -a) age="$2"
     re_isanum='^[0-9]+$'
@@ -200,22 +203,30 @@ do
     fi
     shift;;
     -idx_path | -ip) index_path="$2"
-    echo "The value provided for path index is $OPTARG"
-    if [ ! -d "$path_index" ]; then
+    echo "The value provided for path index is $index_path"
+    if [ ! -d "$index_path" ]; then
+      echo "Error: You must pass a valid directory"
+      exit_abnormal
+      exit 1
+      fi
+    shift;;
+    -project_path | -pp) project_path="$2"
+    echo "The value provided for project path is $project_path"
+    if [ ! -d "$project_path" ]; then
       echo "Error: You must pass a valid directory"
       exit_abnormal
       exit 1
       fi
     shift;;
     -threads | -th) threads="$2"
-    echo "The value provided for threads is $OPTARG"
+    echo "The value provided for threads is $threads"
     if [ $threads -eq "0" ]; then
       echo "Error: Threads must be greater than zero."
       exit_abnormal
     fi
     shift;;
     -index | -idx) index="$2"
-    echo "The value provided for index is $OPTARG"
+    echo "The value provided for index is $index"
     if ! [ $index = "hg19" ] ; then
       if !  [ $index = "hg38" ] ; then
       echo "Error: index must be equal to hg19 or hg38."
@@ -225,14 +236,14 @@ do
     fi
     shift;;
     -cosmic | -c) cosmic="$2"
-    echo "The value provided for cosmic is $OPTARG"
+    echo "The value provided for cosmic is $cosmic"
     if [ ! -d "$cosmic" ]; then
       echo "Error: You must pass a valid cosmic directory"
       exit_abnormal
     fi
     shift;;
     -database | -d) database="$2"
-    echo "The value provided for database path is $OPTARG"
+    echo "The value provided for database path is $database"
     if [ ! -d "$database" ]; then
       echo "Error: You must pass a valid database directory"
       exit_abnormal
@@ -257,14 +268,14 @@ if [[ -z "$fastq1" ]] || [[ -z "$fastq2" ]] || [[ -z "$bam" ]] || [[ -z "$vcf" ]
   exit
 fi
 
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] ||    [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]]; then
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] ||    [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   echo "all parameters must be passed"
   usage
   exit
 fi
 
-      PATH_INDEX=$path_index
-      PATH_PROJECT=$folder/project
+      PATH_INDEX=$index_path
+      PATH_PROJECT=$project_path/project
       PATH_TRIM=$PATH_PROJECT/trim
       PATH_SAM=$PATH_PROJECT/sam
       PATH_BAM_ANNO=$PATH_PROJECT/bam_annotato
@@ -296,6 +307,7 @@ fi
       PATH_TRIAL=$PATH_PROJECT/Trial
       PATH_REFERENCE=$PATH_PROJECT/Reference
       PATH_FOOD=$PATH_PROJECT/Food
+      PATH_OUTPUT=$PATH_PROJECT/output
 
       echo "Removing old folders"
 
@@ -382,7 +394,7 @@ fi
       mkdir $PATH_TRIAL
       mkdir $PATH_REFERENCE
       mkdir $PATH_FOOD
-      mkdir $PATH_PROJECT/output
+      mkdir $PATH_OUTPUT
 
 # if [[ "$prep_databases" = "yes" ]]; then
 #   echo "Creation of the index"
@@ -397,7 +409,7 @@ fi
 if [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   FQ2=$(basename "$fastq2")
-  if [ ${FQ1: -9} == ".fastq.gz" ] && [ ${FQ2: -9} == ".fastq.gz" ] ; then
+  if [ ${FQ1: -3} == ".gz" ] && [ ${FQ2: -3} == ".gz" ] ; then
     echo "Fastq extraction"
     gunzip $fastq1
     gunzip $fastq2
@@ -487,7 +499,7 @@ echo "Starting the analysis"
          echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Somatic.txt
          echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Germline.txt
          Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
-         R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
+         R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
 #     elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
 #       echo "bam/sam analysis"
 #       FASTQ_NAME="${FASTQ%.*}"
@@ -590,7 +602,7 @@ if [ ! -z "$vcf"]; then
     Rscript illumina_vcf.R $depth $AF $FASTQ1_NAME $index $PATH_PROJECT $database
     echo "Report generation"
     Rscript report_definitivo_vcf_illumina.R $FASTQ1_NAME "$tumor" $PATH_PROJECT
-    R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='/output/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
+    R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
   fi
 #done
 
