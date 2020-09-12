@@ -158,9 +158,21 @@ do
     shift;;
     -fastq2 | -fq2) fast2="$2"
     shift;;
+    -ubam | -ub) ubam="$2"
+    shift;;
     -bam | -b) bam="$2"
     shift;;
     -vcf | -v) vcf="$2"
+    shift;;
+    -paired | -pr) paired="$2"
+    echo "The value provided for paired is $paired"
+    if ! [ $paired = "yes" ] ; then
+        if !  [ $paired = "no" ] ; then
+        echo "Error: paired must be equal to yes or no."
+        exit_abnormal
+        exit 1
+        fi
+      fi
     shift;;
     -depth | -d) depth="$2"
     echo "The value provided for filter-expression of DP is $depth"
@@ -262,8 +274,8 @@ do
   shift
 done
 
-if [[ -z "$fastq1" ]] || [[ -z "$fastq2" ]] || [[ -z "$bam" ]] || [[ -z "$vcf" ]]; then
-  echo "At least one parameter between \$fastq1, \$fastq2, \$bam or \$vcf must be passed"
+if [[ -z "$fastq1" ]] || [[ -z "$fastq2" ]] || [[ -z "$ubam" ]] || [[ -z "$bam" ]] || [[ -z "$vcf" ]]; then
+  echo "At least one parameter between \$fastq1, \$fastq2, \$ubam, \$bam or \$vcf must be passed"
   usage
   exit
 fi
@@ -402,6 +414,17 @@ fi
 #   samtools faidx $PATH_INDEX/${index}.fa
 # fi
 #Questi si devono fare creare dall'applicazione
+
+if [ ! -z "$ubam" ]; then
+  UB=$(basename "${ubam%.*}")
+  if [[ "$paired" = "yes" ]]; then
+    bamToFastq -i $ubam -fq $UB.fq -fq2 ${UB}_2.fq
+  elif [[ "$paired" = "no" ]]; then
+    bamToFastq -i $ubam -fq $UB.fq
+  fi
+fi
+#se ubam è pieno potrei impostare fastq1 uguale ubam, ci vuole una cartella in cui salvarli in caso
+
 
 # for FASTQ in $(ls $PATH_FASTQ)
 #   do
