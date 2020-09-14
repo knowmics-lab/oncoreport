@@ -151,6 +151,10 @@ do
     shift;;
     -fastq2 | -fq2) fastq2="$2"
     shift;;
+    -ubam_tumor | -ubt) ubam="$2"
+    shift;;
+    -ubam_normal | -ubn) ubamn="$2"
+    shift;;
     -normal1 | -nm1) normal1="$2"
     shift;;
     -normal2 | -nm2) normal2="$2"
@@ -160,6 +164,16 @@ do
     -bam_normal | -bn) bamn="$2"
     shift;;
     -vcf | -v) vcf="$2"
+    shift;;
+    -paired | -pr) paired="$2"
+    echo "The value provided for paired is $paired"
+    if ! [ $paired = "yes" ] ; then
+        if !  [ $paired = "no" ] ; then
+        echo "Error: paired must be equal to yes or no."
+        exit_abnormal
+        exit 1
+        fi
+      fi
     shift;;
     -depth | -d) depth="$2"
     echo "The value provided for filter-expression of DP is $depth"
@@ -394,6 +408,34 @@ echo "Index download"
 #     gunzip $PATH_FASTQ_NORMAL/*.fastq.gz
 #   fi
 # done
+
+if [ ! -z "$ubamt" ]; then
+  UB=$(basename "${ubamt%.*}")
+  PATH_FASTQ=$PATH_PROJECT/fastq
+  mkdir $PATH_FASTQ
+  if [[ "$paired" = "yes" ]]; then
+    bamToFastq -i $ubamt -fq $PATH_FASTQ/${UB}.fq -fq2 $PATH_FASTQ/${UB}_2.fq
+    $fastq1 = $PATH_FASTQ/${UB}.fq
+    $fastq2 = $PATH_FASTQ/${UB}_2.fq
+  elif [[ "$paired" = "no" ]]; then
+    bamToFastq -i $ubamt -fq $PATH_FASTQ/${UB}.fq
+    $fastq1 = $PATH_FASTQ/${UB}.fq
+  fi
+fi
+
+if [ ! -z "$ubamn" ]; then
+  UBN=$(basename "${ubamn%.*}")
+  PATH_NORMAL=$PATH_PROJECT/normal
+  mkdir $PATH_NORMAL
+  if [[ "$paired" = "yes" ]]; then
+    bamToFastq -i $ubamn -fq $PATH_NORMAL/${UBN}.fq -fq2 $PATH_NORMAL/${UBN}_2.fq
+    $normal1 = $PATH_NORMAL/${UBN}.fq
+    $normal2 = $PATH_NORMAL/${UBN}_2.fq
+  elif [[ "$paired" = "no" ]]; then
+    bamToFastq -i $ubamn -fq $PATH_NORMAL/${UBN}.fq
+    $normal1 = $PATH_NORMAL/${UBN}.fq
+  fi
+fi
 
 if [ ! -z "$fastq1" ] && [ ! -z "$normal1" ]; then
   FQ1=$(basename "$fastq1")

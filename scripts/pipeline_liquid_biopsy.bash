@@ -274,6 +274,7 @@ do
   shift
 done
 
+#Qua ci vuole & non |
 if [[ -z "$fastq1" ]] || [[ -z "$fastq2" ]] || [[ -z "$ubam" ]] || [[ -z "$bam" ]] || [[ -z "$vcf" ]]; then
   echo "At least one parameter between \$fastq1, \$fastq2, \$ubam, \$bam or \$vcf must be passed"
   usage
@@ -415,12 +416,20 @@ fi
 # fi
 #Questi si devono fare creare dall'applicazione
 
+#Setting cutadapt path
+export PATH=/root/.local/bin/:$PATH
+
 if [ ! -z "$ubam" ]; then
   UB=$(basename "${ubam%.*}")
+  PATH_FASTQ=$PATH_PROJECT/fastq
+  mkdir $PATH_FASTQ
   if [[ "$paired" = "yes" ]]; then
-    bamToFastq -i $ubam -fq $UB.fq -fq2 ${UB}_2.fq
+    bamToFastq -i $ubam -fq $PATH_FASTQ/${UB}.fq -fq2 $PATH_FASTQ/${UB}_2.fq
+    $fastq1 = $PATH_FASTQ/${UB}.fq
+    $fastq2 = $PATH_FASTQ/${UB}_2.fq
   elif [[ "$paired" = "no" ]]; then
-    bamToFastq -i $ubam -fq $UB.fq
+    bamToFastq -i $ubam -fq $PATH_FASTQ/${UB}.fq
+    $fastq1 = $PATH_FASTQ/${UB}.fq
   fi
 fi
 #se ubam è pieno potrei impostare fastq1 uguale ubam, ci vuole una cartella in cui salvarli in caso
@@ -440,6 +449,8 @@ if [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
 fi
 #done
 
+#Non ho fatto la possibilità non paired del fastq
+
 echo "Starting the analysis"
 # for FASTQ in $(ls $PATH_FASTQ)
 #   do
@@ -447,16 +458,21 @@ echo "Starting the analysis"
 #       if [ ${FASTQ: -13} == "_R1_001.fastq" ]; then
          #FASTQ_NAME=$(basename $FASTQ ".fastq")
          #Aggiustare qua con || per farlo partire in ogni caso
-         if [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
+      if [ ! -z "$fastq1" ] && [ -z $fastq2 ]; then
+         FASTQ1_NAME=$(basename "${FQ1%.*}")
+         echo "The file loaded is a not paired fastq"
+		     echo "Trimming"
+         TrimGalore-0.6.0/trim_galore $fastq1 -o $PATH_TRIM/
+         echo "Alignment"
+         bowtie2 -p $threads -x $PATH_INDEX/$index -U $PATH_TRIM/${FASTQ1_NAME}_trimmed.fq -S $PATH_SAM/${FASTQ1_NAME}.sam
+       elif [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
 		     FASTQ1_NAME=$(basename "${FQ1%.*}")
          FASTQ2_NAME=$(basename "${FQ2%.*}")
-         echo "The file loaded is a fastq"
-		  #Setting cutadapt path
-		     export PATH=/root/.local/bin/:$PATH
+         echo "The file loaded is a paired fastq"
 		     echo "Trimming"
 		     TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM/
 		     echo "Alignment"
-		     bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM/$FASTQ1_NAME.sam
+		     bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM/${FASTQ1_NAME}.sam
          fi
          if [ -z "$bam"] && [ -z "$vcf"]; then
            echo "Adding Read Group"
