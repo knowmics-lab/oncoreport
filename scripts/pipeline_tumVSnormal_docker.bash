@@ -151,7 +151,7 @@ do
     shift;;
     -fastq2 | -fq2) fastq2="$2"
     shift;;
-    -ubam_tumor | -ubt) ubam="$2"
+    -ubam_tumor | -ubt) ubamt="$2"
     shift;;
     -ubam_normal | -ubn) ubamn="$2"
     shift;;
