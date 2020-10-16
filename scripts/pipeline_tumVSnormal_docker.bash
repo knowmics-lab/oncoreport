@@ -1,19 +1,8 @@
 #!/bin/bash
-#CAMBIA I NOMI DEI FILE R
-# usage() {
-#   echo "Usage: $0 [ -g patient gender ]
-#   [ -s patient surname ] [-n patient name] [-i patient id] [-a patient age]
-#   [-t patient tumor, you must choose a type of tumor from disease_list.txt]
-#   [-p prep_database must be yes or no]
-#   [-b number of bowtie2 threads, leave 1 if you are uncertain]
-#   [-i index must be hg19 or hg38]
-#   [-f path of the sample]
-#   [-o path of COSMIC]
-#   [-h database path]" 1>&2
-# }
+
 usage() {
-  echo "Usage: $0 [-depth/-d analysis depth ] [-gender/-g patient gender ]
-  [-surname/-s patient surname ] [-af filter-expression of AF ]
+  echo "Usage: $0 [-gender/-g patient gender ]
+  [-surname/-s patient surname ]
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-idx_path/-ip index path]
@@ -24,126 +13,20 @@ usage() {
   [-fastq2/-fq2 second fastq sample]
   [-normal1/-nm1 first fastq sample]
   [-normal2/-nm2 second fastq sample]
+  [-ubamt/-ubt ubam tumor sample]
+  [-ubamn/-ubn ubam normal sample]
   [-bamt/-bt bam or sam tumor sample]
   [-bamn/-bn bam or sam normal sample]
+  [-paired/-pr paired sample]
   [-vcf/-v vcf sample]
   [-cosmic/-c path of COSMIC]
-  [-database/-d database path]" 1>&2
+  [-database/-db database path]" 1>&2
 }
 exit_abnormal() {
   usage
   exit 1
 }
-# while getopts "n:s:i:g:a:t:p:h:b:c:f:o:h:" OPTION; do
-#   case "${OPTION}" in
-#     n)
-#       name=$OPTARG
-#       echo "The value provided for patient name is $OPTARG"
-#       ;;
-#     s)
-#      surname=$OPTARG
-#      echo "The value provided for patient surname is $OPTARG"
-#      ;;
-#     i)
-#       id=$OPTARG
-#       echo "The value provided for patient ID is $OPTARG"
-#       ;;
-#     g)
-#       gender=$OPTARG
-#       echo "The value provided for patient gender is $OPTARG"
-#       ;;
-#     a)
-#       age=$OPTARG
-#       re_isanum='^[0-9]+$'
-#       echo "The value provided for patient age is $OPTARG"
-#       if ! [[ $age =~ $re_isanum ]] ; then
-#         echo "Error: Age must be a positive, whole number."
-#         exit_abnormal
-#         exit 1
-#       elif [ $age -eq "0" ]; then
-#         echo "Error: Age must be greater than zero."
-#         exit_abnormal
-#       fi
-#       ;;
-#     t)
-#       tumor=$OPTARG
-#       echo "The value provided for patient tumor is $OPTARG"
-#       if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
-#       command;
-#       else echo "Error: Tumor must be a value from the list disease_list.txt";
-#       exit_abnormal
-#       exit 1
-#       fi
-#       ;;
-#     p)
-#       prep_databases=$OPTARG
-#       echo "The value provided for database_preparation is $OPTARG"
-#       if ! [ $prep_databases = "yes" ] ; then
-#         if !  [ $prep_databases = "no" ] ; then
-#         echo "Error: prep_database must be equal to yes or no."
-#         exit_abnormal
-#         exit 1
-#         fi
-#       fi
-#         ;;
-#     b)
-#       threads=$OPTARG
-#       echo "The value provided for threads is $OPTARG"
-#       if [ $threads -eq "0" ]; then
-#         echo "Error: Threads must be greater than zero."
-#         exit_abnormal
-#       fi
-#         ;;
-#     c)
-#       index=$OPTARG
-#       echo "The value provided for index is $OPTARG"
-#       if ! [ $index = "hg19" ] ; then
-#         if !  [ $index = "hg38" ] ; then
-#         echo "Error: index must be equal to hg19 or hg38."
-#         exit_abnormal
-#         exit 1
-#         fi
-#       fi
-#         ;;
-#      f)
-#       folder=$OPTARG
-#       echo "The value provided for folder is $OPTARG"
-#       if [ ! -d "$folder" ]; then
-#         echo "Error: You must pass a valid directory"
-#         exit_abnormal
-#       fi
-#         ;;
-#      o)
-#      cosmic=$OPTARG
-#      echo "The value provided for cosmic is $OPTARG"
-#      if [ ! -d "$cosmic" ]; then
-#        echo "Error: You must pass a valid cosmic directory"
-#        exit_abnormal
-#      fi
-#        ;;
-#      h)
-#      database=$OPTARG
-#      echo "The value provided for database path is $OPTARG"
-#      if [ ! -d "$database" ]; then
-#        echo "Error: You must pass a valid database directory"
-#        exit_abnormal
-#      fi
-#        ;;
-#     :)
-#       echo "Error: ${OPTARG} requires an argument."
-#       usage
-#       exit_abnormal
-#         ;;
-#     *)
-#       exit_abnormal
-#         ;;
-#     /? | h)
-#       echo "ERROR: Invalid option $OPTARG"
-#       usage
-#       exit 1
-#         ;;
-#         esac
-#       done
+
 while [ -n "$1" ]
 do
   case "$1" in
@@ -151,17 +34,17 @@ do
     shift;;
     -fastq2 | -fq2) fastq2="$2"
     shift;;
-    -ubam_tumor | -ubt) ubamt="$2"
+    -ubamt | -ubt) ubamt="$2"
     shift;;
-    -ubam_normal | -ubn) ubamn="$2"
+    -ubamn | -ubn) ubamn="$2"
     shift;;
     -normal1 | -nm1) normal1="$2"
     shift;;
     -normal2 | -nm2) normal2="$2"
     shift;;
-    -bam_tumor | -bt) bamt="$2"
+    -bamt | -bt) bamt="$2"
     shift;;
-    -bam_normal | -bn) bamn="$2"
+    -bamn | -bn) bamn="$2"
     shift;;
     -vcf | -v) vcf="$2"
     shift;;
@@ -174,12 +57,6 @@ do
         exit 1
         fi
       fi
-    shift;;
-    -depth | -d) depth="$2"
-    echo "The value provided for filter-expression of DP is $depth"
-    shift;;
-    -af) AF="$2"
-    echo "The value provided for filter-expression of AF is $AF"
     shift;;
     -name | -n) name="$2"
     echo "The value provided for patient name is $name"
@@ -255,7 +132,7 @@ do
       exit_abnormal
     fi
     shift;;
-    -database | -d) database="$2"
+    -database | -db) database="$2"
     echo "The value provided for database path is $database"
     if [ ! -d "$database" ]; then
       echo "Error: You must pass a valid database directory"
@@ -267,28 +144,28 @@ do
     shift;;
     #Questo non so se lasciarlo perché non so se funziona come su getopts
     --help | -h) help="$2"
-      usage
-      exit_abnormal
-      exit 1
-      shift;;
+    usage
+    exit_abnormal
+    exit 1
+    shift;;
   esac
   shift
 done
 
-if [[ -z "$fastq1" ]] || [[ -z "$normal1" ]] || [[ -z "$bamt" ]] || [[ -z "$vcf" ]]; then
-  echo "At least one parameter between \$fastq1, \$normal1, \$bam_tumor or \$vcf must be passed"
+if ( [[ -z "$fastq1" ]] || [[ -z "$normal1" ]] ) && ( [[ -z "$ubamt" ]] || [[ -z "$ubamn" ]] || [[ -z "$paired" ]] ) && ( [[ -z "$bamt" ]] || [[ -z "$bamn" ]] ) && [[ -z "$vcf" ]]; then
+  echo "At least one couple of parameter between \$fastq1 - \$normal1, \$ubamt -\$ubamn - \$paired, \$bamt - \$bamn, or the parameter \$vcf must be passed"
   usage
   exit
 fi
 
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] ||    [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$cosmic" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   echo "all parameters must be passed"
   usage
   exit
 fi
 
 
-PATH_PROJECT=$project_path/project
+PATH_PROJECT=$project_path
 PATH_INDEX=$index_path
 PATH_TRIM_TUMOR=$PATH_PROJECT/trim_tumor
 PATH_TRIM_NORMAL=$PATH_PROJECT/trim_normal
@@ -344,70 +221,124 @@ fi
 if [[ -d $PATH_FOOD ]]; then
 rm -r $PATH_FOOD
 fi
+if [[ -d $PATH_TXT_CIVIC ]]; then
+rm -r $PATH_TXT_CIVIC
+fi
+if [[ -d $PATH_TXT_CGI ]]; then
+rm -r $PATH_TXT_CGI
+fi
+if [[ -d $PATH_TXT_PHARM ]]; then
+rm -r $PATH_TXT_PHARM
+fi
+if [[ -d $PATH_TXT_COSMIC ]]; then
+rm -r $PATH_TXT_COSMIC
+fi
+if [[ -d $PATH_TXT_CLINVAR ]]; then
+rm -r $PATH_TXT_CLINVAR
+fi
+if [[ -d $PATH_TXT_REFGENE ]]; then
+rm -r $PATH_TXT_REFGENE
+fi
 
+
+echo "Creating temp folders"
+
+if [[ ! -d $PATH_TRIM_TUMOR ]]; then
 mkdir $PATH_TRIM_TUMOR
+fi
+if [[ ! -d $PATH_TRIM_NORMAL ]]; then
 mkdir $PATH_TRIM_NORMAL
+fi
+if [[ ! -d $PATH_SAM_TUMOR ]]; then
 mkdir $PATH_SAM_TUMOR
+fi
+if [[ ! -d $PATH_SAM_NORMAL ]]; then
 mkdir $PATH_SAM_NORMAL
+fi
+if [[ ! -d $PATH_BAM_ANNO_TUMOR ]]; then
 mkdir $PATH_BAM_ANNO_TUMOR
+fi
+if [[ ! -d $PATH_BAM_ANNO_NORMAL ]]; then
 mkdir $PATH_BAM_ANNO_NORMAL
+fi
+if [[ ! -d $PATH_BAM_ORD_TUMOR ]]; then
 mkdir $PATH_BAM_ORD_TUMOR
+fi
+if [[ ! -d $PATH_BAM_ORD_NORMAL ]]; then
 mkdir $PATH_BAM_ORD_NORMAL
+fi
+if [[ ! -d $PATH_BAM_SORT_TUMOR ]]; then
 mkdir $PATH_BAM_SORT_TUMOR
+fi
+if [[ ! -d $PATH_BAM_SORT_NORMAL ]]; then
 mkdir $PATH_BAM_SORT_NORMAL
+fi
+if [[ ! -d $PATH_MARK_DUP_TUMOR ]]; then
 mkdir $PATH_MARK_DUP_TUMOR
+fi
+if [[ ! -d $PATH_MARK_DUP_NORMAL ]]; then
 mkdir $PATH_MARK_DUP_NORMAL
+fi
+if [[ ! -d $PATH_VCF_MUT ]]; then
 mkdir $PATH_VCF_MUT
+fi
+if [[ ! -d $PATH_VCF_FILTERED ]]; then
 mkdir $PATH_VCF_FILTERED
+fi
+if [[ ! -d $PATH_VCF_PASS ]]; then
 mkdir $PATH_VCF_PASS
+fi
+if [[ ! -d $PATH_CONVERTITI ]]; then
 mkdir $PATH_CONVERTITI
+fi
+if [[ ! -d $PATH_TXT_CGI ]]; then
 mkdir $PATH_TXT_CGI
+fi
+if [[ ! -d $PATH_TXT_CIVIC ]]; then
 mkdir $PATH_TXT_CIVIC
+fi
+if [[ ! -d $PATH_TXT_PHARM ]]; then
 mkdir $PATH_TXT_PHARM
+fi
+if [[ ! -d $PATH_TXT_CLINVAR ]]; then
 mkdir $PATH_TXT_CLINVAR
+fi
+if [[ ! -d $PATH_TXT_COSMIC ]]; then
 mkdir $PATH_TXT_COSMIC
+fi
+if [[ ! -d $PATH_TXT_REFGENE ]]; then
 mkdir $PATH_TXT_REFGENE
+fi
+if [[ ! -d $PATH_DEFINITIVE ]]; then
 mkdir $PATH_DEFINITIVE
+fi
+if [[ ! -d $PATH_TRIAL ]]; then
 mkdir $PATH_TRIAL
+fi
+if [[ ! -d $PATH_REFERENCE ]]; then
 mkdir $PATH_REFERENCE
+fi
+if [[ ! -d $PATH_FOOD ]]; then
 mkdir $PATH_FOOD
-mkdir $PATH_PROJECT/output
+fi
+if [[ ! -d $PATH_TXT_CIVIC/results ]]; then
 mkdir $PATH_TXT_CIVIC/results
+fi
+if [[ ! -d $PATH_TXT_CGI/results ]]; then
 mkdir $PATH_TXT_CGI/results
+fi
+if [[ ! -d $PATH_TXT_COSMIC/results ]]; then
 mkdir $PATH_TXT_COSMIC/results
+fi
+if [[ ! -d $PATH_TXT_PHARM/results ]]; then
 mkdir $PATH_TXT_PHARM/results
+fi
+if [[ ! -d $PATH_OUTPUT ]]; then
 mkdir $PATH_OUTPUT
-
-echo "Index download"
-
-# if [[ "$prep_databases" = "yes" ]] && [[ "$index" = "hg19" ]]; then
-# bash prep_banche_dati.bash
-#   elif [[ "$prep_databases" = "yes" ]] && [[ "$index" = "hg38" ]]; then
-#   bash prep_banche_dati_hg38.bash
-# fi
-#
-# if [[ "$prep_databases" = "yes" ]]; then
-#   echo "Index creation"
-#   java -jar picard.jar CreateSequenceDictionary REFERENCE=$PATH_INDEX/${index}.fa OUTPUT=$PATH_INDEX/${index}.dict
-#   samtools faidx $PATH_INDEX/${index}.fa
-# fi
-
-# for FASTQ in $(ls $PATH_FASTQ_TUMOR)
-#   do
-#     if [ ${FASTQ: -9} == ".fastq.gz" ]; then
-#     echo "Tumor fastq extraction"
-#     gunzip $PATH_FASTQ_TUMOR/*.fastq.gz
-#   fi
-# done
+fi
 
 
-# for FASTQB in $(ls $PATH_FASTQ_NORMAL)
-#   do
-#     if [ ${FASTQB: -9} == ".fastq.gz" ]; then
-#     echo "NORMAL fastq extraction"
-#     gunzip $PATH_FASTQ_NORMAL/*.fastq.gz
-#   fi
-# done
+#TUMOR ANALYSIS
 
 if [ ! -z "$ubamt" ]; then
   UB=$(basename "${ubamt%.*}")
@@ -423,6 +354,66 @@ if [ ! -z "$ubamt" ]; then
   fi
 fi
 
+if [ ! -z "$fastq1" ] && [ ! -z "$normal1" ]; then
+  FQ1=$(basename "$fastq1")
+  if [ ${FQ1: -3} == ".gz" ]; then
+    echo "Fastq1 tumor extraction"
+    gunzip $fastq1
+  fi
+fi
+
+if [ ! -z "$fastq2" ] && [ ! -z "$normal2" ]; then
+  FQ2=$(basename "$fastq2")
+  if [ ${FQ2: -3} == ".gz" ]; then
+    echo "Fastq2 tumor extraction"
+    gunzip $fastq2
+  fi
+fi
+
+if [ ! -z "$fastq1" ]; then
+  FASTQ1_NAME=$(basename "${FQ1%.*}")
+  echo "The file loaded is a fastq"
+  #Setting cutadapt path
+  export PATH=/root/.local/bin/:$PATH
+  if [ -z "$fastq2" ]; then
+	echo "Tumor sample trimming"
+	TrimGalore-0.6.0/trim_galore $fastq1 -o $PATH_TRIM_TUMOR/
+	echo "Tumor sample alignment"
+    bowtie2 -p $threads -x $PATH_INDEX/${index} -U $PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
+  else
+    FASTQ2_NAME=$(basename "${FQ2%.*}")
+    echo "Tumor sample trimming"
+    TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM_TUMOR/
+  	echo "Tumor sample alignment"
+  	bowtie2 -p $threads -x $PATH_INDEX/${index} -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
+  fi
+fi
+  
+if [ -z "$bamt" ] && [ -z "$vcf" ]; then
+  echo "Adding Read Group"
+  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+elif [ ! -z "$bamt" ]; then
+  FASTQ1_NAME=$(basename "${bamt%.*}")
+  echo "Adding Read Group"
+  java -jar picard.jar AddOrReplaceReadGroups I=$bamt O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+fi
+
+if [ -z "$vcf" ]; then		
+  echo "Sorting"
+  java -jar picard.jar SortSam I=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
+  echo "Reordering"
+  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  echo "Duplicates Removal"
+  java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt
+  rm -r $PATH_SAM_TUMOR
+  rm -r $PATH_BAM_ANNO_TUMOR
+  rm -r $PATH_BAM_SORT_TUMOR
+fi
+
+
+
+#NORMAL ANALYSIS
+
 if [ ! -z "$ubamn" ]; then
   UBN=$(basename "${ubamn%.*}")
   PATH_NORMAL=$PATH_PROJECT/normal
@@ -437,80 +428,21 @@ if [ ! -z "$ubamn" ]; then
   fi
 fi
 
-if [ ! -z "$fastq1" ] && [ ! -z "$normal1" ]; then
-  FQ1=$(basename "$fastq1")
+if [ ! -z "$normal1" ]; then
   NM1=$(basename "$normal1")
-  if [ ${FQ1: -3} == ".gz" ] && [ ${NM1: -3} == ".gz" ] ; then
-    echo "Fastq extraction"
-    gunzip $fastq1
+  if [ ${NM1: -3} == ".gz" ]; then
+    echo "Fastq1 normal extraction"
     gunzip $normal1
   fi
 fi
 
-if [ ! -z "$fastq2" ] && [ ! -z "$normal2" ]; then
-  FQ2=$(basename "$fastq2")
+if [ ! -z "$normal2" ]; then
   NM2=$(basename "$normal2")
-  if [ ${FQ2: -3} == ".gz" ] && [ ${NM2: -3} == ".gz" ] ; then
-    echo "Fastq extraction"
-    gunzip $fastq2
+  if [ ${NM2: -3} == ".gz" ]; then
+    echo "Fastq2 normal extraction"
     gunzip $normal2
   fi
 fi
-
-# for FASTQ in $(ls $PATH_FASTQ_TUMOR)
-#  do
-#   if [ ${FASTQ: -6} == ".fastq" ]; then
-#    FASTQ1_NAME=$(basename $FASTQ ".fastq")
-  if [ ! -z "$fastq1" ]; then
-    FASTQ1_NAME=$(basename "${FQ1%.*}")
-    echo "The file loaded is a fastq"
-	  #Setting cutadapt path
-		export PATH=/root/.local/bin/:$PATH
-    if [ -z "$fastq2" ]; then
-		  echo "Tumor sample trimming"
-		  TrimGalore-0.6.0/trim_galore $fastq1 -o $PATH_TRIM_TUMOR/
-		  echo "Tumor sample alignment"
-		  bowtie2 -p $threads -x $PATH_INDEX/${index} -U $PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
-    else
-      FASTQ2_NAME=$(basename "${FQ2%.*}")
-      echo "Tumor sample trimming"
-  		TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM_TUMOR/
-  		echo "Tumor sample alignment"
-  		bowtie2 -p $threads -x $PATH_INDEX/${index} -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq  -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
-    fi
-  fi
-  if [ -z "$bamt"] && [ -z "$vcf"]; then
-		echo "Adding Read Group"
-		java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
-  elif [ ! -z "$bamt" ]; then
-    FASTQ1_NAME=$(basename "${bamt%.*}")
-    echo "Adding Read Group"
-  	java -jar picard.jar AddOrReplaceReadGroups I=$bamt O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
-  fi
-		echo "Sorting"
-		java -jar picard.jar SortSam I=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
-		echo "Reordering"
-		java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-		echo "Duplicates Removal"
-		java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt
-    rm -r $PATH_SAM_TUMOR
-    rm -r $PATH_BAM_ANNO_TUMOR
-    rm -r $PATH_BAM_SORT_TUMOR
-#   echo "bam/sam analysis"
-#   elif [ ${FASTQ: -4} == ".bam" ] || [ ${FASTQ: -4} == ".sam" ]; then
-#     FASTQ1_NAME="${FASTQ%.*}"
-#     echo "Adding Read Group"
-# 		java -jar picard.jar AddOrReplaceReadGroups I=$PATH_FASTQ_TUMOR/$FASTQ O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
-# 		echo "Sorting"
-# 		java -jar picard.jar SortSam I=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
-# 		echo "Reordering"
-# 		java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-# 		echo "Duplicates Removal"
-# 		java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt
-#     rm -r $PATH_BAM_ANNO_TUMOR
-#     rm -r $PATH_BAM_SORT_TUMOR
-#   fi
-# done
 
 if [ ! -z "$normal1" ]; then
   NORMAL1_NAME=$(basename "${NM1%.*}")
@@ -530,94 +462,65 @@ if [ ! -z "$normal1" ]; then
   fi
 fi
 
-# for FASTQB in $(ls $PATH_FASTQ_NORMAL)
-# 	do
-#     if [ ${FASTQB: -6} == ".fastq" ]; then
-# 		    NORMAL1_NAME=$(basename $FASTQB ".fastq")
-#   	    echo "NORMAL sample trimming"
-# 				TrimGalore-0.6.0/trim_galore $PATH_FASTQ_NORMAL/$NORMAL1_NAME.fastq -o $PATH_TRIM_NORMAL/
-# 				echo "NORMAL sample alignment"
-# 				bowtie2 -p $threads -x $PATH_INDEX/${index} -U $PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq -S $PATH_SAM_NORMAL/$NORMAL1_NAME.sam
-  if [ -z "$bamn"] && [ -z "$vcf"]; then
-	   echo "AddingRead Group"
-	   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_NORMAL/$NORMAL1_NAME.sam O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
-  elif [ ! -z "$bamn" ]; then
-    NORMAL1_NAME=$(basename "${bamn%.*}")
-    java -jar picard.jar AddOrReplaceReadGroups I=$bamn O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
-  fi
-				echo "Sorting"
-				java -jar picard.jar SortSam I=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam O=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam SORT_ORDER=coordinate
-				echo "Reordering"
-				java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam O=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-				echo "Duplicates Removal"
-				java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt
-        rm -r $PATH_SAM_NORMAL
-        rm -r $PATH_BAM_ANNO_NORMAL
-        rm -r $PATH_BAM_SORT_NORMAL
-#         echo "bam/sam analysis"
-#     elif [ ${FASTQB: -4} == ".bam" ] || [ ${FASTQB: -4} == ".sam" ]; then
-#         NORMAL1_NAME="${FASTQ%.*}"
-#         echo "Adding Read Group"
-#       	java -jar picard.jar AddOrReplaceReadGroups I=$PATH_FASTQ_NORMAL/$FASTQB O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
-#       	echo "Sorting"
-#       	java -jar picard.jar SortSam I=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam O=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam SORT_ORDER=coordinate
-#       	echo "Reordering"
-#       	java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam O=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
-#       	echo "Duplicates Removal"
-#       	java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt
-#         rm -r $PATH_BAM_ANNO_NORMAL
-#         rm -r $PATH_BAM_SORT_NORMAL
-#     fi
-# done
-
-# for FILE in $(ls $PATH_MARK_DUP_TUMOR)
-# do
-		echo "Variant Calling"
-		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam -tumor $FASTQ1_NAME -I $PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam -normal $NORMAL1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
-		echo "Variant Filtering"
-		java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
-		echo "PASS Selection"
-		awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-		# done
-
-if [ -z "$vcf"]; then
-    echo "Annotation"
-    sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-    sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-    cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTITI/$FASTQ1_NAME.txt
-    Rscript merge_database.R $index
-else
-    FASTQ1_NAME=$(basename $vcf ".vcf")
-    echo "Annotation"
-    cp $PATH_FASTQ_TUMOR/$FASTQ $PATH_VCF_PASS/
-    sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-    sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-    cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTITI/$FASTQ1_NAME.txt
-    Rscript merge_database.R $index
+if [ -z "$bamn" ] && [ -z "$vcf" ]; then
+  echo "AddingRead Group"
+  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_NORMAL/$NORMAL1_NAME.sam O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
+elif [ ! -z "$bamn" ]; then
+  NORMAL1_NAME=$(basename "${bamn%.*}")
+  java -jar picard.jar AddOrReplaceReadGroups I=$bamn O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
 fi
 
-    echo "Report creation"
-		echo >> $PATH_TXT_CIVIC/$FASTQ1_NAME.txt
-		echo >> $PATH_TXT_CGI/$FASTQ1_NAME.txt
-		echo >> $PATH_TXT_COSMIC/$FASTQ1_NAME.txt
-		echo >> $PATH_TXT_PHARM/$FASTQ1_NAME.txt
-		echo >> $PATH_TXT_CLINVAR/$FASTQ1_NAME.txt
-		echo >> $PATH_TXT_REFGENE/$FASTQ1_NAME.txt
+if [ -z "$vcf" ]; then
+  echo "Sorting"
+  java -jar picard.jar SortSam I=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam O=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam SORT_ORDER=coordinate
+  echo "Reordering"
+  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam O=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  echo "Duplicates Removal"
+  java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt
+  rm -r $PATH_SAM_NORMAL
+  rm -r $PATH_BAM_ANNO_NORMAL
+  rm -r $PATH_BAM_SORT_NORMAL
+fi
 
-		Rscript report_definitivo_docker_tmVSnm.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
-		R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME
 
-    rm -r $PATH_TRIM_NORMAL
-    rm -r $PATH_BAM_ORD_NORMAL
-    rm -r $PATH_TRIM_TUMOR
-    rm -r $PATH_BAM_ORD_TUMOR
-    rm -r $PATH_VCF_MUT
-    rm -r $PATH_CONVERTITI
-    rm -r $PATH_TXT_CIVIC
-    rm -r $PATH_TXT_CGI
-    rm -r $PATH_TXT_PHARM
-    rm -r $PATH_TXT_COSMIC
-    rm -r $PATH_TXT_CLINVAR
-    rm -r $PATH_TXT_REFGENE
+# VCF ANALYSIS
 
-    echo "done"
+if [ -z "$vcf" ]; then
+  echo "Variant Calling"
+  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam -tumor $FASTQ1_NAME -I $PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam -normal $NORMAL1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
+  echo "Variant Filtering"
+  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
+  echo "PASS Selection"
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+else
+  FASTQ1_NAME=$(basename $vcf ".vcf")
+  cp $vcf $PATH_VCF_PASS/
+fi
+
+echo "Annotation"
+sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTITI/$FASTQ1_NAME.txt
+Rscript merge_database.R $index $database $PATH_PROJECT
+
+
+# REPORT CREATION
+
+echo "Report creation"
+echo >> $PATH_TXT_CIVIC/$FASTQ1_NAME.txt
+echo >> $PATH_TXT_CGI/$FASTQ1_NAME.txt
+echo >> $PATH_TXT_COSMIC/$FASTQ1_NAME.txt
+echo >> $PATH_TXT_PHARM/$FASTQ1_NAME.txt
+echo >> $PATH_TXT_CLINVAR/$FASTQ1_NAME.txt
+echo >> $PATH_TXT_REFGENE/$FASTQ1_NAME.txt
+Rscript report_definitivo_docker_tmVSnm.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
+R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database
+
+rm -r $PATH_TRIM_NORMAL
+rm -r $PATH_BAM_ORD_NORMAL
+rm -r $PATH_TRIM_TUMOR
+rm -r $PATH_BAM_ORD_TUMOR
+#rm -r $PATH_VCF_MUT
+#rm -r $PATH_CONVERTITI
+
+echo "done"
