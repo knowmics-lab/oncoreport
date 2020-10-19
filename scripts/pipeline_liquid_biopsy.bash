@@ -296,7 +296,7 @@ if [ ! -z "$ubam" ]; then
   fi
 fi
 
-if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then 
+if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   if [ ${FQ1: -3} == ".gz" ]; then
     echo "Fastq extraction"
@@ -331,7 +331,7 @@ elif [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
   echo "Alignment"
   bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM/${FASTQ1_NAME}.sam
 fi
-        
+
 if [ -z "$bam" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ1_NAME.sam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
@@ -340,7 +340,7 @@ elif [ ! -z "$bam" ]; then
   echo "Adding Read Group"
   java -jar picard.jar AddOrReplaceReadGroups I=$bam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
 fi
-         
+
 if [ ! -z "$fastq1" ] || [ ! -z "$bam" ]; then
   echo "Sorting"
   java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ1_NAME}_sortato.bam SORT_ORDER=coordinate
@@ -353,7 +353,7 @@ if [ ! -z "$fastq1" ] || [ ! -z "$bam" ]; then
   echo "PASS Selection"
   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 fi
-         
+
 if [ ! -z "$vcf" ]; then
   VCF_NAME=$(basename "$vcf")
   if [ ${VCF_NAME: -17} != ".varianttable.txt" ]; then
@@ -369,6 +369,7 @@ fi
 #VARIANTTABLE format
 if [ ! -z "$vcf" ] && [ ${vcf: -17} == ".varianttable.txt" ]; then
   FASTQ1_NAME=$(basename $vcf ".varianttable.txt")
+  $type = illumina
   echo "Annotation vcf illumina"
   Rscript illumina_vcf.R $depth $AF $vcf $index $PATH_PROJECT $database
   echo "Report generation"
@@ -393,6 +394,7 @@ else
   sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
   cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Somatic.txt
   cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Germline.txt
+  $type = biopsy
   Rscript merge_database.R $index $database $PATH_PROJECT
   echo "Report creation"
   #echo >> $PATH_TXT_CIVIC/${FASTQ1_NAME}_Somatic.txt
@@ -411,22 +413,22 @@ else
   R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database
 fi
 
-#echo "Removing folders"
-#rm -r $PATH_TRIM
-#rm -r $PATH_SAM
-#rm -r $PATH_BAM_ANNO
-#rm -r $PATH_BAM_SORT
-#rm -r $PATH_VCF_DA_CONVERTIRE
-#rm -r $PATH_VCF_FILTERED
-#rm -r $PATH_VCF_DP
-#rm -r $PATH_VCF_IN_SN
-#rm -r $PATH_VCF_AF
-#rm -r $PATH_VCF_MERGE
-#rm -r $PATH_TXT_CIVIC
-#rm -r $PATH_TXT_CGI
-#rm -r $PATH_TXT_PHARM
-#rm -r $PATH_TXT_COSMIC
-#rm -r $PATH_TXT_CLINVAR
-#rm -r $PATH_TXT_REFGENE
+echo "Removing folders"
+rm -r $PATH_TRIM
+rm -r $PATH_SAM
+rm -r $PATH_BAM_ANNO
+rm -r $PATH_BAM_SORT
+rm -r $PATH_VCF_DA_CONVERTIRE
+rm -r $PATH_VCF_FILTERED
+rm -r $PATH_VCF_DP
+rm -r $PATH_VCF_IN_SN
+rm -r $PATH_VCF_AF
+rm -r $PATH_VCF_MERGE
+rm -r $PATH_TXT_CIVIC
+rm -r $PATH_TXT_CGI
+rm -r $PATH_TXT_PHARM
+rm -r $PATH_TXT_COSMIC
+rm -r $PATH_TXT_CLINVAR
+rm -r $PATH_TXT_REFGENE
 
 echo "Done"
