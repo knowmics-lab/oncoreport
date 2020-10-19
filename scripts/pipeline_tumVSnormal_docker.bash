@@ -497,7 +497,7 @@ else
   cp $vcf $PATH_VCF_PASS/
 fi
 
-$type = normal
+$type = tumnorm
 echo "Annotation"
 sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
