@@ -388,7 +388,7 @@ if [ ! -z "$fastq1" ]; then
   	bowtie2 -p $threads -x $PATH_INDEX/${index} -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
   fi
 fi
-  
+
 if [ -z "$bamt" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
@@ -398,7 +398,7 @@ elif [ ! -z "$bamt" ]; then
   java -jar picard.jar AddOrReplaceReadGroups I=$bamt O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
 fi
 
-if [ -z "$vcf" ]; then		
+if [ -z "$vcf" ]; then
   echo "Sorting"
   java -jar picard.jar SortSam I=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
   echo "Reordering"
@@ -497,6 +497,7 @@ else
   cp $vcf $PATH_VCF_PASS/
 fi
 
+$type = normal
 echo "Annotation"
 sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
