@@ -162,41 +162,28 @@ fi
       PATH_PROJECT=$project_path
       PATH_TRIM=$PATH_PROJECT/trim
       PATH_SAM=$PATH_PROJECT/sam
-      PATH_BAM_ANNO=$PATH_PROJECT/bam_annotato
-      PATH_BAM_SORT=$PATH_PROJECT/bam_sortato
-      PATH_BAM_ORD=$PATH_PROJECT/bam_ordinato
+      PATH_BAM_ANNO=$PATH_PROJECT/bam_annotated
+      PATH_BAM_SORT=$PATH_PROJECT/bam_sorted
+      PATH_BAM_ORD=$PATH_PROJECT/bam_ordered
       PATH_VCF_MUT=$PATH_PROJECT/mutect
       PATH_VCF_FILTERED=$PATH_PROJECT/filtered
-      PATH_VCF_PASS=$PATH_PROJECT/pass_filtrati
+      PATH_VCF_PASS=$PATH_PROJECT/pass_filtered
       PATH_VCF_DP=$PATH_PROJECT/dp_filtered
       PATH_VCF_IN_SN=$PATH_PROJECT/in_snp
       PATH_VCF_AF=$PATH_PROJECT/vcf_af
-      PATH_VCF_PASS_AF=$PATH_PROJECT/pass_finale
+      PATH_VCF_PASS_AF=$PATH_PROJECT/pass_final
       PATH_VCF_MERGE=$PATH_PROJECT/merge
-      PATH_VCF_DA_CONVERTIRE=$PATH_PROJECT/vcf_convertire
-      PATH_CONVERTITI=$PATH_PROJECT/convertiti
-      PATH_TXT_CIVIC=$PATH_PROJECT/txt_civic
-      PATH_TXT_CGI=$PATH_PROJECT/txt_cgi
-      PATH_TXT_PHARM=$PATH_PROJECT/txt_pharm
-      PATH_TXT_COSMIC=$PATH_PROJECT/txt_cosmic
-      PATH_TXT_CLINVAR=$PATH_PROJECT/txt_clinvar
-      PATH_TXT_REFGENE=$PATH_PROJECT/txt_refgene
-      PATH_CIVIC=$PATH_PROJECT/civic
-      PATH_CGI=$PATH_PROJECT/cgi
-      PATH_PHARM=$PATH_PROJECT/pharm
-      PATH_CLINVAR=$PATH_PROJECT/clinvar
-      PATH_COSMIC=$PATH_PROJECT/cosmic
-      PATH_REFGENE=$PATH_PROJECT/refgene
-      PATH_DEFINITIVE=$PATH_PROJECT/definitive
-      PATH_TRIAL=$PATH_PROJECT/Trial
-      PATH_REFERENCE=$PATH_PROJECT/Reference
-      PATH_FOOD=$PATH_PROJECT/Food
+      PATH_VCF_TO_CONVERT=$PATH_PROJECT/vcf_converted
+      PATH_CONVERTED=$PATH_PROJECT/converted
+      PATH_TXT=$PATH_PROJECT/txt
+      PATH_TRIAL=$PATH_TXT/trial
+      PATH_REFERENCE=$PATH_TXT/reference
       PATH_OUTPUT=$PATH_PROJECT/output
 
       echo "Removing old folders"
 
-      if [[ -d $PATH_CONVERTITI ]]; then
-      rm -r $PATH_CONVERTITI
+      if [[ -d $PATH_CONVERTED ]]; then
+      rm -r $PATH_CONVERTED
       fi
       if [[ -d $PATH_BAM_ORD ]]; then
       rm -r $PATH_BAM_ORD
@@ -210,38 +197,12 @@ fi
       if [[ -d $PATH_VCF_MUT ]]; then
       rm -r $PATH_VCF_MUT
       fi
-      if [[ -d $PATH_CIVIC ]]; then
-      rm -r $PATH_CIVIC
-      fi
-      if [[ -d $PATH_CGI ]]; then
-      rm -r $PATH_CGI
-      fi
-      if [[ -d $PATH_PHARM ]]; then
-      rm -r $PATH_PHARM
-      fi
-      if [[ -d $PATH_CLINVAR ]]; then
-      rm -r $PATH_CLINVAR
-      fi
-      if [[ -d $PATH_COSMIC ]]; then
-      rm -r $PATH_COSMIC
-      fi
-      if [[ -d $PATH_REFGENE ]]; then
-      rm -r $PATH_REFGENE
-      fi
-      if [[ -d $PATH_DEFINITIVE ]]; then
-      rm -r $PATH_DEFINITIVE
-      fi
-      if [[ -d $PATH_TRIAL ]]; then
-      rm -r $PATH_TRIAL
-      fi
-      if [[ -d $PATH_REFERENCE ]]; then
-      rm -r $PATH_REFERENCE
-      fi
-      if [[ -d $PATH_FOOD ]]; then
-      rm -r $PATH_FOOD
+      if [[ -d $PATH_TXT ]]; then
+      rm -r $PATH_TXT
       fi
 
       #mkdir $PATH_PROJECT
+      mkdir $PATH_TRIM
       mkdir $PATH_SAM
       mkdir $PATH_BAM_ANNO
       mkdir $PATH_BAM_ORD
@@ -254,29 +215,11 @@ fi
       mkdir $PATH_VCF_AF
       mkdir $PATH_VCF_PASS_AF
       mkdir $PATH_VCF_MERGE
-      mkdir $PATH_VCF_DA_CONVERTIRE
-      mkdir $PATH_CONVERTITI
-      mkdir $PATH_TXT_CGI
-      mkdir $PATH_TXT_CIVIC
-      mkdir $PATH_TXT_PHARM
-      mkdir $PATH_TXT_CLINVAR
-      mkdir $PATH_TXT_COSMIC
-      mkdir $PATH_TXT_REFGENE
-      mkdir $PATH_TRIM
-      mkdir $PATH_CIVIC
-      mkdir $PATH_CGI
-      mkdir $PATH_PHARM
-      mkdir $PATH_COSMIC
-      mkdir $PATH_REFGENE
-      mkdir $PATH_CLINVAR
-      mkdir $PATH_CIVIC/results
-      mkdir $PATH_CGI/results
-      mkdir $PATH_COSMIC/results
-      mkdir $PATH_PHARM/results
-      mkdir $PATH_DEFINITIVE
+      mkdir $PATH_VCF_TO_CONVERT
+      mkdir $PATH_CONVERTED
+      mkdir $PATH_TXT
       mkdir $PATH_TRIAL
       mkdir $PATH_REFERENCE
-      mkdir $PATH_FOOD
       mkdir $PATH_OUTPUT
 
 #Setting cutadapt path
@@ -312,7 +255,6 @@ elif [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
   fi
 fi
 
-
 echo "Starting the analysis"
 
 if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then
@@ -334,20 +276,20 @@ fi
 
 if [ -z "$bam" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ1_NAME.sam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ1_NAME.sam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
 elif [ ! -z "$bam" ]; then
   FASTQ1_NAME=$(basename "${bam%.*}")
   echo "Adding Read Group"
-  java -jar picard.jar AddOrReplaceReadGroups I=$bam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+  java -jar picard.jar AddOrReplaceReadGroups I=$bam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
 fi
 
 if [ ! -z "$fastq1" ] || [ ! -z "$bam" ]; then
   echo "Sorting"
-  java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotato.bam O=$PATH_BAM_SORT/${FASTQ1_NAME}_sortato.bam SORT_ORDER=coordinate
+  java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
   echo "Reordering"
-  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ1_NAME}_sortato.bam O=$PATH_BAM_ORD/${FASTQ1_NAME}_ordinato.bam   SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam   SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
   echo "Variant Calling"
-  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ1_NAME}_ordinato.bam -tumor $FASTQ1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
+  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam -tumor $FASTQ1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
   echo "Variant Filtration"
   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
   echo "PASS Selection"
@@ -370,11 +312,6 @@ fi
 if [ ! -z "$vcf" ] && [ ${vcf: -17} == ".varianttable.txt" ]; then
   FASTQ1_NAME=$(basename $vcf ".varianttable.txt")
   $type = illumina
-  echo "Annotation vcf illumina"
-  Rscript illumina_vcf.R $depth $AF $vcf $index $PATH_PROJECT $database
-  echo "Report generation"
-  Rscript report_definitivo_vcf_illumina.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
-  R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database
 else
   echo "Splitting indel and snp"
   java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ1_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf STRICT=false
@@ -385,50 +322,32 @@ else
   echo "PASS Selection"
   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
   echo "Germline"
-  grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf
+  grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf
   echo "Somatic"
-  grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
+  grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
   echo "Annotation"
-  sed -i '/#CHROM/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
-  sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf
-  sed -i '/chr/,$!d' $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf
-  cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Somatic.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Somatic.txt
-  cut -f1,2,4,5 $PATH_VCF_DA_CONVERTIRE/${FASTQ1_NAME}_Germline.vcf > $PATH_CONVERTITI/${FASTQ1_NAME}_Germline.txt
+  sed -i '/#CHROM/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
+  sed -i '/chr/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf
+  sed -i '/chr/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
+  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf > $PATH_CONVERTED/${FASTQ1_NAME}_Somatic.txt
+  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf > $PATH_CONVERTED/${FASTQ1_NAME}_Germline.txt
   $type = biopsy
-  Rscript merge_database.R $index $database $PATH_PROJECT
-  echo "Report creation"
-  #echo >> $PATH_TXT_CIVIC/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_CIVIC/${FASTQ1_NAME}_Germline.txt
-  #echo >> $PATH_TXT_CGI/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_CGI/${FASTQ1_NAME}_Germline.txt
-  #echo >> $PATH_TXT_COSMIC/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_COSMIC/${FASTQ1_NAME}_Germline.txt
-  #echo >> $PATH_TXT_PHARM/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_PHARM/${FASTQ1_NAME}_Germline.txt
-  #echo >> $PATH_TXT_CLINVAR/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_CLINVAR/${FASTQ1_NAME}_Germline.txt
-  #echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Somatic.txt
-  #echo >> $PATH_TXT_REFGENE/${FASTQ1_NAME}_Germline.txt
-  Rscript report_definitivo_biospia_liquida_linea_di_comando.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
-  R -e "rmarkdown::render('./Generazione_report_definitivo_docker_bl.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database
 fi
+echo "Annotation of illumina vcf"
+Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type $depth $AF $vcf
+echo "Report creation"
+R -e "rmarkdown::render('./createReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
 
 echo "Removing folders"
 rm -r $PATH_TRIM
 rm -r $PATH_SAM
 rm -r $PATH_BAM_ANNO
 rm -r $PATH_BAM_SORT
-rm -r $PATH_VCF_DA_CONVERTIRE
+rm -r $PATH_VCF_TO_CONVERT
 rm -r $PATH_VCF_FILTERED
 rm -r $PATH_VCF_DP
 rm -r $PATH_VCF_IN_SN
 rm -r $PATH_VCF_AF
 rm -r $PATH_VCF_MERGE
-rm -r $PATH_TXT_CIVIC
-rm -r $PATH_TXT_CGI
-rm -r $PATH_TXT_PHARM
-rm -r $PATH_TXT_COSMIC
-rm -r $PATH_TXT_CLINVAR
-rm -r $PATH_TXT_REFGENE
 
 echo "Done"

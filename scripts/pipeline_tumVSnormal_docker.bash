@@ -181,18 +181,11 @@ PATH_MARK_DUP_TUMOR=$PATH_PROJECT/mark_dup_tumor
 PATH_MARK_DUP_NORMAL=$PATH_PROJECT/mark_dup_normal
 PATH_VCF_MUT=$PATH_PROJECT/mutect
 PATH_VCF_FILTERED=$PATH_PROJECT/filtered
-PATH_VCF_PASS=$PATH_PROJECT/pass_filtrati
-PATH_CONVERTITI=$PATH_PROJECT/convertiti
-PATH_TXT_CIVIC=$PATH_PROJECT/txt_civic
-PATH_TXT_CGI=$PATH_PROJECT/txt_cgi
-PATH_TXT_PHARM=$PATH_PROJECT/txt_pharm
-PATH_TXT_COSMIC=$PATH_PROJECT/txt_cosmic
-PATH_TXT_CLINVAR=$PATH_PROJECT/txt_clinvar
-PATH_TXT_REFGENE=$PATH_PROJECT/txt_refgene
-PATH_DEFINITIVE=$PATH_PROJECT/definitive
-PATH_TRIAL=$PATH_PROJECT/Trial
-PATH_REFERENCE=$PATH_PROJECT/Reference
-PATH_FOOD=$PATH_PROJECT/Food
+PATH_VCF_PASS=$PATH_PROJECT/pass_filtered
+PATH_CONVERTED=$PATH_PROJECT/converted
+PATH_TXT=$PATH_PROJECT/txt
+PATH_TRIAL=$PATH_TXT/trial
+PATH_REFERENCE=$PATH_TXT/reference
 PATH_OUTPUT=$PATH_PROJECT/output
 
 echo "Removing old folders"
@@ -209,35 +202,8 @@ fi
 if [[ -d $PATH_VCF_PASS ]]; then
 rm -r $PATH_VCF_PASS
 fi
-if [[ -d $PATH_DEFINITIVE ]]; then
-rm -r $PATH_DEFINITIVE
-fi
-if [[ -d $PATH_TRIAL ]]; then
-rm -r $PATH_TRIAL
-fi
-if [[ -d $PATH_REFERENCE ]]; then
-rm -r $PATH_REFERENCE
-fi
-if [[ -d $PATH_FOOD ]]; then
-rm -r $PATH_FOOD
-fi
-if [[ -d $PATH_TXT_CIVIC ]]; then
-rm -r $PATH_TXT_CIVIC
-fi
-if [[ -d $PATH_TXT_CGI ]]; then
-rm -r $PATH_TXT_CGI
-fi
-if [[ -d $PATH_TXT_PHARM ]]; then
-rm -r $PATH_TXT_PHARM
-fi
-if [[ -d $PATH_TXT_COSMIC ]]; then
-rm -r $PATH_TXT_COSMIC
-fi
-if [[ -d $PATH_TXT_CLINVAR ]]; then
-rm -r $PATH_TXT_CLINVAR
-fi
-if [[ -d $PATH_TXT_REFGENE ]]; then
-rm -r $PATH_TXT_REFGENE
+if [[ -d $PATH_TXT ]]; then
+rm -r $PATH_TXT
 fi
 
 
@@ -288,29 +254,11 @@ fi
 if [[ ! -d $PATH_VCF_PASS ]]; then
 mkdir $PATH_VCF_PASS
 fi
-if [[ ! -d $PATH_CONVERTITI ]]; then
-mkdir $PATH_CONVERTITI
+if [[ ! -d $PATH_CONVERTED ]]; then
+mkdir $PATH_CONVERTED
 fi
-if [[ ! -d $PATH_TXT_CGI ]]; then
-mkdir $PATH_TXT_CGI
-fi
-if [[ ! -d $PATH_TXT_CIVIC ]]; then
-mkdir $PATH_TXT_CIVIC
-fi
-if [[ ! -d $PATH_TXT_PHARM ]]; then
-mkdir $PATH_TXT_PHARM
-fi
-if [[ ! -d $PATH_TXT_CLINVAR ]]; then
-mkdir $PATH_TXT_CLINVAR
-fi
-if [[ ! -d $PATH_TXT_COSMIC ]]; then
-mkdir $PATH_TXT_COSMIC
-fi
-if [[ ! -d $PATH_TXT_REFGENE ]]; then
-mkdir $PATH_TXT_REFGENE
-fi
-if [[ ! -d $PATH_DEFINITIVE ]]; then
-mkdir $PATH_DEFINITIVE
+if [[ ! -d $PATH_TXT ]]; then
+mkdir $PATH_TXT
 fi
 if [[ ! -d $PATH_TRIAL ]]; then
 mkdir $PATH_TRIAL
@@ -318,25 +266,9 @@ fi
 if [[ ! -d $PATH_REFERENCE ]]; then
 mkdir $PATH_REFERENCE
 fi
-if [[ ! -d $PATH_FOOD ]]; then
-mkdir $PATH_FOOD
-fi
-if [[ ! -d $PATH_TXT_CIVIC/results ]]; then
-mkdir $PATH_TXT_CIVIC/results
-fi
-if [[ ! -d $PATH_TXT_CGI/results ]]; then
-mkdir $PATH_TXT_CGI/results
-fi
-if [[ ! -d $PATH_TXT_COSMIC/results ]]; then
-mkdir $PATH_TXT_COSMIC/results
-fi
-if [[ ! -d $PATH_TXT_PHARM/results ]]; then
-mkdir $PATH_TXT_PHARM/results
-fi
 if [[ ! -d $PATH_OUTPUT ]]; then
 mkdir $PATH_OUTPUT
 fi
-
 
 #TUMOR ANALYSIS
 
@@ -501,27 +433,17 @@ $type = tumnorm
 echo "Annotation"
 sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTITI/$FASTQ1_NAME.txt
-Rscript merge_database.R $index $database $PATH_PROJECT
-
-
+cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTED/$FASTQ1_NAME.txt
+Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type $depth $AF $vcf
 # REPORT CREATION
-
 echo "Report creation"
-echo >> $PATH_TXT_CIVIC/$FASTQ1_NAME.txt
-echo >> $PATH_TXT_CGI/$FASTQ1_NAME.txt
-echo >> $PATH_TXT_COSMIC/$FASTQ1_NAME.txt
-echo >> $PATH_TXT_PHARM/$FASTQ1_NAME.txt
-echo >> $PATH_TXT_CLINVAR/$FASTQ1_NAME.txt
-echo >> $PATH_TXT_REFGENE/$FASTQ1_NAME.txt
-Rscript report_definitivo_docker_tmVSnm.R $FASTQ1_NAME "$tumor" $PATH_PROJECT $database
-R -e "rmarkdown::render('./Generazione_report_definitivo_docker_tmVSnm.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database
+R -e "rmarkdown::render('./createReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
 
 rm -r $PATH_TRIM_NORMAL
 rm -r $PATH_BAM_ORD_NORMAL
 rm -r $PATH_TRIM_TUMOR
 rm -r $PATH_BAM_ORD_TUMOR
-#rm -r $PATH_VCF_MUT
-#rm -r $PATH_CONVERTITI
+rm -r $PATH_VCF_MUT
+rm -r $PATH_CONVERTED
 
 echo "done"
