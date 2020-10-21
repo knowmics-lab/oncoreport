@@ -12,7 +12,7 @@ usage() {
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
   [-ubam/-ub ubam sample]
-  [-paired/-pr paired sample]
+  [-paired/-pr must be yes if ubam paired sample is loaded otherwise, if ubam is not paired, it must be no]
   [-bam/-b bam or sam sample]
   [-vcf/-v vcf sample]
   [-cosmic/-c path of COSMIC]
