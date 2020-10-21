@@ -15,9 +15,9 @@ usage() {
   [-normal2/-nm2 second fastq sample]
   [-ubamt/-ubt ubam tumor sample]
   [-ubamn/-ubn ubam normal sample]
+  [-paired/-pr must be yes if ubam paired sample is loaded otherwise, if ubam is not paired, it must be no]
   [-bamt/-bt bam or sam tumor sample]
   [-bamn/-bn bam or sam normal sample]
-  [-paired/-pr paired sample]
   [-vcf/-v vcf sample]
   [-cosmic/-c path of COSMIC]
   [-database/-db database path]" 1>&2
