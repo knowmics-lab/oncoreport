@@ -434,10 +434,10 @@ echo "Annotation"
 sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
 cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf > $PATH_CONVERTED/$FASTQ1_NAME.txt
-Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type $depth $AF $vcf
+Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type
 # REPORT CREATION
 echo "Report creation"
-R -e "rmarkdown::render('./createReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
+R -e "rmarkdown::render('./CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
 
 rm -r $PATH_TRIM_NORMAL
 rm -r $PATH_BAM_ORD_NORMAL

@@ -312,6 +312,7 @@ fi
 if [ ! -z "$vcf" ] && [ ${vcf: -17} == ".varianttable.txt" ]; then
   FASTQ1_NAME=$(basename $vcf ".varianttable.txt")
   $type = illumina
+  Rscript ProcessVariantTable.R $depth $AF $vcf
 else
   echo "Splitting indel and snp"
   java -jar picard.jar SplitVcfs I= $PATH_VCF_DP/$FASTQ1_NAME.vcf SNP_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf INDEL_OUTPUT= $PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf STRICT=false
@@ -334,9 +335,9 @@ else
   $type = biopsy
 fi
 echo "Annotation of illumina vcf"
-Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type $depth $AF $vcf
+Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type
 echo "Report creation"
-R -e "rmarkdown::render('./createReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
+R -e "rmarkdown::render('./CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
 
 echo "Removing folders"
 rm -r $PATH_TRIM
