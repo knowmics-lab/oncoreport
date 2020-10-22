@@ -45,6 +45,8 @@ RUN R -e "install.packages('kableExtra', repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('dplyr', repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('filesstrings', repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('data.table', repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('RCurl', repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('stringr', repos='http://cran.rstudio.com/')"
 RUN pip3 install cython
 RUN pip3 install CrossMap
 RUN pip3 install CrossMap --upgrade
