@@ -10,6 +10,7 @@ RUN pip3 install --user --upgrade cutadapt
 RUN apt-get -y install curl
 RUN apt-get -y install tar
 RUN apt-get -y install samtools
+RUN apt-get -y install bedtools
 RUN curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.0.tar.gz -o trim_galore.tar.gz
 RUN tar xvzf trim_galore.tar.gz
 RUN apt-get -y install software-properties-common
@@ -52,38 +53,42 @@ RUN pip3 install CrossMap
 RUN pip3 install CrossMap --upgrade
 RUN apt-get install rename
 RUN apt-get update --fix-missing
+RUN mkdir Databases
 RUN wget https://civicdb.org/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv
 RUN wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2020/clinvar_20200327.vcf.gz
 RUN wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz
+RUN mv nightly-ClinicalEvidenceSummaries.tsv civic.txt
+RUN mv civic.txt Databases/
 RUN gunzip clinvar_20200327.vcf.gz
 RUN gunzip ncbiRefSeq.txt.gz
 RUN mv clinvar_* clinvar_hg38.vcf
+RUN mv clinvar_hg38.vcf Databases/
 RUN mv ncbiRefSeq* ncbiRefSeq_hg38.txt
+RUN mv ncbiRefSeq_hg38.txt Databases/
 RUN wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2020/clinvar_20200327.vcf.gz
 RUN wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeq.txt.gz
 RUN gunzip clinvar_20200327.vcf.gz
+RUN mv clinvar_20200327.vcf Databases/
 RUN gunzip ncbiRefSeq.txt.gz
-COPY Disease.txt /
-COPY disease_list.txt /
-COPY Drug_food.txt /
-COPY pharm_databasehg19.txt /
-COPY pharm_databasehg38.txt /
-COPY cgi_databasehg38.txt /
-COPY cgi_databasehg19.txt /
-COPY Script_prep_banche_linea_di_comando.R /
-COPY database_hg38.R /
-COPY civic_hg38.R /
-COPY merge_database.R /
-COPY report_definitivo_biospia_liquida_linea_di_comando.R /
-COPY Generazione_report_definitivo_docker_bl.Rmd /
-COPY report_definitivo_docker_tmVSnm.R /
-COPY Generazione_report_definitivo_docker_tmVSnm.Rmd /
-COPY pipeline_tumVSnormal_docker.bash /
-COPY pipeline_liquid_biopsy.bash /
-COPY prep_banche_dati.bash /
-COPY prep_banche_dati_hg38.bash /
-COPY illumina_vcf.R /
-COPY report_definitivo_vcf_illumina.R /
+RUN mv ncbiRefSeq.txt Databases/
 RUN apt-get -y install nano
 RUN apt-get -y install apt-utils --fix-missing
+COPY Disease.txt Databases/
+COPY disease_list.txt /
+COPY Drug_food.txt Databases/
+COPY pharm_database_hg19.txt Databases/
+COPY pharm_database_hg38.txt Databases/
+COPY cgi_original_hg38.txt Databases/
+COPY cgi_original_hg19.txt Databases/
+COPY PrepareDatabases.R /
+COPY MergeInfo.R /
+COPY imports.R /
+COPY Functions.R /
+COPY CreateReport.Rmd /
+COPY pipeline_tumVSnormal.bash /
+COPY pipeline_liquid_biopsy.bash /
+COPY setup_databases.bash /
+COPY ProcessVariantTable.R /
+COPY CreateCivicBed.R /
+
 ENTRYPOINT [ "bash" ]
