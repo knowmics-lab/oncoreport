@@ -29,9 +29,9 @@ options(knitr.table.format = "html")
 args=commandArgs(trailingOnly = TRUE)
 if(args[10]=="tumnorm")
 {
-  sample.type <- "Tumor and Blood Biopsy"
+  sample.type <- "Case and Control Biopsy"
 } else {
-  sample.type <- "Liquid Biopsy"
+  sample.type <- "Case Biopsy"
 }
 pat<-data.frame(Name=args[1],Surname= args[2], ID=args[3],Gender=args[4], Age=args[5], 
                 Sample=sample.type, Tumor=args[6] )
