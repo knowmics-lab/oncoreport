@@ -63,7 +63,7 @@ if(genome=="hg38")
 }
 write.table(civic,file=paste0(database.path,"/civic_database_",genome,".txt"), quote=FALSE,
             row.names = FALSE, na= "NA", sep = "\t", col.names = T)
-unlink(paste0(database.path,"/civic.txt"))
+#unlink(paste0(database.path,"/civic.txt"))
 
 
 #################################################################################################
