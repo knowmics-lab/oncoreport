@@ -35,7 +35,7 @@ When you download The Cosmic file for the GRCh38 version remember to change the 
 ## Usage example
 ### File extension
 Your fastq file need to have one of the following extension:
-1.	for the both the pipeline
+1.	for both the pipeline
 -  .fastq.gz
 -	.fastq  
 -	.bam
