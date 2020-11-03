@@ -117,8 +117,11 @@ mv /CreateCivicBed.R /oncoreport/scripts || exit 134
 
 # Apply MYSQL configuration fixes
 apply_configuration_fixes() {
-    sed 's/^log_error/# log_error/' -i /etc/mysql/mysql.conf.d/mysqld.cnf
-    sed 's/^datadir\(.*\)=.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' -i /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i 's/^log_error/# log_error/' /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i 's/^datadir\(.*\)=.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+    sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf
     cat >/etc/mysql/conf.d/mysql-skip-name-resolv.cnf <<EOF
 [mysqld]
 skip_name_resolve
@@ -143,20 +146,13 @@ remove_debian_system_maint_password
 rm -rf /oncoreport/tmp
 
 # Apply PHP configuration fixes
-sed -i 's/post_max_size \= .M/post_max_size \= 200G/g' /etc/php/*/fpm/php.ini
-sed -i 's/upload_max_filesize \= .M/upload_max_filesize \= 200G/g' /etc/php/*/fpm/php.ini
+sed -i 's/post_max_size \= .M/post_max_size \= 200G/g' /etc/php/*/apache2/php.ini
+sed -i 's/upload_max_filesize \= .M/upload_max_filesize \= 200G/g' /etc/php/*/apache2/php.ini
+sed -i "s/;date.timezone =/date.timezone = Europe\/London/g" /etc/php/*/apache2/php.ini
+sed -i "s/;date.timezone =/date.timezone = Europe\/London/g" /etc/php/*/cli/php.ini
+sed -i "s/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=staff/" /etc/apache2/envvars
 
 # Redirect NGINX and PHP log to docker stdout and stderr
-if [ -f "/var/log/nginx/access.log" ]; then
-    rm /var/log/nginx/access.log
-fi
-ln -s /dev/stdout /var/log/nginx/access.log
-
-if [ -f "/var/log/nginx/error.log" ]; then
-    rm /var/log/nginx/error.log
-fi
-ln -s /dev/stdout /var/log/nginx/error.log
-
 if [ -f "/var/log/php7.3-fpm.log" ]; then
     rm /var/log/php7.3-fpm.log
 fi

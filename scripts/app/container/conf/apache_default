@@ -1,0 +1,26 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /oncoreport/ws/public
+        <Directory />
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+        <Directory /oncoreport/ws/public>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog /oncoreport/ws/storage/app/logs/apache_error.log
+
+        LogLevel warn
+
+        # CustomLog /oncoreport/ws/storage/app/logs/apache_access.log combined
+
+	SetEnvIf x-forwarded-proto https HTTPS=on
+
+</VirtualHost>

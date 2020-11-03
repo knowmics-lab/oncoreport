@@ -40,7 +40,7 @@ RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtool
                             libcurl4-openssl-dev rename apt-utils nano postfix libyaml-dev \
                             python3-setuptools git apache2 php-xdebug composer \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
-                            php-xml php-mbstring php-gettext zip php-zip php-curl php-intl && \
+                            php-xml php-mbstring zip php-zip php-curl php-intl && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
@@ -68,6 +68,7 @@ RUN rm -rf /var/log/mysql && rm -rf /var/lib/mysql
 ADD scripts/bootstrap.sh                            /usr/local/bin/
 ADD scripts/installPackages.R                       /usr/local/bin/
 ADD scripts/setup.sh                                /usr/local/bin/
+ADD scripts/create_mysql_users.sh                   /usr/local/bin/
 ADD conf/apache_default                             /etc/apache2/sites-available/000-default.conf
 ADD scripts/start-apache2.sh                        /usr/local/bin/start-apache2.sh
 ADD scripts/start-mysqld.sh                         /usr/local/bin/start-mysqld.sh
@@ -76,23 +77,23 @@ ADD conf/supervisord-mysqld.conf                    /etc/supervisor/conf.d/super
 ADD conf/supervisord.conf                           /etc/supervisor/supervisord.conf
 ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_innodb.cnf
 # ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/supervisord-worker.conf # Enable for production
-ADD ../../../databases/hg19/Disease.txt             /Disease.txt
-ADD ../disease_list.txt                             /disease_list.txt
-ADD ../../../databases/hg19/Drug_food.txt           /Drug_food.txt
-ADD ../../../databases/hg19/pharm_database_hg19.txt /pharm_database_hg19.txt
-ADD ../../../databases/hg19/cgi_original_hg19.txt   /cgi_original_hg19.txt
-ADD ../../../databases/hg38/pharm_database_hg38.txt /pharm_database_hg38.txt
-ADD ../../../databases/hg38/cgi_original_hg38.txt   /cgi_original_hg38.txt
-ADD ../PrepareDatabases.R                           /PrepareDatabases.R
-ADD ../MergeInfo.R                                  /MergeInfo.R
-ADD ../imports.R                                    /imports.R
-ADD ../Functions.R                                  /Functions.R
-ADD ../CreateReport.Rmd                             /CreateReport.Rmd
-ADD ../pipeline_tumVSnormal.bash                    /pipeline_tumVSnormal.bash
-ADD ../pipeline_liquid_biopsy.bash                  /pipeline_liquid_biopsy.bash
-ADD ../setup_databases.bash                         /setup_databases.bash
-ADD ../ProcessVariantTable.R                        /ProcessVariantTable.R
-ADD ../CreateCivicBed.R                             /CreateCivicBed.R
+ADD databases/Disease.txt                           /Disease.txt
+ADD databases/disease_list.txt                      /disease_list.txt
+ADD databases/Drug_food.txt                         /Drug_food.txt
+ADD databases/hg19/pharm_database_hg19.txt          /pharm_database_hg19.txt
+ADD databases/hg19/cgi_original_hg19.txt            /cgi_original_hg19.txt
+ADD databases/hg38/pharm_database_hg38.txt          /pharm_database_hg38.txt
+ADD databases/hg38/cgi_original_hg38.txt            /cgi_original_hg38.txt
+ADD oncoreport/PrepareDatabases.R                   /PrepareDatabases.R
+ADD oncoreport/MergeInfo.R                          /MergeInfo.R
+ADD oncoreport/imports.R                            /imports.R
+ADD oncoreport/Functions.R                          /Functions.R
+ADD oncoreport/CreateReport.Rmd                     /CreateReport.Rmd
+ADD oncoreport/pipeline_tumVSnormal.bash            /pipeline_tumVSnormal.bash
+ADD oncoreport/pipeline_liquid_biopsy.bash          /pipeline_liquid_biopsy.bash
+ADD oncoreport/setup_databases.bash                 /setup_databases.bash
+ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
+ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
 #ADD repo.tar.gz         /repo.tar.gz # Enable for production
 #COPY genkey.sh           /genkey.sh # TODO
 #COPY import_reference.sh /import_reference.sh # TODO
@@ -105,7 +106,7 @@ RUN /usr/bin/Rscript /usr/local/bin/installPackages.R
 # Complete the setup
 RUN /bin/bash /usr/local/bin/setup.sh
 
-RUN ln -s /usr/local/bin/bootstrap.sh /
+RUN ln -s /usr/local/bin/bootstrap.sh /bootstrap.sh
 
 RUN /usr/bin/apt autoclean && \
     /usr/bin/apt clean && \
