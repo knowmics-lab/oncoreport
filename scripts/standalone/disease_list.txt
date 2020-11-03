@@ -1,0 +1,141 @@
+Disease
+Acoustic Neuroma
+Melanoma
+Leukemia
+Adenoid cystic carcinoma
+Adrenal adenoma
+Adrenal Gland Pheochromocytoma
+Adrenocortical Carcinoma
+Alveolar Rhabdomyosarcoma
+Anaplastic Large Cell Lymphoma
+Anaplastic Oligodendroglioma
+Thyroid Cancer
+Angiosarcoma
+Any cancer type
+Astrocytoma
+B cell lymphoma
+Barrett's Adenocarcinoma
+Basal Cell Carcinoma
+Bile Duct Adenocarcinoma
+Biliary Tract Cancer
+Billiary tract
+Bladder Cancer
+Bone Cancer
+Brain Cancer
+Breast Cancer
+Bronchiolo-alveolar Adenocarcinoma
+Cervical Cancer
+Cervix Cancer
+Cholangiocarcinoma
+Chordoma
+Myeloma
+Chuvash Polycythemia
+Renal Cancer
+Colon Cancer
+Congenital Fibrosarcoma
+Dermatofibrosarcoma
+Dermatofibrosarcoma Protuberans
+Desmoid Fibromatosis
+Diffuse Intrinsic Pontine Glioma
+Diffuse Large B-cell Lymphoma
+Endometrial Cancer
+Ovarian Cancer
+Epithelioid Hemangioendothelioma
+Epithelioid Inflammatory Myofibroblastic Sarcoma
+Erdheim-Chester histiocytosis
+Esophageal Cancer
+Essential Thrombocythemia
+Ewing Sarcoma
+Female germ cell tumor
+Female Reproductive Organ Cancer
+Fibrous histiocytoma
+Follicular Lymphoma
+Ganglioglioma
+Gastric Cancer
+Giant cell astrocytoma
+Glioblastoma
+Glioblastoma Multiforme
+Glioma
+Head And Neck Cancer
+Hematologic Cancer
+Hematologic malignancies
+Hepatic carcinoma
+Hepatocellular Cancer
+Hyper eosinophilic advanced snydrome
+Inflammatory myofibroblastic
+Inflammatory Myofibroblastic Tumor
+Intrahepatic Cholangiocarcinoma
+Langerhans-Cell Histiocytosis
+Laryngeal Cancer
+Liposarcoma
+Lung Cancer
+Lymphangioleiomyomatosis
+Lymphoma
+Lynch Syndrome
+Male germ cell tumor
+Malignant astrocytoma
+Malignant Glioma
+Malignant Mesothelioma
+Malignant Peripheral Nerve Sheath Tumor
+Malignant Pleural Mesothelioma
+Malignant rhabdoid tumor
+Malignant Sertoli-Leydig Cell Tumor
+Mantle Cell Lymphoma
+Medulloblastoma
+Meningioma
+Merkel Cell Carcinoma
+Mesenchymal Chondrosarcoma
+Mesothelioma
+Myxoid Liposarcoma
+Neuroblastoma
+Neuroendocrine
+Neuroendocrine Tumor
+Neurofibroma
+Non-small cell lung
+NUT Midline Carcinoma
+Oligodendroglioma
+Oral Squamous Cell Carcinoma
+Oropharynx Cancer
+Osteosarcoma
+Pancreatic Cancer
+Papillary Adenocarcinoma
+Paraganglioma
+Parietal Lobe Ependymoma
+Pediatric Fibrosarcoma
+Pediatric glioma
+Pericytoma
+Peripheral T-cell Lymphoma
+Peritoneal Mesothelioma
+Peutz-Jeghers Syndrome
+Pilocytic Astrocytoma
+Plexiform Neurofibroma
+Polycythemia Vera
+Prostate Cancer
+Pseudomyxoma Peritonei
+PTEN Hamartoma Tumor Syndrome
+Rectum Cancer
+Retinoblastoma
+Rhabdoid Cancer
+Rhabdomyosarcoma
+Salivary Cancer
+Sarcoma
+Schwannoma
+Scrotum Paget's Disease
+Sezary's Disease
+Skin Squamous Cell Carcinoma
+Solid Tumor
+Stomach Cancer
+Supratentorial Glioblastoma Multiforme
+Synovial Sarcoma
+Systemic Mastocytosis
+Thymic
+Thymic Carcinoma
+Tuberous Sclerosis
+Ureter Small Cell Carcinoma
+Urinary tract carcinoma
+Urothelial Carcinoma
+Uterine Cancer
+Vagina Sarcoma
+Von Hippel-Lindau Disease
+Waldenström's Macroglobulinemia
+Waldenström macroglobulinemia
