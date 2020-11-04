@@ -118,7 +118,7 @@ mv /CreateCivicBed.R /oncoreport/scripts || exit 134
 # Apply MYSQL configuration fixes
 apply_configuration_fixes() {
     sed -i 's/^log_error/# log_error/' /etc/mysql/mysql.conf.d/mysqld.cnf
-    sed -i 's/^datadir\(.*\)=.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i 's/.*datadir.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' /etc/mysql/mysql.conf.d/mysqld.cnf
     sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
     sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
     sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf

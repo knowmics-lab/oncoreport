@@ -3,10 +3,11 @@ set -e
 
 [[ $DEBUG == true ]] && set -x
 
-MYSQL_DATA_DIR="/oncoreport/ws/storage/app/database/"
+MYSQL_DATA_DIR="/oncoreport/ws/storage/app/database"
 MYSQL_USER="www-data"
 MYSQL_GROUP="staff"
 MYSQL_RUN_DIR="/var/run/mysqld"
+DB_NAME="oncoreport"
 
 create_data_dir() {
     if [ ! -d ${MYSQL_DATA_DIR} ]; then
@@ -39,7 +40,7 @@ initialize_mysql_database() {
     fi
     if [ ! -d ${MYSQL_DATA_DIR}/${DB_NAME} ]; then
         echo "Creating users..."
-        if /usr/local/bin/create_mysql_users.sh && php /oncoreport/ws/artisan migrate --seed --force; then
+        if /usr/local/bin/create_mysql_users.sh; then #  && php /oncoreport/ws/artisan migrate --seed --force # TODO: add this part
             export DB_CREATED="true"
         fi
     fi

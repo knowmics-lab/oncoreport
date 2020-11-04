@@ -37,8 +37,8 @@ RUN /usr/bin/apt update --fix-missing && \
 # Install common packages
 RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
-                            libcurl4-openssl-dev rename apt-utils nano postfix libyaml-dev \
-                            python3-setuptools git apache2 php-xdebug composer \
+                            libcurl4-openssl-dev rename apt-utils nano libyaml-dev \
+                            python3-setuptools git apache2 php-xdebug composer php-cli \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
                             php-xml php-mbstring zip php-zip php-curl php-intl && \
     apt autoremove -y && \
