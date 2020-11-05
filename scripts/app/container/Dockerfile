@@ -37,7 +37,7 @@ RUN /usr/bin/apt update --fix-missing && \
 # Install common packages
 RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
-                            libcurl4-openssl-dev rename apt-utils nano libyaml-dev \
+                            libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
                             python3-setuptools git apache2 php-xdebug composer php-cli \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
                             php-xml php-mbstring zip php-zip php-curl php-intl && \
@@ -69,11 +69,12 @@ ADD scripts/bootstrap.sh                            /usr/local/bin/
 ADD scripts/installPackages.R                       /usr/local/bin/
 ADD scripts/setup.sh                                /usr/local/bin/
 ADD scripts/create_mysql_users.sh                   /usr/local/bin/
-ADD conf/apache_default                             /etc/apache2/sites-available/000-default.conf
+ADD conf/apache_default.conf                        /etc/apache2/sites-available/000-default.conf
 ADD scripts/start-apache2.sh                        /usr/local/bin/start-apache2.sh
 ADD scripts/start-mysqld.sh                         /usr/local/bin/start-mysqld.sh
 ADD conf/supervisord-apache2.conf                   /etc/supervisor/conf.d/supervisord-apache2.conf
 ADD conf/supervisord-mysqld.conf                    /etc/supervisor/conf.d/supervisord-mysqld.conf
+ADD conf/supervisord-beanstalkd.conf                /etc/supervisor/conf.d/supervisord-beanstalkd.conf
 ADD conf/supervisord.conf                           /etc/supervisor/supervisord.conf
 ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_innodb.cnf
 # ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/supervisord-worker.conf # Enable for production
