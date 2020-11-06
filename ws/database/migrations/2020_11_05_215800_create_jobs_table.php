@@ -15,7 +15,7 @@ class CreateJobsTable extends Migration
     {
         Schema::create(
             'jobs',
-            function (Blueprint $table) {
+            static function (Blueprint $table) {
                 $table->id();
                 $table->string('sample_code')->nullable()->index();
                 $table->string('name')->nullable()->default(null);
@@ -24,9 +24,6 @@ class CreateJobsTable extends Migration
                 $table->json('job_parameters');
                 $table->json('job_output');
                 $table->longText('log');
-                $table->unsignedBigInteger('patient_id')->nullable()->index();
-                $table->foreign('patient_id', 'patient_id_to_patient_foreign_key')->references('id')->on('patients')
-                      ->onDelete('set null')->onUpdate('set null');
                 $table->unsignedBigInteger('user_id')->index();
                 $table->foreign('user_id', 'user_id_to_user_foreign_key')->references('id')->on('users')
                       ->onDelete('cascade')->onUpdate('cascade');

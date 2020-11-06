@@ -2,28 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/Laravel_05_11_20__19_17.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/laravel-plugin.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/phpunit.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/storage/app/tus_cache/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/conf/apache_default" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/conf/supervisord.conf" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/conf/supervisord.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/conf/worker.conf" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/CommandException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/IgnoredException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/ProcessingJobException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/Factory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Providers/TusServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/disease_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/disease_list.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.phpstorm.meta.php" beforeDir="false" afterPath="$PROJECT_DIR$/.phpstorm.meta.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_ide_helper.php" beforeDir="false" afterPath="$PROJECT_DIR$/_ide_helper.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/CreateNewUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/CreateNewUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/PasswordValidationRules.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/PasswordValidationRules.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/ResetUserPassword.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/ResetUserPassword.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/UpdateUserPassword.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/UpdateUserPassword.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/UpdateUserProfileInformation.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/UpdateUserProfileInformation.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Jetstream/DeleteUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Jetstream/DeleteUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/JobController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Job.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Job.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/JobPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/JobPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/UserPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/UserPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/JetstreamServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/JetstreamServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215656_add_admin_column_to_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215656_add_admin_column_to_users_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215800_create_jobs_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215800_create_jobs_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/welcome.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
@@ -166,6 +195,8 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/reflection-docblock" />
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-ide-helper" />
       <path value="$PROJECT_DIR$/vendor/pda/pheanstalk" />
+      <path value="$PROJECT_DIR$/vendor/ankitpokhrel/tus-php" />
+      <path value="$PROJECT_DIR$/vendor/predis/predis" />
     </include_path>
   </component>
   <component name="ProjectId" id="1jskRk1M2jq36EWcN2niQbwU8st" />
@@ -175,21 +206,25 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/storage/app/tus_cache" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="Laravel.SettingsForm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/storage/app/tus_cache" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/storage/app" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
+      <recent name="$PROJECT_DIR$/app/Providers" />
+      <recent name="$PROJECT_DIR$/app/Exceptions" />
+      <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$/app/Jobs/Types" />
     </key>
   </component>
   <component name="RunManager">
@@ -207,6 +242,8 @@
       <option name="presentableId" value="Default" />
       <updated>1604600180710</updated>
       <workItem from="1604600181862" duration="5008000" />
+      <workItem from="1604660814191" duration="14785000" />
+      <workItem from="1604696017507" duration="5000" />
     </task>
     <servers />
   </component>
@@ -218,17 +255,21 @@
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="419" y="23" width="858" height="1408" key="#Directories/0.27.3392.1404@0.27.3392.1404" timestamp="1604600232311" />
+    <state x="586" y="461" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1604691183249">
+      <screen x="0" y="27" width="3392" height="1404" />
+    </state>
+    <state x="586" y="461" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604691183249" />
     <state x="1482" y="489" width="424" height="495" key="FileChooserDialogImpl" timestamp="1604609925074">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="1482" y="489" width="424" height="495" key="FileChooserDialogImpl/0.27.3392.1404@0.27.3392.1404" timestamp="1604609925074" />
-    <state x="1203" y="366" width="986" height="741" key="SettingsEditor" timestamp="1604600827703">
+    <state x="1203" y="362" width="986" height="741" key="SettingsEditor" timestamp="1604684823114">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="1203" y="366" width="986" height="741" key="SettingsEditor/0.27.3392.1404@0.27.3392.1404" timestamp="1604600827703" />
-    <state x="578" y="645" width="540" height="182" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1604613694774">
+    <state x="1203" y="362" width="986" height="741" key="SettingsEditor/0.27.3392.1404@0.27.3392.1404" timestamp="1604684823114" />
+    <state x="578" y="633" width="540" height="182" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1604681263223">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="578" y="645" width="540" height="182" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604613694774" />
+    <state x="578" y="633" width="540" height="182" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604681263223" />
   </component>
 </project>

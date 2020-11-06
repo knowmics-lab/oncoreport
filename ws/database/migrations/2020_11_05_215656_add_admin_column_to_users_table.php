@@ -15,7 +15,7 @@ class AddAdminColumnToUsersTable extends Migration
     {
         Schema::table(
             'users',
-            function (Blueprint $table) {
+            static function (Blueprint $table) {
                 $table->boolean('admin')->default(false);
             }
         );
@@ -30,7 +30,7 @@ class AddAdminColumnToUsersTable extends Migration
     {
         Schema::table(
             'users',
-            function (Blueprint $table) {
+            static function (Blueprint $table) {
                 $table->dropColumn('admin');
             }
         );

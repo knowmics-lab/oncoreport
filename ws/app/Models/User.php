@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -27,6 +31,15 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'admin' => false,
     ];
 
     /**
@@ -48,6 +61,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'admin'             => 'boolean',
     ];
 
     /**
@@ -58,4 +72,53 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function jobs(): HasMany
+    {
+        return $this->hasMany(Job::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function patients(): HasMany
+    {
+        return $this->hasMany(Patient::class, 'user_id', 'id');
+    }
+
+    /**
+     * Returns some statistics about the user or the system if the user is an administrator.
+     *
+     * @return array
+     */
+    public function statistics(): array
+    {
+        $stats = [];
+        if ($this->admin) {
+            $stats['jobs'] = [
+                'all'        => Job::count(),
+                'ready'      => Job::whereStatus(Job::READY)->count(),
+                'queued'     => Job::whereStatus(Job::QUEUED)->count(),
+                'processing' => Job::whereStatus(Job::PROCESSING)->count(),
+                'failed'     => Job::whereStatus(Job::FAILED)->count(),
+                'completed'  => Job::whereStatus(Job::COMPLETED)->count(),
+            ];
+        } else {
+            $stats['jobs'] = [
+                'all'        => Job::whereUserId($this->id)->count(),
+                'ready'      => Job::whereUserId($this->id)->whereStatus(Job::READY)->count(),
+                'queued'     => Job::whereUserId($this->id)->whereStatus(Job::QUEUED)->count(),
+                'processing' => Job::whereUserId($this->id)->whereStatus(Job::PROCESSING)->count(),
+                'failed'     => Job::whereUserId($this->id)->whereStatus(Job::FAILED)->count(),
+                'completed'  => Job::whereUserId($this->id)->whereStatus(Job::COMPLETED)->count(),
+            ];
+        }
+
+        return $stats;
+    }
+
+
 }

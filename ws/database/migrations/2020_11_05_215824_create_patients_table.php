@@ -11,12 +11,24 @@ class CreatePatientsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('patients', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        Schema::create(
+            'patients',
+            static function (Blueprint $table) {
+                $table->id();
+                $table->string('code');
+                $table->string('first_name');
+                $table->string('last_name');
+                $table->enum('gender', ['m', 'f']);
+                $table->tinyInteger('age');
+                $table->unsignedBigInteger('user_id')->nullable()->index();
+                $table->foreign('user_id', 'user_id_to_patient_foreign_key')
+                      ->references('id')->on('users')
+                      ->onDelete('set null')->onUpdate('set null');
+                $table->timestamps();
+            }
+        );
     }
 
     /**
@@ -24,7 +36,7 @@ class CreatePatientsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('patients');
     }
