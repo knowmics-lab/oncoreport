@@ -1,8 +1,13 @@
 <?php
+/**
+ * Oncoreport Web Service
+ *
+ * @author S. Alaimo, Ph.D. <alaimos at gmail dot com>
+ */
 
 namespace App\Models;
 
-//use App\Jobs\Types\Factory;
+use App\Jobs\Types\Factory;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,6 +74,20 @@ class Job extends Model
      * If a job is a group then it uses the type of the first grouped job.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \App\Models\Patient                   $patient
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByPatient(Builder $query, Patient $patient): Builder
+    {
+        return $query->whereNotNull('patient_id')->where('patient_id', '=', $patient->id);
+    }
+
+    /**
+     * Scope a query to filter for job_type.
+     * If a job is a group then it uses the type of the first grouped job.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string                                $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -98,8 +117,7 @@ class Job extends Model
      */
     public function readableJobType(): string
     {
-        //return Factory::displayName($this);
-        return Str::title(ucwords(str_replace(['-', '_'], ' ', str_replace('_job_type', '', $this->job_type))));
+        return Factory::displayName($this);
     }
 
     /**

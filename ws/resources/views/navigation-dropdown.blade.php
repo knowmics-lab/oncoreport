@@ -16,8 +16,11 @@
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
                     @if (Auth::user()->admin)
-                        <x-jet-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list')">
+                        <x-jet-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
                             {{ __('Manage users') }}
+                        </x-jet-nav-link>
+                        <x-jet-nav-link href="{{ route('users-create') }}" :active="request()->routeIs('users-create')">
+                            {{ __('Create user') }}
                         </x-jet-nav-link>
                     @endif
                 </div>
@@ -105,9 +108,13 @@
                 {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
             @if (Auth::user()->admin)
-                <x-jet-responsive-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list')">
+                <x-jet-responsive-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
                     {{ __('Manage users') }}
                 </x-jet-responsive-nav-link>
+                <x-jet-responsive-nav-link href="{{ route('users-create') }}" :active="request()->routeIs('users-create')">
+                    {{ __('Create users') }}
+                </x-jet-responsive-nav-link>
+
             @endif
         </div>
 

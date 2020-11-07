@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Livewire\Admin\User\Index as UserIndex;
+use App\Http\Livewire\Admin\User\Create as UserCreate;
+use App\Http\Livewire\Admin\User\Show as UserShow;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get(
     '/',
     function () {
-        return view('welcome');
+        return redirect()->route('dashboard');
     }
 );
 
@@ -29,25 +32,13 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
 
 Route::middleware(['auth:sanctum', 'verified'])->get(
     '/admin/users',
-    'UserController@index'
+    UserIndex::class
 )->name('users-list')->middleware('can:view-any,App\\Models\\User');
 Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/admin/users/new',
-    'UserController@create'
+    '/admin/users/create',
+    UserCreate::class
 )->name('users-create')->middleware('can:create,App\\Models\\User');
-Route::middleware(['auth:sanctum', 'verified'])->post(
-    '/admin/users/new',
-    'UserController@doCreate'
-)->name('users-do-create')->middleware('can:create,App\\Models\\User');
 Route::middleware(['auth:sanctum', 'verified'])->get(
     '/admin/users/{user}',
-    'UserController@show'
-)->name('users-show')->middleware('can:view,user');
-Route::middleware(['auth:sanctum', 'verified'])->post(
-    '/admin/users/{user}',
-    'UserController@update'
-)->name('users-update')->middleware('can:update,user');
-Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/admin/users/{user}/delete',
-    'UserController@delete'
-)->name('users-delete')->middleware('can:delete,user');
+    UserShow::class
+)->name('users-show');
