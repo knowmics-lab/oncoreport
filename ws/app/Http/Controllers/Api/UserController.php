@@ -11,26 +11,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
-use Auth;
-use Carbon\Carbon;
 use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Rules\Password;
 
 class UserController extends Controller
 {
-    /**
-     * UserController constructor.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(User::class, 'user');
-    }
-
 
     /**
      * Display a listing of the resource.
@@ -38,9 +27,11 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      *
      * @return \App\Http\Resources\UserCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Request $request): UserCollection
     {
+        $this->authorize('viewAny', User::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return new UserCollection($this->handleBuilderRequest($request, User::query()));
@@ -53,11 +44,13 @@ class UserController extends Controller
      *
      * @return \App\Http\Resources\User
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request): UserResource
     {
+        $this->authorize('create', User::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
         $values = $this->validate(
             $request,
             [
@@ -88,9 +81,11 @@ class UserController extends Controller
      * @param \App\Models\User         $user
      *
      * @return \App\Http\Resources\User
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, User $user): UserResource
     {
+        $this->authorize('view', $user);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return new UserResource($user);
@@ -104,11 +99,13 @@ class UserController extends Controller
      *
      * @return \App\Http\Resources\User
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, User $user): UserResource
     {
+        $this->authorize('update', $user);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
         $rules = [
             'name'         => ['filled', 'string', 'max:255'],
             'email'        => ['filled', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
@@ -127,7 +124,7 @@ class UserController extends Controller
             $user->email = $values['email'];
             $user->email_verified_at = now();
         }
-        if (isset($values['admin'])) {
+        if (isset($values['admin']) && $request->user()->admin && $request->user()->id !== $user->id) {
             $user->admin = (bool)$values['admin'];
         }
         if (isset($values['new_password'])) {
@@ -149,8 +146,9 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user): JsonResponse
     {
+        $this->authorize('delete', $user);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
         $user->deleteProfilePhoto();
         /** @noinspection PhpUndefinedMethodInspection */
         $user->tokens->each->delete();
@@ -175,11 +173,19 @@ class UserController extends Controller
      */
     public function token(Request $request, User $user): JsonResponse
     {
+        $this->authorize('generateToken', $user);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
-        $this->authorize('generateToken', $user);
         $key = Str::random(5);
-        $token = $user->createToken('api-call-token-' . $key);
+        $token = $user->createToken(
+            'api-call-token-' . $key,
+            [
+                'create',
+                'read',
+                'update',
+                'delete',
+            ]
+        );
 
         return response()->json(
             [

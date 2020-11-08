@@ -28,9 +28,6 @@ class JobTypeController extends Controller
         return response()->json(
             [
                 'data'  => Factory::listTypes()->keyBy('id'),
-                'links' => [
-                    'self' => route('job-types.index'),
-                ],
             ]
         );
     }
@@ -59,7 +56,7 @@ class JobTypeController extends Controller
             [
                 'data'  => $res,
                 'links' => [
-                    'self' => route('job-types.show', $id),
+                    'self' => route('job-types.show', $id, false),
                 ],
             ]
         );

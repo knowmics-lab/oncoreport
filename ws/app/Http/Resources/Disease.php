@@ -35,7 +35,7 @@ class Disease extends JsonResource
                 'updated_at_diff' => $this->updated_at->diffForHumans(),
             ],
             'links' => [
-                'self' => route('diseases.show', $this->resource),
+                'self' => route('diseases.show', $this->resource, false),
             ],
         ];
     }

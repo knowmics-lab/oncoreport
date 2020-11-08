@@ -7,6 +7,7 @@
 
 namespace App\Http\Resources;
 
+use App\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -40,15 +41,15 @@ class Job extends JsonResource
                 'created_at_diff' => $this->created_at->diffForHumans(),
                 'updated_at'      => $this->updated_at,
                 'updated_at_diff' => $this->updated_at->diffForHumans(),
-                'owner'           => new User($this->user),
-                'patient'         => $this->patient ? new Patient($this->patient) : null,
+                'owner'           => Utils::flattenResource(new User($this->user), $request),
+                'patient'         => $this->patient ? Utils::flattenResource(new Patient($this->patient), $request) : null,
             ],
             'links' => [
-                'self'    => route('jobs.show', $this->resource),
-                'owner'   => route('users.show', $this->user),
-                'patient' => $this->patient ? route('patients.show', $this->patient) : null,
-                'upload'  => route('jobs.upload', $this->resource),
-                'submit'  => route('jobs.submit', $this->resource),
+                'self'    => route('jobs.show', $this->resource, false),
+                'owner'   => route('users.show', $this->user, false),
+                'patient' => $this->patient ? route('patients.show', $this->patient, false) : null,
+                'upload'  => route('jobs.upload', $this->resource, false),
+                'submit'  => route('jobs.submit', $this->resource, false),
             ],
         ];
     }

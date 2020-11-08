@@ -12,6 +12,7 @@ use App\Http\Resources\Job as JobResource;
 use App\Http\Resources\JobCollection;
 use App\Jobs\DeleteJobDirectory;
 use App\Jobs\Request as JobRequest;
+use App\Jobs\Types\AbstractJob;
 use App\Jobs\Types\Factory;
 use App\Models\Job;
 use App\Models\Patient;
@@ -26,31 +27,15 @@ class JobController extends Controller
 {
 
     /**
-     * JobController constructor.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(Job::class, 'job');
-    }
-
-    /**
-     * Display a listing of the resource.
+     * Starting from a query, this method creates a job collection
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request              $request
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \App\Http\Resources\JobCollection
      */
-    public function index(Request $request): JobCollection
+    private function buildJobCollection(Request $request, Builder $query): JobCollection
     {
-        $query = Job::query();
-        if ($request->has('deep_type')) {
-            $type = $request->get('deep_type');
-            if ($type) {
-                $query = Job::deepTypeFilter($type);
-            }
-        }
-
-        /** @noinspection PhpParamsInspection */
         return new JobCollection(
             $this->handleBuilderRequest(
                 $request,
@@ -71,6 +56,31 @@ class JobController extends Controller
         );
     }
 
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \App\Http\Resources\JobCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function index(Request $request): JobCollection
+    {
+        $this->authorize('viewAny', Job::class);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $query = Job::query();
+        if ($request->has('deep_type')) {
+            $type = $request->get('deep_type');
+            if ($type) {
+                $query = Job::deepTypeFilter($type);
+            }
+        }
+
+        /** @noinspection PhpParamsInspection */
+        return $this->buildJobCollection($request, $query);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -78,9 +88,13 @@ class JobController extends Controller
      * @param \App\Models\Patient      $patient
      *
      * @return \App\Http\Resources\JobCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function byPatient(Request $request, Patient $patient): JobCollection
     {
+        $this->authorize('view', $patient);
+        $this->authorize('viewAny', Job::class);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         $query = Job::byPatient($patient);
         if ($request->has('deep_type')) {
             $type = $request->get('deep_type');
@@ -91,24 +105,7 @@ class JobController extends Controller
         }
 
         /** @noinspection PhpParamsInspection */
-        return new JobCollection(
-            $this->handleBuilderRequest(
-                $request,
-                $query,
-                static function (Builder $builder) use ($request) {
-                    if ($request->has('completed')) {
-                        $builder->where('status', '=', Job::COMPLETED);
-                    }
-                    /** @var \App\Models\User $user */
-                    $user = optional($request->user());
-                    if (!$user->admin) {
-                        $builder->where('user_id', $user->id);
-                    }
-
-                    return $builder;
-                }
-            )
-        );
+        return $this->buildJobCollection($request, $query);
     }
 
     /**
@@ -118,7 +115,7 @@ class JobController extends Controller
      *
      * @return array
      */
-    private function _prepareNestedValidation(array $specs): array
+    private function prepareNestedValidation(array $specs): array
     {
         $nestedSpecs = [];
         foreach ($specs as $field => $rules) {
@@ -138,35 +135,47 @@ class JobController extends Controller
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request): JobResource
     {
+        $this->authorize('create', Job::class);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
         $jobTypes = Factory::listTypes();
         $validValues = $this->validate(
             $request,
             [
-                'sample_code' => ['filled', 'string', 'alpha_dash'],
+                'sample_code' => ['required', 'string', 'alpha_dash'],
                 'name'        => ['required', 'string'],
                 'type'        => ['required', 'string', Rule::in($jobTypes->pluck('id'))],
                 'parameters'  => ['filled', 'array'],
             ]
         );
-        $parametersValidation = $this->_prepareNestedValidation(
-            Factory::validationSpec($validValues['type'], $request)
-        );
+        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($validValues['type'], $request));
+        $patientInputState = Factory::patientInputState($validValues['type']);
+        $patientInputValidation = ['integer', Rule::exists('patients', 'id')];
+        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
+        if ($patientInputState === AbstractJob::PATIENT_REQUIRED) {
+            $parametersValidation['patient_id'] = ['required', ...$patientInputValidation];
+        } elseif ($patientInputState === AbstractJob::PATIENT_OPTIONAL) {
+            $parametersValidation['patient_id'] = ['filled', ...$patientInputValidation];
+        }
         $validParameters = $this->validate($request, $parametersValidation);
         $type = $validValues['type'];
+        $patientId = $noPatientInput ? null : ($validParameters['patient_id'] ?? null);
         $validParameters = $validParameters['parameters'] ?? [];
         $job = Job::create(
             [
-                'sample_code'    => $validValues['sample_code'] ?? null,
+                'sample_code'    => $validValues['sample_code'],
                 'name'           => $validValues['name'],
                 'job_type'       => $type,
                 'status'         => Job::READY,
                 'job_parameters' => [],
                 'job_output'     => [],
                 'log'            => '',
-                'user_id'        => \Auth::guard('api')->id(),
+                'patient_id'     => $patientId,
+                'user_id'        => $request->user()->id,
             ]
         );
         $job->setParameters(Arr::dot($validParameters));
@@ -179,12 +188,17 @@ class JobController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Job $job
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Job          $job
      *
      * @return \App\Http\Resources\Job
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(Job $job): JobResource
+    public function show(Request $request, Job $job): JobResource
     {
+        $this->authorize('view', $job);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+
         return new JobResource($job);
     }
 
@@ -196,15 +210,42 @@ class JobController extends Controller
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, Job $job): JobResource
     {
-        if (!$job->canBeModified()) {
-            abort(400, 'Unable to modify a submitted, running, or completed job.');
+        $this->authorize('update', $job);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
+        abort_unless($job->canBeModified(), 400, 'Unable to modify a queued or running job.');
+        $validValues = $this->validate(
+            $request,
+            [
+                'sample_code' => ['filled', 'string', 'alpha_dash'],
+                'name'        => ['filled', 'string'],
+                'parameters'  => ['filled', 'array'],
+                'patient_id'  => ['nullable', 'integer', Rule::exists('patients', 'id')],
+            ]
+        );
+        $patientInputState = Factory::patientInputState($job->job_type);
+        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
+        if ($noPatientInput) {
+            $patientId = null;
+        } elseif (array_key_exists('patient_id', $validValues)) {
+            $patientId = $validValues['patient_id'];
+        } else {
+            $patientId = $job->patient_id;
         }
-        $parametersValidation = $this->_prepareNestedValidation(Factory::validationSpec($job, $request));
+        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($job, $request));
         $validParameters = $this->validate($request, $parametersValidation);
         $validParameters = $validParameters['parameters'] ?? [];
+        $job->fill(
+            [
+                'sample_code' => $validValues['sample_code'] ?? $job->sample_code,
+                'name'        => $validValues['name'] ?? $job->name,
+                'patient_id'  => $patientId,
+            ]
+        );
         $job->addParameters(Arr::dot($validParameters));
         $job->save();
 
@@ -214,16 +255,18 @@ class JobController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Job $job
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Job          $job
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy(Job $job): JsonResponse
+    public function destroy(Request $request, Job $job): JsonResponse
     {
-        if (!$job->canBeDeleted()) {
-            abort(400, 'Unable to delete a queued or running job.');
-        }
+        $this->authorize('delete', $job);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
+        abort_unless($job->canBeDeleted(), 400, 'Unable to delete a queued or running job.');
 
         DeleteJobDirectory::dispatch($job);
 
@@ -238,15 +281,18 @@ class JobController extends Controller
     /**
      * Submit the specified resource for execution
      *
-     * @param \App\Models\Job $job
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Job          $job
      *
      * @return \App\Http\Resources\Job
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function submit(Job $job): JobResource
+    public function submit(Request $request, Job $job): JobResource
     {
-        if (!$job->canBeModified()) {
-            abort(400, 'Unable to submit a job that is already submitted.');
-        }
+        $this->authorize('submitJob', $job);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
+        abort_unless($job->canBeModified(), 400, 'Unable to submit a job that is already submitted.');
         $job->setStatus(Job::QUEUED);
         JobRequest::dispatch($job);
 
@@ -256,15 +302,17 @@ class JobController extends Controller
     /**
      * Upload a file to the specified job
      *
-     * @param \App\Models\Job $job
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Job          $job
      *
      * @return mixed
      */
-    public function upload(Job $job)
+    public function upload(Request $request, Job $job)
     {
-        if (!$job->canBeModified()) {
-            abort(400, 'Unable to upload a file for a job that is already submitted.');
-        }
+        $this->authorize('uploadJob', $job);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
+        abort_unless($job->canBeModified(), 400, 'Unable to upload a file for a job that is already submitted.');
         set_time_limit(0);
         /** @var \TusPhp\Tus\Server $server */
         $server = app('tus-server');

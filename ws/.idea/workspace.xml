@@ -2,52 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/ClearQueue.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobTypeController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/Disease.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseCollection.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/Job.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/JobCollection.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/Patient.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/PatientCollection.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/User.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/UserCollection.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/TestJobType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.phpstorm.meta.php" beforeDir="false" afterPath="$PROJECT_DIR$/.phpstorm.meta.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_ide_helper.php" beforeDir="false" afterPath="$PROJECT_DIR$/_ide_helper.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_ide_helper_models.php" beforeDir="false" afterPath="$PROJECT_DIR$/_ide_helper_models.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Disease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/GenerateAuthToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/GenerateAuthToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/JobTypeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobTypeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Disease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Job.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Job.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/JobCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/JobCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/UserCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/UserCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/Factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/Factory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Job.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Job.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Policies/DiseasePolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/DiseasePolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Policies/JobPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/JobPolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Policies/UserPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/UserPolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/sass/app.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/input.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/input.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.mix.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.mix.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/debugbar/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/debugbar/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,6 +227,8 @@
       <workItem from="1604660814191" duration="14785000" />
       <workItem from="1604696017507" duration="5000" />
       <workItem from="1604740030644" duration="26468000" />
+      <workItem from="1604827540760" duration="10851000" />
+      <workItem from="1604871623115" duration="5000" />
     </task>
     <servers />
   </component>
@@ -262,14 +240,14 @@
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="419" y="23" width="858" height="1408" key="#Directories/0.27.3392.1404@0.27.3392.1404" timestamp="1604600232311" />
-    <state x="657" y="442" width="387" height="627" key="#com.intellij.ide.util.MemberChooser" timestamp="1604747812907">
+    <state x="657" y="434" width="387" height="681" key="#com.intellij.ide.util.MemberChooser" timestamp="1604839037429">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="657" y="442" width="387" height="627" key="#com.intellij.ide.util.MemberChooser/0.27.3392.1404@0.27.3392.1404" timestamp="1604747812907" />
-    <state x="586" y="405" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1604784666663">
+    <state x="657" y="434" width="387" height="681" key="#com.intellij.ide.util.MemberChooser/0.27.3392.1404@0.27.3392.1404" timestamp="1604839037429" />
+    <state x="586" y="385" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1604871455260">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="586" y="405" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604784666663" />
+    <state x="586" y="385" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604871455260" />
     <state x="1482" y="659" width="424" height="154" key="#com.jetbrains.php.lang.intentions.PhpImportClassDialog#" timestamp="1604784844946">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
@@ -278,6 +256,10 @@
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="1482" y="489" width="424" height="495" key="FileChooserDialogImpl/0.27.3392.1404@0.27.3392.1404" timestamp="1604609925074" />
+    <state x="670" y="657" width="355" height="159" key="NewPhpFileDialog" timestamp="1604827855825">
+      <screen x="0" y="27" width="3392" height="1404" />
+    </state>
+    <state x="670" y="657" width="355" height="159" key="NewPhpFileDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604827855825" />
     <state x="1203" y="362" width="986" height="741" key="SettingsEditor" timestamp="1604684823114">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>

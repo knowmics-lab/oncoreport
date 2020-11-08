@@ -53,8 +53,8 @@ class Job extends Model
      */
     protected $attributes = [
         'job_type'       => self::READY,
-        'job_parameters' => [],
-        'job_output'     => [],
+        'job_parameters' => "{}",
+        'job_output'     => "{}",
         'log'            => '',
         'patient_id'     => null,
     ];

@@ -56,7 +56,15 @@ class GenerateAuthToken extends Command
                 return 101;
             }
             $key = Str::random(5);
-            $token = $userObject->createToken('command-line-token-' . $key);
+            $token = $userObject->createToken(
+                'command-line-token-' . $key,
+                [
+                    'create',
+                    'read',
+                    'update',
+                    'delete',
+                ]
+            );
 
             if ($json) {
                 $this->line(

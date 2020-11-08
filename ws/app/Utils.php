@@ -10,6 +10,7 @@ namespace App;
 use App\Exceptions\CommandException;
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
+use Illuminate\Http\Resources\Json\JsonResource;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -125,6 +126,31 @@ final class Utils
         @chmod($rootPath, 0777);
 
         return true;
+    }
+
+    /**
+     * Flatten a resource object removing data and links sections
+     *
+     * @param \Illuminate\Http\Resources\Json\JsonResource $resource
+     * @param \Illuminate\Http\Request                     $request
+     *
+     * @return array
+     */
+    public static function flattenResource(JsonResource $resource, $request): array
+    {
+        $resArray = $resource->toArray($request);
+        if (isset($resArray['data'])) {
+            $tmpArray = $resArray['data'];
+            if (isset($resArray['links']) && is_array($resArray['links'])) {
+                foreach ($resArray['links'] as $key => $link) {
+                    $tmpArray["{$key}.link"] = $link;
+                }
+            }
+
+            return $tmpArray;
+        }
+
+        return $resArray;
     }
 
 }

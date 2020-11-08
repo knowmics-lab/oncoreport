@@ -10,6 +10,7 @@ namespace App\Jobs\Types;
 use App\Exceptions\ProcessingJobException;
 use App\Models\Job as JobModel;
 use Cache;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionException;
@@ -20,7 +21,8 @@ use Symfony\Component\Finder\Finder;
  * @method static string description(JobModel|AbstractJob|string $where)
  * @method static array parametersSpec(JobModel|AbstractJob|string $where)
  * @method static array outputSpec(JobModel|AbstractJob|string $where)
- * @method static array validationSpec(JobModel|AbstractJob|string $where, \Illuminate\Http\Request $request)
+ * @method static array validationSpec(JobModel|AbstractJob|string $where, Request $request)
+ * @method static string patientInputState(JobModel|AbstractJob|string $where)
  */
 class Factory
 {
@@ -104,6 +106,7 @@ class Factory
                 'parametersSpec',
                 'outputSpec',
                 'validationSpec',
+                'patientInputState',
             ]
         )) {
             if (count($arguments) >= 1) {

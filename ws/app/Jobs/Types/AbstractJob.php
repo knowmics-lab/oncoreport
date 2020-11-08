@@ -32,9 +32,14 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 abstract class AbstractJob
 {
 
+    // Constants to represent output type
     public const OUT_TYPE_CONFIRMATION    = 'confirmation';
     public const OUT_TYPE_ANALYSIS        = 'analysis';
     public const OUT_TYPE_ANALYSIS_REPORT = 'analysis-report';
+    // Constants to represent patient requirements
+    public const PATIENT_REQUIRED = 'patient_required';
+    public const PATIENT_OPTIONAL = 'patient_optional';
+    public const NO_PATIENT       = 'no_patient';
 
     /**
      * @var \App\Models\Job
@@ -112,6 +117,17 @@ abstract class AbstractJob
      * @return array
      */
     abstract public static function validationSpec(Request $request): array;
+
+    /**
+     * Returns one of self::PATIENT_REQUIRED or self::PATIENT_OPTIONAL or self::NO_PATIENT.
+     * This is used to define if the current job will need a patient_id:
+     *  - self::PATIENT_REQUIRED => this job must be tied to a valid patient;
+     *  - self::NO_PATIENT       => this job must NOT be tied to a valid patient;
+     *  - self::PATIENT_OPTIONAL => this job can be tied to a valid patient (but it is not required).
+     *
+     * @return string
+     */
+    abstract public static function patientInputState(): string;
 
     /**
      * Checks the input of this job and returns true iff the input contains valid data

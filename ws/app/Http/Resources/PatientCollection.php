@@ -7,6 +7,7 @@
 
 namespace App\Http\Resources;
 
+use App\Utils;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PatientCollection extends ResourceCollection
@@ -30,13 +31,7 @@ class PatientCollection extends ResourceCollection
     {
         return $this->collection->map(
             static function (Patient $item) use ($request) {
-                $tmp = $item->toArray($request);
-                $data = $tmp['data'];
-                $data['self.link'] = $tmp['links']['self'];
-                $data['owner.link'] = $tmp['links']['owner'];
-                $data['jobs.link'] = $tmp['links']['jobs'];
-
-                return $data;
+                return Utils::flattenResource($item, $request);
             }
         )->keyBy('id')->all();
     }

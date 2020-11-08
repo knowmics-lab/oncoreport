@@ -7,6 +7,7 @@
 
 namespace App\Http\Resources;
 
+use App\Utils;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
@@ -30,11 +31,7 @@ class UserCollection extends ResourceCollection
     {
         return $this->collection->map(
             static function (User $item) use ($request) {
-                $tmp = $item->toArray($request);
-                $data = $tmp['data'];
-                $data['self.link'] = $tmp['links']['self'];
-
-                return $data;
+                return Utils::flattenResource($item, $request);
             }
         )->keyBy('id')->all();
     }

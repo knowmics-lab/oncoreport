@@ -20,22 +20,16 @@ class DiseaseController extends Controller
 {
 
     /**
-     * UserController constructor.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(Disease::class, 'disease');
-    }
-
-    /**
      * Display a listing of the resource.
      *
      * @param \Illuminate\Http\Request $request
      *
      * @return \App\Http\Resources\DiseaseCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Request $request): DiseaseCollection
     {
+        $this->authorize('viewAny', Disease::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return new DiseaseCollection(Disease::all());
@@ -48,9 +42,11 @@ class DiseaseController extends Controller
      * @param \App\Models\Disease      $disease
      *
      * @return \App\Http\Resources\Disease
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, Disease $disease): DiseaseResource
     {
+        $this->authorize('view', $disease);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return new DiseaseResource($disease);

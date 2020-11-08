@@ -25,19 +25,24 @@ class User extends JsonResource
      */
     public function toArray($request): array
     {
+        $data = [
+            'id'              => $this->id,
+            'name'            => $this->name,
+            'email'           => $this->email,
+            'admin'           => $this->admin,
+            'created_at'      => $this->created_at,
+            'created_at_diff' => $this->created_at->diffForHumans(),
+            'updated_at'      => $this->updated_at,
+            'updated_at_diff' => $this->updated_at->diffForHumans(),
+        ];
+        if (!$request->user()->admin) {
+            unset($data['admin']);
+        }
+
         return [
-            'data'  => [
-                'id'              => $this->id,
-                'name'            => $this->name,
-                'email'           => $this->email,
-                'admin'           => $this->admin,
-                'created_at'      => $this->created_at,
-                'created_at_diff' => $this->created_at->diffForHumans(),
-                'updated_at'      => $this->updated_at,
-                'updated_at_diff' => $this->updated_at->diffForHumans(),
-            ],
+            'data'  => $data,
             'links' => [
-                'self' => route('users.show', $this->resource),
+                'self' => route('users.show', $this->resource, false),
             ],
         ];
     }

@@ -12,23 +12,12 @@ use App\Http\Resources\Patient as PatientResource;
 use App\Http\Resources\PatientCollection;
 use App\Models\Disease;
 use App\Models\Patient;
-use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
 
 class PatientController extends Controller
 {
-    /**
-     * PatientController constructor.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(Patient::class, 'patient');
-    }
-
 
     /**
      * Display a listing of the resource.
@@ -36,9 +25,11 @@ class PatientController extends Controller
      * @param \Illuminate\Http\Request $request
      *
      * @return \App\Http\Resources\PatientCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Request $request): PatientCollection
     {
+        $this->authorize('viewAny', Patient::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         /** @noinspection PhpParamsInspection */
@@ -52,11 +43,13 @@ class PatientController extends Controller
      *
      * @return \App\Http\Resources\Patient
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request): PatientResource
     {
+        $this->authorize('create', Patient::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
         $values = $this->validate(
             $request,
             [
@@ -64,9 +57,9 @@ class PatientController extends Controller
                 'first_name' => ['required', 'string', 'max:255'],
                 'last_name'  => ['required', 'string', 'max:255'],
                 'gender'     => ['required', 'string', Rule::in(Patient::VALID_GENDERS)],
-                'age'        => ['required', 'integer'],
-                'disease_id' => ['required_unless:disease', 'integer', 'exists:diseases,id'],
-                'disease'    => ['required_unless:disease_id', 'string', 'exists:diseases,name'],
+                'age'        => ['required', 'integer', 'between:0,100'],
+                'disease_id' => ['required_without:disease', 'integer', 'exists:diseases,id'],
+                'disease'    => ['required_without:disease_id', 'string', 'exists:diseases,name'],
             ]
         );
         $model = Patient::create(
@@ -77,9 +70,10 @@ class PatientController extends Controller
                 'gender'     => $values['gender'],
                 'age'        => $values['age'],
                 'disease_id' => $values['disease_id'] ?? Disease::whereName($values['disease'])->firstOrFail()->id,
-                'user_id'    => $request->user(),
+                'user_id'    => $request->user()->id,
             ]
-        )->save();
+        );
+        $model->save();
 
         return new PatientResource($model);
     }
@@ -91,9 +85,11 @@ class PatientController extends Controller
      * @param \App\Models\Patient      $patient
      *
      * @return \App\Http\Resources\Patient
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, Patient $patient): PatientResource
     {
+        $this->authorize('view', $patient);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return new PatientResource($patient);
@@ -107,11 +103,13 @@ class PatientController extends Controller
      *
      * @return \App\Http\Resources\Patient
      * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, Patient $patient): PatientResource
     {
+        $this->authorize('update', $patient);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
         $rules = [
             'code'       => ['filled', 'string', 'alpha_dash', 'max:255'],
             'first_name' => ['filled', 'string', 'max:255'],
@@ -124,12 +122,16 @@ class PatientController extends Controller
         $values = $this->validate($request, $rules);
         $disease_id = $values['disease_id'] ?? (
             isset($values['disease']) ? Disease::whereName($values['disease'])->firstOrFail()->id : $patient->disease_id);
-        $patient->code = $values['code'] ?? $patient->code;
-        $patient->first_name = $values['first_name'] ?? $patient->first_name;
-        $patient->last_name = $values['last_name'] ?? $patient->last_name;
-        $patient->gender = $values['gender'] ?? $patient->gender;
-        $patient->age = $values['age'] ?? $patient->age;
-        $patient->disease_id = $disease_id;
+        $patient->forceFill(
+            [
+                "code"       => $values['code'] ?? $patient->code,
+                "first_name" => $values['first_name'] ?? $patient->first_name,
+                "last_name"  => $values['last_name'] ?? $patient->last_name,
+                "gender"     => $values['gender'] ?? $patient->gender,
+                "age"        => $values['age'] ?? $patient->age,
+                "disease_id" => $disease_id,
+            ]
+        )->save();
         $patient->save();
 
         return new PatientResource($patient);
@@ -146,8 +148,9 @@ class PatientController extends Controller
      */
     public function destroy(Request $request, Patient $patient): JsonResponse
     {
+        $this->authorize('delete', $patient);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to read objects');
+        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
         $patient->delete();
 
         return response()->json(
