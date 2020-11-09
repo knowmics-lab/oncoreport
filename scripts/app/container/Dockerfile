@@ -38,9 +38,9 @@ RUN /usr/bin/apt update --fix-missing && \
 RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
                             libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
-                            python3-setuptools git apache2 php-xdebug composer php-cli \
+                            python3-setuptools git apache2 php-xdebug composer php-cli jq \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
-                            php-xml php-mbstring zip php-zip php-curl php-intl && \
+                            php-xml php-mbstring zip php-zip php-curl php-intl pigz && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
@@ -85,16 +85,19 @@ ADD databases/hg19/pharm_database_hg19.txt          /pharm_database_hg19.txt
 ADD databases/hg19/cgi_original_hg19.txt            /cgi_original_hg19.txt
 ADD databases/hg38/pharm_database_hg38.txt          /pharm_database_hg38.txt
 ADD databases/hg38/cgi_original_hg38.txt            /cgi_original_hg38.txt
-ADD oncoreport/PrepareDatabases.R                   /PrepareDatabases.R
+ADD oncoreport/PrepareCOSMIC.R                      /PrepareCOSMIC.R
+ADD oncoreport/PrepareDatabases_build.R             /PrepareDatabases_build.R
 ADD oncoreport/MergeInfo.R                          /MergeInfo.R
 ADD oncoreport/imports.R                            /imports.R
 ADD oncoreport/Functions.R                          /Functions.R
 ADD oncoreport/CreateReport.Rmd                     /CreateReport.Rmd
 ADD oncoreport/pipeline_tumVSnormal.bash            /pipeline_tumVSnormal.bash
 ADD oncoreport/pipeline_liquid_biopsy.bash          /pipeline_liquid_biopsy.bash
-ADD oncoreport/setup_databases.bash                 /setup_databases.bash
+ADD oncoreport/prepare_cosmic.bash                  /prepare_cosmic.bash
 ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
 ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
+ADD oncoreport/path.bash                            /path.bash
+ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
 #ADD repo.tar.gz         /repo.tar.gz # Enable for production
 #COPY genkey.sh           /genkey.sh # TODO
 #COPY import_reference.sh /import_reference.sh # TODO

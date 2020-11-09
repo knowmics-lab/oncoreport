@@ -22,51 +22,75 @@ exit_abnormal() {
   exit 1
 }
 
-while [ -n "$1" ]
-do
+while [ -n "$1" ]; do
   case "$1" in
-    -fastq1 | -fq1) fastq1="$2"
-    shift;;
-    -fastq2 | -fq2) fast2="$2"
-    shift;;
-    -ubam | -ub) ubam="$2"
-    shift;;
-    -bam | -b) bam="$2"
-    shift;;
-    -vcf | -v) vcf="$2"
-    shift;;
-    -paired | -pr) paired="$2"
+  -fastq1 | -fq1)
+    fastq1="$2"
+    shift
+    ;;
+  -fastq2 | -fq2)
+    fast2="$2"
+    shift
+    ;;
+  -ubam | -ub)
+    ubam="$2"
+    shift
+    ;;
+  -bam | -b)
+    bam="$2"
+    shift
+    ;;
+  -vcf | -v)
+    vcf="$2"
+    shift
+    ;;
+  -paired | -pr)
+    paired="$2"
     echo "The value provided for paired is $paired"
-    if ! [ $paired = "yes" ] ; then
-      if !  [ $paired = "no" ] ; then
+    if ! [ $paired = "yes" ]; then
+      if ! [ $paired = "no" ]; then
         echo "Error: paired must be equal to yes or no."
         exit_abnormal
         exit 1
       fi
     fi
-    shift;;
-    -depth | -dp) depth="$2"
+    shift
+    ;;
+  -depth | -dp)
+    depth="$2"
     echo "The value provided for filter-expression of DP is $depth"
-    shift;;
-    -allfreq | -af) AF="$2"
+    shift
+    ;;
+  -allfreq | -af)
+    AF="$2"
     echo "The value provided for filter-expression of AF is $AF"
-    shift;;
-    -name | -n) name="$2"
+    shift
+    ;;
+  -name | -n)
+    name="$2"
     echo "The value provided for patient name is $name"
-    shift;;
-    -surname | -s) surname="$2"
+    shift
+    ;;
+  -surname | -s)
+    surname="$2"
     echo "The value provided for patient surname is $surname"
-    shift;;
-    -id | -i) id="$2"
+    shift
+    ;;
+  -id | -i)
+    id="$2"
     echo "The value provided for patient ID is $id"
-    shift;;
-    -gender | -g) gender="$2"
+    shift
+    ;;
+  -gender | -g)
+    gender="$2"
     echo "The value provided for patient gender is $gender"
-    shift;;
-    -age | -a) age="$2"
+    shift
+    ;;
+  -age | -a)
+    age="$2"
     re_isanum='^[0-9]+$'
     echo "The value provided for patient age is $age"
-    if ! [[ $age =~ $re_isanum ]] ; then
+    if ! [[ $age =~ $re_isanum ]]; then
       echo "Error: Age must be a positive, whole number."
       exit_abnormal
       exit 1
@@ -75,143 +99,160 @@ do
       exit_abnormal
       exit 1
     fi
-    shift;;
-    -tumor | -t) tumor="$2"
+    shift
+    ;;
+  -tumor | -t)
+    tumor="$2"
     echo "The value provided for patient tumor is $tumor"
-    if cat disease_list.txt | grep -w "$tumor" > /dev/null; then
-    command;
-    else echo "Error: Tumor must be a value from the list disease_list.txt";
-    exit_abnormal
-    exit 1
+    if cat disease_list.txt | grep -w "$tumor" >/dev/null; then
+      command
+    else
+      echo "Error: Tumor must be a value from the list disease_list.txt"
+      exit_abnormal
+      exit 1
     fi
-    shift;;
-    -idx_path | -ip) index_path="$2"
+    shift
+    ;;
+  -idx_path | -ip)
+    index_path="$2"
     echo "The value provided for path index is $index_path"
     if [ ! -d "$index_path" ]; then
       echo "Error: You must pass a valid directory"
       exit_abnormal
       exit 1
-      fi
-    shift;;
-    -project_path | -pp) project_path="$2"
+    fi
+    shift
+    ;;
+  -project_path | -pp)
+    project_path="$2"
     echo "The value provided for project path is $project_path"
     if [ ! -d "$project_path" ]; then
       echo "Error: You must pass a valid directory"
       exit_abnormal
       exit 1
-      fi
-    shift;;
-    -threads | -th) threads="$2"
+    fi
+    shift
+    ;;
+  -threads | -th)
+    threads="$2"
     echo "The value provided for threads is $threads"
     if [ $threads -eq "0" ]; then
       echo "Error: Threads must be greater than zero."
       exit_abnormal
     fi
-    shift;;
-    -index | -idx) index="$2"
+    shift
+    ;;
+  -index | -idx)
+    index="$2"
     echo "The value provided for index is $index"
-    if ! [ $index = "hg19" ] ; then
-      if !  [ $index = "hg38" ] ; then
-      echo "Error: index must be equal to hg19 or hg38."
-      exit_abnormal
-      exit 1
+    if ! [ $index = "hg19" ]; then
+      if ! [ $index = "hg38" ]; then
+        echo "Error: index must be equal to hg19 or hg38."
+        exit_abnormal
+        exit 1
       fi
     fi
-    shift;;
-    -database | -db) database="$2"
+    shift
+    ;;
+  -database | -db)
+    database="$2"
     echo "The value provided for database path is $database"
     if [ ! -d "$database" ]; then
       echo "Error: You must pass a valid database directory"
       exit_abnormal
     fi
-    shift;;
-    *)
-      exit_abnormal
-    shift;;
-    #Questo non so se lasciarlo perché non so se funziona come su getopts
-    --help | -h) help="$2"
-      usage
-      exit_abnormal
-      exit 1
-      shift;;
+    shift
+    ;;
+  *)
+    exit_abnormal
+    shift
+    ;;
+  #Questo non so se lasciarlo perché non so se funziona come su getopts
+  --help | -h)
+    help="$2"
+    usage
+    exit_abnormal
+    exit 1
+    shift
+    ;;
   esac
   shift
 done
 
-if [[ -z "$fastq1" ]] && ( [[ -z "$ubam" ]] || [[ -z "$paired" ]] ) && [[ -z "$bam" ]] && [[ -z "$vcf" ]]; then
+if [[ -z "$fastq1" ]] && ([[ -z "$ubam" ]] || [[ -z "$paired" ]]) && [[ -z "$bam" ]] && [[ -z "$vcf" ]]; then
   echo "At least one parameter between \$fastq1, \$fastq2, \$ubam, \$bam or \$vcf must be passed"
   usage
   exit
 fi
 
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] ||    [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   echo "all parameters must be passed"
   usage
   exit
 fi
 
-      PATH_INDEX=$index_path
-      PATH_PROJECT=$project_path
-      PATH_TRIM=$PATH_PROJECT/trim
-      PATH_SAM=$PATH_PROJECT/sam
-      PATH_BAM_ANNO=$PATH_PROJECT/bam_annotated
-      PATH_BAM_SORT=$PATH_PROJECT/bam_sorted
-      PATH_BAM_ORD=$PATH_PROJECT/bam_ordered
-      PATH_VCF_MUT=$PATH_PROJECT/mutect
-      PATH_VCF_FILTERED=$PATH_PROJECT/filtered
-      PATH_VCF_PASS=$PATH_PROJECT/pass_filtered
-      PATH_VCF_DP=$PATH_PROJECT/dp_filtered
-      PATH_VCF_IN_SN=$PATH_PROJECT/in_snp
-      PATH_VCF_AF=$PATH_PROJECT/vcf_af
-      PATH_VCF_PASS_AF=$PATH_PROJECT/pass_final
-      PATH_VCF_MERGE=$PATH_PROJECT/merge
-      PATH_VCF_TO_CONVERT=$PATH_PROJECT/vcf_converted
-      PATH_CONVERTED=$PATH_PROJECT/converted
-      PATH_TXT=$PATH_PROJECT/txt
-      PATH_TRIAL=$PATH_TXT/trial
-      PATH_REFERENCE=$PATH_TXT/reference
-      PATH_OUTPUT=$PATH_PROJECT/output
+PATH_INDEX=$index_path
+PATH_PROJECT=$project_path
+PATH_TRIM=$PATH_PROJECT/trim
+PATH_SAM=$PATH_PROJECT/sam
+PATH_BAM_ANNO=$PATH_PROJECT/bam_annotated
+PATH_BAM_SORT=$PATH_PROJECT/bam_sorted
+PATH_BAM_ORD=$PATH_PROJECT/bam_ordered
+PATH_VCF_MUT=$PATH_PROJECT/mutect
+PATH_VCF_FILTERED=$PATH_PROJECT/filtered
+PATH_VCF_PASS=$PATH_PROJECT/pass_filtered
+PATH_VCF_DP=$PATH_PROJECT/dp_filtered
+PATH_VCF_IN_SN=$PATH_PROJECT/in_snp
+PATH_VCF_AF=$PATH_PROJECT/vcf_af
+PATH_VCF_PASS_AF=$PATH_PROJECT/pass_final
+PATH_VCF_MERGE=$PATH_PROJECT/merge
+PATH_VCF_TO_CONVERT=$PATH_PROJECT/vcf_converted
+PATH_CONVERTED=$PATH_PROJECT/converted
+PATH_TXT=$PATH_PROJECT/txt
+PATH_TRIAL=$PATH_TXT/trial
+PATH_REFERENCE=$PATH_TXT/reference
+PATH_OUTPUT=$PATH_PROJECT/output
 
-      echo "Removing old folders"
+echo "Removing old folders"
 
-      if [[ -d $PATH_CONVERTED ]]; then
-      rm -r $PATH_CONVERTED
-      fi
-      if [[ -d $PATH_BAM_ORD ]]; then
-      rm -r $PATH_BAM_ORD
-      fi
-      if [[ -d $PATH_VCF_PASS ]]; then
-      rm -r $PATH_VCF_PASS
-      fi
-      if [[ -d $PATH_VCF_PASS_AF ]]; then
-      rm -r $PATH_VCF_PASS_AF
-      fi
-      if [[ -d $PATH_VCF_MUT ]]; then
-      rm -r $PATH_VCF_MUT
-      fi
-      if [[ -d $PATH_TXT ]]; then
-      rm -r $PATH_TXT
-      fi
+if [[ -d $PATH_CONVERTED ]]; then
+  rm -r $PATH_CONVERTED
+fi
+if [[ -d $PATH_BAM_ORD ]]; then
+  rm -r $PATH_BAM_ORD
+fi
+if [[ -d $PATH_VCF_PASS ]]; then
+  rm -r $PATH_VCF_PASS
+fi
+if [[ -d $PATH_VCF_PASS_AF ]]; then
+  rm -r $PATH_VCF_PASS_AF
+fi
+if [[ -d $PATH_VCF_MUT ]]; then
+  rm -r $PATH_VCF_MUT
+fi
+if [[ -d $PATH_TXT ]]; then
+  rm -r $PATH_TXT
+fi
 
-      mkdir $PATH_TRIM
-      mkdir $PATH_SAM
-      mkdir $PATH_BAM_ANNO
-      mkdir $PATH_BAM_ORD
-      mkdir $PATH_BAM_SORT
-      mkdir $PATH_VCF_MUT
-      mkdir $PATH_VCF_FILTERED
-      mkdir $PATH_VCF_PASS
-      mkdir $PATH_VCF_DP
-      mkdir $PATH_VCF_IN_SN
-      mkdir $PATH_VCF_AF
-      mkdir $PATH_VCF_PASS_AF
-      mkdir $PATH_VCF_MERGE
-      mkdir $PATH_VCF_TO_CONVERT
-      mkdir $PATH_CONVERTED
-      mkdir $PATH_TXT
-      mkdir $PATH_TRIAL
-      mkdir $PATH_REFERENCE
-      mkdir $PATH_OUTPUT
+mkdir $PATH_TRIM
+mkdir $PATH_SAM
+mkdir $PATH_BAM_ANNO
+mkdir $PATH_BAM_ORD
+mkdir $PATH_BAM_SORT
+mkdir $PATH_VCF_MUT
+mkdir $PATH_VCF_FILTERED
+mkdir $PATH_VCF_PASS
+mkdir $PATH_VCF_DP
+mkdir $PATH_VCF_IN_SN
+mkdir $PATH_VCF_AF
+mkdir $PATH_VCF_PASS_AF
+mkdir $PATH_VCF_MERGE
+mkdir $PATH_VCF_TO_CONVERT
+mkdir $PATH_CONVERTED
+mkdir $PATH_TXT
+mkdir $PATH_TRIAL
+mkdir $PATH_REFERENCE
+mkdir $PATH_OUTPUT
 
 #Setting cutadapt path
 export PATH=/root/.local/bin/:$PATH
@@ -220,17 +261,17 @@ if [ ! -z "$ubam" ]; then
   UB=$(basename "${ubam%.*}")
   PATH_FASTQ=$PATH_PROJECT/fastq
   mkdir $PATH_FASTQ
-  if [[ "$paired" = "yes" ]]; then
+  if [[ "$paired" == "yes" ]]; then
     bamToFastq -i $ubam -fq $PATH_FASTQ/${UB}.fq -fq2 $PATH_FASTQ/${UB}_2.fq
     $fastq1 = $PATH_FASTQ/${UB}.fq
     $fastq2 = $PATH_FASTQ/${UB}_2.fq
-  elif [[ "$paired" = "no" ]]; then
+  elif [[ "$paired" == "no" ]]; then
     bamToFastq -i $ubam -fq $PATH_FASTQ/${UB}.fq
     $fastq1 = $PATH_FASTQ/${UB}.fq
   fi
 fi
 
-if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then 
+if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   if [ ${FQ1: -3} == ".gz" ]; then
     echo "Fastq extraction"
@@ -239,7 +280,7 @@ if [ ! -z "$fastq1" ] && [ -z "$fastq2" ]; then
 elif [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   FQ2=$(basename "$fastq2")
-  if [ ${FQ1: -3} == ".gz" ] && [ ${FQ2: -3} == ".gz" ] ; then
+  if [ ${FQ1: -3} == ".gz" ] && [ ${FQ2: -3} == ".gz" ]; then
     echo "Fastq extraction"
     gunzip $fastq1
     gunzip $fastq2
@@ -264,7 +305,7 @@ elif [ ! -z "$fastq1" ] && [ ! -z "$fastq2" ]; then
   echo "Alignment"
   bowtie2 -p $threads -x $PATH_INDEX/$index -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM/${FASTQ1_NAME}.sam
 fi
-        
+
 if [ -z "$bam" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
   java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM/$FASTQ1_NAME.sam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
@@ -273,20 +314,20 @@ elif [ ! -z "$bam" ]; then
   echo "Adding Read Group"
   java -jar picard.jar AddOrReplaceReadGroups I=$bam O=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
 fi
-         
+
 if [ ! -z "$fastq1" ] || [ ! -z "$bam" ]; then
   echo "Sorting"
   java -jar picard.jar SortSam I=$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
   echo "Reordering"
-  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam   SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
   echo "Variant Calling"
   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam -tumor $FASTQ1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
   echo "Variant Filtration"
   java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf > $PATH_VCF_PASS/$FASTQ1_NAME.vcf
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf >$PATH_VCF_PASS/$FASTQ1_NAME.vcf
 fi
-         
+
 if [ ! -z "$vcf" ]; then
   VCF_NAME=$(basename "$vcf")
   if [ ${VCF_NAME: -17} != ".varianttable.txt" ]; then
@@ -312,17 +353,17 @@ else
   echo "Merge indel and snp"
   java -jar picard.jar MergeVcfs I=$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf I=$PATH_VCF_AF/$FASTQ1_NAME.vcf O=$PATH_VCF_MERGE/$FASTQ1_NAME.vcf
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf > $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_MERGE/$FASTQ1_NAME.vcf >$PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf
   echo "Germline"
-  grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf
+  grep Germline $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf >$PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf
   echo "Somatic"
-  grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf > $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
+  grep Germline -v $PATH_VCF_PASS_AF/$FASTQ1_NAME.vcf >$PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
   echo "Annotation"
   sed -i '/#CHROM/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
   sed -i '/chr/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf
   sed -i '/chr/,$!d' $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf
-  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf > $PATH_CONVERTED/${FASTQ1_NAME}_Somatic.txt
-  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf > $PATH_CONVERTED/${FASTQ1_NAME}_Germline.txt
+  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Somatic.vcf >$PATH_CONVERTED/${FASTQ1_NAME}_Somatic.txt
+  cut -f1,2,4,5 $PATH_VCF_TO_CONVERT/${FASTQ1_NAME}_Germline.vcf >$PATH_CONVERTED/${FASTQ1_NAME}_Germline.txt
   type=biopsy
 fi
 

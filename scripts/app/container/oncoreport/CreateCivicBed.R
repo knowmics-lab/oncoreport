@@ -1,8 +1,8 @@
-args=commandArgs(trailingOnly = TRUE)
+args <- commandArgs(trailingOnly = TRUE)
 
 database.path <- args[1]
 
-civic<-read.csv(paste0(database.path,"/civic.txt"), sep="\t", quote="")
+civic <- read.csv(paste0(database.path,"/civic.txt"), sep="\t", quote="")
 df_total <- civic[!is.na(civic$start2),c("chromosome2", "start2", "stop2", 
             "reference_bases", "variant_bases", "gene", "variant", "disease", "drugs", 
             "drug_interaction_type", "evidence_type", "evidence_level", "evidence_direction", 
