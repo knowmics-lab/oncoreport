@@ -140,7 +140,7 @@ while [ -n "$1" ]; do
     shift
     ;;
   *)
-    exit_abnormal
+    exit_abnormal_usage "Error: invalid parameter \"$1\"."
     shift
     ;;
   esac
@@ -185,25 +185,25 @@ echo "Removing old folders"
 [[ -d "$PATH_VCF_MUT" ]] && rm -r "$PATH_VCF_MUT"
 [[ -d "$PATH_TXT" ]] && rm -r "$PATH_TXT"
 
-mkdir "$PATH_TRIM"
-mkdir "$PATH_SAM"
-mkdir "$PATH_BAM_ANNO"
-mkdir "$PATH_BAM_ORD"
-mkdir "$PATH_BAM_SORT"
-mkdir "$PATH_VCF_MUT"
-mkdir "$PATH_VCF_FILTERED"
-mkdir "$PATH_VCF_PASS"
-mkdir "$PATH_VCF_DP"
-mkdir "$PATH_VCF_IN_SN"
-mkdir "$PATH_VCF_AF"
-mkdir "$PATH_VCF_PASS_AF"
-mkdir "$PATH_VCF_MERGE"
-mkdir "$PATH_VCF_TO_CONVERT"
-mkdir "$PATH_CONVERTED"
-mkdir "$PATH_TXT"
-mkdir "$PATH_TRIAL"
-mkdir "$PATH_REFERENCE"
-mkdir "$PATH_OUTPUT"
+[[ ! -d "$PATH_TRIM" ]] && mkdir "$PATH_TRIM"
+[[ ! -d "$PATH_SAM" ]] && mkdir "$PATH_SAM"
+[[ ! -d "$PATH_BAM_ANNO" ]] && mkdir "$PATH_BAM_ANNO"
+[[ ! -d "$PATH_BAM_ORD" ]] && mkdir "$PATH_BAM_ORD"
+[[ ! -d "$PATH_BAM_SORT" ]] && mkdir "$PATH_BAM_SORT"
+[[ ! -d "$PATH_VCF_MUT" ]] && mkdir "$PATH_VCF_MUT"
+[[ ! -d "$PATH_VCF_FILTERED" ]] && mkdir "$PATH_VCF_FILTERED"
+[[ ! -d "$PATH_VCF_PASS" ]] && mkdir "$PATH_VCF_PASS"
+[[ ! -d "$PATH_VCF_DP" ]] && mkdir "$PATH_VCF_DP"
+[[ ! -d "$PATH_VCF_IN_SN" ]] && mkdir "$PATH_VCF_IN_SN"
+[[ ! -d "$PATH_VCF_AF" ]] && mkdir "$PATH_VCF_AF"
+[[ ! -d "$PATH_VCF_PASS_AF" ]] && mkdir "$PATH_VCF_PASS_AF"
+[[ ! -d "$PATH_VCF_MERGE" ]] && mkdir "$PATH_VCF_MERGE"
+[[ ! -d "$PATH_VCF_TO_CONVERT" ]] && mkdir "$PATH_VCF_TO_CONVERT"
+[[ ! -d "$PATH_CONVERTED" ]] && mkdir "$PATH_CONVERTED"
+[[ ! -d "$PATH_TXT" ]] && mkdir "$PATH_TXT"
+[[ ! -d "$PATH_TRIAL" ]] && mkdir "$PATH_TRIAL"
+[[ ! -d "$PATH_REFERENCE" ]] && mkdir "$PATH_REFERENCE"
+[[ ! -d "$PATH_OUTPUT" ]] && mkdir "$PATH_OUTPUT"
 
 if [ -n "$ubam" ]; then
   UB=$(basename "${ubam%.*}")
@@ -240,9 +240,17 @@ echo "Starting the analysis"
 if [ -n "$fastq1" ] && [ -z "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   FASTQ1_NAME=$(basename "${FQ1%.*}")
+  if [ "${FQ1: -3}" == ".gz" ]; then
+    FASTQ1_NAME=$(basename "${FASTQ1_NAME%.*}")
+  fi
   echo "The FASTQ file is not paired."
   echo "Trimming"
-  trim_galore -j "$threads" -o "$PATH_TRIM/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 101
+  if ((threads > 7)); then
+    RT=6
+  else
+    RT=$threads
+  fi
+  trim_galore -j "$RT" -o "$PATH_TRIM/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 101
   echo "Alignment"
   bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/$index" -U "$PATH_TRIM/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM/${FASTQ1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 102
 elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
@@ -250,9 +258,20 @@ elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
   FQ2=$(basename "$fastq2")
   FASTQ1_NAME=$(basename "${FQ1%.*}")
   FASTQ2_NAME=$(basename "${FQ2%.*}")
+  if [ "${FQ1: -3}" == ".gz" ]; then
+    FASTQ1_NAME=$(basename "${FASTQ1_NAME%.*}")
+  fi
+  if [ "${FQ2: -3}" == ".gz" ]; then
+    FASTQ2_NAME=$(basename "${FASTQ2_NAME%.*}")
+  fi
   echo "The FASTQ file is paired"
   echo "Trimming"
-  trim_galore -j "$threads" --paired --dont_gzip -o "$PATH_TRIM/" "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 101
+  if ((threads > 7)); then
+    RT=6
+  else
+    RT=$threads
+  fi
+  trim_galore -j "$RT" --paired --dont_gzip -o "$PATH_TRIM/" "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 101
   echo "Alignment"
   bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/$index" -1 "$PATH_TRIM/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM/${FASTQ1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 102
 fi
@@ -270,9 +289,9 @@ if [ -n "$fastq1" ] || [ -n "$bam" ]; then
   echo "Sorting"
   java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO/${FASTQ1_NAME}_annotated.bam" O="$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 104
   echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam" O="$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$PATH_INDEX/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 105
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT/${FASTQ1_NAME}_sorted.bam" O="$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 105
   echo "Variant Calling"
-  java -jar "$GATK_PATH" Mutect2 -R "$PATH_INDEX/${index}.fa" -I "$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam" -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 106
+  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/${FASTQ1_NAME}_ordered.bam" -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 106
   echo "Variant Filtration"
   java -jar "$GATK_PATH" FilterMutectCalls -V "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -O "$PATH_VCF_FILTERED/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to filter variants" 107
   echo "PASS Selection"
@@ -284,11 +303,11 @@ if [ -n "$vcf" ]; then
   if [ "${VCF_NAME: -17}" != ".varianttable.txt" ]; then
     FASTQ1_NAME=$(basename "${vcf%.*}")
     echo "DP Filtering"
-    java -jar "$GATK_PATH" VariantFiltration -R "$PATH_INDEX/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/$FASTQ1_NAME.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter VCF" 109
+    java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/$FASTQ1_NAME.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter VCF" 109
   fi
 else
   echo "DP Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$PATH_INDEX/${index}.fa" -V "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" -O "$PATH_VCF_DP/$FASTQ1_NAME.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 110
+  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" -O "$PATH_VCF_DP/$FASTQ1_NAME.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 110
 fi
 
 #VARIANTTABLE format
@@ -300,7 +319,7 @@ else
   echo "Splitting indel and snp"
   java -jar "$PICARD_PATH" SplitVcfs I="$PATH_VCF_DP/$FASTQ1_NAME.vcf" SNP_OUTPUT="$PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf" INDEL_OUTPUT="$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf" STRICT=false || exit_abnormal_code "Unable to split INDELs and SNPs" 112
   echo "AF Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$PATH_INDEX/${index}.fa" -V "$PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf" -O "$PATH_VCF_AF/$FASTQ1_NAME.vcf" --genotype-filter-name "Germline" --genotype-filter-expression "$AF" || exit_abnormal_code "Unable to filter SNPs by AF" 113
+  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_IN_SN/$FASTQ1_NAME.SNP.vcf" -O "$PATH_VCF_AF/$FASTQ1_NAME.vcf" --genotype-filter-name "Germline" --genotype-filter-expression "$AF" || exit_abnormal_code "Unable to filter SNPs by AF" 113
   echo "Merge indel and snp"
   java -jar "$PICARD_PATH" MergeVcfs I="$PATH_VCF_IN_SN/$FASTQ1_NAME.INDEL.vcf" I="$PATH_VCF_AF/$FASTQ1_NAME.vcf" O="$PATH_VCF_MERGE/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to merge filtered SNPs with INDELs" 114
   echo "PASS Selection"
@@ -320,21 +339,22 @@ else
 fi
 
 echo "Annotation of VCF files"
-Rscript MergeInfo.R "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type"
+Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 119
 
 echo "Report creation"
-R -e "rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type"
+R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 120
 
 echo "Removing folders"
-rm -r "$PATH_TRIM"
-rm -r "$PATH_SAM"
-rm -r "$PATH_BAM_ANNO"
-rm -r "$PATH_BAM_SORT"
-rm -r "$PATH_VCF_TO_CONVERT"
-rm -r "$PATH_VCF_FILTERED"
-rm -r "$PATH_VCF_DP"
-rm -r "$PATH_VCF_IN_SN"
-rm -r "$PATH_VCF_AF"
-rm -r "$PATH_VCF_MERGE"
+{ rm -r "$PATH_TRIM" &&
+  rm -r "$PATH_SAM" &&
+  rm -r "$PATH_BAM_ANNO" &&
+  rm -r "$PATH_BAM_SORT" &&
+  rm -r "$PATH_VCF_TO_CONVERT" &&
+  rm -r "$PATH_VCF_FILTERED" &&
+  rm -r "$PATH_VCF_DP" &&
+  rm -r "$PATH_VCF_IN_SN" &&
+  rm -r "$PATH_VCF_AF" &&
+  rm -r "$PATH_VCF_MERGE" &&
+  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 121
 
 echo "Done"

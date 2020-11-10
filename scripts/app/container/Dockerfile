@@ -42,7 +42,8 @@ RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtool
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
                             php-xml php-mbstring zip php-zip php-curl php-intl pigz && \
     apt autoremove -y && \
-    echo "ServerName localhost" >> /etc/apache2/apache2.conf
+    echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
+    update-java-alternatives -s "java-1.8.0-openjdk-amd64"
 
 # Fix certificate issues
 RUN apt-get update && \
