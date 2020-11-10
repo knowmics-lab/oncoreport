@@ -1,4 +1,4 @@
-library(knitr)
-library(kableExtra)
-library(dplyr)
-library(stringr)
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(kableExtra))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(stringr))

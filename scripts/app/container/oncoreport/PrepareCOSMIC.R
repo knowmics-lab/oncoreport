@@ -1,8 +1,8 @@
 args <- commandArgs(trailingOnly = TRUE)
 
-library(dplyr)
-library(data.table)
-library(stringr)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(stringr))
 
 cosmic.path <- args[1]
 genome <- args[2]

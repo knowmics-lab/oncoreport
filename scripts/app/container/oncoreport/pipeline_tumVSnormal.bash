@@ -1,5 +1,9 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+# shellcheck disable=SC1090
+source "$SCRIPT_DIR/path.bash"
+
 usage() {
   echo "Usage: $0 [-gender/-g patient gender ]
   [-surname/-s patient surname ]
