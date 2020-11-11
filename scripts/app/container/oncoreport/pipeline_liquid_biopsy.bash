@@ -125,9 +125,12 @@ while [ -n "$1" ]; do
     ;;
   -threads | -th)
     threads="$2"
+    MAX_PROC=$(nproc)
     echo "The value provided for threads is $threads"
     if ((threads <= 0)); then
       exit_abnormal_usage "Error: Threads must be greater than zero."
+    elif ((threads > MAX_PROC)); then
+      exit_abnormal_usage "Error: Thread number is greater than the maximum value ($MAX_PROC)."
     fi
     shift
     ;;

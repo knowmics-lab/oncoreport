@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -214,6 +213,7 @@
       <workItem from="1604949881958" duration="2284000" />
       <workItem from="1604995157758" duration="748000" />
       <workItem from="1605042162135" duration="599000" />
+      <workItem from="1605119335368" duration="599000" />
     </task>
     <servers />
   </component>

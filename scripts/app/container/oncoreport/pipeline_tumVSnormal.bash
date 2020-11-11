@@ -9,10 +9,9 @@ usage() {
   [-surname/-s patient surname ]
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
-  [-idx_path/-ip index path]
   [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
-  [-index/-idx index must be hg19 or hg38]
+  [-genome/-gn genome version: hg19 or hg38]
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
   [-normal1/-nm1 first fastq sample]
@@ -22,9 +21,20 @@ usage() {
   [-paired/-pr must be yes if ubam paired sample is loaded otherwise, if ubam is not paired, it must be no]
   [-bamt/-bt bam or sam tumor sample]
   [-bamn/-bn bam or sam normal sample]
-  [-vcf/-v vcf sample]
-  [-database/-db database path]" 1>&2
+  [-vcf/-v vcf sample]" 1>&2
 }
+
+exit_abnormal_code() {
+  echo "$1" 1>&2
+  exit "$2"
+}
+
+exit_abnormal_usage() {
+  echo "$1" 1>&2
+  usage
+  exit 1
+}
+
 exit_abnormal() {
   usage
   exit 1
@@ -71,12 +81,8 @@ while [ -n "$1" ]; do
   -paired | -pr)
     paired="$2"
     echo "The value provided for paired is $paired"
-    if ! [ $paired = "yes" ]; then
-      if ! [ $paired = "no" ]; then
-        echo "Error: paired must be equal to yes or no."
-        exit_abnormal
-        exit 1
-      fi
+    if ! { [ "$paired" = "yes" ] || [ "$paired" = "no" ]; }; then
+      exit_abnormal_usage "Error: paired must be equal to yes or no."
     fi
     shift
     ;;
@@ -104,109 +110,65 @@ while [ -n "$1" ]; do
     age="$2"
     re_isanum='^[0-9]+$'
     echo "The value provided for patient age is $age"
-    if ! [[ $age =~ $re_isanum ]]; then
-      echo "Error: Age must be a positive, whole number."
-      exit_abnormal
-      exit 1
-    elif [ $age -eq "0" ]; then
-      echo "Error: Age must be greater than zero."
-      exit_abnormal
-      exit 1
+    if ! [[ "$age" =~ $re_isanum ]]; then
+      exit_abnormal_usage "Error: Age must be a positive integer number."
+    elif ((age < 0)); then
+      exit_abnormal_usage "Error: Age must be greater than zero."
     fi
     shift
     ;;
   -tumor | -t)
     tumor="$2"
     echo "The value provided for patient tumor is $tumor"
-    if cat disease_list.txt | grep -w "$tumor" >/dev/null; then
-      command
-    else
-      echo "Error: Tumor must be a value from the list disease_list.txt"
-      exit_abnormal
-      exit 1
-    fi
-    shift
-    ;;
-  -idx_path | -ip)
-    index_path="$2"
-    echo "The value provided for path index is $index_path"
-    if [ ! -d "$index_path" ]; then
-      echo "Error: You must pass a valid directory"
-      exit_abnormal
-      exit 1
+    if ! grep -w "$tumor" "$ONCOREPORT_DATABASES_PATH/disease_list.txt" >/dev/null; then
+      exit_abnormal_usage "Error: Invalid tumor supplied."
     fi
     shift
     ;;
   -project_path | -pp)
     project_path="$2"
     echo "The value provided for project path is $project_path"
-    if [ ! -d "$project_path" ]; then
-      echo "Error: You must pass a valid directory"
-      exit_abnormal
-      exit 1
+    if [ ! -d "$project_path" ] && ! mkdir -p "$project_path"; then
+      exit_abnormal_usage "Error: You must pass a valid directory."
     fi
     shift
     ;;
   -threads | -th)
     threads="$2"
+    MAX_PROC=$(nproc)
     echo "The value provided for threads is $threads"
-    if [ $threads -eq "0" ]; then
-      echo "Error: Threads must be greater than zero."
-      exit_abnormal
+    if ((threads <= 0)); then
+      exit_abnormal_usage "Error: Threads must be greater than zero."
+    elif ((threads > MAX_PROC)); then
+      exit_abnormal_usage "Error: Thread number is greater than the maximum value ($MAX_PROC)."
     fi
     shift
     ;;
-  -index | -idx)
+  -genome | -gn)
     index="$2"
-    echo "The value provided for index is $index"
-    if ! [ $index = "hg19" ]; then
-      if ! [ $index = "hg38" ]; then
-        echo "Error: index must be equal to hg19 or hg38."
-        exit_abnormal
-        exit 1
-      fi
-    fi
-    shift
-    ;;
-  -database | -db)
-    database="$2"
-    echo "The value provided for database path is $database"
-    if [ ! -d "$database" ]; then
-      echo "Error: You must pass a valid database directory"
-      exit_abnormal
+    echo "The value provided for genome is $index"
+    if ! { [ "$index" = "hg19" ] || [ "$index" = "hg38" ]; }; then
+      exit_abnormal_usage "Error: genome should be equal to hg19 or hg38."
     fi
     shift
     ;;
   *)
-    exit_abnormal
-    shift
-    ;;
-  #Questo non so se lasciarlo perché non so se funziona come su getopts
-  --help | -h)
-    help="$2"
-    usage
-    exit_abnormal
-    exit 1
+    exit_abnormal_usage "Error: invalid parameter \"$1\"."
     shift
     ;;
   esac
   shift
 done
 
-if ([[ -z "$fastq1" ]] || [[ -z "$normal1" ]]) && ([[ -z "$ubamt" ]] || [[ -z "$ubamn" ]] || [[ -z "$paired" ]]) && ([[ -z "$bamt" ]] || [[ -z "$bamn" ]]) && [[ -z "$vcf" ]]; then
-  echo "At least one couple of parameter between \$fastq1 - \$normal1, \$ubamt -\$ubamn - \$paired, \$bamt - \$bamn, or the parameter \$vcf must be passed"
-  usage
-  exit
+if { [[ -z "$fastq1" ]] || [[ -z "$normal1" ]]; } && { [[ -z "$ubamt" ]] || [[ -z "$ubamn" ]] || [[ -z "$paired" ]]; } && { [[ -z "$bamt" ]] || [[ -z "$bamn" ]]; } && [[ -z "$vcf" ]]; then
+  exit_abnormal_usage "One input file should be specified."
 fi
 
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
-  echo "all parameters must be passed"
-  usage
-  exit
+if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
+  exit_abnormal_usage "All parameters must be passed"
 fi
 
 PATH_PROJECT=$project_path
-PATH_INDEX=$index_path
 PATH_TRIM_TUMOR=$PATH_PROJECT/trim_tumor
 PATH_TRIM_NORMAL=$PATH_PROJECT/trim_normal
 PATH_SAM_TUMOR=$PATH_PROJECT/sam_tumor
@@ -230,258 +192,202 @@ PATH_OUTPUT=$PATH_PROJECT/output
 
 echo "Removing old folders"
 
-if [[ -d $PATH_MARK_DUP_TUMOR ]]; then
-  rm -r $PATH_MARK_DUP_TUMOR
-fi
-if [[ -d $PATH_MARK_DUP_NORMAL ]]; then
-  rm -r $PATH_MARK_DUP_NORMAL
-fi
-if [[ -d $PATH_VCF_FILTERED ]]; then
-  rm -r $PATH_VCF_FILTERED
-fi
-if [[ -d $PATH_VCF_PASS ]]; then
-  rm -r $PATH_VCF_PASS
-fi
-if [[ -d $PATH_TXT ]]; then
-  rm -r $PATH_TXT
-fi
+[[ -d $PATH_MARK_DUP_TUMOR ]] && rm -r "$PATH_MARK_DUP_TUMOR"
+[[ -d $PATH_MARK_DUP_NORMAL ]] && rm -r "$PATH_MARK_DUP_NORMAL"
+[[ -d $PATH_VCF_FILTERED ]] && rm -r "$PATH_VCF_FILTERED"
+[[ -d $PATH_VCF_PASS ]] && rm -r "$PATH_VCF_PASS"
+[[ -d $PATH_TXT ]] && rm -r "$PATH_TXT"
 
 echo "Creating temp folders"
 
-if [[ ! -d $PATH_TRIM_TUMOR ]]; then
-  mkdir $PATH_TRIM_TUMOR
-fi
-if [[ ! -d $PATH_TRIM_NORMAL ]]; then
-  mkdir $PATH_TRIM_NORMAL
-fi
-if [[ ! -d $PATH_SAM_TUMOR ]]; then
-  mkdir $PATH_SAM_TUMOR
-fi
-if [[ ! -d $PATH_SAM_NORMAL ]]; then
-  mkdir $PATH_SAM_NORMAL
-fi
-if [[ ! -d $PATH_BAM_ANNO_TUMOR ]]; then
-  mkdir $PATH_BAM_ANNO_TUMOR
-fi
-if [[ ! -d $PATH_BAM_ANNO_NORMAL ]]; then
-  mkdir $PATH_BAM_ANNO_NORMAL
-fi
-if [[ ! -d $PATH_BAM_ORD_TUMOR ]]; then
-  mkdir $PATH_BAM_ORD_TUMOR
-fi
-if [[ ! -d $PATH_BAM_ORD_NORMAL ]]; then
-  mkdir $PATH_BAM_ORD_NORMAL
-fi
-if [[ ! -d $PATH_BAM_SORT_TUMOR ]]; then
-  mkdir $PATH_BAM_SORT_TUMOR
-fi
-if [[ ! -d $PATH_BAM_SORT_NORMAL ]]; then
-  mkdir $PATH_BAM_SORT_NORMAL
-fi
-if [[ ! -d $PATH_MARK_DUP_TUMOR ]]; then
-  mkdir $PATH_MARK_DUP_TUMOR
-fi
-if [[ ! -d $PATH_MARK_DUP_NORMAL ]]; then
-  mkdir $PATH_MARK_DUP_NORMAL
-fi
-if [[ ! -d $PATH_VCF_MUT ]]; then
-  mkdir $PATH_VCF_MUT
-fi
-if [[ ! -d $PATH_VCF_FILTERED ]]; then
-  mkdir $PATH_VCF_FILTERED
-fi
-if [[ ! -d $PATH_VCF_PASS ]]; then
-  mkdir $PATH_VCF_PASS
-fi
-if [[ ! -d $PATH_CONVERTED ]]; then
-  mkdir $PATH_CONVERTED
-fi
-if [[ ! -d $PATH_TXT ]]; then
-  mkdir $PATH_TXT
-fi
-if [[ ! -d $PATH_TRIAL ]]; then
-  mkdir $PATH_TRIAL
-fi
-if [[ ! -d $PATH_REFERENCE ]]; then
-  mkdir $PATH_REFERENCE
-fi
-if [[ ! -d $PATH_OUTPUT ]]; then
-  mkdir $PATH_OUTPUT
-fi
+[[ ! -d $PATH_TRIM_TUMOR ]] && mkdir "$PATH_TRIM_TUMOR"
+[[ ! -d $PATH_TRIM_NORMAL ]] && mkdir "$PATH_TRIM_NORMAL"
+[[ ! -d $PATH_SAM_TUMOR ]] && mkdir "$PATH_SAM_TUMOR"
+[[ ! -d $PATH_SAM_NORMAL ]] && mkdir "$PATH_SAM_NORMAL"
+[[ ! -d $PATH_BAM_ANNO_TUMOR ]] && mkdir "$PATH_BAM_ANNO_TUMOR"
+[[ ! -d $PATH_BAM_ANNO_NORMAL ]] && mkdir "$PATH_BAM_ANNO_NORMAL"
+[[ ! -d $PATH_BAM_ORD_TUMOR ]] && mkdir "$PATH_BAM_ORD_TUMOR"
+[[ ! -d $PATH_BAM_ORD_NORMAL ]] && mkdir "$PATH_BAM_ORD_NORMAL"
+[[ ! -d $PATH_BAM_SORT_TUMOR ]] && mkdir "$PATH_BAM_SORT_TUMOR"
+[[ ! -d $PATH_BAM_SORT_NORMAL ]] && mkdir "$PATH_BAM_SORT_NORMAL"
+[[ ! -d $PATH_MARK_DUP_TUMOR ]] && mkdir "$PATH_MARK_DUP_TUMOR"
+[[ ! -d $PATH_MARK_DUP_NORMAL ]] && mkdir "$PATH_MARK_DUP_NORMAL"
+[[ ! -d $PATH_VCF_MUT ]] && mkdir "$PATH_VCF_MUT"
+[[ ! -d $PATH_VCF_FILTERED ]] && mkdir "$PATH_VCF_FILTERED"
+[[ ! -d $PATH_VCF_PASS ]] && mkdir "$PATH_VCF_PASS"
+[[ ! -d $PATH_CONVERTED ]] && mkdir "$PATH_CONVERTED"
+[[ ! -d $PATH_TXT ]] && mkdir "$PATH_TXT"
+[[ ! -d $PATH_TRIAL ]] && mkdir "$PATH_TRIAL"
+[[ ! -d $PATH_REFERENCE ]] && mkdir "$PATH_REFERENCE"
+[[ ! -d $PATH_OUTPUT ]] && mkdir "$PATH_OUTPUT"
 
 #TUMOR ANALYSIS
-
-if [ ! -z "$ubamt" ]; then
+if [ -n "$ubamt" ]; then
   UB=$(basename "${ubamt%.*}")
-  PATH_FASTQ=$PATH_PROJECT/fastq
-  mkdir $PATH_FASTQ
+  PATH_FASTQ="$PATH_PROJECT/fastq"
+  [[ ! -d "$PATH_FASTQ" ]] && mkdir "$PATH_FASTQ"
   if [[ "$paired" == "yes" ]]; then
-    bamToFastq -i $ubamt -fq $PATH_FASTQ/${UB}.fq -fq2 $PATH_FASTQ/${UB}_2.fq
-    $fastq1 = $PATH_FASTQ/${UB}.fq
-    $fastq2 = $PATH_FASTQ/${UB}_2.fq
+    bamToFastq -i "$ubamt" -fq "$PATH_FASTQ/${UB}_1.fq" -fq2 "$PATH_FASTQ/${UB}_2.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
+    fastq1="$PATH_FASTQ/${UB}_1.fq"
+    fastq2="$PATH_FASTQ/${UB}_2.fq"
   elif [[ "$paired" == "no" ]]; then
-    bamToFastq -i $ubamt -fq $PATH_FASTQ/${UB}.fq
-    $fastq1 = $PATH_FASTQ/${UB}.fq
+    bamToFastq -i "$ubamt" -fq "$PATH_FASTQ/${UB}.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
+    fastq1="$PATH_FASTQ/${UB}.fq"
   fi
 fi
 
-if [ ! -z "$fastq1" ] && [ ! -z "$normal1" ]; then
+if [ -n "$fastq1" ]; then
   FQ1=$(basename "$fastq1")
-  if [ ${FQ1: -3} == ".gz" ]; then
-    echo "Fastq1 tumor extraction"
-    gunzip $fastq1
-  fi
-fi
-
-if [ ! -z "$fastq2" ] && [ ! -z "$normal2" ]; then
-  FQ2=$(basename "$fastq2")
-  if [ ${FQ2: -3} == ".gz" ]; then
-    echo "Fastq2 tumor extraction"
-    gunzip $fastq2
-  fi
-fi
-
-if [ ! -z "$fastq1" ]; then
   FASTQ1_NAME=$(basename "${FQ1%.*}")
-  echo "The file loaded is a fastq"
-  #Setting cutadapt path
-  export PATH=/root/.local/bin/:$PATH
-  if [ -z "$fastq2" ]; then
-    echo "Tumor sample trimming"
-    TrimGalore-0.6.0/trim_galore $fastq1 -o $PATH_TRIM_TUMOR/
-    echo "Tumor sample alignment"
-    bowtie2 -p $threads -x $PATH_INDEX/${index} -U $PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
+  if [ "${FQ1: -3}" == ".gz" ]; then
+    FASTQ1_NAME=$(basename "${FASTQ1_NAME%.*}")
+  fi
+  if ((threads > 7)); then
+    RT=6
   else
-    FASTQ2_NAME=$(basename "${FQ2%.*}")
+    RT=$threads
+  fi
+  if [ -z "$fastq2" ]; then
+    echo "Tumor FASTQ file is not paired."
     echo "Tumor sample trimming"
-    TrimGalore-0.6.0/trim_galore -paired $fastq1 $fastq2 -o $PATH_TRIM_TUMOR/
+    trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 102
     echo "Tumor sample alignment"
-    bowtie2 -p $threads -x $PATH_INDEX/${index} -1 $PATH_TRIM/${FASTQ1_NAME}_val_1.fq -2 $PATH_TRIM/${FASTQ2_NAME}_val_2.fq -S $PATH_SAM_TUMOR/$FASTQ1_NAME.sam
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM_TUMOR/$FASTQ1_NAME.sam" || exit_abnormal_code "Unable to align input file" 103
+  else
+    echo "Tumor FASTQ file is paired."
+    FQ2=$(basename "$fastq2")
+    FASTQ2_NAME=$(basename "${FQ2%.*}")
+    if [ "${FQ2: -3}" == ".gz" ]; then
+      FASTQ2_NAME=$(basename "${FASTQ2_NAME%.*}")
+    fi
+    echo "Tumor sample trimming"
+    trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip --paired "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 102
+    echo "Tumor sample alignment"
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM_TUMOR/$FASTQ1_NAME.sam" || exit_abnormal_code "Unable to align input file" 103
   fi
 fi
 
 if [ -z "$bamt" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
-elif [ ! -z "$bamt" ]; then
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam" O="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
+elif [ -n "$bamt" ]; then
   FASTQ1_NAME=$(basename "${bamt%.*}")
   echo "Adding Read Group"
-  java -jar picard.jar AddOrReplaceReadGroups I=$bamt O=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $FASTQ1_NAME
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
 fi
 
 if [ -z "$vcf" ]; then
   echo "Sorting"
-  java -jar picard.jar SortSam I=$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam O=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam SORT_ORDER=coordinate
+  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" O="$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 105
   echo "Reordering"
-  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam O=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam" O="$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 106
   echo "Duplicates Removal"
-  java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt
-  rm -r $PATH_SAM_TUMOR
-  rm -r $PATH_BAM_ANNO_TUMOR
-  rm -r $PATH_BAM_SORT_TUMOR
+  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt" || exit_abnormal_code "Unable to remove duplicates" 107
 fi
 
 #NORMAL ANALYSIS
-
-if [ ! -z "$ubamn" ]; then
+if [ -n "$ubamn" ]; then
   UBN=$(basename "${ubamn%.*}")
-  PATH_NORMAL=$PATH_PROJECT/normal
-  mkdir $PATH_NORMAL
+  PATH_NORMAL="$PATH_PROJECT/normal"
+  [[ ! -d "$PATH_NORMAL" ]] && mkdir "$PATH_NORMAL"
   if [[ "$paired" == "yes" ]]; then
-    bamToFastq -i $ubamn -fq $PATH_NORMAL/${UBN}.fq -fq2 $PATH_NORMAL/${UBN}_2.fq
-    $normal1 = $PATH_NORMAL/${UBN}.fq
-    $normal2 = $PATH_NORMAL/${UBN}_2.fq
+    bamToFastq -i "$ubamn" -fq "$PATH_NORMAL/${UBN}_1.fq" -fq2 "$PATH_NORMAL/${UBN}_2.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 108
+    normal1="$PATH_NORMAL/${UBN}_1.fq"
+    normal2="$PATH_NORMAL/${UBN}_2.fq"
   elif [[ "$paired" == "no" ]]; then
-    bamToFastq -i $ubamn -fq $PATH_NORMAL/${UBN}.fq
-    $normal1 = $PATH_NORMAL/${UBN}.fq
+    bamToFastq -i "$ubamn" -fq "$PATH_NORMAL/${UBN}.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 108
+    normal1="$PATH_NORMAL/${UBN}.fq"
   fi
 fi
 
-if [ ! -z "$normal1" ]; then
+if [ -n "$normal1" ]; then
   NM1=$(basename "$normal1")
-  if [ ${NM1: -3} == ".gz" ]; then
-    echo "Fastq1 normal extraction"
-    gunzip $normal1
-  fi
-fi
-
-if [ ! -z "$normal2" ]; then
-  NM2=$(basename "$normal2")
-  if [ ${NM2: -3} == ".gz" ]; then
-    echo "Fastq2 normal extraction"
-    gunzip $normal2
-  fi
-fi
-
-if [ ! -z "$normal1" ]; then
   NORMAL1_NAME=$(basename "${NM1%.*}")
-  echo "The file loaded is a fastq"
-  #Setting cutadapt path
-  if [ -z "$normal2" ]; then
-    echo "Normal sample trimming"
-    TrimGalore-0.6.0/trim_galore $normal1 -o $PATH_TRIM_TUMOR/
-    echo "Normal sample alignment"
-    bowtie2 -p $threads -x $PATH_INDEX/${index} -U $PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq -S $PATH_SAM_NORMAL/${NORMAL1_NAME}.sam
+  if [ "${NM1: -3}" == ".gz" ]; then
+    NORMAL1_NAME=$(basename "${NORMAL1_NAME%.*}")
+  fi
+  if ((threads > 7)); then
+    RT=6
   else
-    NORMAL2_NAME=$(basename "${NM2%.*}")
+    RT=$threads
+  fi
+  if [ -z "$normal2" ]; then
+    echo "Normal FASTQ file is not paired."
     echo "Normal sample trimming"
-    TrimGalore-0.6.0/trim_galore -paired $normal1 $normal2 -o $PATH_TRIM_NORMAL/
+    trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip "$normal1" || exit_abnormal_code "Unable to trim input file" 109
     echo "Normal sample alignment"
-    bowtie2 -p $threads -x $PATH_INDEX/${index} -1 $PATH_TRIM/${NORMAL1_NAME}_val_1.fq -2 $PATH_TRIM/${NORMAL2_NAME}_val_2.fq -S $PATH_SAM_NORMAL/${NORMAL1_NAME}.sam
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" -S "$PATH_SAM_NORMAL/${NORMAL1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 110
+  else
+    echo "Normal FASTQ file is paired."
+    NM2=$(basename "$normal2")
+    NORMAL2_NAME=$(basename "${NM2%.*}")
+    if [ "${NM2: -3}" == ".gz" ]; then
+      NORMAL2_NAME=$(basename "${NORMAL2_NAME%.*}")
+    fi
+    echo "Normal sample trimming"
+    trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip --paired "$normal1" "$normal2" || exit_abnormal_code "Unable to trim input file" 109
+    echo "Normal sample alignment"
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq" -2 "$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq" -S "$PATH_SAM_NORMAL/${NORMAL1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 110
   fi
 fi
 
 if [ -z "$bamn" ] && [ -z "$vcf" ]; then
   echo "AddingRead Group"
-  java -jar picard.jar AddOrReplaceReadGroups I=$PATH_SAM_NORMAL/$NORMAL1_NAME.sam O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
-elif [ ! -z "$bamn" ]; then
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_NORMAL/$NORMAL1_NAME.sam" O="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
+elif [ -n "$bamn" ]; then
   NORMAL1_NAME=$(basename "${bamn%.*}")
-  java -jar picard.jar AddOrReplaceReadGroups I=$bamn O=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM= $NORMAL1_NAME
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
 fi
 
 if [ -z "$vcf" ]; then
   echo "Sorting"
-  java -jar picard.jar SortSam I=$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam O=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam SORT_ORDER=coordinate
+  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" O="$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 112
   echo "Reordering"
-  java -jar picard.jar ReorderSam I=$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam O=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam SEQUENCE_DICTIONARY=$PATH_INDEX/${index}.dict CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam" O="$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 113
   echo "Duplicates Removal"
-  java -jar picard.jar MarkDuplicates I=$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam REMOVE_DUPLICATES=TRUE O=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam CREATE_INDEX=TRUE M=$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt
-  rm -r $PATH_SAM_NORMAL
-  rm -r $PATH_BAM_ANNO_NORMAL
-  rm -r $PATH_BAM_SORT_NORMAL
+  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt" || exit_abnormal_code "Unable to remove duplicates" 114
 fi
 
 # VCF ANALYSIS
 
 if [ -z "$vcf" ]; then
   echo "Variant Calling"
-  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar Mutect2 -R $PATH_INDEX/${index}.fa -I $PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam -tumor $FASTQ1_NAME -I $PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam -normal $NORMAL1_NAME -O $PATH_VCF_MUT/$FASTQ1_NAME.vcf -mbq 25
+  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam" -tumor "$FASTQ1_NAME" -I "$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam" -normal "$NORMAL1_NAME" -O "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 115
   echo "Variant Filtering"
-  java -jar gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar FilterMutectCalls -V $PATH_VCF_MUT/$FASTQ1_NAME.vcf -O $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf
+  java -jar "$GATK_PATH" FilterMutectCalls -V "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -O "$PATH_VCF_FILTERED/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to filter variants" 116
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' $PATH_VCF_FILTERED/$FASTQ1_NAME.vcf >$PATH_VCF_PASS/$FASTQ1_NAME.vcf
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/$FASTQ1_NAME.vcf" >"$PATH_VCF_PASS/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
 else
-  FASTQ1_NAME=$(basename $vcf ".vcf")
-  cp $vcf $PATH_VCF_PASS/
+  FASTQ1_NAME=$(basename "$vcf" ".vcf")
+  cp "$vcf" "$PATH_VCF_PASS/" || exit_abnormal_code "Unable to copy VCF file" 118
 fi
 
-echo "Annotation"
 type=tumnorm
-sed -i '/#CHROM/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-sed -i '/chr/,$!d' $PATH_VCF_PASS/$FASTQ1_NAME.vcf
-cut -f1,2,4,5 $PATH_VCF_PASS/$FASTQ1_NAME.vcf >$PATH_CONVERTED/$FASTQ1_NAME.txt
-Rscript MergeInfo.R $index $database $PATH_PROJECT $FASTQ1_NAME "$tumor" $type
+{ sed -i '/#CHROM/,$!d' "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" &&
+  sed -i '/chr/,$!d' "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" &&
+  cut -f1,2,4,5 "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" >"$PATH_CONVERTED/$FASTQ1_NAME.txt"; } ||
+  exit_abnormal_code "Unable to prepare variants for annotation" 119
+
+echo "Annotation of VCF files"
+Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 120
 
 # REPORT CREATION
 
 echo "Report creation"
-R -e "rmarkdown::render('./CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args $name $surname $id $gender $age "$tumor" $FASTQ1_NAME $PATH_PROJECT $database $type
+R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 121
 
-rm -r $PATH_TRIM_NORMAL
-rm -r $PATH_BAM_ORD_NORMAL
-rm -r $PATH_TRIM_TUMOR
-rm -r $PATH_BAM_ORD_TUMOR
-rm -r $PATH_VCF_MUT
-rm -r $PATH_CONVERTED
+{ rm -r "$PATH_SAM_TUMOR" &&
+  rm -r "$PATH_BAM_ANNO_TUMOR" &&
+  rm -r "$PATH_BAM_SORT_TUMOR" &&
+  rm -r "$PATH_SAM_NORMAL" &&
+  rm -r "$PATH_BAM_ANNO_NORMAL" &&
+  rm -r "$PATH_BAM_SORT_NORMAL" &&
+  rm -r "$PATH_TRIM_NORMAL" &&
+  rm -r "$PATH_BAM_ORD_NORMAL" &&
+  rm -r "$PATH_TRIM_TUMOR" &&
+  rm -r "$PATH_BAM_ORD_TUMOR" &&
+  rm -r "$PATH_VCF_MUT" &&
+  rm -r "$PATH_CONVERTED" &&
+  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
 
-echo "done"
+echo "Done"
