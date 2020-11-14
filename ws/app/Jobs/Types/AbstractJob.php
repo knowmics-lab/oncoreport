@@ -11,8 +11,10 @@ namespace App\Jobs\Types;
 use App\Models\Job;
 use App\Models\Job as JobModel;
 use App\Utils;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use RuntimeException;
+use Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
@@ -44,7 +46,12 @@ abstract class AbstractJob
     /**
      * @var \App\Models\Job
      */
-    protected $model;
+    protected Job $model;
+
+    /**
+     * @var \Illuminate\Contracts\Filesystem\Filesystem
+     */
+    protected Filesystem $publicFolder;
 
     /**
      * AbstractJob constructor.
@@ -54,6 +61,7 @@ abstract class AbstractJob
     public function __construct(JobModel $model)
     {
         $this->model = $model;
+        $this->publicFolder = Storage::disk('public');
     }
 
 
@@ -235,6 +243,116 @@ abstract class AbstractJob
         } catch (ProcessFailedException $e) {
             throw Utils::mapCommandException($e, $errorCodeMap);
         }
+    }
+
+    /**
+     * Checks if a file is exists in the current job directory
+     *
+     * @param string $file
+     *
+     * @return bool
+     */
+    protected function fileExistsRelative(string $file): bool
+    {
+        return $this->publicFolder->exists($file);
+    }
+
+    /**
+     * Checks if a file is exists in the current job directory
+     *
+     * @param string $file
+     *
+     * @return bool
+     */
+    protected function fileExists(string $file): bool
+    {
+        if (empty($file)) {
+            return false;
+        }
+
+        return $this->fileExistsRelative($this->model->getJobDirectory() . '/' . $file);
+    }
+
+    /**
+     * Checks if a parameter contains the name of a valid file.
+     * A file is considered valid only if it exists in the current job directory
+     *
+     * @param string $parameter
+     *
+     * @return bool
+     */
+    protected function validateFileParameter(string $parameter): bool
+    {
+        $file = $this->model->getParameter($parameter);
+
+        return $this->fileExists($file);
+    }
+
+
+    /**
+     * Helper function used to generate absolute path and url of a relative path
+     *
+     * @param string $pathRelative
+     *
+     * @return array
+     */
+    private function pathHelper(string $pathRelative): array
+    {
+        $pathAbsolute = $this->model->absoluteJobPath($pathRelative);
+        $url = $this->publicFolder->url($pathRelative);
+
+        return [$pathRelative, $pathAbsolute, $url];
+    }
+
+    /**
+     * Returns the paths and url of a new file in the job directory
+     * The result is an array with 3 elements: [0] relative path; [1] absolute path; [2] url.
+     *
+     * @param string $prefix
+     * @param string $suffix
+     *
+     * @return array
+     */
+    protected function getJobFilePaths(string $prefix = '', string $suffix = ''): array
+    {
+        return $this->pathHelper($this->model->getJobFile($prefix, $suffix));
+    }
+
+    /**
+     * This function returns the relative path, absolute path, and url of a file.
+     * The result is an array with 3 elements: [0] relative path; [1] absolute path; [2] url.
+     *
+     * @param string $filename
+     *
+     * @return array
+     */
+    protected function getFilePaths(string $filename): array
+    {
+        return $this->pathHelper($this->model->getJobDirectory() . '/' . $filename);
+    }
+
+    /**
+     * This function returns the relative path and url of a file to be saved as output of a job.
+     *
+     * @param string|array $filename
+     *
+     * @return array|null
+     */
+    protected function getFilePathsForOutput($filename): ?array
+    {
+        if (is_array($filename) && count($filename) === 3) {
+            if (!$this->fileExistsRelative($filename[0])) {
+                return null;
+            }
+
+            return ['path' => $filename[0], 'url' => $filename[2]];
+        }
+        [$path, , $url] = $this->pathHelper($filename);
+        if (!$this->fileExistsRelative($path)) {
+            return null;
+        }
+
+        return compact('path', 'url');
     }
 
     /**

@@ -12,7 +12,7 @@ sample.name <- args[7]
 ```
 
 ---
-pagetitle: Report of `r sample.name`
+pagetitle: Report of `r paste(args[1], args[2], sep=" ")`
 ---
 
 ```{r, include=FALSE}

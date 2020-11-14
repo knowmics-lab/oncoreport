@@ -20,5 +20,5 @@ if (nrow(data) > 0)
 } else {
   data$Type <- character()
 }
-write.table(data, paste0(project.path, "/converted/", sample.name, ".txt"),
+write.table(data, paste0(project.path, "/converted/variants.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")

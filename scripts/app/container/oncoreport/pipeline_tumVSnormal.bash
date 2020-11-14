@@ -252,7 +252,7 @@ if [ -n "$fastq1" ]; then
     echo "Tumor sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 102
     echo "Tumor sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM_TUMOR/$FASTQ1_NAME.sam" || exit_abnormal_code "Unable to align input file" 103
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM_TUMOR/aligned.sam" || exit_abnormal_code "Unable to align input file" 103
   else
     echo "Tumor FASTQ file is paired."
     FQ2=$(basename "$fastq2")
@@ -263,26 +263,26 @@ if [ -n "$fastq1" ]; then
     echo "Tumor sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip --paired "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 102
     echo "Tumor sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM_TUMOR/$FASTQ1_NAME.sam" || exit_abnormal_code "Unable to align input file" 103
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM_TUMOR/aligned.sam" || exit_abnormal_code "Unable to align input file" 103
   fi
 fi
 
 if [ -z "$bamt" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_TUMOR/${FASTQ1_NAME}.sam" O="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_TUMOR/aligned.sam" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
 elif [ -n "$bamt" ]; then
   FASTQ1_NAME=$(basename "${bamt%.*}")
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
 fi
 
 if [ -z "$vcf" ]; then
   echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_TUMOR/${FASTQ1_NAME}_annotated.bam" O="$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 105
+  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_TUMOR/annotated.bam" O="$PATH_BAM_SORT_TUMOR/sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 105
   echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_TUMOR/${FASTQ1_NAME}_sorted.bam" O="$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 106
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_TUMOR/sorted.bam" O="$PATH_BAM_ORD_TUMOR/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 106
   echo "Duplicates Removal"
-  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_TUMOR/${FASTQ1_NAME}_ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_marked.txt" || exit_abnormal_code "Unable to remove duplicates" 107
+  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_TUMOR/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_TUMOR/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_TUMOR/marked.txt" || exit_abnormal_code "Unable to remove duplicates" 107
 fi
 
 #NORMAL ANALYSIS
@@ -316,7 +316,7 @@ if [ -n "$normal1" ]; then
     echo "Normal sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip "$normal1" || exit_abnormal_code "Unable to trim input file" 109
     echo "Normal sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" -S "$PATH_SAM_NORMAL/${NORMAL1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 110
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" -S "$PATH_SAM_NORMAL/aligned.sam" || exit_abnormal_code "Unable to align input file" 110
   else
     echo "Normal FASTQ file is paired."
     NM2=$(basename "$normal2")
@@ -327,45 +327,45 @@ if [ -n "$normal1" ]; then
     echo "Normal sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip --paired "$normal1" "$normal2" || exit_abnormal_code "Unable to trim input file" 109
     echo "Normal sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq" -2 "$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq" -S "$PATH_SAM_NORMAL/${NORMAL1_NAME}.sam" || exit_abnormal_code "Unable to align input file" 110
+    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq" -2 "$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq" -S "$PATH_SAM_NORMAL/aligned.sam" || exit_abnormal_code "Unable to align input file" 110
   fi
 fi
 
 if [ -z "$bamn" ] && [ -z "$vcf" ]; then
   echo "AddingRead Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_NORMAL/$NORMAL1_NAME.sam" O="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_NORMAL/aligned.sam" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
 elif [ -n "$bamn" ]; then
   NORMAL1_NAME=$(basename "${bamn%.*}")
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
 fi
 
 if [ -z "$vcf" ]; then
   echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/${NORMAL1_NAME}_annotated.bam" O="$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 112
+  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/annotated.bam" O="$PATH_BAM_SORT_NORMAL/sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 112
   echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/${NORMAL1_NAME}_sorted.bam" O="$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 113
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/sorted.bam" O="$PATH_BAM_ORD_NORMAL/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 113
   echo "Duplicates Removal"
-  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/${NORMAL1_NAME}_ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_marked.txt" || exit_abnormal_code "Unable to remove duplicates" 114
+  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/marked.txt" || exit_abnormal_code "Unable to remove duplicates" 114
 fi
 
 # VCF ANALYSIS
 
 if [ -z "$vcf" ]; then
   echo "Variant Calling"
-  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_MARK_DUP_TUMOR/${FASTQ1_NAME}_nodup.bam" -tumor "$FASTQ1_NAME" -I "$PATH_MARK_DUP_NORMAL/${NORMAL1_NAME}_nodup.bam" -normal "$NORMAL1_NAME" -O "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 115
+  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_MARK_DUP_TUMOR/nodup.bam" -tumor "$FASTQ1_NAME" -I "$PATH_MARK_DUP_NORMAL/nodup.bam" -normal "$NORMAL1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 115
   echo "Variant Filtering"
-  java -jar "$GATK_PATH" FilterMutectCalls -V "$PATH_VCF_MUT/$FASTQ1_NAME.vcf" -O "$PATH_VCF_FILTERED/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to filter variants" 116
+  java -jar "$GATK_PATH" FilterMutectCalls -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" || exit_abnormal_code "Unable to filter variants" 116
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/$FASTQ1_NAME.vcf" >"$PATH_VCF_PASS/$FASTQ1_NAME.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
 else
   FASTQ1_NAME=$(basename "$vcf" ".vcf")
-  cp "$vcf" "$PATH_VCF_PASS/" || exit_abnormal_code "Unable to copy VCF file" 118
+  cp "$vcf" "$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to copy VCF file" 118
 fi
 
 type=tumnorm
-{ sed -i '/#CHROM/,$!d' "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" &&
-  sed -i '/chr/,$!d' "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" &&
-  cut -f1,2,4,5 "$PATH_VCF_PASS/$FASTQ1_NAME.vcf" >"$PATH_CONVERTED/$FASTQ1_NAME.txt"; } ||
+{ sed -i '/#CHROM/,$!d' "$PATH_VCF_PASS/variants.vcf" &&
+  sed -i '/chr/,$!d' "$PATH_VCF_PASS/variants.vcf" &&
+  cut -f1,2,4,5 "$PATH_VCF_PASS/variants.vcf" >"$PATH_CONVERTED/variants.txt"; } ||
   exit_abnormal_code "Unable to prepare variants for annotation" 119
 
 echo "Annotation of VCF files"
@@ -374,7 +374,7 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PA
 # REPORT CREATION
 
 echo "Report creation"
-R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report_$FASTQ1_NAME.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 121
+R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 121
 
 { rm -r "$PATH_SAM_TUMOR" &&
   rm -r "$PATH_BAM_ANNO_TUMOR" &&

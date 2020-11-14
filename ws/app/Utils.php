@@ -26,6 +26,12 @@ final class Utils
 
     public const IGNORED_ERROR_CODE = '===IGNORED===';
 
+    public const VALID_GENOMES = ['hg19', 'hg38'];
+
+    public const VALID_FILTER_OPERATORS = ['lt' => '<', 'lte' => '<=', 'gt' => '>', 'gte' => '>=',];
+
+
+
     /**
      * Runs a shell command and checks for successful completion of execution
      *

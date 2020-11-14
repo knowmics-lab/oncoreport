@@ -30,8 +30,8 @@ pipeline.type <- args[7]
 #Merge germline and somatic mutations into a unique file for liquid biopsy
 if (pipeline.type == "biopsy")
 {
-  germ <- fread(paste0(project.path, "/converted/", sample.name, "_Germline.txt"))
-  som <- fread(paste0(project.path, "/converted/", sample.name, "_Somatic.txt"))
+  germ <- fread(paste0(project.path, "/converted/variants_Germline.txt"))
+  som <- fread(paste0(project.path, "/converted/variants_Somatic.txt"))
   names(germ) <- c("Chromosome", "Stop", "Ref_base", "Var_base")
   names(som) <- c("Chromosome", "Stop", "Ref_base", "Var_base")
   if (dim(germ)[1] != 0)
@@ -47,14 +47,14 @@ if (pipeline.type == "biopsy")
     som$Type <- character()
   }
   res <- merge(som, germ, all = TRUE)
-  write.table(res, paste0(project.path, "/converted/", sample.name, ".txt"),
+  write.table(res, paste0(project.path, "/converted/variants.txt"),
               quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-  unlink(paste0(project.path, "/converted/", sample.name, "_Germline.txt"))
-  unlink(paste0(project.path, "/converted/", sample.name, "_Somatic.txt"))
+  unlink(paste0(project.path, "/converted/variants_Germline.txt"))
+  unlink(paste0(project.path, "/converted/variants_Somatic.txt"))
 }
 
 #Read patient info
-pat <- fread(paste0(project.path, "/converted/", sample.name, ".txt"))
+pat <- fread(paste0(project.path, "/converted/variants.txt"))
 colnames(pat)[1] <- "Chromosome"
 colnames(pat)[2] <- "Stop"
 colnames(pat)[3] <- "Ref_base"

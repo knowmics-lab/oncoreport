@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.Rmd" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.Rmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/ProcessVariantTable.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/ProcessVariantTable.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,19 +181,19 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Api" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Jobs/Types" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
+    <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="Laravel.SettingsForm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Jobs/Types" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
       <recent name="$PROJECT_DIR$/app/Http/Resources" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/app/Console/Commands" />
-      <recent name="$PROJECT_DIR$/app/Providers" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/storage/app" />
@@ -214,6 +223,9 @@
       <workItem from="1604995157758" duration="748000" />
       <workItem from="1605042162135" duration="599000" />
       <workItem from="1605119335368" duration="599000" />
+      <workItem from="1605175461300" duration="606000" />
+      <workItem from="1605183032882" duration="9217000" />
+      <workItem from="1605348194335" duration="9204000" />
     </task>
     <servers />
   </component>
@@ -229,22 +241,22 @@
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="594" y="530" width="507" height="431" key="#com.intellij.fileTypes.FileTypeChooser/0.27.3392.1404@0.27.3392.1404" timestamp="1604962022441" />
-    <state x="657" y="434" width="387" height="681" key="#com.intellij.ide.util.MemberChooser" timestamp="1604839037429">
+    <state x="657" y="430" width="387" height="708" key="#com.intellij.ide.util.MemberChooser" timestamp="1605215421773">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="657" y="434" width="387" height="681" key="#com.intellij.ide.util.MemberChooser/0.27.3392.1404@0.27.3392.1404" timestamp="1604839037429" />
-    <state x="586" y="385" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1604871455260">
+    <state x="657" y="430" width="387" height="708" key="#com.intellij.ide.util.MemberChooser/0.27.3392.1404@0.27.3392.1404" timestamp="1605215421773" />
+    <state x="586" y="377" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1605195807622">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="586" y="385" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1604871455260" />
+    <state x="586" y="377" width="524" height="495" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.27.3392.1404@0.27.3392.1404" timestamp="1605195807622" />
     <state x="1482" y="659" width="424" height="154" key="#com.jetbrains.php.lang.intentions.PhpImportClassDialog#" timestamp="1604784844946">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="1482" y="659" width="424" height="154" key="#com.jetbrains.php.lang.intentions.PhpImportClassDialog#/0.27.3392.1404@0.27.3392.1404" timestamp="1604784844946" />
-    <state x="1482" y="485" width="424" height="495" key="FileChooserDialogImpl" timestamp="1604950226545">
+    <state x="1482" y="481" width="424" height="495" key="FileChooserDialogImpl" timestamp="1605196488017">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
-    <state x="1482" y="485" width="424" height="495" key="FileChooserDialogImpl/0.27.3392.1404@0.27.3392.1404" timestamp="1604950226545" />
+    <state x="1482" y="481" width="424" height="495" key="FileChooserDialogImpl/0.27.3392.1404@0.27.3392.1404" timestamp="1605196488017" />
     <state x="670" y="657" width="355" height="159" key="NewPhpFileDialog" timestamp="1604827855825">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
@@ -261,6 +273,10 @@
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
     <state x="514" y="338" width="672" height="677" key="run.anything.popup/0.27.3392.1404@0.27.3392.1404" timestamp="1604767653595" />
+    <state x="1359" y="344" key="search.everywhere.popup" timestamp="1605204635157">
+      <screen x="0" y="27" width="3392" height="1404" />
+    </state>
+    <state x="1359" y="344" key="search.everywhere.popup/0.27.3392.1404@0.27.3392.1404" timestamp="1605204635157" />
     <state x="578" y="633" width="540" height="182" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1604681263223">
       <screen x="0" y="27" width="3392" height="1404" />
     </state>
