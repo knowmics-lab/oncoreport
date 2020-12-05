@@ -30,6 +30,9 @@ final class Utils
 
     public const VALID_FILTER_OPERATORS = ['lt' => '<', 'lte' => '<=', 'gt' => '>', 'gte' => '>=',];
 
+    public const TUMOR_ONLY_TYPE = 'tumor-only';
+
+    public const TUMOR_NORMAL_TYPE = 'tumor-vs-normal';
 
 
     /**
@@ -149,7 +152,7 @@ final class Utils
             $tmpArray = $resArray['data'];
             if (isset($resArray['links']) && is_array($resArray['links'])) {
                 foreach ($resArray['links'] as $key => $link) {
-                    $tmpArray["{$key}.link"] = $link;
+                    $tmpArray["{$key}_link"] = $link;
                 }
             }
 

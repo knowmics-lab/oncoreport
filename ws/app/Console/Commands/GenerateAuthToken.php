@@ -31,6 +31,7 @@ class GenerateAuthToken extends Command
      * Execute the console command.
      *
      * @return int
+     * @throws \JsonException
      */
     public function handle(): int
     {
@@ -44,7 +45,7 @@ class GenerateAuthToken extends Command
                         json_encode(
                             [
                                 'error' => 101,
-                                'data'  => null,
+                                'data'  => 'User not found. Please specify a valid user.',
                             ],
                             JSON_THROW_ON_ERROR
                         )
@@ -80,7 +81,19 @@ class GenerateAuthToken extends Command
                 $this->info('Token generated. The new token is: ' . $token->plainTextToken);
             }
         } catch (\Exception $e) {
-            $this->error('An error occurred: ' . $e->getMessage());
+            if ($json) {
+                $this->line(
+                    json_encode(
+                        [
+                            'error' => 102,
+                            'data'  => 'An error occurred: ' . $e->getMessage(),
+                        ],
+                        JSON_THROW_ON_ERROR
+                    )
+                );
+            } else {
+                $this->error('An error occurred: ' . $e->getMessage());
+            }
 
             return 102;
         }

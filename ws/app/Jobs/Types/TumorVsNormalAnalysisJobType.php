@@ -51,6 +51,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
     public static function outputSpec(): array
     {
         return [
+            'type'                => Utils::TUMOR_NORMAL_TYPE,
             'tumorBamOutputFile'  => 'The path and url of the tumor BAM file produced by this analysis',
             'normalBamOutputFile' => 'The path and url of the normal BAM file produced by this analysis',
             'vcfOutputFile'       => 'The path and url of the VCF file produced by this analysis',

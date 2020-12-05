@@ -77,7 +77,6 @@ class JobController extends Controller
             }
         }
 
-        /** @noinspection PhpParamsInspection */
         return $this->buildJobCollection($request, $query);
     }
 

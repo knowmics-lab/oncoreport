@@ -208,6 +208,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $this->log('Writing output');
             $this->setOutput(
                 [
+                    'type'              => Utils::TUMOR_ONLY_TYPE,
                     'bamOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/bam_ordered/ordered.bam'),
                     'vcfOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
                     'vcfPASSOutputFile' => $this->getFilePathsForOutput($outputRelative . '/pass_final/variants.vcf'),
