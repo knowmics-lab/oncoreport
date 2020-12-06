@@ -1,0 +1,55 @@
+{
+  "configured": {
+    "type": "boolean",
+    "default": false
+  },
+  "local": {
+    "type": "boolean",
+    "default": true
+  },
+  "apiProtocol": {
+    "type": "string",
+    "default": "http",
+    "enum": [
+      "http",
+      "https"
+    ]
+  },
+  "apiHostname": {
+    "type": "string",
+    "default": "localhost"
+  },
+  "apiPort": {
+    "type": "integer",
+    "default": 18080,
+    "exclusiveMinimum": 0,
+    "maximum": 65535
+  },
+  "apiPath": {
+    "type": "string",
+    "default": "/api/"
+  },
+  "publicPath": {
+    "type": "string",
+    "default": "/storage/"
+  },
+  "dataPath": {
+    "type": "string"
+  },
+  "socketPath": {
+    "type": "string",
+    "default": ""
+  },
+  "containerName": {
+    "type": "string",
+    "default": "Oncoreport"
+  },
+  "apiKey": {
+    "type": "string",
+    "default": ""
+  },
+  "autoStopDockerOnClose": {
+    "type": "boolean",
+    "default": false
+  }
+}
