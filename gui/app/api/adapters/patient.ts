@@ -1,100 +1,113 @@
-// /* eslint-disable @typescript-eslint/naming-convention */
-// import Connector from './connector';
-// import {
-//   SortingSpec,
-//   ResponseType,
-//   MetaResponseType,
-// } from '../../interfaces/common';
-// import {
-//   Gender,
-//   Patient,
-//   PatientCollectionItem,
-//   PatientsCollection,
-// } from '../../interfaces/patients';
-// import { Disease } from '../../interfaces/diseases';
-// import ApiError from '../../errors/ApiError';
-//
-// interface ApiResponseSingle {
-//   data: Omit<Patient, 'links'>;
-//   links: Patient['links'];
-// }
-//
-// interface ApiResponseCollection {
-//   data: PatientCollectionItem[];
-//   meta: MetaResponseType;
-// }
-//
-// export default {
-//   async create(
-//     code: string,
-//     first_name: string,
-//     last_name: string,
-//     age: number,
-//     gender: Gender,
-//     disease: Disease | number
-//   ): Promise<ResponseType<Patient>> {
-//     const disease_id = typeof disease === 'number' ? disease : disease.id;
-//     const result = await Connector.callPost<ApiResponseSingle>('patients', {
-//       code,
-//       first_name,
-//       last_name,
-//       gender,
-//       age,
-//       disease_id,
-//     });
-//     if (!result.data) {
-//       return {
-//         validationErrors: result.validationErrors,
-//       };
-//     }
-//     const { data, links } = result.data;
-//     return {
-//       data: {
-//         ...data,
-//         links,
-//       },
-//     };
-//   },
-//   async delete(id: number): Promise<void> {
-//     await Connector.callDelete(`patients/${id}`);
-//   },
-//   async fetchById(id: number): Promise<Patient> {
-//     const result = await Connector.callGet<ApiResponseSingle>(`patients/${id}`);
-//     if (!result.data) throw new ApiError('Unable to fetch the patient');
-//     const { data, links } = result.data;
-//     return {
-//       ...data,
-//       links,
-//     };
-//   },
-//   async fetch(
-//     per_page = 15,
-//     sorting: SortingSpec = { created_at: 'desc' },
-//     page = 1
-//   ): Promise<PatientsCollection> {
-//     const order = Object.keys(sorting);
-//     const order_direction = Object.values(sorting);
-//     const result = await Connector.callGet<ApiResponseCollection>(`patients`, {
-//       page,
-//       per_page,
-//       order,
-//       order_direction,
-//     });
-//     if (!result.data) throw new ApiError('Unable to fetch patients');
-//     const { data, meta } = result.data;
-//     return {
-//       data: data.map((p) => ({
-//         ...p,
-//         links: {
-//           self: p.self_link,
-//           owner: p.owner_link,
-//           jobs: p.jobs_link,
-//         },
-//       })),
-//       meta: {
-//         ...meta,
-//         sorting,
-//       },
-//     };
-//   },
-// };
+/* eslint-disable @typescript-eslint/naming-convention */
+import { singleton } from 'tsyringe';
+import Connector from './connector';
+import { SortingSpec } from '../../interfaces/common';
+import { Patient as PatientObject } from '../../interfaces/entities/patient';
+import ApiError from '../../errors/ApiError';
+import ApiValidationError from '../../errors/ApiValidationError';
+import { Adapter } from '../../interfaces/adapter';
+import { Collection } from '../../interfaces/collection';
+import {
+  ApiResponseCollection,
+  ApiResponseSingle,
+} from '../../interfaces/responses';
+import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
+
+@singleton()
+export default class Patient implements Adapter<PatientObject> {
+  public constructor(private connector: Connector) {}
+
+  public async create(patient: PatientObject): Promise<PatientObject> {
+    const result = await this.connector.callPost<
+      ApiResponseSingle<PatientObject>
+    >('patients', {
+      code: patient.code,
+      first_name: patient.first_name,
+      last_name: patient.last_name,
+      gender: patient.gender,
+      age: patient.age,
+      disease_id: patient.disease.id,
+    });
+    if (!result.data) {
+      throw new ApiValidationError(
+        'Error occurred during validation of input data',
+        result.validationErrors
+      );
+    }
+    return result.data.data;
+  }
+
+  public async update(patient: PatientObject): Promise<PatientObject> {
+    if (!patient.id) {
+      throw new ApiError(
+        'This object cannot be updated since no id is present'
+      );
+    }
+    const result = await this.connector.callPatch<
+      ApiResponseSingle<PatientObject>
+    >(`patients/${patient.id}`, {
+      code: patient.code,
+      first_name: patient.first_name,
+      last_name: patient.last_name,
+      gender: patient.gender,
+      age: patient.age,
+      disease_id: patient.disease.id,
+    });
+    if (!result.data) {
+      throw new ApiValidationError(
+        'Error occurred during validation of input data',
+        result.validationErrors
+      );
+    }
+    return result.data.data;
+  }
+
+  public async delete(patient: PatientObject): Promise<void> {
+    if (!patient.id) {
+      throw new ApiError(
+        'This object cannot be deleted since no id is present'
+      );
+    }
+    await this.connector.callDelete(`patients/${patient.id}`);
+  }
+
+  public async fetchOne(
+    id: number | IdentifiableEntity
+  ): Promise<PatientObject> {
+    const realId = typeof id === 'number' ? id : id.id;
+    if (!realId) {
+      throw new ApiError('No valid id specified');
+    }
+    const result = await this.connector.callGet<
+      ApiResponseSingle<PatientObject>
+    >(`patients/${realId}`);
+    if (!result.data) throw new ApiError('Unable to fetch the patient');
+    return result.data.data;
+  }
+
+  public async fetchPage(
+    per_page = 15,
+    sorting: SortingSpec = { created_at: 'desc' },
+    page = 1
+  ): Promise<Collection<PatientObject>> {
+    const order = Object.keys(sorting);
+    const order_direction = Object.values(sorting);
+    const result = await this.connector.callGet<
+      ApiResponseCollection<PatientObject>
+    >(`patients`, {
+      page,
+      per_page,
+      order,
+      order_direction,
+    });
+    if (!result.data) throw new ApiError('Unable to fetch patients');
+    const { data, meta } = result.data;
+    return {
+      data,
+      meta: {
+        ...meta,
+        sorting,
+      },
+    };
+  }
+}

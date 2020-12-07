@@ -13,6 +13,7 @@ container.register<Store<ConfigObjectType>>(Store, {
 container.register<ConfigObjectType>('config', {
   useFactory: () => container.resolve(Settings).getConfig(),
 });
+
 // container.register<Settings>(Settings, { useClass: Settings });
 
 export default container;

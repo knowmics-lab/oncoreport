@@ -1,0 +1,58 @@
+/* eslint-disable @typescript-eslint/naming-convention,class-methods-use-this */
+import { singleton } from 'tsyringe';
+import Connector from './connector';
+import { Disease as DiseaseObject } from '../../interfaces/entities/disease';
+import ApiError from '../../errors/ApiError';
+import { Adapter } from '../../interfaces/adapter';
+import { Collection } from '../../interfaces/collection';
+import { ApiResponseSingle } from '../../interfaces/responses';
+import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
+
+@singleton()
+export default class Disease implements Adapter<DiseaseObject> {
+  public constructor(private connector: Connector) {}
+
+  public async create(): Promise<never> {
+    throw new ApiError('This operation is not supported');
+  }
+
+  public async update(): Promise<never> {
+    throw new ApiError('This operation is not supported');
+  }
+
+  public async delete(): Promise<never> {
+    throw new ApiError('This operation is not supported');
+  }
+
+  public async fetchOne(
+    id: number | IdentifiableEntity
+  ): Promise<DiseaseObject> {
+    const realId = typeof id === 'number' ? id : id.id;
+    if (!realId) {
+      throw new ApiError('No valid id specified');
+    }
+    const result = await this.connector.callGet<
+      ApiResponseSingle<DiseaseObject>
+    >(`diseases/${realId}`);
+    if (!result.data) throw new ApiError('Unable to fetch the disease');
+    return result.data.data;
+  }
+
+  public async fetchPage(): Promise<Collection<DiseaseObject>> {
+    const result = await this.connector.callGet<DiseaseObject[]>(`diseases`);
+    if (!result.data) throw new ApiError('Unable to fetch diseases');
+    const { data } = result;
+    return {
+      data,
+      meta: {
+        current_page: 0,
+        last_page: 0,
+        from: 0,
+        to: data?.length - 1,
+        per_page: data?.length,
+        sorting: {},
+        total: data?.length,
+      },
+    };
+  }
+}
