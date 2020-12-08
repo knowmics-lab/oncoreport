@@ -7,10 +7,11 @@ import { Adapter } from '../../interfaces/adapter';
 import { Collection } from '../../interfaces/collection';
 import { ApiResponseSingle } from '../../interfaces/responses';
 import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
+import { SimpleMapArray } from '../../interfaces/common';
 
 @singleton()
 export default class Disease implements Adapter<DiseaseObject> {
-  public constructor(private connector: Connector) {}
+  public constructor(public readonly connector: Connector) {}
 
   public async create(): Promise<never> {
     throw new ApiError('This operation is not supported');
@@ -39,19 +40,23 @@ export default class Disease implements Adapter<DiseaseObject> {
   }
 
   public async fetchPage(): Promise<Collection<DiseaseObject>> {
-    const result = await this.connector.callGet<DiseaseObject[]>(`diseases`);
+    const result = await this.connector.callGet<{
+      data: SimpleMapArray<DiseaseObject>;
+    }>(`diseases`);
     if (!result.data) throw new ApiError('Unable to fetch diseases');
-    const { data } = result;
+    const { data } = result.data;
+    const values = Object.values(data);
+    const size = values.length;
     return {
-      data,
+      data: values,
       meta: {
         current_page: 0,
         last_page: 0,
         from: 0,
-        to: data?.length - 1,
-        per_page: data?.length,
+        to: size - 1,
+        per_page: size,
         sorting: {},
-        total: data?.length,
+        total: size,
       },
     };
   }

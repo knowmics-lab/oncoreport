@@ -1,8 +1,11 @@
 import { SortingSpec } from './common';
 import { Collection } from './collection';
-import { IdentifiableEntity } from './common/identifiableEntity';
+import IdentifiableEntity from './common/identifiableEntity';
+import Connector from '../api/adapters/connector';
 
 export interface Adapter<T> {
+  readonly connector: Connector;
+
   create(patient: T): Promise<T>;
 
   update(patient: T): Promise<T>;

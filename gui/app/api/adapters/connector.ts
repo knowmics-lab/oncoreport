@@ -8,6 +8,7 @@ import {
   RecursiveMapType,
   ResponseType,
 } from '../../interfaces/common';
+import ApiError from '../../errors/ApiError';
 
 @singleton()
 export default class Connector {
@@ -45,9 +46,9 @@ export default class Connector {
       return null;
     }
     if (response.data && response.data.message) {
-      throw new Error(response.data.message);
+      throw new ApiError(response.data.message);
     }
-    throw new Error('Unknown error');
+    throw new ApiError('Unknown error');
   }
 
   private static delay(ms: number) {
@@ -60,7 +61,7 @@ export default class Connector {
     config: MapType,
     retry = 10
   ): Promise<ResponseType<T>> {
-    if (retry < 0) throw new Error('Too many retries');
+    if (retry < 0) throw new ApiError('Too many retries');
     try {
       const { data } = await axios.request({
         method,

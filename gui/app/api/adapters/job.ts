@@ -16,7 +16,7 @@ import { Patient } from '../../interfaces/entities/patient';
 
 @singleton()
 export default class Job implements Adapter<JobObject> {
-  public constructor(private connector: Connector) {}
+  public constructor(public readonly connector: Connector) {}
 
   public async create(job: JobObject): Promise<JobObject> {
     const result = await this.connector.callPost<ApiResponseSingle<JobObject>>(

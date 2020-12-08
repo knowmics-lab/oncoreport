@@ -92,11 +92,20 @@ export default class Settings {
     };
   }
 
+  public setConfig(config: Partial<ConfigObjectType>): this {
+    this.config = {
+      ...this.getConfig(),
+      ...config,
+    };
+    return this;
+  }
+
   public saveConfig(config: Partial<ConfigObjectType>): this {
     this.configStore.set({
-      ...this.config,
+      ...this.getConfig(),
       ...config,
     });
+    this.reset();
     return this;
   }
 

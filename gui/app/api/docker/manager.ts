@@ -1,86 +1,51 @@
-// eslint-disable-next-line max-classes-per-file
 import fs from 'fs-extra';
 import { is } from 'electron-util';
 import Client from 'dockerode';
 import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
-import Utils from './utils';
-import Settings from './settings';
-import { DOCKER_IMAGE_NAME } from '../constants/system.json';
-import type { ConfigObjectType } from '../interfaces/settings';
-import TimeoutError from '../errors/TimeoutError';
-import { Nullable } from '../interfaces/common';
+import { inject, injectable } from 'tsyringe';
+import Utils from '../utils';
+import { DOCKER_IMAGE_NAME } from '../../constants/system.json';
+import type { ConfigObjectType } from '../../interfaces/settings';
+import TimeoutError from '../../errors/TimeoutError';
+import { Nullable } from '../../interfaces/common';
+import PullStatus from './pullStatus';
+import { AuthTokenResult, DockerPullEvent } from './types';
 
-type DockerPullEvent = {
-  status: string;
-  id?: string;
-  progress?: string;
-};
+@injectable()
+export default class DockerManager {
+  #config?: ConfigObjectType;
 
-type AuthTokenResult = {
-  error: number;
-  data: string;
-};
+  #client: Client;
 
-export class DockerPullStatus {
-  idMap: Map<string, number> = new Map<string, number>();
+  #container?: Client.Container;
 
-  outputArray: string[] = [];
-
-  pushEvent(event: DockerPullEvent) {
-    if (event.id) {
-      const { id, status } = event;
-      let mappedId;
-      if (this.idMap.has(id)) {
-        mappedId = this.idMap.get(id);
-      } else {
-        mappedId = this.outputArray.length;
-        this.idMap.set(id, mappedId);
-        this.outputArray.push('');
-      }
-      if (mappedId) {
-        const progress = event.progress ? ` ${event.progress}` : '';
-        this.outputArray[mappedId] = `${id}: ${status}${progress}`;
-      }
-    } else {
-      this.outputArray.push(event.status);
-    }
-  }
-
-  isUpToDate() {
-    return (
-      this.outputArray.filter((s) => s.includes('Image is up to date')).length >
-      0
-    );
-  }
-
-  toString() {
-    return this.outputArray.join('\n');
-  }
-}
-
-export class DockerManager {
-  public config: ConfigObjectType;
-
-  private client: Client;
-
-  private container: Client.Container | undefined;
-
-  constructor(config: ConfigObjectType) {
+  constructor(@inject('config') config: ConfigObjectType) {
+    this.#client = new Client();
     this.config = config;
+  }
+
+  public get config() {
+    if (!this.#config)
+      throw new Error('Config is null! This should never happen!');
+    return this.#config;
+  }
+
+  public set config(config: ConfigObjectType) {
+    this.#config = config;
     let socketPath;
-    if (this.config.socketPath) {
-      socketPath = this.config.socketPath;
+    if (this.#config.socketPath) {
+      socketPath = this.#config.socketPath;
     } else if (is.windows) {
       socketPath = '//./pipe/docker_engine';
     } else {
       socketPath = '/var/run/docker.sock';
     }
-    this.client = new Client({ socketPath });
-    this.container = undefined;
+    this.#client = new Client({ socketPath });
+    this.#container = undefined;
   }
 
-  static liveDemuxStream(
+  public static liveDemuxStream(
     stream: NodeStream.Duplex,
     onStdout: Nullable<(b: Buffer) => void>,
     onStderr: Nullable<(b: Buffer) => void>,
@@ -141,7 +106,7 @@ export class DockerManager {
     }
   }
 
-  static async demuxStream(
+  public static async demuxStream(
     stream: NodeStream.Duplex,
     checkRunning: Nullable<() => Promise<boolean>>,
     timeoutRunning = 30000
@@ -164,29 +129,29 @@ export class DockerManager {
     });
   }
 
-  getBootedFile(): string {
+  public getBootedFile(): string {
     return `${this.config.dataPath}/booted`;
   }
 
-  getDbDirectory(): string {
+  public getDbDirectory(): string {
     return `${this.config.dataPath}/database/`;
   }
 
-  getDbReadyFile(): string {
+  public getDbReadyFile(): string {
     return `${this.getDbDirectory()}/ready`;
   }
 
-  async waitContainerBooted(timeout = 0) {
+  public async waitContainerBooted(timeout = 0) {
     await Utils.waitExists(this.getDbDirectory(), timeout);
     await Utils.waitExists(this.getDbReadyFile(), timeout);
     await Utils.waitExists(this.getBootedFile(), timeout);
   }
 
-  async cleanupBootedFile() {
+  public async cleanupBootedFile() {
     await fs.remove(this.getBootedFile());
   }
 
-  async checkContainerStatus(): Promise<string> {
+  public async checkContainerStatus(): Promise<string> {
     let inspect = null;
     while (inspect === null) {
       try {
@@ -207,25 +172,25 @@ export class DockerManager {
     return inspect.State.Status;
   }
 
-  async isRunning(): Promise<boolean> {
+  public async isRunning(): Promise<boolean> {
     const status = await this.checkContainerStatus();
     return status === 'running';
   }
 
-  getContainer(): Client.Container {
-    if (!this.container) {
-      this.container = this.client.getContainer(this.config.containerName);
+  public getContainer(): Client.Container {
+    if (!this.#container) {
+      this.#container = this.#client.getContainer(this.config.containerName);
     }
-    return this.container;
+    return this.#container;
   }
 
-  async createContainer(): Promise<void> {
+  public async createContainer(): Promise<void> {
     const status = await this.checkContainerStatus();
     if (status === 'not found') {
       await this.cleanupBootedFile();
-      this.container = undefined;
+      this.#container = undefined;
       // noinspection ES6MissingAwait
-      this.client.createContainer({
+      this.#client.createContainer({
         Image: DOCKER_IMAGE_NAME,
         name: this.config.containerName,
         ExposedPorts: {
@@ -270,7 +235,7 @@ export class DockerManager {
     return undefined;
   }
 
-  async checkForUpdates(
+  public async checkForUpdates(
     showMessage: (a: string, b: boolean) => void,
     displayLog: Nullable<(a: string) => void>,
     timeout = 120000,
@@ -282,7 +247,7 @@ export class DockerManager {
         showMessage('Checking for container updates...', false);
         try {
           const displayStatus = displayLog
-            ? debounce((s: DockerPullStatus) => {
+            ? debounce((s: PullStatus) => {
                 if (s) displayLog(s.toString());
               }, 500)
             : undefined;
@@ -319,7 +284,7 @@ export class DockerManager {
     }
   }
 
-  async startupSequence(
+  public async startupSequence(
     showMessage: (a: string, b: boolean) => void,
     displayLog: Nullable<(a: string) => void>,
     timeout = 120000,
@@ -358,7 +323,7 @@ export class DockerManager {
     }
   }
 
-  async startContainer(): Promise<void> {
+  public async startContainer(): Promise<void> {
     const status = await this.checkContainerStatus();
     if (status === 'not found') {
       await this.createContainer();
@@ -386,7 +351,7 @@ export class DockerManager {
     }
   }
 
-  async stopContainer(): Promise<void> {
+  public async stopContainer(): Promise<void> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
       const container = this.getContainer();
@@ -399,7 +364,7 @@ export class DockerManager {
     }
   }
 
-  async removeContainer(): Promise<void> {
+  public async removeContainer(): Promise<void> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
       await this.stopContainer();
@@ -414,7 +379,7 @@ export class DockerManager {
     }
   }
 
-  async execDockerCommand(
+  public async execDockerCommand(
     Cmd: string[],
     timeoutRunning = 30000,
     parse = true
@@ -447,7 +412,7 @@ export class DockerManager {
     throw new Error('Unable to exec command. Container is not running');
   }
 
-  async generateAuthToken(): Promise<string> {
+  public async generateAuthToken(): Promise<string> {
     const result = (await this.execDockerCommand([
       '/genkey.sh',
       '--json',
@@ -458,7 +423,7 @@ export class DockerManager {
     throw new Error(result.data);
   }
 
-  async execDockerCommandLive(
+  public async execDockerCommandLive(
     Cmd: string[],
     outputCallback: (a: string) => void,
     errCallback: Nullable<(a: string) => void> = null,
@@ -504,7 +469,7 @@ export class DockerManager {
     throw new Error('Unable to exec command. Container is not running');
   }
 
-  async clearQueue(): Promise<unknown> {
+  public async clearQueue(): Promise<unknown> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
       return this.execDockerCommand(
@@ -516,15 +481,15 @@ export class DockerManager {
     return undefined;
   }
 
-  async pullImage(
-    outputCallback: Nullable<(s: DockerPullStatus) => void>
-  ): Promise<DockerPullStatus> {
+  public async pullImage(
+    outputCallback: Nullable<(s: PullStatus) => void>
+  ): Promise<PullStatus> {
     return new Promise((resolve, reject) => {
-      this.client.pull(DOCKER_IMAGE_NAME, (e: unknown, stream: unknown) => {
+      this.#client.pull(DOCKER_IMAGE_NAME, (e: unknown, stream: unknown) => {
         if (e) {
           reject(e);
         } else {
-          const status = new DockerPullStatus();
+          const status = new PullStatus();
           const onFinished = (err: unknown) => {
             if (err) reject(err);
             else resolve(status);
@@ -535,31 +500,16 @@ export class DockerManager {
               outputCallback(status);
             }
           };
-          this.client.modem.followProgress(stream, onFinished, onProgress);
+          this.#client.modem.followProgress(stream, onFinished, onProgress);
         }
       });
     });
   }
 
-  async hasImage() {
-    const images = await this.client.listImages();
+  public async hasImage() {
+    const images = await this.#client.listImages();
     return (
       images.filter((r) => r.RepoTags.includes(DOCKER_IMAGE_NAME)).length > 0
     );
   }
 }
-
-let instance: Nullable<DockerManager> = null;
-
-export const getInstance = () => {
-  if (!instance) {
-    instance = new DockerManager(Settings.getConfig());
-  }
-  return instance;
-};
-
-export const resetInstance = () => {
-  instance = null;
-};
-
-export default getInstance();

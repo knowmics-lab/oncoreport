@@ -1,3 +1,5 @@
+export type SimpleMapArray<T> = { [id: number]: T };
+
 export type SimpleMapType<T> = { [name: string]: T };
 
 export type RecursiveMapType<T> = {

@@ -14,7 +14,16 @@ export enum OutputTypes {
   tumorNormal = 'tumor-vs-normal',
 }
 
+export enum JobStatus {
+  ready = 'ready',
+  queued = 'queued',
+  processing = 'processing',
+  completed = 'completed',
+  failed = 'failed',
+}
+
 export enum JobTypes {
+  empty = '',
   tumorOnly = 'tumor_only_analysis_job_type',
   tumorNormal = 'tumor_vs_normal_analysis_job_type',
 }
@@ -30,7 +39,7 @@ export interface Job extends IdentifiableEntity, TimedEntity {
   name: string;
   type: JobTypes;
   readable_type: string;
-  status: 'ready' | 'queued' | 'processing' | 'completed' | 'failed';
+  status: JobStatus;
   parameters?: JobConfig;
   log?: string;
   output?: JobOutput;

@@ -15,7 +15,7 @@ import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
 
 @singleton()
 export default class Patient implements Adapter<PatientObject> {
-  public constructor(private connector: Connector) {}
+  public constructor(public readonly connector: Connector) {}
 
   public async create(patient: PatientObject): Promise<PatientObject> {
     const result = await this.connector.callPost<

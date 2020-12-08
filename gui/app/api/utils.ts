@@ -32,13 +32,13 @@ export default {
   //       return [];
   //   }
   // },
-  filterByKey(raw: never, callback: (k: string) => boolean) {
+  filterByKey<T>(raw: T, callback: (k: keyof T) => boolean): Partial<T> {
     return Object.keys(raw)
-      .filter(callback)
+      .filter((k) => callback(k as keyof T))
       .reduce((obj, key) => {
         return {
           ...obj,
-          [key]: raw[key],
+          [key]: raw[key as keyof T],
         };
       }, {});
   },
