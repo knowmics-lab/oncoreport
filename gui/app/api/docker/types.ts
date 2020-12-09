@@ -1,4 +1,4 @@
-export type DockerPullEvent = {
+export type PullEvent = {
   status: string;
   id?: string;
   progress?: string;

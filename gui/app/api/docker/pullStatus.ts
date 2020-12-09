@@ -1,11 +1,11 @@
-import { DockerPullEvent } from './types';
+import { PullEvent } from './types';
 
 export default class PullStatus {
   idMap: Map<string, number> = new Map<string, number>();
 
   outputArray: string[] = [];
 
-  pushEvent(event: DockerPullEvent) {
+  pushEvent(event: PullEvent) {
     if (event.id) {
       const { id, status } = event;
       let mappedId;

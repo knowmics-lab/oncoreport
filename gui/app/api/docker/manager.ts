@@ -10,10 +10,10 @@ import type { ConfigObjectType } from '../../interfaces/settings';
 import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces/common';
 import PullStatus from './pullStatus';
-import { AuthTokenResult, DockerPullEvent } from './types';
+import { AuthTokenResult, PullEvent } from './types';
 
 @injectable()
-export default class DockerManager {
+export default class Manager {
   #config?: ConfigObjectType;
 
   #client: Client;
@@ -114,7 +114,7 @@ export default class DockerManager {
     return new Promise((resolve) => {
       let stdout = Buffer.from('');
       let stderr = Buffer.from('');
-      DockerManager.liveDemuxStream(
+      Manager.liveDemuxStream(
         stream,
         (content) => {
           stdout = Buffer.concat([stdout, content]);
@@ -393,7 +393,7 @@ export default class DockerManager {
         AttachStdout: true,
       });
       const stream = await exec.start({});
-      const [stdout] = await DockerManager.demuxStream(
+      const [stdout] = await Manager.demuxStream(
         stream,
         () => {
           return new Promise((resolve) => {
@@ -451,7 +451,7 @@ export default class DockerManager {
             });
           }
         : null;
-      return DockerManager.liveDemuxStream(
+      return Manager.liveDemuxStream(
         stream,
         (buf) => outputCallback(buf.toString()),
         onStderr,
@@ -494,7 +494,7 @@ export default class DockerManager {
             if (err) reject(err);
             else resolve(status);
           };
-          const onProgress = (event: DockerPullEvent) => {
+          const onProgress = (event: PullEvent) => {
             status.pushEvent(event);
             if (outputCallback) {
               outputCallback(status);
