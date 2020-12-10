@@ -73,4 +73,8 @@ export interface ResponseType<T> {
   data?: T;
 }
 
-export type UploadProgressFunction = (x: number, y: number, z: number) => void;
+export type UploadProgressFunction = (
+  percentage: number,
+  bytesUploaded: number,
+  bytesTotal: number
+) => void;

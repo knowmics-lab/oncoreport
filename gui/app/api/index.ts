@@ -1,11 +1,13 @@
 /* eslint-disable import/no-cycle */
-export { default as Analysis } from './analysis';
-export { default as Connector } from './connector';
-export { default as Disease } from './disease';
-export { default as Docker } from './docker';
-export { default as Downloader } from './downloader';
-export { default as Jobs } from './jobs';
-export { default as Patient } from './patient';
+export { DiseaseAdapter, PatientAdapter, JobAdapter } from './adapters';
+export { DiseaseEntity, PatientEntity, JobEntity } from './entities';
+export {
+  DiseaseRepository,
+  PatientRepository,
+  JobRepository,
+} from './repositories';
+export { DockerManager, DockerPullStatus } from './docker';
 export { default as Settings } from './settings';
-export { default as Upload } from './upload';
+export { default as TransferManager } from './transferManager';
+export { default as ValidateConfig } from './validateConfig';
 export { default as Utils } from './utils';

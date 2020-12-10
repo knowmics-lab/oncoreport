@@ -10,54 +10,59 @@ import {
   JobStatus,
   JobTypes,
 } from '../../interfaces/entities/job';
-import JobAdapter from '../adapters/job';
 import Entity from './timedEntity';
 import { fillable, fillableWithEntity, userReadonly } from './entity';
 import { Nullable } from '../../interfaces/common';
 import Patient from './patient';
 import Settings from '../settings';
 import { Utils } from '../index';
-import Downloader from '../downloader';
 import EntityError from '../../errors/EntityError';
+// eslint-disable-next-line import/no-cycle
+import TransferManager from '../transferManager';
+import { JobAdapter } from '../adapters';
 
 @injectable()
 export default class Job extends Entity<JobObject> implements JobObject {
   @fillable()
-  log?: string;
+  public log?: string;
 
   @fillable()
-  name = '';
-
-  @fillable()
-  @userReadonly()
-  output?: JobOutput;
+  public name = '';
 
   @fillable()
   @userReadonly()
-  owner: unknown = {};
+  public output?: JobOutput;
 
   @fillable()
-  parameters?: JobConfig;
+  @userReadonly()
+  public owner: unknown = {};
+
+  @fillable()
+  public parameters?: JobConfig;
 
   @fillable()
   @fillableWithEntity(Patient)
-  patient!: Nullable<Patient>;
+  public patient!: Nullable<Patient>;
 
   @fillable()
   @userReadonly()
-  readable_type = '';
+  public readable_type = '';
 
   @fillable()
-  sample_code = '';
+  public sample_code = '';
 
   @fillable()
   @userReadonly()
-  status: JobStatus = JobStatus.ready;
+  public status: JobStatus = JobStatus.ready;
 
   @fillable()
-  type: JobTypes = JobTypes.empty;
+  public type: JobTypes = JobTypes.empty;
 
-  public constructor(adapter: JobAdapter, private settings: Settings) {
+  public constructor(
+    adapter: JobAdapter,
+    private settings: Settings,
+    private transferManager: TransferManager
+  ) {
     super(adapter);
   }
 
@@ -78,16 +83,18 @@ export default class Job extends Entity<JobObject> implements JobObject {
       const { path: outputPath } = this.output[outputVariable];
       const outputUrl = this.settings.getPublicUrl(outputPath);
       const outputFilename = path.basename(outputPath);
-      Downloader.downloadUrl(
+      this.transferManager.download(
         outputUrl,
         outputFilename,
-        () => onStart && onStart(outputVariable),
-        () => onCompleted && onCompleted(outputVariable)
-      ); // @todo modify with IOC
+        onStart ? () => onStart(outputVariable) : undefined,
+        onCompleted ? () => onCompleted(outputVariable) : undefined
+      );
     } else {
       throw new EntityError('Unable to find output path');
     }
   }
+
+  // @todo upload
 
   public async openLocalFolder(): Promise<void> {
     if (!this.settings.isLocal())

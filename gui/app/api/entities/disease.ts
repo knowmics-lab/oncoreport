@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
 import { Disease as DiseaseObject } from '../../interfaces/entities/disease';
-import DiseaseAdapter from '../adapters/disease';
 import Entity from './timedEntity';
 import EntityError from '../../errors/EntityError';
 import { fillable } from './entity';
+import { DiseaseAdapter } from '../adapters';
 
 @injectable()
 export default class Disease extends Entity<DiseaseObject>

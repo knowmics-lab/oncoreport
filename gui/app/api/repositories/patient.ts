@@ -1,10 +1,10 @@
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import Repository from './repository';
 import { Patient as PatientObject } from '../../interfaces/entities/patient';
-import PatientEntity from '../entities/patient';
-import PatientAdapter from '../adapters/patient';
+import { PatientEntity } from '../entities';
+import { PatientAdapter } from '../adapters';
 
-@injectable()
+@singleton()
 export default class Patient extends Repository<PatientObject, PatientEntity> {
   public constructor(adapter: PatientAdapter) {
     super(adapter, PatientEntity);
