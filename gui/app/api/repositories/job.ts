@@ -1,11 +1,10 @@
 import { singleton } from 'tsyringe';
 import Repository from './repository';
-import { Job as JobObject } from '../../interfaces/entities/job';
-import { SortingSpec } from '../../interfaces/common';
-import { Collection } from '../../interfaces/collection';
+import type { JobObject, SortingSpec, Collection } from '../../interfaces';
 import Patient from '../entities/patient';
 import { JobEntity } from '../entities';
 import { JobAdapter } from '../adapters';
+import { SortingDirection } from '../../interfaces';
 
 @singleton()
 export default class Job extends Repository<JobObject, JobEntity> {
@@ -16,7 +15,7 @@ export default class Job extends Repository<JobObject, JobEntity> {
   public async fetchPageByPatient(
     patient: Patient,
     per_page = 15,
-    sorting: SortingSpec = { created_at: 'desc' },
+    sorting: SortingSpec = { created_at: SortingDirection.desc },
     page = 1
   ): Promise<Collection<JobEntity>> {
     const tmpCollection = await (this.adapter as JobAdapter).fetchPageByPatient(

@@ -5,7 +5,7 @@ import checkInternetConnection from 'check-internet-connected';
 // import type { FileFilter } from '../types/common';
 // import type { AnalysisFileTypes } from '../types/analysis';
 import TimeoutError from '../errors/TimeoutError';
-import { JobPathType } from '../interfaces/jobs';
+import type { JobPath } from '../interfaces';
 
 let watcher: FSWatcher | null = null;
 
@@ -150,7 +150,7 @@ export default {
   hasPathProperty<X extends {}, Y extends PropertyKey>(
     obj: X,
     prop: Y
-  ): obj is X & Record<Y, JobPathType> {
+  ): obj is X & Record<Y, JobPath> {
     return (
       this.hasProperty(obj, prop) &&
       this.hasProperty(obj[prop], 'path') &&

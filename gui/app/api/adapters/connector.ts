@@ -7,7 +7,7 @@ import {
   Nullable,
   RecursiveMapType,
   ResponseType,
-} from '../../interfaces/common';
+} from '../../interfaces';
 import ApiError from '../../errors/ApiError';
 
 @singleton()

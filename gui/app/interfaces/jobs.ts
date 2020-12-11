@@ -1,9 +1,4 @@
-import {
-  MetaResponseType,
-  Nullable,
-  SimpleMapType,
-  StatePaginationType,
-} from './common';
+import { Nullable } from './common';
 import { PatientCollectionItem } from './patients';
 import { JobConfig } from './analysis';
 
@@ -62,35 +57,4 @@ export interface JobCollectionItem extends JobBase {
   patient_link: Nullable<string>;
   upload_link: string;
   submit_link: string;
-}
-
-export interface JobsCollection {
-  data: Job[];
-  meta: MetaResponseType;
-}
-
-export interface JobType {
-  id: string;
-  description: string;
-}
-
-export type JobTypesCollection = SimpleMapType<JobType>;
-
-export interface JobsListType {
-  readonly refreshAll: boolean;
-  readonly refreshPages: number[];
-  readonly state: StatePaginationType;
-  readonly pages: { readonly [page: number]: Job[] };
-}
-
-export interface LoadedJobs {
-  fetching: boolean;
-  submitting: number[];
-  deleting: number[];
-  readonly items: { readonly [id: number]: Job };
-}
-
-export interface JobsStateType {
-  readonly jobsList: JobsListType;
-  readonly jobs: LoadedJobs;
 }

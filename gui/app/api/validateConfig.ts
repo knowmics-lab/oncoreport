@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import axios from 'axios';
 import { inject, injectable } from 'tsyringe';
-import { ConfigObjectType } from '../interfaces/settings';
+import type { ConfigObjectType } from '../interfaces';
 import DockerManager from './docker/manager';
 
 @injectable()

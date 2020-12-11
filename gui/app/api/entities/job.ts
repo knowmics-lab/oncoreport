@@ -3,23 +3,21 @@ import { container, injectable } from 'tsyringe';
 import path from 'path';
 import fs from 'fs-extra';
 import { api as electron } from 'electron-util';
-import {
-  Job as JobObject,
+import type {
+  JobObject,
   JobConfig,
   JobOutput,
-  JobStatus,
-  JobTypes,
-} from '../../interfaces/entities/job';
+  Nullable,
+} from '../../interfaces';
 import Entity from './timedEntity';
 import { fillable, fillableWithEntity, userReadonly } from './entity';
-import { Nullable } from '../../interfaces/common';
 import Patient from './patient';
 import Settings from '../settings';
 import { Utils } from '../index';
 import EntityError from '../../errors/EntityError';
-// eslint-disable-next-line import/no-cycle
 import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
+import { JobStatus, JobTypes } from '../../interfaces';
 
 @injectable()
 export default class Job extends Entity<JobObject> implements JobObject {

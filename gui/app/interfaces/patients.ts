@@ -1,4 +1,4 @@
-import { MetaResponseType, Nullable, StatePaginationType } from './common';
+import { Nullable } from './common';
 import { DiseaseCollectionItem } from './diseases';
 
 export enum Gender {
@@ -33,28 +33,4 @@ export interface PatientCollectionItem extends PatientBase {
   self_link: string;
   owner_link: Nullable<string>;
   jobs_link: string;
-}
-
-export interface PatientsCollection {
-  data: Patient[];
-  meta: MetaResponseType;
-}
-
-export interface PatientsListType {
-  readonly refreshAll: boolean;
-  readonly refreshPages: number[];
-  readonly state: StatePaginationType;
-  readonly pages: { readonly [page: number]: PatientCollectionItem[] };
-}
-
-export interface LoadedPatients {
-  fetching: boolean;
-  submitting: number[];
-  deleting: number[];
-  readonly items: { readonly [id: number]: Patient };
-}
-
-export interface PatientsStateType {
-  readonly patientsList: PatientsListType;
-  readonly patients: LoadedPatients;
 }

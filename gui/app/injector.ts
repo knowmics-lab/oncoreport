@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { container } from 'tsyringe';
 import Store, { Schema } from 'electron-store';
 import configSchema from './constants/config-schema.json';

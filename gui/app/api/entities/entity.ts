@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment */
 import { container } from 'tsyringe';
-import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
-import { Adapter } from '../../interfaces/adapter';
+import { IdentifiableEntity, Adapter } from '../../interfaces';
 
 const fillablePropertyKey = Symbol.for('fillable');
 const fillableWithEntityPropertyKey = Symbol.for('fillableWithEntity');

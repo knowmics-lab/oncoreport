@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import Repository from './repository';
-import { Patient as PatientObject } from '../../interfaces/entities/patient';
+import type { PatientObject } from '../../interfaces';
 import { PatientEntity } from '../entities';
 import { PatientAdapter } from '../adapters';
 

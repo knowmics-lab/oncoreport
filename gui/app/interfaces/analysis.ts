@@ -1,16 +1,16 @@
-import { MapType, Nullable } from './common';
-
-export type JobConfig = MapType;
+import { MapType } from './common';
+import { JobConfig } from './entities';
+import { Comparison, Genome } from './enums';
 
 export interface FileContainingConfig extends MapType {
-  fastq1?: Nullable<string>;
-  fastq2?: Nullable<string>;
-  ubam?: Nullable<string>;
-  bam?: Nullable<string>;
+  fastq1?: string;
+  fastq2?: string;
+  ubam?: string;
+  bam?: string;
 }
 
 export interface FilterType extends MapType {
-  comparison?: 'lt' | 'lte' | 'gt' | 'gte';
+  comparison?: Comparison;
   value?: number;
 }
 
@@ -18,8 +18,8 @@ export interface TumorOnlyAnalysisConfig
   extends FileContainingConfig,
     JobConfig {
   paired: boolean;
-  vcf?: Nullable<string>;
-  genome?: 'hg19' | 'hg38';
+  vcf?: string;
+  genome?: Genome;
   threads?: number;
   depthFilter: FilterType;
   alleleFractionFilter: FilterType;
@@ -29,7 +29,7 @@ export interface TumorNormalAnalysisConfig extends JobConfig {
   paired: boolean;
   tumor: FileContainingConfig;
   normal: FileContainingConfig;
-  vcf?: Nullable<string>;
-  genome?: 'hg19' | 'hg38';
+  vcf?: string;
+  genome?: Genome;
   threads?: number;
 }

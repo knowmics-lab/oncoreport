@@ -2,8 +2,11 @@ import Store from 'electron-store';
 import { api } from 'electron-util';
 import findFreePort from 'find-free-port';
 import { singleton } from 'tsyringe';
-import { ConfigObjectType } from '../interfaces/settings';
-import { AxiosHeaders, SimpleMapType } from '../interfaces/common';
+import type {
+  ConfigObjectType,
+  AxiosHeaders,
+  SimpleMapType,
+} from '../interfaces';
 
 @singleton()
 export default class Settings {

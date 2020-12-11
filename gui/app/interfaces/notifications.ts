@@ -1,11 +1,10 @@
-import { Nullable, SimpleMapType } from './common';
-
-export type TypeOfNotification = 'success' | 'warning' | 'error' | 'info';
+import { SimpleMapType } from './common';
+import { TypeOfNotification } from './enums';
 
 export interface Notification {
   message: string;
   variant: TypeOfNotification;
-  duration: Nullable<number>;
+  duration?: number;
 }
 
 export interface PushedNotification extends Notification {
@@ -13,10 +12,8 @@ export interface PushedNotification extends Notification {
   shown: boolean;
 }
 
-export type Notifications = SimpleMapType<PushedNotification>;
-
 export interface NotificationsState {
-  readonly notifications: Notifications;
+  readonly notifications: SimpleMapType<PushedNotification>;
 }
 
 export type PushNotificationFunction = (

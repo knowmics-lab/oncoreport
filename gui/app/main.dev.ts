@@ -15,6 +15,8 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import injector from './injector';
+import { MainProcessManager } from './api';
 
 export default class AppUpdater {
   constructor() {
@@ -86,8 +88,6 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -107,6 +107,8 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
+  injector.resolve(MainProcessManager).setWindow(mainWindow).registerHandlers();
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -117,8 +119,6 @@ const createWindow = async () => {
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -132,7 +132,5 @@ if (process.env.E2E_BUILD === 'true') {
 }
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });

@@ -1,9 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
-import {
-  Gender,
-  Patient as PatientObject,
-} from '../../interfaces/entities/patient';
+import { Gender, PatientObject } from '../../interfaces';
 import PatientAdapter from '../adapters/patient';
 import Entity from './timedEntity';
 import { fillable, fillableWithEntity, userReadonly } from './entity';

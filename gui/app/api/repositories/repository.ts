@@ -1,8 +1,7 @@
 import { container, InjectionToken } from 'tsyringe';
 import Entity from '../entities/entity';
-import { Adapter } from '../../interfaces/adapter';
-import { SortingSpec } from '../../interfaces/common';
-import { Collection } from '../../interfaces/collection';
+import type { Adapter, SortingSpec, Collection } from '../../interfaces';
+import { SortingDirection } from '../../interfaces';
 
 export default abstract class Repository<T, U extends Entity<T>> {
   protected adapter: Adapter<T>;
@@ -28,7 +27,7 @@ export default abstract class Repository<T, U extends Entity<T>> {
 
   public async fetchPage(
     per_page = 15,
-    sorting: SortingSpec = { created_at: 'desc' },
+    sorting: SortingSpec = { created_at: SortingDirection.desc },
     page = 1
   ): Promise<Collection<U>> {
     const tmpCollection = await this.adapter.fetchPage(per_page, sorting, page);

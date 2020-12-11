@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { singleton } from 'tsyringe';
 import Connector from './connector';
-import { SortingSpec } from '../../interfaces/common';
-import { Job as JobObject } from '../../interfaces/entities/job';
-import ApiError from '../../errors/ApiError';
-import ApiValidationError from '../../errors/ApiValidationError';
-import { Adapter } from '../../interfaces/adapter';
-import { Collection } from '../../interfaces/collection';
 import {
+  Adapter,
   ApiResponseCollection,
   ApiResponseSingle,
-} from '../../interfaces/responses';
-import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
-import { Patient } from '../../interfaces/entities/patient';
+  Collection,
+  IdentifiableEntity,
+  JobObject,
+  PatientObject,
+  SortingDirection,
+  SortingSpec,
+} from '../../interfaces';
+import ApiError from '../../errors/ApiError';
+import ApiValidationError from '../../errors/ApiValidationError';
 
 @singleton()
 export default class Job implements Adapter<JobObject> {
@@ -98,7 +99,7 @@ export default class Job implements Adapter<JobObject> {
 
   public async fetchPage(
     per_page = 15,
-    sorting: SortingSpec = { created_at: 'desc' },
+    sorting: SortingSpec = { created_at: SortingDirection.desc },
     page = 1
   ): Promise<Collection<JobObject>> {
     const order = Object.keys(sorting);
@@ -123,9 +124,9 @@ export default class Job implements Adapter<JobObject> {
   }
 
   public async fetchPageByPatient(
-    patient: number | Patient,
+    patient: number | PatientObject,
     per_page = 15,
-    sorting: SortingSpec = { created_at: 'desc' },
+    sorting: SortingSpec = { created_at: SortingDirection.desc },
     page = 1
   ): Promise<Collection<JobObject>> {
     const id = typeof patient === 'object' ? patient.id : patient;

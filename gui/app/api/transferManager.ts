@@ -1,10 +1,13 @@
-import { ipcRenderer } from 'electron';
+import { BrowserWindow, ipcMain, ipcRenderer } from 'electron';
 import { is } from 'electron-util';
 import uniqid from 'uniqid';
 import { singleton } from 'tsyringe';
 import cpFile, { ProgressData } from 'cp-file';
 import { debounce } from 'ts-debounce';
-import { UploadProgressFunction } from '../interfaces/common';
+import { download } from 'electron-dl';
+import * as tus from 'tus-js-client';
+import fs from 'fs';
+import type { UploadProgressFunction } from '../interfaces';
 import { UsesUpload } from '../interfaces/ui';
 import Settings from './settings';
 import { JobEntity } from './entities';
@@ -17,7 +20,9 @@ type UploadCallbackType = {
 
 @singleton()
 export default class TransferManager {
-  #handlersRegistered = false;
+  #rendererHandlersRegistered = false;
+
+  #mainHandlersRegistered = false;
 
   readonly downloadStartCallbacks = new Map<string, () => void>();
 
@@ -28,19 +33,19 @@ export default class TransferManager {
   readonly #settings: Settings;
 
   public constructor(settings: Settings) {
-    this.registerHandlers();
+    this.registerRendererHandlers();
     this.#settings = settings;
   }
 
-  private registerHandlers() {
-    if (!this.#handlersRegistered) {
-      this.registerDownloadHandlers();
-      this.registerUploadHandlers();
-      this.#handlersRegistered = true;
+  private registerRendererHandlers() {
+    if (!this.#rendererHandlersRegistered) {
+      this.registerRendererDownloadHandlers();
+      this.registerRendererUploadHandlers();
+      this.#rendererHandlersRegistered = true;
     }
   }
 
-  private registerDownloadHandlers() {
+  private registerRendererDownloadHandlers() {
     if (is.renderer) {
       ipcRenderer.removeAllListeners('download-started');
       ipcRenderer.on('download-started', (_e, { id }) => {
@@ -67,7 +72,7 @@ export default class TransferManager {
     }
   }
 
-  private registerUploadHandlers() {
+  private registerRendererUploadHandlers() {
     if (is.renderer) {
       ipcRenderer.removeAllListeners('upload-message');
       ipcRenderer.on(
@@ -141,7 +146,7 @@ export default class TransferManager {
     );
   }
 
-  async upload(
+  public async upload(
     job: JobEntity,
     filePath: string,
     fileName: string,
@@ -173,6 +178,99 @@ export default class TransferManager {
         endpoint,
       });
     });
+  }
+
+  public registerMainHandlers(win: BrowserWindow) {
+    if (!this.#mainHandlersRegistered) {
+      this.registerMainDownloadHandler(win);
+      this.registerMainUploadHandler();
+      this.#mainHandlersRegistered = true;
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public registerMainDownloadHandler(win: BrowserWindow) {
+    if (is.main) {
+      ipcMain.on('download-file', async (event, { id, url, filename }) => {
+        await download(win, url, {
+          saveAs: true,
+          openFolderWhenDone: false,
+          filename,
+          onStarted() {
+            event.reply('download-started', { id });
+          },
+          onProgress(progress) {
+            if (progress.percent >= 1) {
+              event.reply('download-completed', { id });
+            }
+          },
+        });
+      });
+    }
+  }
+
+  public registerMainUploadHandler() {
+    if (is.main) {
+      ipcMain.on(
+        'upload-file',
+        async (event, { id, filePath, fileName, fileType, endpoint }) => {
+          const file = fs.createReadStream(filePath);
+          const { size } = fs.statSync(filePath);
+          // resume: true,
+          const upload = new tus.Upload(file, {
+            endpoint,
+            retryDelays: [0, 3000, 5000, 10000, 20000],
+            headers: {
+              ...this.#settings.getAuthHeaders(),
+            },
+            chunkSize: 50 * 1024 * 1024, // 50Mb per chunk
+            metadata: {
+              filename: fileName,
+              filetype: fileType,
+            },
+            uploadSize: size,
+            onError(error) {
+              event.reply('upload-message', {
+                id,
+                isDone: false,
+                isProgress: false,
+                isError: true,
+                percentage: 0,
+                bytesUploaded: 0,
+                bytesTotal: 0,
+                error: error.message,
+              });
+            },
+            onProgress(bytesUploaded, bytesTotal) {
+              const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
+              event.reply('upload-message', {
+                id,
+                isDone: false,
+                isProgress: true,
+                isError: false,
+                error: null,
+                percentage,
+                bytesUploaded,
+                bytesTotal,
+              });
+            },
+            onSuccess() {
+              event.reply('upload-message', {
+                id,
+                isDone: true,
+                isProgress: false,
+                isError: false,
+                error: null,
+                percentage: 0,
+                bytesUploaded: 0,
+                bytesTotal: 0,
+              });
+            },
+          });
+          upload.start();
+        }
+      );
+    }
   }
 }
 

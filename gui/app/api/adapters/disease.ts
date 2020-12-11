@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention,class-methods-use-this */
 import { singleton } from 'tsyringe';
 import Connector from './connector';
-import { Disease as DiseaseObject } from '../../interfaces/entities/disease';
 import ApiError from '../../errors/ApiError';
-import { Adapter } from '../../interfaces/adapter';
-import { Collection } from '../../interfaces/collection';
-import { ApiResponseSingle } from '../../interfaces/responses';
-import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
-import { SimpleMapArray } from '../../interfaces/common';
+import {
+  DiseaseObject,
+  SimpleMapArray,
+  Adapter,
+  Collection,
+  ApiResponseSingle,
+  IdentifiableEntity,
+} from '../../interfaces';
 
 @singleton()
 export default class Disease implements Adapter<DiseaseObject> {

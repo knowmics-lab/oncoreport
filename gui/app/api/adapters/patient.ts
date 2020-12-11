@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { singleton } from 'tsyringe';
 import Connector from './connector';
-import { SortingSpec } from '../../interfaces/common';
-import { Patient as PatientObject } from '../../interfaces/entities/patient';
-import ApiError from '../../errors/ApiError';
-import ApiValidationError from '../../errors/ApiValidationError';
-import { Adapter } from '../../interfaces/adapter';
-import { Collection } from '../../interfaces/collection';
 import {
+  PatientObject,
+  IdentifiableEntity,
+  SortingSpec,
+  Collection,
+  Adapter,
   ApiResponseCollection,
   ApiResponseSingle,
-} from '../../interfaces/responses';
-import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
+  SortingDirection,
+} from '../../interfaces';
+import ApiError from '../../errors/ApiError';
+import ApiValidationError from '../../errors/ApiValidationError';
 
 @singleton()
 export default class Patient implements Adapter<PatientObject> {
@@ -87,7 +88,7 @@ export default class Patient implements Adapter<PatientObject> {
 
   public async fetchPage(
     per_page = 15,
-    sorting: SortingSpec = { created_at: 'desc' },
+    sorting: SortingSpec = { created_at: SortingDirection.desc },
     page = 1
   ): Promise<Collection<PatientObject>> {
     const order = Object.keys(sorting);

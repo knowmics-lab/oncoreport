@@ -6,9 +6,9 @@ import * as NodeStream from 'stream';
 import { inject, injectable } from 'tsyringe';
 import Utils from '../utils';
 import { DOCKER_IMAGE_NAME } from '../../constants/system.json';
-import type { ConfigObjectType } from '../../interfaces/settings';
+import type { ConfigObjectType } from '../../interfaces';
 import TimeoutError from '../../errors/TimeoutError';
-import { Nullable } from '../../interfaces/common';
+import { Nullable } from '../../interfaces';
 import PullStatus from './pullStatus';
 import { AuthTokenResult, PullEvent } from './types';
 

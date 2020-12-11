@@ -1,5 +1,5 @@
 import { SortingSpec } from './common';
-import { Collection } from './collection';
+import Collection from './collection';
 import IdentifiableEntity from './common/identifiableEntity';
 import Connector from '../api/adapters/connector';
 

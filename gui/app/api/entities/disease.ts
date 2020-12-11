@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
-import { Disease as DiseaseObject } from '../../interfaces/entities/disease';
+import { DiseaseObject } from '../../interfaces';
 import Entity from './timedEntity';
 import EntityError from '../../errors/EntityError';
 import { fillable } from './entity';

@@ -1,6 +1,6 @@
 import { MetaResponseType } from './common';
 
-export interface Collection<T> {
+export default interface Collection<T> {
   data: T[];
   meta: MetaResponseType;
 }

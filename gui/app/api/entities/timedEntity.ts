@@ -1,5 +1,7 @@
-import IdentifiableEntity from '../../interfaces/common/identifiableEntity';
-import ITimedEntity from '../../interfaces/common/timedEntity';
+import {
+  IdentifiableEntity,
+  TimedEntity as ITimedEntity,
+} from '../../interfaces';
 import Entity, { fillable, userReadonly } from './entity';
 
 export default abstract class TimedEntity<
