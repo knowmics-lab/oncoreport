@@ -299,6 +299,7 @@
     "formik": "^2.2.5",
     "fs-extra": "^9.0.1",
     "history": "^4.7.2",
+    "immer": "^8.0.0",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.20",
     "material-ui-popup-state": "^1.7.0",

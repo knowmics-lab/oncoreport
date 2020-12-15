@@ -7,6 +7,10 @@ export interface LoadedDiseases<E extends Disease> {
 }
 
 export default interface DiseasesState<E extends Disease> {
-  readonly diseasesList: E[];
+  readonly diseasesList: {
+    refresh: boolean;
+    data: E[];
+    fetching: boolean;
+  };
   readonly diseases: LoadedDiseases<E>;
 }

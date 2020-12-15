@@ -10,8 +10,6 @@ export interface PatientsCollection<E extends Patient> {
 
 export interface LoadedPatients<E extends Patient> {
   fetching: boolean;
-  submitting: number[];
-  deleting: number[];
   readonly items: SimpleMapArray<E>;
 }
 
