@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/app/api/adapters/disease.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/api/adapters/job.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/api/entities/disease.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/api/entities/entity.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/api/entities/timedEntity.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/errors/ApiValidationError.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/errors/EntityError.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/collection.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/common/identifiableEntity.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/common/timedEntity.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/entities/disease.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/entities/job.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/entities/patient.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/app/interfaces/responses.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/app/api/adapters/connector.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/app/api/adapters/connector.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/app/api/adapters/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/app/api/adapters/patient.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/app/injector.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/app/injector.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -244,6 +225,7 @@
       <workItem from="1607185915066" duration="4611000" />
       <workItem from="1607337291682" duration="1477000" />
       <workItem from="1607365365896" duration="989000" />
+      <workItem from="1608193244112" duration="11000" />
     </task>
     <servers />
   </component>

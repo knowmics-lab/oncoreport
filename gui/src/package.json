@@ -1,0 +1,18 @@
+{
+  "name": "oncoreport",
+  "productName": "OncoReport",
+  "version": "0.0.1",
+  "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Salvatore Alaimo",
+    "email": "salvatore.alaimo@unict.it",
+    "url": "https://alaimos.tech"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "CC-BY-NC-ND-4.0",
+  "dependencies": {}
+}
