@@ -14,5 +14,9 @@
     "postinstall": "yarn electron-rebuild"
   },
   "license": "CC-BY-NC-ND-4.0",
-  "dependencies": {}
+  "dependencies": {
+    "@mui-treasury/components": "^1.9.2",
+    "@mui-treasury/styles": "^1.13.1",
+    "@mui-treasury/mockup": "^1.2.10"
+  }
 }

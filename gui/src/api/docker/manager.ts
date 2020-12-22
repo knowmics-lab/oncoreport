@@ -5,7 +5,7 @@ import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
 import { inject, injectable } from 'tsyringe';
 import Utils from '../utils';
-import { DOCKER_IMAGE_NAME } from '../../constants/system.json';
+import SystemConstants from '../../constants/system.json';
 import type { ConfigObjectType } from '../../interfaces';
 import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces';
@@ -191,7 +191,7 @@ export default class Manager {
       this.#container = undefined;
       // noinspection ES6MissingAwait
       this.#client.createContainer({
-        Image: DOCKER_IMAGE_NAME,
+        Image: SystemConstants.DOCKER_IMAGE_NAME,
         name: this.config.containerName,
         ExposedPorts: {
           '80/tcp': {},
@@ -485,31 +485,36 @@ export default class Manager {
     outputCallback: Nullable<(s: PullStatus) => void>
   ): Promise<PullStatus> {
     return new Promise((resolve, reject) => {
-      this.#client.pull(DOCKER_IMAGE_NAME, (e: unknown, stream: unknown) => {
-        if (e) {
-          reject(e);
-        } else {
-          const status = new PullStatus();
-          const onFinished = (err: unknown) => {
-            if (err) reject(err);
-            else resolve(status);
-          };
-          const onProgress = (event: PullEvent) => {
-            status.pushEvent(event);
-            if (outputCallback) {
-              outputCallback(status);
-            }
-          };
-          this.#client.modem.followProgress(stream, onFinished, onProgress);
+      this.#client.pull(
+        SystemConstants.DOCKER_IMAGE_NAME,
+        (e: unknown, stream: unknown) => {
+          if (e) {
+            reject(e);
+          } else {
+            const status = new PullStatus();
+            const onFinished = (err: unknown) => {
+              if (err) reject(err);
+              else resolve(status);
+            };
+            const onProgress = (event: PullEvent) => {
+              status.pushEvent(event);
+              if (outputCallback) {
+                outputCallback(status);
+              }
+            };
+            this.#client.modem.followProgress(stream, onFinished, onProgress);
+          }
         }
-      });
+      );
     });
   }
 
   public async hasImage() {
     const images = await this.#client.listImages();
     return (
-      images.filter((r) => r.RepoTags.includes(DOCKER_IMAGE_NAME)).length > 0
+      images.filter((r) =>
+        r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
+      ).length > 0
     );
   }
 }

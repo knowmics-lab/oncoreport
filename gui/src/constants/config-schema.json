@@ -42,7 +42,7 @@
   },
   "containerName": {
     "type": "string",
-    "default": "Oncoreport"
+    "default": "oncoreport"
   },
   "apiKey": {
     "type": "string",

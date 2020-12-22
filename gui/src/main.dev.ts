@@ -45,12 +45,14 @@ const installExtensions = async () => {
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  return installer
-    .default(
+  try {
+    return installer.default(
       extensions.map((name) => installer[name]),
       forceDownload
-    )
-    .catch(console.log);
+    );
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const createWindow = async () => {

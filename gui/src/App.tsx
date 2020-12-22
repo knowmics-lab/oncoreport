@@ -2,30 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../assets/icon.svg';
 import injector from './injector';
-import { JobRepository, PatientRepository, Settings } from './api';
-
-injector.resolve(Settings).setConfig({
-  apiKey: '5|J1i9JMjO4wltBRi83eEknCgV4YnjX8GWaPW7qCUI',
-});
-
-const repo = injector.resolve(JobRepository);
-const repo1 = injector.resolve(PatientRepository);
-
-console.log(repo);
-
-repo1
-  .fetch(1)
-  .then((p) => {
-    // eslint-disable-next-line promise/no-nesting
-    repo
-      .fetchPageByPatient(p)
-      .then((j) => {
-        console.log(j);
-        repo.refreshAllPagesByPatient(p);
-      })
-      .catch(console.error);
-  })
-  .catch(console.error);
+import InjectorContext from './reactInjector/context';
+import Routes from './constants/routes.json';
+import Layout from './app/layout';
 
 const Hello = () => {
   return (
@@ -66,10 +45,14 @@ const Hello = () => {
 
 export default function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/" component={Hello} />
-      </Switch>
-    </Router>
+    <InjectorContext.Provider value={injector}>
+      <Layout>
+        <Router>
+          <Switch>
+            <Route path={Routes.HOME} component={Hello} />
+          </Switch>
+        </Router>
+      </Layout>
+    </InjectorContext.Provider>
   );
 }

@@ -46,21 +46,9 @@ initialize_mysql_database() {
     fi
 }
 
-if [ ! -d "/oncoreport/ws/storage/app/public/" ]; then
-    mkdir -p "/oncoreport/ws/storage/app/public/"
-fi
-# if [ ! -d "/oncoreport/ws/storage/app/annotations/" ]; then
-#     mkdir -p "/oncoreport/ws/storage/app/annotations/"
-# fi
-# if [ ! -d "/oncoreport/ws/storage/app/references/" ]; then
-#     mkdir -p "/oncoreport/ws/storage/app/references/"
-# fi
-if [ ! -d "/oncoreport/ws/storage/app/tus_cache/" ]; then
-    mkdir -p "/oncoreport/ws/storage/app/tus_cache/"
-fi
-if [ ! -d "/oncoreport/ws/storage/app/logs/" ]; then
-    mkdir -p "/oncoreport/ws/storage/app/logs/"
-fi
+[ ! -d "/oncoreport/ws/storage/app/public/" ] && mkdir -p "/oncoreport/ws/storage/app/public/"
+[ ! -d "/oncoreport/ws/storage/app/tus_cache/" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache/"
+[ ! -d "/oncoreport/ws/storage/app/logs/" ] && mkdir -p "/oncoreport/ws/storage/app/logs/"
 
 create_data_dir
 create_run_dir
@@ -69,9 +57,9 @@ initialize_mysql_database
 chown -R www-data:staff "/oncoreport/ws"
 chmod -R 777 "/oncoreport/ws/storage/"
 
-if [ "$DB_CREATED" = "true" ]; then
-    touch "${MYSQL_DATA_DIR}/ready"
-fi
+[ "$DB_CREATED" = "true" ] && touch "${MYSQL_DATA_DIR}/ready"
+
+[ -f /var/run/apache2/apache2.pid ] && rm -f /var/run/apache2/apache2.pid
 
 echo "Starting supervisord"
 exec supervisord -n
