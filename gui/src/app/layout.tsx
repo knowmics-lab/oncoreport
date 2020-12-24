@@ -5,17 +5,19 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import MUILayout, {
-  Root,
-  getHeader,
-  getDrawerSidebar,
-  getSidebarTrigger,
-  getSidebarContent,
   getCollapseBtn,
   getContent,
+  getDrawerSidebar,
   getFooter,
+  getHeader,
+  getSidebarContent,
+  getSidebarTrigger,
+  Root,
 } from '@mui-treasury/layout';
 import LayoutHeader from './components/layout/header';
 import NavContent from './components/layout/navContent';
+import Notifications from './components/layout/notifications';
+import ContentWrapper from './components/layout/contentWrapper';
 
 const Header = getHeader(styled);
 const DrawerSidebar = getDrawerSidebar(styled);
@@ -87,7 +89,12 @@ const Layout = ({ children, footer }: Props) => {
         </SidebarContent>
         <CollapseBtn style={{ overflow: 'hidden' }} />
       </DrawerSidebar>
-      <Content>{children}</Content>
+      <Content>
+        <ContentWrapper>
+          {children}
+          <Notifications />
+        </ContentWrapper>
+      </Content>
       {footer && <Footer>{footer}</Footer>}
     </Root>
   );

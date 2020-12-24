@@ -9,61 +9,12 @@
       "to": "/"
     },
     {
-      "icon": "far fa-play-circle",
-      "text": "Run Analysis",
-      "collapsible": true,
+      "icon": "far fa-hourglass",
+      "text": "Patients",
+      "collapsible": false,
       "configured": true,
-      "key": "main-menu-runAnalysis",
-      "items": [
-        {
-          "icon": "fas fa-dna",
-          "text": "SmallRNA-seq Analysis",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-smallRNAAnalysis",
-          "to": "/analysis/smallRNA"
-        },
-        {
-          "icon": "fas fa-dna",
-          "text": "RNA-seq Analysis",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-longRNAAnalysis",
-          "to": "/analysis/longRNA"
-        },
-        {
-          "icon": "far fa-circle",
-          "text": "CircRNA Analysis",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-circRNAAnalysis",
-          "to": "/analysis/circRNA"
-        },
-        {
-          "icon": "fas fa-layer-group",
-          "text": "New Samples Group",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-sampleGroup",
-          "to": "/analysis/sampleGroup"
-        },
-        {
-          "icon": "fas fa-layer-group",
-          "text": "New DEGs Analysis",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-diffExpr",
-          "to": "/analysis/diffExpr"
-        },
-        {
-          "icon": "fas fa-project-diagram",
-          "text": "New Pathway Analysis",
-          "collapsible": false,
-          "configured": true,
-          "key": "main-menu-pathway-analysis",
-          "to": "/analysis/pathway"
-        }
-      ]
+      "key": "main-menu-patients",
+      "to": "/patients"
     },
     {
       "icon": "far fa-hourglass",
@@ -74,20 +25,8 @@
       "to": "/jobs"
     },
     {
-      "icon": "far fa-file-alt",
-      "text": "Reference Sequences",
-      "collapsible": false,
       "configured": true,
-      "key": "main-menu-ref-seq",
-      "to": "/references"
-    },
-    {
-      "icon": "fas fa-table",
-      "text": "Annotations",
-      "collapsible": false,
-      "configured": true,
-      "key": "main-menu-gtf-annotations",
-      "to": "/annotations"
+      "divider": true
     },
     {
       "icon": "fas fa-cog",

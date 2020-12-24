@@ -5,6 +5,7 @@ import injector from './injector';
 import InjectorContext from './reactInjector/context';
 import Routes from './constants/routes.json';
 import Layout from './app/layout';
+import { SettingsPage } from './app/components/pages';
 
 const Hello = () => {
   return (
@@ -46,13 +47,14 @@ const Hello = () => {
 export default function App() {
   return (
     <InjectorContext.Provider value={injector}>
-      <Layout>
-        <Router>
+      <Router>
+        <Layout>
           <Switch>
+            <Route path={Routes.SETTINGS} exact component={SettingsPage} />
             <Route path={Routes.HOME} component={Hello} />
           </Switch>
-        </Router>
-      </Layout>
+        </Layout>
+      </Router>
     </InjectorContext.Provider>
   );
 }

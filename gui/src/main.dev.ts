@@ -42,13 +42,13 @@ if (
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  // const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   try {
-    return installer.default(
+    await installer.default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      true
     );
   } catch (e) {
     console.log(e);
@@ -56,13 +56,6 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
     : path.join(__dirname, '../resources');
@@ -79,7 +72,19 @@ const createWindow = async () => {
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true,
+      contextIsolation: false,
     },
+  });
+
+  mainWindow.webContents.on('did-frame-finish-load', async () => {
+    if (process.env.NODE_ENV === 'development') {
+      if (
+        process.env.NODE_ENV === 'development' ||
+        process.env.DEBUG_PROD === 'true'
+      ) {
+        await installExtensions();
+      }
+    }
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);

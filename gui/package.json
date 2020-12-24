@@ -264,6 +264,7 @@
     "@mui-treasury/styles": "^1.13.1",
     "axios": "^0.21.0",
     "check-internet-connected": "^2.0.5",
+    "clsx": "^1.1.1",
     "cp-file": "^9.0.0",
     "cpy": "^8.1.1",
     "dockerode": "^3.2.1",
@@ -275,6 +276,8 @@
     "electron-util": "^0.14.2",
     "find-free-port": "^2.0.0",
     "formik": "^2.2.6",
+    "formik-material-ui": "^3.0.1",
+    "formik-material-ui-lab": "^0.0.8",
     "fs-extra": "^9.0.1",
     "history": "^5.0.0",
     "immer": "^8.0.0",
@@ -283,6 +286,7 @@
     "material-ui-popup-state": "^1.7.1",
     "mimetype-to-fontawesome": "^2.0.0",
     "moment": "^2.29.1",
+    "notistack": "^1.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
@@ -293,7 +297,8 @@
     "ts-debounce": "^2.1.0",
     "tsyringe": "^4.4.0",
     "tus-js-client": "^2.2.0",
-    "uniqid": "^5.2.0"
+    "uniqid": "^5.2.0",
+    "yup": "^0.32.8"
   },
   "devEngines": {
     "node": ">=10.x",
