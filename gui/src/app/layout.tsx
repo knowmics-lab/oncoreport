@@ -46,13 +46,12 @@ layout.configureHeader((builder) => {
 layout.configureEdgeSidebar((builder) => {
   builder
     .create('primarySidebar', { anchor: 'left' })
-    .registerPersistentConfig('xs', {
+    .registerTemporaryConfig('xs', {
+      width: 256,
+    })
+    .registerPermanentConfig('lg', {
       width: 256,
       collapsible: false,
-      persistentBehavior: {
-        header: 'fit',
-        _other: 'none',
-      },
     });
 });
 
@@ -62,14 +61,24 @@ type Props = {
 };
 
 const Layout = ({ children, footer }: Props) => {
+  // @TODO enable and remove button for production
+  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [dark, setDark] = React.useState(true);
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: dark ? 'dark' : 'light',
+        },
+      }),
+    [dark]
+  );
+
   return (
-    <Root
-      theme={createMuiTheme({ palette: { type: dark ? 'dark' : 'light' } })}
-      scheme={layout}
-    >
+    <Root theme={theme} scheme={layout}>
       <CssBaseline />
-      <Header color="default">
+      <Header color={dark ? 'default' : 'primary'}>
         <Toolbar>
           <SidebarTrigger sidebarId="primarySidebar" />
           <LayoutHeader />

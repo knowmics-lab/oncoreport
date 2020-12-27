@@ -24,6 +24,7 @@ type ListItemLinkProps = {
   to: string;
   classes?: Partial<ClassNameMap>;
   className?: string;
+  exact?: boolean;
 };
 
 const ListItemLink = ({
@@ -32,6 +33,7 @@ const ListItemLink = ({
   to,
   classes,
   className,
+  exact,
 }: ListItemLinkProps) => {
   const renderLink = React.useMemo(
     () =>
@@ -45,13 +47,14 @@ const ListItemLink = ({
         ) => (
           <RouterLink
             to={to}
+            exact={!!exact}
             {...itemProps}
             innerRef={ref}
             activeClassName="Mui-selected"
           />
         )
       ),
-    [to]
+    [to, exact]
   );
 
   return (
@@ -70,6 +73,7 @@ ListItemLink.defaultProps = {
   icon: null,
   classes: null,
   className: null,
+  exact: false,
 };
 
 type ListItemExpandableProps = {
@@ -126,6 +130,7 @@ export type MenuItem = {
   items?: MenuItem[];
   to?: string;
   divider?: boolean;
+  exact?: boolean;
 };
 
 const useCollapsibleState = () => {
@@ -169,11 +174,21 @@ const NavContent = () => {
   };
 
   const renderMenuItem = (
-    { icon, text, collapsible, configured, key, items, to, divider }: MenuItem,
+    {
+      icon,
+      text,
+      collapsible,
+      configured,
+      key,
+      items,
+      to,
+      divider,
+      exact,
+    }: MenuItem,
     nested = false
   ): React.ReactNode => {
     if (configured && !settings.isConfigured()) return null;
-    if (divider) return <Divider style={{ margin: '12px 0' }} />;
+    if (divider) return <Divider key={key} style={{ margin: '12px 0' }} />;
     if (collapsible) {
       return (
         <React.Fragment key={key}>
@@ -201,6 +216,7 @@ const NavContent = () => {
           icon={<Icon className={icon} />}
           primary={text}
           to={to}
+          exact={exact}
           key={key}
           className={nested ? classes.nested : undefined}
         />

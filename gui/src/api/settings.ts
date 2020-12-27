@@ -8,14 +8,20 @@ import type {
   SimpleMapType,
 } from '../interfaces';
 
+type Listener = (config: ConfigObjectType) => void;
+
 @singleton()
 export default class Settings {
   private config: ConfigObjectType | undefined = undefined;
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  private listeners = new Map<object, Listener>();
 
   constructor(private configStore: Store<ConfigObjectType>) {}
 
   public reset(): this {
     this.config = undefined;
+    this.notify();
     return this;
   }
 
@@ -100,6 +106,7 @@ export default class Settings {
       ...this.getConfig(),
       ...config,
     };
+    this.notify();
     return this;
   }
 
@@ -116,5 +123,24 @@ export default class Settings {
   public async findFreePort(start: number): Promise<number> {
     const [port] = await findFreePort(start);
     return port;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public subscribe(o: object, l: Listener): this {
+    this.listeners.set(o, l);
+    return this;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public unsubscribe(o: object): this {
+    if (this.listeners.has(o)) this.listeners.delete(o);
+    return this;
+  }
+
+  private notify(): void {
+    if (this.listeners.size > 0) {
+      const cfg = this.getConfig();
+      this.listeners.forEach((l) => l(cfg));
+    }
   }
 }

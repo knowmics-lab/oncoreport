@@ -147,12 +147,20 @@ export default class MainProcessManager {
     }
   }
 
+  private registerConfigChangeHandler() {
+    ipcMain.on('config-change', () => {
+      console.log('Reloading configuration');
+      this.settings.reset();
+    });
+  }
+
   public registerHandlers() {
     if (!this.#registered) {
       this.registerQuitHandler();
       this.registerBlockingMessagesHandler();
       if (this.#window) this.transferManager.registerMainHandlers(this.#window);
       this.registerNewWindowHandler();
+      this.registerConfigChangeHandler();
       this.#registered = true;
     }
   }

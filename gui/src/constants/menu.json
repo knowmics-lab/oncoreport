@@ -5,11 +5,12 @@
       "text": "Home",
       "collapsible": false,
       "configured": true,
+      "exact": true,
       "key": "main-menu-home",
       "to": "/"
     },
     {
-      "icon": "far fa-hourglass",
+      "icon": "fas fa-user-injured",
       "text": "Patients",
       "collapsible": false,
       "configured": true,
@@ -26,6 +27,7 @@
     },
     {
       "configured": true,
+      "key": "main-menu-divider1",
       "divider": true
     },
     {
@@ -33,6 +35,7 @@
       "text": "Settings",
       "collapsible": false,
       "configured": false,
+      "exact": true,
       "key": "main-menu-settings",
       "to": "/settings"
     }

@@ -1,16 +1,20 @@
 /* eslint-disable no-underscore-dangle */
 import { container, InjectionToken } from 'tsyringe';
 import { has, get, set, unset } from 'lodash';
+import uniqid from 'uniqid';
 import Entity, { EntityEvent } from '../entities/entity';
 import type {
   Adapter,
   Collection,
   IdentifiableEntity,
   SimpleMapArray,
+  SimpleMapType,
   SortingSpec,
 } from '../../interfaces';
 import { SortingDirection } from '../../interfaces';
 import EntityError from '../../errors/EntityError';
+
+type RefreshListener = (page?: number) => void;
 
 export default abstract class Repository<
   T extends IdentifiableEntity,
@@ -29,6 +33,8 @@ export default abstract class Repository<
   protected instanceCache: SimpleMapArray<U> = {};
 
   protected pagesCache: SimpleMapArray<Collection<U>> = {};
+
+  protected refreshListeners: SimpleMapType<RefreshListener> = {};
 
   protected constructor(adapter: Adapter<T>, token: InjectionToken<U>) {
     this.adapter = adapter;
@@ -108,16 +114,20 @@ export default abstract class Repository<
     this._sorting = value;
   }
 
-  public refreshPage(page: number): Promise<Collection<U>> {
+  public async refreshPage(page: number): Promise<Collection<U>> {
     if (has(this.pagesCache, page)) {
       unset(this.pagesCache, page);
     }
-    return this.fetchPage(page);
+    const result = await this.fetchPage(page);
+    this.notifyRefresh(page);
+    return result;
   }
 
-  public refreshAllPages(): Promise<Collection<U>> {
+  public async refreshAllPages(): Promise<Collection<U>> {
     this.pagesCache = {};
-    return this.fetchPage();
+    const result = this.fetchPage();
+    this.notifyRefresh();
+    return result;
   }
 
   public async fetchPage(page = 1): Promise<Collection<U>> {
@@ -133,5 +143,19 @@ export default abstract class Repository<
       });
     }
     return get(this.pagesCache, page);
+  }
+
+  public subscribeRefresh(listener: RefreshListener): string {
+    const id = uniqid();
+    set(this.refreshListeners, id, listener);
+    return id;
+  }
+
+  public unsubscribeRefresh(id: string) {
+    unset(this.refreshListeners, id);
+  }
+
+  private notifyRefresh(page?: number) {
+    Object.values(this.refreshListeners).forEach((l) => l(page));
   }
 }

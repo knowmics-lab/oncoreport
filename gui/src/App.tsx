@@ -1,11 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../assets/icon.svg';
 import injector from './injector';
 import InjectorContext from './reactInjector/context';
 import Routes from './constants/routes.json';
 import Layout from './app/layout';
-import { SettingsPage } from './app/components/pages';
+import * as Pages from './app/components/pages';
 
 const Hello = () => {
   return (
@@ -50,8 +50,17 @@ export default function App() {
       <Router>
         <Layout>
           <Switch>
-            <Route path={Routes.SETTINGS} exact component={SettingsPage} />
-            <Route path={Routes.HOME} component={Hello} />
+            <Route
+              path={Routes.PATIENTS}
+              exact
+              component={Pages.PatientsPage}
+            />
+            <Route
+              path={Routes.SETTINGS}
+              exact
+              component={Pages.SettingsPage}
+            />
+            <Route path={Routes.HOME} exact component={Hello} />
           </Switch>
         </Layout>
       </Router>

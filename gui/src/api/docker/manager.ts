@@ -405,6 +405,7 @@ export default class Manager {
         timeoutRunning
       );
       if (parse) {
+        console.log(stdout);
         return JSON.parse(stdout);
       }
       return stdout;

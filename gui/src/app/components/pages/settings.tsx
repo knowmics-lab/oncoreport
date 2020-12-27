@@ -1,61 +1,78 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, CircularProgress, Collapse, FormGroup, Grid, Paper, Typography } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+import {
+  Button,
+  CircularProgress,
+  Collapse,
+  FormGroup,
+  Grid,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import { is } from 'electron-util';
 import TextField from '../UI/Form/TextField';
 import SelectField from '../UI/Form/SelectField';
 import FileField from '../UI/Form/FileField';
 import SwitchField from '../UI/Form/SwitchField';
-import { useService } from '../../../reactInjector';
-import { Settings as SettingsManager } from '../../../api';
+import { useContainer, useService } from '../../../reactInjector';
+import { Settings as SettingsManager, ValidateConfig } from '../../../api';
 import { ConfigObjectType, TypeOfNotification } from '../../../interfaces';
 import { useNotifications } from '../UI/hooks';
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    padding: 16,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  buttonWrapper: {
-    margin: theme.spacing(1),
-    position: 'relative',
-  },
-  buttonProgress: {
-    color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}));
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    paper: {
+      padding: 16,
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    buttonWrapper: {
+      margin: theme.spacing(1),
+      position: 'relative',
+    },
+    buttonProgress: {
+      color: green[500],
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: -12,
+      marginLeft: -12,
+    },
+  })
+);
 
 export default function Settings() {
+  const injector = useContainer();
   const settings = useService(SettingsManager);
   const classes = useStyles();
   const [isSaving, setIsSaving] = useState(false);
   const { pushSimple } = useNotifications();
 
-  const formSubmit = async (
-    values: ConfigObjectType,
-    helpers: FormikHelpers<ConfigObjectType>
-  ) => {
+  const formSubmit = async (values: ConfigObjectType) => {
     setIsSaving(true);
-    // eslint-disable-next-line no-console
-    console.log(values);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        setIsSaving(false);
-        //helpers.setSubmitting(false);
-        pushSimple('Settings saved!', TypeOfNotification.success);
-        resolve();
-      }, 2000);
-    });
+    try {
+      const validator = injector.resolve(ValidateConfig);
+      validator.newConfig = {
+        ...values,
+        configured: true,
+        socketPath:
+          values.socketPath ||
+          (is.windows ? '//./pipe/docker_engine' : '/var/run/docker.sock'),
+      };
+      const newConfig = await validator.validate();
+      settings.saveConfig(newConfig);
+      pushSimple('Settings saved!', TypeOfNotification.success);
+      setIsSaving(false);
+    } catch (e) {
+      pushSimple(`An error occurred: ${e.message}!`, TypeOfNotification.error);
+      setIsSaving(false);
+      throw e;
+    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -70,11 +87,11 @@ export default function Settings() {
       then: Yup.string().required(),
       otherwise: Yup.string().notRequired(),
     }),
-    socketPath: Yup.string().when('local', {
-      is: true,
-      then: Yup.string().notRequired(),
-      otherwise: Yup.string().notRequired(),
-    }),
+    // socketPath: Yup.string().when('local', {
+    //   is: true,
+    //   then: Yup.string().notRequired(),
+    //   otherwise: Yup.string().notRequired(),
+    // }),
     containerName: Yup.string().when('local', {
       is: true,
       then: Yup.string().required(),
@@ -88,7 +105,7 @@ export default function Settings() {
   });
 
   return (
-    <Paper elevation={1} square className={classes.paper}>
+    <Paper elevation={1} className={classes.paper}>
       <Typography variant="h5" component="h3">
         Settings
       </Typography>
@@ -100,29 +117,59 @@ export default function Settings() {
       >
         {({ values }) => (
           <Form>
-            <SelectField
-              label="API Protocol"
-              name="apiProtocol"
-              options={{ http: 'http', https: 'https' }}
-              required
-            />
-            <TextField label="API Hostname" name="apiHostname" required />
-            <TextField label="API Port" name="apiPort" type="number" required />
-            <TextField label="API Path" name="apiPath" required />
-            <TextField label="Public Path" name="publicPath" required />
+            <Grid container spacing={2}>
+              <Grid item md>
+                <SelectField
+                  label="API Protocol"
+                  name="apiProtocol"
+                  options={{ http: 'http', https: 'https' }}
+                  required
+                />
+              </Grid>
+              <Grid item md>
+                <TextField label="API Hostname" name="apiHostname" required />
+              </Grid>
+              <Grid item md>
+                <TextField
+                  label="API Port"
+                  name="apiPort"
+                  type="number"
+                  required
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item md>
+                <TextField label="API Path" name="apiPath" required />
+              </Grid>
+              <Grid item md>
+                <TextField label="Public Path" name="publicPath" required />
+              </Grid>
+            </Grid>
             <SwitchField label="Is docker installed locally?" name="local" />
             <Collapse in={values.local}>
-              <FileField
-                label="Local container storage path"
-                name="dataPath"
-                dialogOptions={{ properties: ['openDirectory'] }}
-              />
-              <TextField label="Local container name" name="containerName" />
-              <FileField
-                label="Local docker socket"
-                name="socketPath"
-                dialogOptions={{ properties: ['openFile'], filters: [] }}
-              />
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <FileField
+                    label="Local container storage path"
+                    name="dataPath"
+                    dialogOptions={{ properties: ['openDirectory'] }}
+                  />
+                </Grid>
+                <Grid item md>
+                  <TextField
+                    label="Local container name"
+                    name="containerName"
+                  />
+                </Grid>
+                <Grid item md>
+                  <FileField
+                    label="Local docker socket"
+                    name="socketPath"
+                    dialogOptions={{ properties: ['openFile'], filters: [] }}
+                  />
+                </Grid>
+              </Grid>
             </Collapse>
             <TextField label="API key" name="apiKey" />
             <FormGroup row className={classes.formControl}>

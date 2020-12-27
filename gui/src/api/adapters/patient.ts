@@ -104,7 +104,7 @@ export default class Patient implements Adapter<PatientObject> {
     if (!result.data) throw new ApiError('Unable to fetch patients');
     const { data, meta } = result.data;
     return {
-      data,
+      data: Object.values(data),
       meta: {
         ...meta,
         sorting,
