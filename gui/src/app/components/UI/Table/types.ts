@@ -30,7 +30,7 @@ export type TableState = {
 export type RowActionFunction<
   D extends IdentifiableEntity,
   E extends Entity<D>
-> = (data: E, size: string) => ReactNodeArray | ReactNode;
+> = (data: E, size: 'small' | 'medium') => ReactNodeArray | ReactNode;
 
 export type RowActionObject<
   D extends IdentifiableEntity,

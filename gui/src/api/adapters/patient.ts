@@ -10,6 +10,7 @@ import {
   ApiResponseCollection,
   ApiResponseSingle,
   SortingDirection,
+  DeleteResponse,
 } from '../../interfaces';
 import ApiError from '../../errors/ApiError';
 import ApiValidationError from '../../errors/ApiValidationError';
@@ -69,7 +70,15 @@ export default class Patient implements Adapter<PatientObject> {
         'This object cannot be deleted since no id is present'
       );
     }
-    await this.connector.callDelete(`patients/${patient.id}`);
+    const result = await this.connector.callDelete<DeleteResponse>(
+      `patients/${patient.id}`
+    );
+    if (!result.data) {
+      throw new ApiError('Unknown error');
+    }
+    if (result.data.errors) {
+      throw new ApiError(result.data.message);
+    }
   }
 
   public async fetchOne(

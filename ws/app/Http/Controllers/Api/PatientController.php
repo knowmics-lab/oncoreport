@@ -32,8 +32,7 @@ class PatientController extends Controller
         $this->authorize('viewAny', Patient::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
-        /** @noinspection PhpParamsInspection */
-        return new PatientCollection($this->handleBuilderRequest($request, Patient::query()));
+        return new PatientCollection($this->handleBuilderRequest($request, Patient::with('disease')));
     }
 
     /**

@@ -23,7 +23,7 @@ export type MapType = {
 
 export interface FileFilter {
   name: string;
-  extension: string;
+  extensions: string[];
 }
 
 export type DialogProperty = 'openFile' | 'openDirectory' | 'multiSelections';

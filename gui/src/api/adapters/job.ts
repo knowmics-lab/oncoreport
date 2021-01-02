@@ -6,6 +6,7 @@ import {
   ApiResponseCollection,
   ApiResponseSingle,
   Collection,
+  DeleteResponse,
   IdentifiableEntity,
   JobObject,
   PatientObject,
@@ -82,7 +83,15 @@ export default class Job implements Adapter<JobObject> {
         'This object cannot be deleted since no id is present'
       );
     }
-    await this.connector.callDelete(`jobs/${job.id}`);
+    const result = await this.connector.callDelete<DeleteResponse>(
+      `jobs/${job.id}`
+    );
+    if (!result.data) {
+      throw new ApiError('Unknown error');
+    }
+    if (result.data.errors) {
+      throw new ApiError(result.data.message);
+    }
   }
 
   public async fetchOne(id: number | IdentifiableEntity): Promise<JobObject> {

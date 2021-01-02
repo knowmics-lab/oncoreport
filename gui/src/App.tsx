@@ -51,6 +51,10 @@ export default function App() {
         <Layout>
           <Switch>
             <Route
+              path={Routes.JOBS_BY_PATIENT}
+              component={Pages.JobsByPatientPage}
+            />
+            <Route
               path={Routes.PATIENTS}
               exact
               component={Pages.PatientsPage}

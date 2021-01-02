@@ -42,7 +42,11 @@ export type { default as Collection } from './collection';
 export type { ConfigObjectType } from './settings';
 // eslint-disable-next-line import/no-cycle
 export type { Adapter } from './adapter';
-export type { ApiResponseSingle, ApiResponseCollection } from './responses';
+export type {
+  ApiResponseSingle,
+  ApiResponseCollection,
+  DeleteResponse,
+} from './responses';
 export type {
   DiseasesState,
   JobsState,

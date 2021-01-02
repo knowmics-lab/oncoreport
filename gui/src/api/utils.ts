@@ -46,7 +46,7 @@ export default {
         };
       }, {}) as unknown) as Omit<T, K>;
   },
-  toArray(list: never) {
+  toArray(list: unknown) {
     return Array.prototype.slice.call(list || [], 0);
   },
   async retryFunction<T>(

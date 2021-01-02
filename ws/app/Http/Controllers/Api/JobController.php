@@ -267,11 +267,21 @@ class JobController extends Controller
         abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
         abort_unless($job->canBeDeleted(), 400, 'Unable to delete a queued or running job.');
 
-        DeleteJobDirectory::dispatch($job);
+        try {
+            $job->deleteJobDirectory();
+            $job->delete();
+        } catch (\Throwable $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                    'errors'  => true,
+                ]
+            );
+        }
 
         return response()->json(
             [
-                'message' => 'Deleting job.',
+                'message' => 'Patient deleted.',
                 'errors'  => false,
             ]
         );
@@ -305,6 +315,7 @@ class JobController extends Controller
      * @param \App\Models\Job          $job
      *
      * @return mixed
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function upload(Request $request, Job $job)
     {
