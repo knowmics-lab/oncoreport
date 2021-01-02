@@ -89,6 +89,12 @@ export enum EntityEvent {
 
 type ListenerFunction<T> = (entity: T) => void;
 
+export type NumberPartial<T> = {
+  [P in keyof T]?: T[P] extends IdentifiableEntity ? number : T[P];
+};
+
+type Fillable<T> = Partial<T> | NumberPartial<T>;
+
 export default abstract class Entity<T extends IdentifiableEntity>
   implements IdentifiableEntity {
   protected data: SimpleMapType<any> = {};
@@ -171,12 +177,13 @@ export default abstract class Entity<T extends IdentifiableEntity>
       let newData;
       if (this.isNew) {
         newData = await this.adapter.create((this as unknown) as T);
+        this.fillDataArray(newData);
         this.notify(EntityEvent.CREATE);
       } else {
         newData = await this.adapter.update((this as unknown) as T);
+        this.fillDataArray(newData);
         this.notify(EntityEvent.UPDATE);
       }
-      this.fillDataArray(newData);
       this.dirty = false;
     }
     return this;
@@ -194,14 +201,17 @@ export default abstract class Entity<T extends IdentifiableEntity>
             val = (container.resolve(t) as Entity<any>).syncInitialize(val);
           }
         }
-        this.data[f] = val;
+        this.data = {
+          ...this.data,
+          [f]: val,
+        };
       }
     }
 
     return this;
   }
 
-  public fill(d: Partial<T>): this {
+  public fill(d: Fillable<T>): this {
     if (this.isDeleted) throw new Error('Attempting to fill deleted entity');
     const o: Partial<T> = {};
     const fillables = getArrayMeta(fillableKey, this) as string[];
@@ -213,9 +223,9 @@ export default abstract class Entity<T extends IdentifiableEntity>
         const t = tokens.get(k);
         if (t) {
           let obj = container.resolve(t) as Entity<any>;
-          if (typeof data === 'number') {
+          if (typeof data === 'number' || typeof data === 'string') {
             obj
-              .initialize(data)
+              .initialize(+data)
               .then((r) => {
                 return r;
               })
@@ -260,5 +270,15 @@ export default abstract class Entity<T extends IdentifiableEntity>
   protected notify(e: EntityEvent): this {
     this.listeners.get(e)?.forEach((l) => l(this));
     return this;
+  }
+
+  public toDataObject(): NumberPartial<T> {
+    const fillables = getArrayMeta(fillableKey, this) as string[];
+    const tokens = getEntityTokens(this);
+    const data: NumberPartial<T> = {};
+    for (const f of fillables) {
+      set(data, f, get(this.data, tokens.has(f) ? `${f}.id` : f, ''));
+    }
+    return data;
   }
 }

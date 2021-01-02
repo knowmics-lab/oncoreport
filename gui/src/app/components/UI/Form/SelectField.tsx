@@ -1,31 +1,34 @@
 import React from 'react';
-import MenuItem from '@material-ui/core/MenuItem';
+// import MenuItem from '@material-ui/core/MenuItem';
 import { Field } from 'formik';
 import {
   TextField as FormikTextField,
   TextFieldProps as FormikTextFieldProps,
 } from 'formik-material-ui';
 import useStyles from './hooks';
-import { SimpleMapType } from '../../../../interfaces';
+import { SimpleMapArray, SimpleMapType } from '../../../../interfaces';
 
 const OPTION_MAPPER = ([k, v]: [string | number, string]) => (
-  <MenuItem key={k} value={k}>
+  <option key={k} value={k}>
     {v}
-  </MenuItem>
+  </option>
 );
 const EMPTY_OPTION = (emptyText: string) => (
-  <MenuItem key="__EMPTY__" value="">
+  <option key="__EMPTY__" value="">
     {emptyText}
-  </MenuItem>
+  </option>
 );
 
 export interface SelectProps
-  extends Omit<FormikTextFieldProps, 'select' | 'form' | 'meta' | 'field' | 'fullWidth'> {
+  extends Omit<
+    FormikTextFieldProps,
+    'select' | 'form' | 'meta' | 'field' | 'fullWidth'
+  > {
   name: string;
   multiple?: boolean;
   emptyText?: string;
   addEmpty?: boolean;
-  options: SimpleMapType<string>;
+  options: SimpleMapType<string> | SimpleMapArray<string>;
 }
 
 export default function SelectField({
@@ -51,6 +54,7 @@ export default function SelectField({
       fullWidth
       SelectProps={{
         ...(SelectProps || {}),
+        native: !multiple,
         multiple: multiple || false,
       }}
       InputLabelProps={{
