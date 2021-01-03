@@ -50,6 +50,7 @@ export default function App() {
       <Router>
         <Layout>
           <Switch>
+            <Route path={Routes.JOBS} component={Pages.JobsPage} />
             <Route
               path={Routes.JOBS_BY_PATIENT}
               component={Pages.JobsByPatientPage}

@@ -25,15 +25,18 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const logRef = createRef<HTMLDivElement>();
+  const [loading, setLoading] = useState(false);
   const [log, setLog] = useState<string>('');
   const [timeout, setTimeout] = useState(30);
   const isOpen = !!job && open;
-  const needsRefresh = job && job.status === JobStatus.processing;
+  const needsRefresh = job && !loading && job.status === JobStatus.processing;
 
   useEffect(() => {
     if (job) {
+      setLoading(true);
       runAsync(async () => {
         setLog((await job.refresh()).log || '');
+        setLoading(false);
       });
     }
   }, [job]);
@@ -60,15 +63,18 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
     <Dialog fullScreen={fullScreen} open={isOpen} onClose={onClose}>
       <DialogTitle>{job ? `Logs of ${job.name}` : 'Logs'}</DialogTitle>
       <DialogContent>
-        {job ? (
+        {job && !loading ? (
           <>
             <pre>{log}</pre>
             <div ref={logRef} />
           </>
         ) : (
-          <div style={{ textAlign: 'center' }}>
-            <CircularProgress />
-          </div>
+          <>
+            <div style={{ textAlign: 'center' }}>
+              <CircularProgress />
+            </div>
+            <div style={{ textAlign: 'center' }}>Please wait...</div>
+          </>
         )}
       </DialogContent>
       <DialogActions>
@@ -87,7 +93,7 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
             />
           </>
         )}
-        <Button onClick={onClose} color="primary" autoFocus>
+        <Button onClick={onClose} color="primary" variant="contained" autoFocus>
           Close
         </Button>
       </DialogActions>
