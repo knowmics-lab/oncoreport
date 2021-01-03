@@ -18,6 +18,8 @@ import LayoutHeader from './components/layout/header';
 import NavContent from './components/layout/navContent';
 import Notifications from './components/layout/notifications';
 import ContentWrapper from './components/layout/contentWrapper';
+import BlockingMessageHandler from './components/layout/blockingMessageHandler';
+import StartHandler from './components/layout/startHandler';
 
 const Header = getHeader(styled);
 const DrawerSidebar = getDrawerSidebar(styled);
@@ -100,8 +102,10 @@ const Layout = ({ children, footer }: Props) => {
       </DrawerSidebar>
       <Content>
         <ContentWrapper>
+          <StartHandler />
           {children}
           <Notifications />
+          <BlockingMessageHandler />
         </ContentWrapper>
       </Content>
       {footer && <Footer>{footer}</Footer>}

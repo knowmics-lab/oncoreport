@@ -13,6 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Icon from '@material-ui/core/Icon';
 import { JobEntity } from '../../../api';
 import { JobStatus } from '../../../interfaces';
+import { runAsync } from '../utils';
 
 type LogsDialogProps = {
   job?: JobEntity;
@@ -28,6 +29,14 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
   const [timeout, setTimeout] = useState(30);
   const isOpen = !!job && open;
   const needsRefresh = job && job.status === JobStatus.processing;
+
+  useEffect(() => {
+    if (job) {
+      runAsync(async () => {
+        setLog((await job.refresh()).log || '');
+      });
+    }
+  }, [job]);
 
   useEffect(() => {
     let t: ReturnType<typeof setInterval> | undefined;

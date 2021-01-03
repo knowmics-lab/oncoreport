@@ -90,6 +90,12 @@ export default abstract class Repository<
     return this.entityFactoryAsync(id);
   }
 
+  public fetchSync(data: T): U {
+    const { id } = data;
+    if (!id) throw new EntityError('Invalid id supplied for fetchSync');
+    return this.entityFactory(data);
+  }
+
   get itemsPerPage(): number {
     return this._itemsPerPage;
   }

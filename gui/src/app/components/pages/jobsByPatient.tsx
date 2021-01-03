@@ -27,6 +27,7 @@ import {
   TypeOfNotification,
 } from '../../../interfaces';
 import SaveResultsMenu from '../UI/saveResultsMenu';
+import LogsDialog from '../UI/LogsDialog';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -45,6 +46,8 @@ export default function Patients() {
   const [patient, setPatient] = useState<PatientEntity | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   const [submittingJobs, setSubmittingJobs] = useState<number[]>([]);
+  const [selectedJob, setSelectedJob] = useState<JobEntity | undefined>();
+  const [logsOpen, setLogsOpen] = useState(false);
   const settings = useService(Settings);
   const history = useHistory();
 
@@ -99,11 +102,8 @@ export default function Patients() {
         onClick(e, job) {
           if (patient) {
             e.preventDefault();
-            runAsync(async () => {
-              await job.refresh();
-              await jobsRepository.refreshPageByPatient(patient, currentPage);
-              await jobsRepository.refreshAllPages();
-            });
+            setSelectedJob(job);
+            setLogsOpen(true);
           }
         },
       },
@@ -208,6 +208,18 @@ export default function Patients() {
               },
               'actions',
             ]}
+          />
+          <LogsDialog
+            job={selectedJob}
+            open={logsOpen}
+            onClose={() => {
+              runAsync(async () => {
+                setLogsOpen(false);
+                setSelectedJob(undefined);
+                await jobsRepository.refreshPageByPatient(patient, currentPage);
+                await jobsRepository.refreshAllPages();
+              });
+            }}
           />
         </>
       ) : (

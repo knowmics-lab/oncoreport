@@ -51,16 +51,16 @@ export default function App() {
         <Layout>
           <Switch>
             <Route
+              path={Routes.JOBS_BY_PATIENT}
+              component={Pages.JobsByPatientPage}
+            />
+            <Route
               path={Routes.PATIENTS_CREATE}
               component={Pages.Forms.PatientForm}
             />
             <Route
               path={Routes.PATIENTS_EDIT}
               component={Pages.Forms.PatientForm}
-            />
-            <Route
-              path={Routes.JOBS_BY_PATIENT}
-              component={Pages.JobsByPatientPage}
             />
             <Route
               path={Routes.PATIENTS}

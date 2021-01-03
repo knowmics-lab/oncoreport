@@ -144,7 +144,7 @@ export default class Manager {
   public async waitContainerBooted(timeout = 0) {
     await Utils.waitExists(this.getDbDirectory(), timeout);
     await Utils.waitExists(this.getDbReadyFile(), timeout);
-    await Utils.waitExists(this.getBootedFile(), timeout);
+    // await Utils.waitExists(this.getBootedFile(), timeout); @TODO restore this line when the container is ready
   }
 
   public async cleanupBootedFile() {
@@ -290,7 +290,9 @@ export default class Manager {
     timeout = 120000,
     maxTries = 3
   ) {
-    await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
+    // @todo restore when the container is published
+    if (displayLog) displayLog('');
+    // await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
     try {
       await Utils.retryFunction(
         async (t: number) => {
@@ -305,7 +307,8 @@ export default class Manager {
             !first
           );
           if (odd) {
-            await this.removeContainer();
+            // @todo restore when the container is published
+            // await this.removeContainer();
           }
           return this.startContainer();
         },

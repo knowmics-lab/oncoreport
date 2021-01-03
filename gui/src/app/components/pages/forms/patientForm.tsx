@@ -141,6 +141,11 @@ export default function PatientForm() {
               <CircularProgress color="inherit" />
             </Grid>
           </Grid>
+          <Grid container justify="center">
+            <Grid item xs="auto">
+              Please wait...
+            </Grid>
+          </Grid>
         </>
       ) : (
         <>
@@ -158,6 +163,7 @@ export default function PatientForm() {
                 return runAsync(async (manager) => {
                   setSubmitting(true);
                   await patient?.fill(d).save();
+                  repository.refreshAllPages();
                   manager.pushSimple(
                     'Patient saved!',
                     TypeOfNotification.success

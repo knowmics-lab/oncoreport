@@ -19,7 +19,9 @@ export default function Body<
   return (
     <TableBody>
       <TableRow>
-        <TableCell colSpan={numOfColumns}>Loading...TODO</TableCell>
+        <TableCell colSpan={numOfColumns} align="center">
+          Loading...
+        </TableCell>
       </TableRow>
     </TableBody>
   );
