@@ -26,7 +26,7 @@ export enum JobTypes {
 export enum Comparison {
   lt = 'lt',
   lte = 'lte',
-  ge = 'gt',
+  gt = 'gt',
   gte = 'gte',
 }
 

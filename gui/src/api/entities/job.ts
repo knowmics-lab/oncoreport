@@ -126,7 +126,7 @@ export default class Job extends Entity<JobObject> implements JobObject {
         );
         if (!(await fs.pathExists(jobFolder)))
           throw new EntityError('Unable to find output path');
-        if (!electron.shell.openItem(jobFolder)) {
+        if (!electron.shell.openPath(jobFolder)) {
           throw new EntityError('Unable to open output folder');
         }
         return;

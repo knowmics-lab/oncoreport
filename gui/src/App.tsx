@@ -52,6 +52,10 @@ export default function App() {
           <Switch>
             <Route path={Routes.JOBS} component={Pages.JobsPage} />
             <Route
+              path={Routes.NEW_ANALYSIS}
+              component={Pages.Forms.NewAnalysisForm}
+            />
+            <Route
               path={Routes.JOBS_BY_PATIENT}
               component={Pages.JobsByPatientPage}
             />

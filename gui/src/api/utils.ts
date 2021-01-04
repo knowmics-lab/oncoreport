@@ -6,7 +6,7 @@ import checkInternetConnection from 'check-internet-connected';
 // import type { FileFilter } from '../types/common';
 // import type { AnalysisFileTypes } from '../types/analysis';
 import TimeoutError from '../errors/TimeoutError';
-import type { JobPath } from '../interfaces';
+import type { FileFilter, JobPath } from '../interfaces';
 
 let watcher: FSWatcher | null = null;
 
@@ -14,25 +14,27 @@ export default {
   cpuCount() {
     return os.cpus().length;
   },
-  // supportedAnalysisFileTypes() {
-  //   return {
-  //     fastq: 'FASTQ',
-  //     bam: 'BAM',
-  //     sam: 'SAM',
-  //   };
-  // },
-  // analysisFileExtensions(type: AnalysisFileTypes): FileFilter[] {
-  //   switch (type) {
-  //     case 'fastq':
-  //       return [{ name: 'FASTQ files', extensions: ['fq', 'fastq', 'gz'] }];
-  //     case 'bam':
-  //       return [{ name: 'BAM files', extensions: ['bam'] }];
-  //     case 'sam':
-  //       return [{ name: 'SAM files', extensions: ['sam'] }];
-  //     default:
-  //       return [];
-  //   }
-  // },
+  supportedAnalysisFileTypes() {
+    return {
+      fastq: 'FASTQ',
+      bam: 'BAM',
+      ubam: 'uBAM',
+      vcf: 'VCF',
+    };
+  },
+  analysisFileExtensions(type: string): FileFilter[] {
+    switch (type) {
+      case 'fastq':
+        return [{ name: 'FASTQ files', extensions: ['fq', 'fastq', 'gz'] }];
+      case 'bam':
+      case 'ubam':
+        return [{ name: 'BAM files', extensions: ['bam'] }];
+      case 'vcf':
+        return [{ name: 'VCF files', extensions: ['vcf'] }];
+      default:
+        return [];
+    }
+  },
   filterByKey<T, K extends keyof T>(
     raw: T,
     callback: (k: keyof T) => boolean

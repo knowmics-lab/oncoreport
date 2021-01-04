@@ -2,11 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/entity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/FileSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/UI/FileSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/UI/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/constants/routes.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/constants/routes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/enums.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/enums.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +38,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -235,6 +255,7 @@
       <workItem from="1609145116955" duration="3537000" />
       <workItem from="1609224693191" duration="612000" />
       <workItem from="1609610546896" duration="611000" />
+      <workItem from="1609753649332" duration="8449000" />
     </task>
     <servers />
   </component>

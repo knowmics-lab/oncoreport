@@ -55,7 +55,7 @@ export default class MainProcessManager {
     if (this.#window) {
       this.#window.webContents.on(
         'new-window',
-        (event, _url, frameName, _disposition, options) => {
+        (event, url, frameName, _disposition, options) => {
           event.preventDefault();
           const forcedOptions = {
             parent: this.#window,
@@ -75,6 +75,7 @@ export default class MainProcessManager {
             modal: isModal,
           });
           win.setMenuBarVisibility(false);
+          win.loadURL(url);
           // eslint-disable-next-line no-param-reassign
           event.newGuest = win;
         }

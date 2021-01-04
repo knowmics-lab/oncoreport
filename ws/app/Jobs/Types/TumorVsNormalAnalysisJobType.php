@@ -252,7 +252,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
         return [
             'paired'        => ['filled', 'boolean'],
             'tumor'         => ['required', 'array'],
-            'tumor.fastq1'  => ['nullable', 'required_without_all:tumor.ubam,tumor.bam,vcf'],
+            'tumor.fastq1'  => ['nullable', 'required_without_all:parameters.tumor.ubam,parameters.tumor.bam,parameters.vcf'],
             'tumor.fastq2'  => [
                 'nullable',
                 Rule::requiredIf(
@@ -263,10 +263,14 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     }
                 ),
             ],
-            'tumor.ubam'    => ['nullable', 'required_without_all:tumor.fastq1,tumor.bam,vcf'],
-            'tumor.bam'     => ['nullable', 'required_without_all:tumor.fastq1,tumor.ubam,vcf'],
+            'tumor.ubam'    => ['nullable', 'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.vcf'],
+            'tumor.bam'     => ['nullable', 'required_without_all:parameters.tumor.fastq1,parameters.tumor.ubam,parameters.vcf'],
             'normal'        => ['required', 'array'],
-            'normal.fastq1' => ['nullable', 'required_with:tumor.fastq1', 'required_without_all:normal.ubam,normal.bam,vcf'],
+            'normal.fastq1' => [
+                'nullable',
+                'required_with:parameters.tumor.fastq1',
+                'required_without_all:parameters.normal.ubam,parameters.normal.bam,parameters.vcf',
+            ],
             'normal.fastq2' => [
                 'nullable',
                 'required_with:tumor.fastq2',
@@ -278,9 +282,20 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     }
                 ),
             ],
-            'normal.ubam'   => ['nullable', 'required_with:tumor.ubam', 'required_without_all:normal.fastq1,normal.bam,vcf'],
-            'normal.bam'    => ['nullable', 'required_with:tumor.bam', 'required_without_all:normal.fastq1,normal.ubam,vcf'],
-            'vcf'           => ['nullable', 'required_without_all:tumor.fastq1,tumor.bam,tumor.ubam,normal.fastq1,normal.bam,normal.ubam'],
+            'normal.ubam'   => [
+                'nullable',
+                'required_with:parameters.tumor.ubam',
+                'required_without_all:parameters.normal.fastq1,parameters.normal.bam,parameters.vcf',
+            ],
+            'normal.bam'    => [
+                'nullable',
+                'required_with:parameters.tumor.bam',
+                'required_without_all:parameters.normal.fastq1,parameters.normal.ubam,parameters.vcf',
+            ],
+            'vcf'           => [
+                'nullable',
+                'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.tumor.ubam,parameters.normal.fastq1,parameters.normal.bam,parameters.normal.ubam',
+            ],
             'genome'        => ['filled', Rule::in(Utils::VALID_GENOMES)],
             'threads'       => ['filled', 'integer'],
         ];

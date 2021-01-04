@@ -49,4 +49,8 @@ export default class Patient extends Entity<PatientObject>
   public constructor(adapter: PatientAdapter) {
     super(adapter);
   }
+
+  public get fullName() {
+    return `${this.first_name} ${this.last_name}`;
+  }
 }

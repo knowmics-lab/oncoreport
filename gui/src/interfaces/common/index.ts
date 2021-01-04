@@ -1,4 +1,5 @@
 import { SortingDirection } from '../enums';
+import { Dispatch, SetStateAction } from 'react';
 
 export type { default as IdentifiableEntity } from './identifiableEntity';
 export type { default as TimedEntity } from './timedEntity';
@@ -79,3 +80,23 @@ export type UploadProgressFunction = (
   bytesUploaded: number,
   bytesTotal: number
 ) => void;
+
+export type UploadState = {
+  isUploading: boolean;
+  uploadFile: string;
+  uploadedBytes: number;
+  uploadedPercent: number;
+  uploadTotal: number;
+};
+
+export type UploadCallbacks = {
+  uploadStart: (uploadFile: string) => void;
+  uploadEnd: () => void;
+  makeOnProgress: () => UploadProgressFunction;
+};
+
+export type UploadHook = [
+  UploadState,
+  UploadCallbacks,
+  Dispatch<SetStateAction<UploadState>>
+];

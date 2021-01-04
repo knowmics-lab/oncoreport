@@ -18,6 +18,9 @@ export {
   SortingSpec,
   ResponseType,
   UploadProgressFunction,
+  UploadState,
+  UploadCallbacks,
+  UploadHook,
 } from './common';
 export {
   Gender,

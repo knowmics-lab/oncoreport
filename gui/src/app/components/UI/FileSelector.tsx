@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       width: '100%',
-      maxWidth: 250,
       backgroundColor: theme.palette.background.paper,
     },
     title: {
@@ -46,6 +45,7 @@ export type File = {
 
 type Props = {
   title?: string;
+  value?: File[];
   onFileAdd: (files: File[]) => void;
   onFileRemove: (file: File) => void;
   multiple?: boolean;
@@ -72,6 +72,7 @@ function isExtensionAllowed(ext: string, filters: string[]): boolean {
 
 export default function FileSelector({
   title,
+  value,
   multiple,
   disabled,
   filters,
@@ -79,7 +80,7 @@ export default function FileSelector({
   onFileRemove,
 }: Props) {
   const classes = useStyles();
-  const [files, setFiles] = React.useState<File[]>([]);
+  const [files, setFiles] = React.useState<File[]>(value || []);
   const processedFilters = React.useMemo(() => processFiltersList(filters), [
     filters,
   ]);
@@ -181,7 +182,7 @@ export default function FileSelector({
   return (
     <Box
       className={classes.root}
-      boxShadow={1}
+      boxShadow={2}
       borderRadius="borderRadius"
       onDragOver={handlePrevent}
       onDragEnter={handlePrevent}
@@ -223,6 +224,7 @@ export default function FileSelector({
 
 FileSelector.defaultProps = {
   title: null,
+  value: [],
   multiple: false,
   disabled: false,
   filters: [{ name: 'All Files', extensions: ['*'] }],

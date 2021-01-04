@@ -98,7 +98,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $alleleFractionFilter = sprintf("AF%s%.2f", $alleleFractionFilterOperator, $alleleFractionFilterValue);
             $command = [
                 'bash',
-                self::scriptPath('pipeline_tumVSnormal.bash'),
+                self::scriptPath('pipeline_liquid_biopsy.bash'),
                 '-i',
                 $patient->code,
                 '-s',
@@ -250,7 +250,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
 
         return [
             'paired'                          => ['filled', 'boolean'],
-            'fastq1'                          => ['nullable', 'required_without_all:ubam,bam,vcf'],
+            'fastq1'                          => ['nullable', 'required_without_all:parameters.ubam,parameters.bam,parameters.vcf'],
             'fastq2'                          => [
                 'nullable',
                 Rule::requiredIf(
@@ -261,9 +261,9 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                     }
                 ),
             ],
-            'ubam'                            => ['nullable', 'required_without_all:fastq1,bam,vcf'],
-            'bam'                             => ['nullable', 'required_without_all:fastq1,ubam,vcf'],
-            'vcf'                             => ['nullable', 'required_without_all:fastq1,bam,ubam'],
+            'ubam'                            => ['nullable', 'required_without_all:parameters.fastq1,parameters.bam,parameters.vcf'],
+            'bam'                             => ['nullable', 'required_without_all:parameters.fastq1,parameters.ubam,parameters.vcf'],
+            'vcf'                             => ['nullable', 'required_without_all:parameters.fastq1,parameters.bam,parameters.ubam'],
             'genome'                          => ['filled', Rule::in(Utils::VALID_GENOMES)],
             'threads'                         => ['filled', 'integer'],
             'depthFilter'                     => ['filled', 'array'],

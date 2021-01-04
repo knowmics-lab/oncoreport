@@ -260,11 +260,11 @@ abstract class AbstractJob
     /**
      * Checks if a file is exists in the current job directory
      *
-     * @param string $file
+     * @param string|null $file
      *
      * @return bool
      */
-    protected function fileExists(string $file): bool
+    protected function fileExists(?string $file): bool
     {
         if (empty($file)) {
             return false;

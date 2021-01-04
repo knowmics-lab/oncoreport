@@ -172,6 +172,19 @@ export default function Patients() {
               {
                 align: Alignment.right,
                 shown: true,
+                icon: 'fas fa-plus',
+                tooltip: 'New Analysis',
+                onClick: () => {
+                  history.push(
+                    generatePath(Routes.NEW_ANALYSIS, {
+                      id: patient?.id,
+                    })
+                  );
+                },
+              },
+              {
+                align: Alignment.right,
+                shown: true,
                 icon: 'fas fa-redo',
                 disabled: (s) => s.isLoading,
                 tooltip: 'Refresh',
