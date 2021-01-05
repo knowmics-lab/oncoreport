@@ -130,7 +130,7 @@ export default function RemoteTable<
             changeSorting={changeSorting}
           />
           {(isLoading || !data) && <TableBodyLoading columns={columns} />}
-          {!!data && (
+          {!isLoading && !!data && (
             <TableBody
               data={data}
               columns={columns}

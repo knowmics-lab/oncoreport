@@ -81,19 +81,6 @@ const steps = [
   'Select input files',
 ];
 
-/*
-  sample_code?: string;
-  name: string;
-  type: JobTypes;
-  readable_type: string;
-  status: JobStatus;
-  parameters?: JobConfig;
-  log?: string;
-  output?: JobOutput;
-  owner: unknown;
-  patient: Nullable<Patient>;
- */
-
 const ComparisonMap = {
   [Comparison.lt]: 'Less than (<)',
   [Comparison.lte]: 'Less than or equal to (<=)',
@@ -626,6 +613,8 @@ export default function NewAnalysisForm() {
                   TypeOfNotification.success
                 );
                 await job.submit();
+                await jobRepository.refreshAllPages();
+                await jobRepository.refreshAllPagesByPatient(patient);
                 manager.pushSimple(
                   `Job submitted!`,
                   TypeOfNotification.success

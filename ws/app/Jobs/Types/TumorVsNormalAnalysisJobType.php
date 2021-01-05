@@ -157,67 +157,80 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             } else {
                 throw new ProcessingJobException('No valid input files have been specified.');
             }
+            $noMutations = false;
             $model = $this->model;
-            self::runCommand(
-                $command,
-                $this->getAbsoluteJobDirectory(),
-                null,
-                static function ($type, $buffer) use ($model) {
-                    $model->appendLog($buffer, false);
-                },
-                [
-                    1   => 'An invalid parameter has been detected',
-                    101 => 'Unable to convert tumor uBAM to FASTQ',
-                    102 => 'Unable to trim tumor FASTQ file',
-                    103 => 'Unable to align tumor FASTQ file',
-                    104 => 'Unable to add read groups to tumor BAM file',
-                    105 => 'Unable to sort tumor BAM file',
-                    106 => 'Unable to reorder tumor BAM file',
-                    107 => 'Unable to remove duplicates from tumor BAM file',
-                    108 => 'Unable to convert normal uBAM to FASTQ',
-                    109 => 'Unable to trim normal FASTQ file',
-                    110 => 'Unable to align normal FASTQ file',
-                    111 => 'Unable to add read groups to normal BAM file',
-                    112 => 'Unable to sort normal BAM file',
-                    113 => 'Unable to reorder normal BAM file',
-                    114 => 'Unable to remove duplicates from normal BAM file',
-                    115 => 'Unable to call variants',
-                    116 => 'Unable to filter variants',
-                    117 => 'Unable to select PASS variants',
-                    118 => 'Unable to copy input VCF file',
-                    119 => 'Unable to prepare variants file for annotation',
-                    120 => 'Unable to prepare input file for annotation',
-                    121 => 'Unable to build report output',
-                    122 => 'Unable to clean unused folders',
-                ]
-            );
-            throw_unless(
-                $this->fileExistsRelative($outputRelative . '/txt'),
-                ProcessingJobException::class,
-                'Unable to generate report intermediate files.'
-            );
-            throw_unless(
-                $this->fileExistsRelative($outputRelative . '/output/report.html'),
-                ProcessingJobException::class,
-                'Unable to generate report output file.'
-            );
-            $this->log('Building intermediate archive');
-            Utils::makeZipArchive(
-                $this->absoluteJobPath($outputRelative . '/txt'),
-                $this->absoluteJobPath($outputRelative . '/output/intermediate.zip')
-            );
-            $this->log('Writing output');
-            $this->setOutput(
-                [
-                    'tumorBamOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/mark_dup_tumor/nodup.bam'),
-                    'normalBamOutputFile' => $this->getFilePathsForOutput($outputRelative . '/mark_dup_normal/nodup.bam'),
-                    'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
-                    'vcfPASSOutputFile'   => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
-                    'textOutputFiles'     => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
-                    'reportOutputFile'    => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
-                ]
-            );
-            $this->log('Analysis completed.');
+            try {
+                self::runCommand(
+                    $command,
+                    $this->getAbsoluteJobDirectory(),
+                    null,
+                    static function ($type, $buffer) use ($model) {
+                        $model->appendLog($buffer, false);
+                    },
+                    [
+                        1   => 'An invalid parameter has been detected',
+                        101 => 'Unable to convert tumor uBAM to FASTQ',
+                        102 => 'Unable to trim tumor FASTQ file',
+                        103 => 'Unable to align tumor FASTQ file',
+                        104 => 'Unable to add read groups to tumor BAM file',
+                        105 => 'Unable to sort tumor BAM file',
+                        106 => 'Unable to reorder tumor BAM file',
+                        107 => 'Unable to remove duplicates from tumor BAM file',
+                        108 => 'Unable to convert normal uBAM to FASTQ',
+                        109 => 'Unable to trim normal FASTQ file',
+                        110 => 'Unable to align normal FASTQ file',
+                        111 => 'Unable to add read groups to normal BAM file',
+                        112 => 'Unable to sort normal BAM file',
+                        113 => 'Unable to reorder normal BAM file',
+                        114 => 'Unable to remove duplicates from normal BAM file',
+                        115 => 'Unable to call variants',
+                        116 => 'Unable to filter variants',
+                        117 => 'Unable to select PASS variants',
+                        118 => 'Unable to copy input VCF file',
+                        119 => 'Unable to prepare variants file for annotation',
+                        120 => 'Unable to prepare input file for annotation',
+                        121 => 'Unable to build report output',
+                        122 => 'Unable to clean unused folders',
+                    ]
+                );
+            } catch (ProcessingJobException $e) {
+                if ($e->getCode() === 999) {
+                    $noMutations = true;
+                } else {
+                    throw $e;
+                }
+            }
+            if ($noMutations) {
+                $this->log('Unable to continue since no mutations have been found in the input data!');
+            } else {
+                throw_unless(
+                    $this->fileExistsRelative($outputRelative . '/txt'),
+                    ProcessingJobException::class,
+                    'Unable to generate report intermediate files.'
+                );
+                throw_unless(
+                    $this->fileExistsRelative($outputRelative . '/output/report.html'),
+                    ProcessingJobException::class,
+                    'Unable to generate report output file.'
+                );
+                $this->log('Building intermediate archive');
+                Utils::makeZipArchive(
+                    $this->absoluteJobPath($outputRelative . '/txt'),
+                    $this->absoluteJobPath($outputRelative . '/output/intermediate.zip')
+                );
+                $this->log('Writing output');
+                $this->setOutput(
+                    [
+                        'tumorBamOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/mark_dup_tumor/nodup.bam'),
+                        'normalBamOutputFile' => $this->getFilePathsForOutput($outputRelative . '/mark_dup_normal/nodup.bam'),
+                        'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
+                        'vcfPASSOutputFile'   => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
+                        'textOutputFiles'     => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
+                        'reportOutputFile'    => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
+                    ]
+                );
+                $this->log('Analysis completed.');
+            }
         } catch (Exception $e) {
             throw_if($e instanceof ProcessingJobException, $e);
             throw new ProcessingJobException('An error occurred during job processing.', 0, $e);

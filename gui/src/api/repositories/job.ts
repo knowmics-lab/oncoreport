@@ -32,29 +32,22 @@ export default class Job extends Repository<JobObject, JobEntity> {
     set(get(this.pagesCacheByPatient, id), page, d);
   }
 
-  public async refreshPageByPatient(
-    patient: Patient,
-    page: number
-  ): Promise<Collection<JobEntity>> {
+  public async refreshPageByPatient(patient: Patient, page: number) {
     if (!patient.id) throw new EntityError('Invalid patient object');
     if (has(this.pagesCacheByPatient, `${patient.id}.${page}`)) {
       unset(this.pagesCacheByPatient, `${patient.id}.${page}`);
     }
-    const result = await this.fetchPageByPatient(patient, page);
+    this.cleanupInstanceCache();
     this.notifyRefreshByPatient(patient, page);
-    return result;
   }
 
-  public async refreshAllPagesByPatient(
-    patient: Patient
-  ): Promise<Collection<JobEntity>> {
+  public async refreshAllPagesByPatient(patient: Patient) {
     if (!patient.id) throw new EntityError('Invalid patient object');
     if (has(this.pagesCacheByPatient, `${patient.id}`)) {
       unset(this.pagesCacheByPatient, `${patient.id}`);
+      this.cleanupInstanceCache();
     }
-    const result = await this.fetchPageByPatient(patient);
     this.notifyRefreshByPatient(patient);
-    return result;
   }
 
   public async fetchPageByPatient(
@@ -92,12 +85,16 @@ export default class Job extends Repository<JobObject, JobEntity> {
   }
 
   public unsubscribeRefreshByPatient(patient: Patient, id: string) {
-    unset(this.refreshListenersByPatient, `${patient.id}.${id}`);
+    if (!patient.id) throw new EntityError('Invalid patient object');
+    if (has(this.refreshListenersByPatient, patient.id)) {
+      unset(get(this.refreshListenersByPatient, patient.id), id);
+    }
   }
 
   private notifyRefreshByPatient(patient: Patient, page?: number) {
+    if (!patient.id) throw new EntityError('Invalid patient object');
     Object.values(
-      get(this.refreshListenersByPatient, `${patient.id}`, {})
+      get(this.refreshListenersByPatient, patient.id, {})
     ).forEach((l) => (l as RefreshListener)(patient, page));
   }
 }

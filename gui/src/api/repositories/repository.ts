@@ -78,6 +78,10 @@ export default abstract class Repository<
     return instance;
   }
 
+  protected cleanupInstanceCache() {
+    this.instanceCache = {};
+  }
+
   public new(): U {
     return this.entityFactory().initializeNew();
   }
@@ -104,6 +108,7 @@ export default abstract class Repository<
     // Empty the cache if the number if items per page changes!
     if (value !== this._itemsPerPage) {
       this.pagesCache = {};
+      this.cleanupInstanceCache();
     }
     this._itemsPerPage = value;
   }
@@ -116,24 +121,23 @@ export default abstract class Repository<
     // Empty the cache if the sorting specifications changes!
     if (value !== this._sorting) {
       this.pagesCache = {};
+      this.cleanupInstanceCache();
     }
     this._sorting = value;
   }
 
-  public async refreshPage(page: number): Promise<Collection<U>> {
+  public async refreshPage(page: number) {
     if (has(this.pagesCache, page)) {
       unset(this.pagesCache, page);
     }
-    const result = await this.fetchPage(page);
+    this.cleanupInstanceCache();
     this.notifyRefresh(page);
-    return result;
   }
 
-  public async refreshAllPages(): Promise<Collection<U>> {
+  public async refreshAllPages() {
     this.pagesCache = {};
-    const result = this.fetchPage();
+    this.cleanupInstanceCache();
     this.notifyRefresh();
-    return result;
   }
 
   public async fetchPage(page = 1): Promise<Collection<U>> {

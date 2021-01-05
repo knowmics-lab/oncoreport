@@ -66,6 +66,7 @@ export default class MainProcessManager {
               nativeWindowOpen: true,
               webviewTag: false,
               nodeIntegrationInSubFrames: false,
+              nodeIntegrationInWorker: false,
             },
           };
           const isModal = frameName === 'modal';
