@@ -7,6 +7,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Models\Job as JobModel;
 use Illuminate\Bus\Queueable;
@@ -71,10 +72,11 @@ class Request implements ShouldQueue
             Auth::logout();
             $this->model->setStatus(JobModel::COMPLETED);
         } catch (Throwable $e) {
-            $this->model->appendLog('Error: ' . $e);
+            if (!($e instanceof IgnoredException)) {
+                $this->model->appendLog('Error: ' . $e);
+            }
             $this->model->setStatus(JobModel::FAILED);
-            /** @noinspection NotOptimalIfConditionsInspection */
-            if ($jobProcessor !== null && ($jobProcessor instanceof Types\AbstractJob)) {
+            if ($jobProcessor && ($jobProcessor instanceof Types\AbstractJob)) {
                 $jobProcessor->cleanupOnFail();
             }
             $this->fail($e);

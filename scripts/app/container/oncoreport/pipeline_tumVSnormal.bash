@@ -368,7 +368,7 @@ type=tumnorm
   cut -f1,2,4,5 "$PATH_VCF_PASS/variants.vcf" >"$PATH_CONVERTED/variants.txt"; } ||
   exit_abnormal_code "Unable to prepare variants for annotation" 119
 
-[[ -s "$PATH_CONVERTED/variants.txt" ]] && exit_abnormal_code "Unable to continue since no variants have been found!" 999
+[[ ! -s "$PATH_CONVERTED/variants.txt" ]] && exit_abnormal_code "Unable to continue since no variants have been found!" 999
 
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 120

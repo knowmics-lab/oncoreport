@@ -7,6 +7,7 @@
 
 namespace App\Jobs\Types;
 
+use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Utils;
 use Exception;
@@ -202,37 +203,39 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             }
             if ($noMutations) {
                 $this->log('Unable to continue since no mutations have been found in the input data!');
-            } else {
-                throw_unless(
-                    $this->fileExistsRelative($outputRelative . '/txt'),
-                    ProcessingJobException::class,
-                    'Unable to generate report intermediate files.'
-                );
-                throw_unless(
-                    $this->fileExistsRelative($outputRelative . '/output/report.html'),
-                    ProcessingJobException::class,
-                    'Unable to generate report output file.'
-                );
-                $this->log('Building intermediate archive');
-                Utils::makeZipArchive(
-                    $this->absoluteJobPath($outputRelative . '/txt'),
-                    $this->absoluteJobPath($outputRelative . '/output/intermediate.zip')
-                );
-                $this->log('Writing output');
-                $this->setOutput(
-                    [
-                        'tumorBamOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/mark_dup_tumor/nodup.bam'),
-                        'normalBamOutputFile' => $this->getFilePathsForOutput($outputRelative . '/mark_dup_normal/nodup.bam'),
-                        'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
-                        'vcfPASSOutputFile'   => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
-                        'textOutputFiles'     => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
-                        'reportOutputFile'    => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
-                    ]
-                );
-                $this->log('Analysis completed.');
+                throw new IgnoredException('Job failed');
             }
+
+            throw_unless(
+                $this->fileExistsRelative($outputRelative . '/txt'),
+                ProcessingJobException::class,
+                'Unable to generate report intermediate files.'
+            );
+            throw_unless(
+                $this->fileExistsRelative($outputRelative . '/output/report.html'),
+                ProcessingJobException::class,
+                'Unable to generate report output file.'
+            );
+            $this->log('Building intermediate archive');
+            Utils::makeZipArchive(
+                $this->absoluteJobPath($outputRelative . '/txt'),
+                $this->absoluteJobPath($outputRelative . '/output/intermediate.zip')
+            );
+            $this->log('Writing output');
+            $this->setOutput(
+                [
+                    'tumorBamOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/mark_dup_tumor/nodup.bam'),
+                    'normalBamOutputFile' => $this->getFilePathsForOutput($outputRelative . '/mark_dup_normal/nodup.bam'),
+                    'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
+                    'vcfPASSOutputFile'   => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
+                    'textOutputFiles'     => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
+                    'reportOutputFile'    => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
+                ]
+            );
+            $this->log('Analysis completed.');
         } catch (Exception $e) {
             throw_if($e instanceof ProcessingJobException, $e);
+            throw_if($e instanceof IgnoredException, $e);
             throw new ProcessingJobException('An error occurred during job processing.', 0, $e);
         }
     }

@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/mainProcessManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/mainProcessManager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/repositories/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/repositories/job.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/repositories/repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/repositories/repository.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/UI/RemoteTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,7 +243,7 @@
       <workItem from="1609224693191" duration="612000" />
       <workItem from="1609610546896" duration="611000" />
       <workItem from="1609753649332" duration="8449000" />
-      <workItem from="1609848057706" duration="961000" />
+      <workItem from="1609848057706" duration="2213000" />
     </task>
     <servers />
   </component>

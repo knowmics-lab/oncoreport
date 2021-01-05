@@ -7,6 +7,7 @@
 
 namespace App\Jobs\Types;
 
+use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Utils;
 use Exception;
@@ -219,6 +220,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $this->log('Analysis completed.');
         } catch (Exception $e) {
             throw_if($e instanceof ProcessingJobException, $e);
+            throw_if($e instanceof IgnoredException, $e);
             throw new ProcessingJobException('An error occurred during job processing.', 0, $e);
         }
     }
