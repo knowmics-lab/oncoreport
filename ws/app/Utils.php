@@ -10,6 +10,7 @@ namespace App;
 use App\Exceptions\CommandException;
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
+use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -71,7 +72,7 @@ final class Utils
     public static function mapCommandException(
         ProcessFailedException $e,
         array $errorCodeMap = []
-    ) {
+    ): Exception {
         $code = $e->getProcess()->getExitCode();
         if (isset($errorCodeMap[$code])) {
             if ($errorCodeMap[$code] === self::IGNORED_ERROR_CODE) {

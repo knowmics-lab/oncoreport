@@ -76,9 +76,9 @@ ADD scripts/start-mysqld.sh                         /usr/local/bin/start-mysqld.
 ADD conf/supervisord-apache2.conf                   /etc/supervisor/conf.d/supervisord-apache2.conf
 ADD conf/supervisord-mysqld.conf                    /etc/supervisor/conf.d/supervisord-mysqld.conf
 ADD conf/supervisord-beanstalkd.conf                /etc/supervisor/conf.d/supervisord-beanstalkd.conf
+ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/supervisord-worker.conf
 ADD conf/supervisord.conf                           /etc/supervisor/supervisord.conf
 ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_innodb.cnf
-# ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/supervisord-worker.conf # Enable for production
 ADD databases/Disease.txt                           /Disease.txt
 ADD databases/disease_list.txt                      /disease_list.txt
 ADD databases/Drug_food.txt                         /Drug_food.txt
@@ -99,8 +99,8 @@ ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
 ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
 ADD oncoreport/path.bash                            /path.bash
 ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
-#ADD repo.tar.gz         /repo.tar.gz # Enable for production
-#COPY genkey.sh           /genkey.sh # TODO
+ADD oncoreport/genkey.sh                            /genkey.sh
+ADD ws.tgz                                          /ws.tgz
 #COPY import_reference.sh /import_reference.sh # TODO
 
 RUN chmod 755 /usr/local/bin/*.sh
@@ -117,8 +117,7 @@ RUN /usr/bin/apt autoclean && \
     /usr/bin/apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-#Disable 3306 for production
-EXPOSE 80 3306
+EXPOSE 80
 VOLUME  [ "/oncoreport/ws" ]
 
 CMD ["/bootstrap.sh"]

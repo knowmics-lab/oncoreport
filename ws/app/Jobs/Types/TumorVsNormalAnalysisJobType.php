@@ -11,6 +11,7 @@ use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Utils;
 use Exception;
+use Hamcrest\Util;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -158,7 +159,6 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             } else {
                 throw new ProcessingJobException('No valid input files have been specified.');
             }
-            $noMutations = false;
             $model = $this->model;
             try {
                 self::runCommand(
@@ -192,20 +192,13 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                         120 => 'Unable to prepare input file for annotation',
                         121 => 'Unable to build report output',
                         122 => 'Unable to clean unused folders',
+                        200 => Utils::IGNORED_ERROR_CODE,
                     ]
                 );
-            } catch (ProcessingJobException $e) {
-                if ($e->getCode() === 999) {
-                    $noMutations = true;
-                } else {
-                    throw $e;
-                }
+            } catch (IgnoredException $e) {
+                $this->log("\n\nUnable to produce a report since no mutations have been found in the input data!");
+                throw $e;
             }
-            if ($noMutations) {
-                $this->log('Unable to continue since no mutations have been found in the input data!');
-                throw new IgnoredException('Job failed');
-            }
-
             throw_unless(
                 $this->fileExistsRelative($outputRelative . '/txt'),
                 ProcessingJobException::class,

@@ -4,10 +4,14 @@
 mkdir -p /oncoreport/tmp || exit 100
 mkdir /oncoreport/databases || exit 101
 mkdir /oncoreport/scripts || exit 102
-mkdir /oncoreport/ws || exit 103
 
-# Extract web servide TODO
-rm -fr /var/www/html && ln -s /oncoreport/ws/public /var/www/html
+(
+  cd /oncoreport &&
+    tar -zxvf /ws.tgz &&
+    rm /ws.tgz &&
+    rm -fr /var/www/html &&
+    ln -s /oncoreport/ws/public /var/www/html
+) || exit 103
 
 # Install other software
 pip3 install cutadapt || exit 104
@@ -148,11 +152,13 @@ apply_configuration_fixes
 remove_debian_system_maint_password
 
 # Install the web service
-# cd /oncoreport/ws/ || exit 100
-# mv .env.docker .env
-# composer install --optimize-autoloader --no-dev
-# php artisan key:generate
-# php artisan storage:link
+(
+  cd /oncoreport/ws/ &&
+    mv .env.docker .env &&
+    composer install --optimize-autoloader --no-dev &&
+    php artisan key:generate &&
+    php artisan storage:link
+) || exit 139
 
 # Remove temporary directory
 rm -rf /oncoreport/tmp
@@ -167,8 +173,7 @@ sed -i "s/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=staff/" /etc/
 # Set folder permission
 chmod 755 /oncoreport/scripts/*
 chmod 755 /oncoreport/databases/*
-# chmod -R 777 /oncoreport/ws/bootstrap/cache
-# chmod -R 777 /oncoreport/ws/storage
-# chmod 755 /genkey.sh
-# chmod 755 /import_reference.sh
+chmod -R 777 /oncoreport/ws/bootstrap/cache
+chmod -R 777 /oncoreport/ws/storage
+chmod 755 /genkey.sh
 chmod -R 755 /usr/local/bin/
