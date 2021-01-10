@@ -262,6 +262,7 @@
     "@mui-treasury/layout": "^4.5.0",
     "@mui-treasury/mockup": "^1.2.10",
     "@mui-treasury/styles": "^1.13.1",
+    "ansi-to-html": "^0.6.14",
     "axios": "^0.21.0",
     "byte-size": "^7.0.0",
     "check-internet-connected": "^2.0.5",
