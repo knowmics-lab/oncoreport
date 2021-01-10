@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CheckForUpdate;
 use App\Console\Commands\ClearQueue;
 use App\Console\Commands\GenerateAuthToken;
+use App\Console\Commands\UpdateRun;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +19,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         ClearQueue::class,
         GenerateAuthToken::class,
+        CheckForUpdate::class,
+        UpdateRun::class,
     ];
 
     /**

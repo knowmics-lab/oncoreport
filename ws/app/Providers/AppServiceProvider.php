@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Utils;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +31,19 @@ class AppServiceProvider extends ServiceProvider
                 if (!file_exists($bootedFile)) {
                     @touch($bootedFile);
                     @chmod($bootedFile, 0777);
+                }
+                $versionNumberFile = storage_path('app/version_number');
+                if (!file_exists($versionNumberFile)) {
+                    @file_put_contents(
+                        $versionNumberFile,
+                        json_encode(
+                            [
+                                'version' => Utils::VERSION_NUMBER,
+                            ],
+                            JSON_THROW_ON_ERROR
+                        )
+                    );
+                    @chmod($versionNumberFile, 0644);
                 }
             }
         );

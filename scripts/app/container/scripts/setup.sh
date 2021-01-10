@@ -121,6 +121,7 @@ mv /CreateCivicBed.R /oncoreport/scripts || exit 134
 mv /PrepareDatabases_build.R /oncoreport/scripts || exit 135
 mv /path.bash /oncoreport/scripts || exit 136
 mv /prepare_indexes.bash /oncoreport/scripts || exit 137
+mv /setup.bash /oncoreport/script || exit 140
 
 # Build database files
 (

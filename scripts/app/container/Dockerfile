@@ -100,8 +100,8 @@ ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
 ADD oncoreport/path.bash                            /path.bash
 ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
 ADD oncoreport/genkey.sh                            /genkey.sh
+ADD oncoreport/setup.bash                           /setup.bash
 COPY ws.tgz                                         /ws.tgz
-#COPY import_reference.sh /import_reference.sh # TODO
 
 RUN chmod 755 /usr/local/bin/*.sh
 

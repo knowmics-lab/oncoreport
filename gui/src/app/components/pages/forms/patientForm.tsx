@@ -26,9 +26,9 @@ import {
 } from '../../../../interfaces';
 import { runAsync } from '../../utils';
 import { useService } from '../../../../reactInjector';
-import SelectField from '../../UI/Form/SelectField';
-import TextField from '../../UI/Form/TextField';
-import Button, { SubmitButton } from '../../UI/Button';
+import SelectField from '../../ui/Form/SelectField';
+import TextField from '../../ui/Form/TextField';
+import Button, { SubmitButton } from '../../ui/Button';
 import Routes from '../../../../constants/routes.json';
 
 const useStyles = makeStyles((theme) =>

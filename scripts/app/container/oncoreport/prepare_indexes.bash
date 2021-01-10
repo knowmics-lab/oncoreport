@@ -46,4 +46,5 @@ echo "Building hg38 sequence samtools index..."
 samtools faidx "$ONCOREPORT_INDEXES_PATH/hg38.fa" || exit_abnormal "Unable to build index" 107
 echo "Cleaning up..."
 cleanup
+touch "$ONCOREPORT_INDEXES_PATH/completed"
 cd "$OLD_PWD" || exit 102

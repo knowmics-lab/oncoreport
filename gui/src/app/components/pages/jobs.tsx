@@ -5,7 +5,7 @@ import {
   Settings,
   Utils,
 } from '../../../api';
-import { Alignment, RowActionType } from '../UI/Table/types';
+import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
 import {
@@ -14,9 +14,9 @@ import {
   OutputTypes,
   TypeOfNotification,
 } from '../../../interfaces';
-import SaveResultsMenu from '../UI/saveResultsMenu';
-import LogsDialog from '../UI/LogsDialog';
-import RepositoryTable from '../UI/RepositoryTable';
+import SaveResultsMenu from '../ui/saveResultsMenu';
+import LogsDialog from '../ui/LogsDialog';
+import RepositoryTable from '../ui/RepositoryTable';
 
 export default function Patients() {
   const jobsRepository = useService(JobRepository);

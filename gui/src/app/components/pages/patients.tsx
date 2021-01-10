@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { generatePath } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import RepositoryTable from '../UI/RepositoryTable';
+import RepositoryTable from '../ui/RepositoryTable';
 import { DiseaseEntity, PatientEntity, PatientRepository } from '../../../api';
 import { Gender, PatientObject, TypeOfNotification } from '../../../interfaces';
-import { Alignment } from '../UI/Table/types';
+import { Alignment } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
 import Routes from '../../../constants/routes.json';

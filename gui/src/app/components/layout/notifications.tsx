@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Snackbar from '../UI/Snackbar';
+import Snackbar from '../ui/Snackbar';
 import { Notifications } from '../../../api';
 import { useService } from '../../../reactInjector';
 

@@ -68,4 +68,5 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg1
 echo " - Processing hg38 database..."
 Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg38" || exit_abnormal "Unable to process hg38 database" false 112
 cd "$OLD_PWD" || exit 113
+touch "$ONCOREPORT_COSMIC_PATH/completed"
 echo "Done!"

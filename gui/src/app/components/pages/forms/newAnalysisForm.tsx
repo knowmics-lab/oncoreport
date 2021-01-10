@@ -30,15 +30,15 @@ import {
 } from '../../../../interfaces';
 import { runAsync } from '../../utils';
 import { useService } from '../../../../reactInjector';
-import SelectField from '../../UI/Form/SelectField';
-import TextField from '../../UI/Form/TextField';
+import SelectField from '../../ui/Form/SelectField';
+import TextField from '../../ui/Form/TextField';
 import Routes from '../../../../constants/routes.json';
-import SwitchField from '../../UI/Form/SwitchField';
-import Wizard from '../../UI/Wizard';
-import FileSelector, { File } from '../../UI/FileSelector';
-import { useUpload } from '../../UI/hooks';
-import UploadProgress from '../../UI/UploadProgress';
-import { SubmitButton } from '../../UI/Button';
+import SwitchField from '../../ui/Form/SwitchField';
+import Wizard from '../../ui/Wizard';
+import FileSelector, { File } from '../../ui/FileSelector';
+import { useUpload } from '../../ui/hooks';
+import UploadProgress from '../../ui/UploadProgress';
+import { SubmitButton } from '../../ui/Button';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

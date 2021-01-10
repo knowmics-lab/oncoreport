@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+## DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 mkdir repo || exit
 cd repo || exit
 git clone https://github.com/gretep/oncoreport.git

@@ -13,14 +13,14 @@ import { green } from '@material-ui/core/colors';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { is } from 'electron-util';
-import TextField from '../UI/Form/TextField';
-import SelectField from '../UI/Form/SelectField';
-import FileField from '../UI/Form/FileField';
-import SwitchField from '../UI/Form/SwitchField';
+import TextField from '../ui/Form/TextField';
+import SelectField from '../ui/Form/SelectField';
+import FileField from '../ui/Form/FileField';
+import SwitchField from '../ui/Form/SwitchField';
 import { useContainer, useService } from '../../../reactInjector';
 import { Settings as SettingsManager, ValidateConfig } from '../../../api';
 import { ConfigObjectType, TypeOfNotification } from '../../../interfaces';
-import { useNotifications } from '../UI/hooks';
+import { useNotifications } from '../ui/hooks';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

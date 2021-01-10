@@ -144,7 +144,7 @@ export default class Manager {
   public async waitContainerBooted(timeout = 0) {
     await Utils.waitExists(this.getDbDirectory(), timeout);
     await Utils.waitExists(this.getDbReadyFile(), timeout);
-    // await Utils.waitExists(this.getBootedFile(), timeout); @TODO restore this line when the container is ready
+    await Utils.waitExists(this.getBootedFile(), timeout);
   }
 
   public async cleanupBootedFile() {

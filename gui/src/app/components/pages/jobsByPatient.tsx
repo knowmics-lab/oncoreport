@@ -15,10 +15,10 @@ import {
   Settings,
   Utils,
 } from '../../../api';
-import { Alignment, RowActionType } from '../UI/Table/types';
+import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
-import JobsTableByPatient from '../UI/JobsTableByPatient';
+import JobsTableByPatient from '../ui/JobsTableByPatient';
 import Routes from '../../../constants/routes.json';
 import {
   JobObject,
@@ -26,8 +26,8 @@ import {
   OutputTypes,
   TypeOfNotification,
 } from '../../../interfaces';
-import SaveResultsMenu from '../UI/saveResultsMenu';
-import LogsDialog from '../UI/LogsDialog';
+import SaveResultsMenu from '../ui/saveResultsMenu';
+import LogsDialog from '../ui/LogsDialog';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
