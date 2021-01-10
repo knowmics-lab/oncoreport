@@ -15,6 +15,7 @@ import { useService } from '../../../reactInjector';
 import { DockerManager, Settings } from '../../../api';
 import { runAsync } from '../utils';
 import { SubmitButton } from '../ui/Button';
+import { ConfigObjectType } from '../../../interfaces';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) =>
     instructions: {
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
+      fontSize: theme.typography.fontSize,
     },
     instructionsSmall: {
       margin: theme.spacing(1),
@@ -40,8 +42,21 @@ const useStyles = makeStyles((theme) =>
       zIndex: theme.zIndex.drawer + 1,
       color: '#fff',
     },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    '.buttonContainer > button': {
+      margin: theme.spacing(1),
+    },
   })
 );
+
+interface ExtendedConfig extends ConfigObjectType {
+  cosmicUsername: string;
+  cosmicPassword: string;
+}
 
 const DEFAULT_START_PORT = 18080;
 
@@ -73,18 +88,11 @@ export default function SetupWizard() {
               <Typography variant="h5" component="h3">
                 Setup Wizard
               </Typography>
-              <Formik
+              <Formik<ExtendedConfig>
                 initialValues={{
-                  local: true,
-                  apiProtocol: 'http',
-                  apiHostname: 'localhost',
-                  apiPort: freePort,
-                  apiPath: '/api/',
-                  publicPath: '/storage/',
-                  dataPath: `${api.app.getPath('home')}/.RNADetector`,
-                  socketPath: '',
-                  containerName: 'RNAdetector',
-                  apiKey: '',
+                  ...settings.getDefaultConfig(freePort),
+                  cosmicUsername: '',
+                  cosmicPassword: '',
                 }}
                 onSubmit={() => {}}
                 // validationSchema={this.getValidationSchema()}
@@ -96,19 +104,40 @@ export default function SetupWizard() {
                   <Form>
                     {firstStep && (
                       <>
+                        <Typography className={classes.instructions}>
+                          Here you can select whether you wish to use
+                          RNAdetector with a local docker installation or with a
+                          remote server.
+                        </Typography>
                         <Typography align="center">
                           Choose setup mode
                         </Typography>
-                        <Box textAlign="center">
-                          <SubmitButton
-                            text="Express setup"
-                            isSaving={saving}
-                          />
+                        <Box
+                          textAlign="center"
+                          className={classes.buttonContainer}
+                        >
                           <Button
                             type="button"
                             variant="contained"
                             color="primary"
-                            onClick={() => {}}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setAdvancedSetup(false);
+                              setFirstStep(false);
+                            }}
+                            disabled={saving}
+                          >
+                            Express setup
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="contained"
+                            color="primary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setAdvancedSetup(true);
+                              setFirstStep(false);
+                            }}
                             disabled={saving}
                           >
                             Custom setup

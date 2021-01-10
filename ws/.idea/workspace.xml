@@ -2,58 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/layout/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/resources/logoOncoReport.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/setup.bash" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/CheckForUpdate.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/FileSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/FileSelector.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/CustomField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/CustomField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/FileField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FileField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/SelectField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/SelectField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/SwitchField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/SwitchField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/TextField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/TextField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Form/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/hooks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/IconButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/IconButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/JobsTableByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/LogsDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/LogsDialog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Snackbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Snackbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/Body.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/LoadingBody.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/LoadingBody.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/RowAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/RowActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowActions.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/Toolbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Toolbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/ToolbarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/ToolbarAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Table/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/UploadProgress.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/UploadProgress.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/Wizard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Wizard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/hooks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/UI/saveResultsMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/saveResultsMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/layout/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/layout/header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/layout/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/layout/notifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Job.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Job.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -297,7 +248,7 @@
       <workItem from="1610053746640" duration="510000" />
       <workItem from="1610214703069" duration="210000" />
       <workItem from="1610214923955" duration="2294000" />
-      <workItem from="1610277232920" duration="2076000" />
+      <workItem from="1610277232920" duration="3000000" />
     </task>
     <servers />
   </component>

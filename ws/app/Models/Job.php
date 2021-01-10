@@ -510,7 +510,7 @@ class Job extends Model
         if ($appendNewLine) {
             $text .= PHP_EOL;
         }
-        echo $text; // @TODO FOR DEBUG ONLY
+        // echo $text; // @TODO FOR DEBUG ONLY
         $this->log .= $text;
         if ($commit) {
             $this->save();

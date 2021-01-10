@@ -1,12 +1,13 @@
 import Store from 'electron-store';
-import { api } from 'electron-util';
+import { api, is } from 'electron-util';
 import findFreePort from 'find-free-port';
 import { singleton } from 'tsyringe';
 import type {
-  ConfigObjectType,
   AxiosHeaders,
+  ConfigObjectType,
   SimpleMapType,
 } from '../interfaces';
+import { ApiProtocol } from '../interfaces';
 
 type Listener = (config: ConfigObjectType) => void;
 
@@ -23,6 +24,24 @@ export default class Settings {
     this.config = undefined;
     this.notify();
     return this;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public getDefaultConfig(apiPort: number): ConfigObjectType {
+    return {
+      local: true,
+      apiProtocol: ApiProtocol.http,
+      apiHostname: 'localhost',
+      apiPort,
+      apiPath: '/api/',
+      publicPath: '/storage/',
+      dataPath: `${api.app.getPath('home')}/.Oncoreport`,
+      socketPath: is.windows
+        ? '//./pipe/docker_engine'
+        : '/var/run/docker.sock',
+      containerName: 'OncoReport',
+      apiKey: '',
+    };
   }
 
   public getConfig(): ConfigObjectType {
