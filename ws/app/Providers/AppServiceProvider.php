@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Utils;
+use DB;
+use Exception;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +29,15 @@ class AppServiceProvider extends ServiceProvider
     {
         Queue::looping(
             static function () {
+                $check = false;
+                while (!$check) {
+                    try {
+                        DB::connection()->getPdo();
+                        $check = true;
+                    } catch (Exception $ignore) {
+                        sleep(5);
+                    }
+                }
                 $bootedFile = storage_path('app/booted');
                 if (!file_exists($bootedFile)) {
                     @touch($bootedFile);
