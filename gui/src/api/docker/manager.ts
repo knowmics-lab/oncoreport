@@ -477,6 +477,7 @@ export default class Manager {
     cosmicPassword: string,
     outputCallback: (a: string) => void
   ) {
+    const debouncedCallback = debounce(outputCallback, 500);
     return new Promise((resolve, reject) => {
       this.execDockerCommandLive(
         [
@@ -487,8 +488,8 @@ export default class Manager {
           '-p',
           cosmicPassword,
         ],
-        outputCallback,
-        outputCallback,
+        debouncedCallback,
+        debouncedCallback,
         (c) => {
           if (c === 0) resolve();
           else reject(new Error(`Unknown error (Code: ${c})`));
