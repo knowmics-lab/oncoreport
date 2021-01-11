@@ -8,7 +8,7 @@ ENV BOOT2DOCKER_GID 50
 
 ENV SUPERVISOR_VERSION 4.2.0
 
-ENV DEBUG true
+ENV DEBUG false
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
