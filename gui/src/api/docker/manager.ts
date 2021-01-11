@@ -408,7 +408,6 @@ export default class Manager {
         timeoutRunning
       );
       if (parse) {
-        console.log(stdout);
         return JSON.parse(stdout);
       }
       return stdout;
@@ -473,6 +472,31 @@ export default class Manager {
     throw new Error('Unable to exec command. Container is not running');
   }
 
+  public async runSetupScript(
+    cosmicUsername: string,
+    cosmicPassword: string,
+    outputCallback: (a: string) => void
+  ) {
+    return new Promise((resolve, reject) => {
+      this.execDockerCommandLive(
+        [
+          'bash',
+          '/oncoreport/scripts/setup.bash',
+          '-u',
+          cosmicUsername,
+          '-p',
+          cosmicPassword,
+        ],
+        outputCallback,
+        outputCallback,
+        (c) => {
+          if (c === 0) resolve();
+          else reject(new Error(`Unknown error (Code: ${c})`));
+        }
+      ).catch((e) => reject(e));
+    });
+  }
+
   public async clearQueue(): Promise<unknown> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
@@ -516,8 +540,9 @@ export default class Manager {
   public async hasImage() {
     const images = await this.#client.listImages();
     return (
-      images.filter((r) =>
-        r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
+      images.filter(
+        (r) =>
+          r.RepoTags && r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
       ).length > 0
     );
   }

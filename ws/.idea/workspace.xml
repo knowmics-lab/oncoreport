@@ -3,10 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/validateConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/validateConfig.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -253,7 +253,7 @@
       <workItem from="1610214923955" duration="2294000" />
       <workItem from="1610277232920" duration="6102000" />
       <workItem from="1610379269155" duration="641000" />
-      <workItem from="1610379924844" duration="2569000" />
+      <workItem from="1610379924844" duration="4059000" />
     </task>
     <servers />
   </component>

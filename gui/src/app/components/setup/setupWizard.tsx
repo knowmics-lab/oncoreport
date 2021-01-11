@@ -1,24 +1,23 @@
 /* eslint-disable react/no-danger */
 import React, { createRef, useEffect, useState } from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import Backdrop from '@material-ui/core/Backdrop';
-import { api, activeWindow } from 'electron-util';
+import { api } from 'electron-util';
 import {
   Button,
   Collapse,
   createStyles,
-  FormGroup,
   Link,
   makeStyles,
+  CircularProgress,
+  Backdrop,
+  Paper,
+  Box,
+  Grid,
+  Typography,
+  LinearProgress,
 } from '@material-ui/core';
 import Convert from 'ansi-to-html';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { DependencyContainer } from 'tsyringe';
 import { useContainer, useService } from '../../../reactInjector';
 import { DockerManager, Settings, ValidateConfig } from '../../../api';
@@ -63,6 +62,7 @@ const useStyles = makeStyles((theme) =>
       fontWeight: theme.typography.fontWeightBold,
     },
     logContainer: {
+      fontFamily: "'Courier New', monospace",
       background: 'black',
     },
   })
@@ -75,6 +75,11 @@ function logToHtml(log: string): string {
     log
       .split('\n')
       .map((s) => s.split('\r').pop())
+      .map((s) =>
+        (s || '')
+          .replaceAll(' ', '&nbsp;')
+          .replaceAll('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+      )
       .join('\n')
   );
 }
@@ -217,32 +222,51 @@ async function runSetup(
   settings: Settings,
   container: DependencyContainer
 ) {
-  const { cosmicUsername, cosmicPassword, local } = values;
-  let newConfig = configFromExtendedConfig(values);
-  let log = '';
-  if (local) {
-    const manager = container.resolve(DockerManager);
-    manager.config = newConfig;
-    if (!(await manager.hasImage())) {
-      log += 'Container image not found...Downloading...\n';
-      setLog(log);
-      const state = await manager.pullImage((s) => {
-        setLog(`${log}${s.toString()}`);
-      });
-      log += `${state.toString()}\n`;
-    }
-  }
-  log += 'Validating configuration:\n';
-  setLog(log);
-  const validator = container.resolve(ValidateConfig);
-  validator.newConfig = newConfig;
-  newConfig = await validator.validate((m) => {
-    log += m;
+  try {
+    const { cosmicUsername, cosmicPassword, local } = values;
+    let newConfig = configFromExtendedConfig(values);
+    let log = '';
+    log += 'Starting installation process...\n';
     setLog(log);
-  });
-  log += 'Saving configuration...';
-  setLog(log);
-  // @TODO
+    if (local) {
+      const manager = container.resolve(DockerManager);
+      manager.config = newConfig;
+      if (!(await manager.hasImage())) {
+        log += 'Container image not found...Downloading...\n';
+        setLog(log);
+        const state = await manager.pullImage((s) => {
+          setLog(`${log}${s.toString()}`);
+        });
+        log += `${state.toString()}\n`;
+      }
+    }
+    log += 'Validating configuration...\n';
+    setLog(log);
+    const validator = container.resolve(ValidateConfig);
+    validator.newConfig = newConfig;
+    newConfig = await validator.validate((m) => {
+      log += m;
+      setLog(log);
+    });
+    if (local) {
+      log +=
+        'Downloading Human Genome indexes and COSMIC database (this might take a while)...\n';
+      setLog(log);
+      const manager = container.resolve(DockerManager);
+      manager.config = newConfig;
+      await manager.runSetupScript(cosmicUsername, cosmicPassword, (m) => {
+        log += m;
+        setLog(log);
+      });
+    }
+    log += 'Saving configuration...';
+    setLog(log);
+    settings.saveConfig(newConfig);
+    api.app.reload();
+    api.app.exit();
+  } catch (e) {
+    setLog((prev) => `${prev}\n\nAn error occurred: ${e.message}\n`);
+  }
 }
 
 export default function SetupWizard() {
@@ -264,6 +288,12 @@ export default function SetupWizard() {
       setLoading(false);
     });
   }, [settings]);
+
+  useEffect(() => {
+    if (saving && logContent && logRef.current) {
+      logRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [logContent, logRef, saving]);
 
   const steps = [
     'Docker parameters',
@@ -325,7 +355,7 @@ export default function SetupWizard() {
                 }}
                 onSubmit={async (v) => {
                   setSaving(true);
-                  return runSetup(v, setLogContent, settings, container);
+                  await runSetup(v, setLogContent, settings, container);
                 }}
                 validationSchema={validationSchema}
               >

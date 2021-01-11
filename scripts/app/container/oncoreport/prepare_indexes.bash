@@ -23,7 +23,7 @@ OLD_PWD=$(pwd)
 cd "$ONCOREPORT_INDEXES_PATH" || exit 101
 cleanup
 echo "Downloading hg19 bowtie index..."
-wget "ftp://ftp.ccb.jhu.edu/pub/data/bowtie2_indexes/hg19.zip" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download index" 102
+wget "https://genome-idx.s3.amazonaws.com/bt/hg19.zip" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download index" 102
 unzip "$ONCOREPORT_INDEXES_PATH/hg19.zip" || exit_abnormal "Unable to extract index" 103
 echo "Downloading hg19 sequence..."
 wget "http://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download sequence" 104
@@ -33,6 +33,7 @@ java -jar "$PICARD_PATH" CreateSequenceDictionary REFERENCE="$ONCOREPORT_INDEXES
 echo "Building hg19 sequence samtools index..."
 samtools faidx "$ONCOREPORT_INDEXES_PATH/hg19.fa" || exit_abnormal "Unable to build index" 107
 echo "Downloading hg38 bowtie index..."
+# TODO https://genome-idx.s3.amazonaws.com/bt/GRCh38_noalt_as.zip
 wget "ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_genbank/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38/seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download index" 102
 tar -zxvf "$ONCOREPORT_INDEXES_PATH/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz" || exit_abnormal "Unable to extract index" 103
 echo "Downloading hg38 sequence..."

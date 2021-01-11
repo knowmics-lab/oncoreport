@@ -86,7 +86,7 @@ export default class ValidateConfig {
       await this.tryRemovePreviousContainer(reportStatus);
       const newManager = this.getManager(this.newConfig);
 
-      if (reportStatus) reportStatus('Creating directories...');
+      if (reportStatus) reportStatus(' - Creating directories...');
       if (!(await fs.pathExists(this.newConfig.dataPath))) {
         await fs.ensureDir(this.newConfig.dataPath, 0o755);
       }
@@ -96,12 +96,12 @@ export default class ValidateConfig {
       if (reportStatus) reportStatus('Ok!\n');
       const status = await newManager.checkContainerStatus();
       if (status !== 'running') {
-        if (reportStatus) reportStatus('Starting container...');
+        if (reportStatus) reportStatus(' - Starting container...');
         await newManager.startContainer();
         if (reportStatus) reportStatus('Ok!\n');
       }
       if (!this.newConfig.apiKey) {
-        if (reportStatus) reportStatus('Generating Auth Token...');
+        if (reportStatus) reportStatus(' - Generating Auth Token...');
         this.newConfig = {
           ...this.newConfig,
           apiKey: await newManager.generateAuthToken(),
@@ -110,7 +110,7 @@ export default class ValidateConfig {
         if (reportStatus) reportStatus('Ok!\n');
       }
     }
-    if (reportStatus) reportStatus('Checking connection to container...');
+    if (reportStatus) reportStatus(' - Checking connection to container...');
     await this.checkUrl();
     await this.checkToken();
     if (reportStatus) reportStatus('Ok!\n');

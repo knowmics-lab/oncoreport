@@ -25,7 +25,7 @@ export default function SetupWizardContainer({ children, header }: Props) {
   const settings = useService(Settings);
   return (
     <>
-      {!settings.isConfigured() ? (
+      {settings.isConfigured() ? (
         children
       ) : (
         <>
