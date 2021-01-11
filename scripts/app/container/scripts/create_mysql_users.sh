@@ -26,4 +26,6 @@ mysql -uroot -e "GRANT USAGE ON *.* TO '${DB_USER}'@'%'"
 mysql -uroot -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` DEFAULT CHARACTER SET \`${MYSQL_CHARSET}\` COLLATE \`${MYSQL_COLLATION}\`"
 mysql -uroot -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%'"
 
+php /oncoreport/ws/artisan migrate --seed --force || exit 100
+
 mysqladmin -uroot shutdown

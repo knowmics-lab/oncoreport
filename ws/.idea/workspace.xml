@@ -6,8 +6,8 @@
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -253,6 +253,7 @@
       <workItem from="1610214923955" duration="2294000" />
       <workItem from="1610277232920" duration="6102000" />
       <workItem from="1610379269155" duration="641000" />
+      <workItem from="1610379924844" duration="652000" />
     </task>
     <servers />
   </component>

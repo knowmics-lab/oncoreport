@@ -40,7 +40,7 @@ initialize_mysql_database() {
     fi
     if [ ! -d ${MYSQL_DATA_DIR}/${DB_NAME} ]; then
         echo "Creating users..."
-        if /usr/local/bin/create_mysql_users.sh && php /oncoreport/ws/artisan migrate --seed --force; then
+        if /usr/local/bin/create_mysql_users.sh; then
             export DB_CREATED="true"
         fi
     fi
