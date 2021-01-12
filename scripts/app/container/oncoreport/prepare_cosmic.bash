@@ -35,17 +35,21 @@ COSMIC_TOKEN=$(echo "${COSMIC_USERNAME}:${COSMIC_PASSWORD}" | base64)
 cosmic_download() {
   TMP_OUT=$(curl -H "Authorization: Basic ${COSMIC_TOKEN}" "$1")
   if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
-    exit_abnormal "$(jq -M -r ".error")" false 104
+    MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
+    if [ "${MESSAGE,,}" = "not authorised" ]; then
+      exit_abnormal "Unable to validate COSMIC account. Check your username and password!" false 104
+    fi
+    exit_abnormal "$MESSAGE" false 105
   fi
   URL="$(echo "$TMP_OUT" | jq -M -r ".url" --)"
-  curl -o "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 105
+  curl -o "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
 }
 
 echo "Creating COSMIC directory"
 [ ! -d "$ONCOREPORT_COSMIC_PATH" ] && mkdir -p "$ONCOREPORT_COSMIC_PATH"
 
 OLD_PWD=$(pwd)
-cd "$ONCOREPORT_COSMIC_PATH" || exit 106
+cd "$ONCOREPORT_COSMIC_PATH" || exit 107
 echo "Preparing COSMIC database:"
 echo " - Downloading hg19 Coding Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh37/cosmic/v92/VCF/CosmicCodingMuts.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz"
