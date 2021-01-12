@@ -290,9 +290,8 @@ export default class Manager {
     timeout = 120000,
     maxTries = 3
   ) {
-    // @todo restore when the container is published
     if (displayLog) displayLog('');
-    // await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
+    await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
     try {
       await Utils.retryFunction(
         async (t: number) => {
@@ -307,8 +306,7 @@ export default class Manager {
             !first
           );
           if (odd) {
-            // @todo restore when the container is published
-            // await this.removeContainer();
+            await this.removeContainer();
           }
           return this.startContainer();
         },
