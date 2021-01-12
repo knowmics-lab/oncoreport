@@ -262,11 +262,10 @@ async function runSetup(
         setLog(log);
       });
     }
-    log += 'Saving configuration...';
+    log += 'Installation completed!\n';
     setLog(log);
     settings.saveConfig(newConfig);
-    log += 'Ok!\nInstallation completed!\n';
-    setLog(log);
+    settings.saveConfig(newConfig);
   } catch (e) {
     setLog(
       (prev) =>
