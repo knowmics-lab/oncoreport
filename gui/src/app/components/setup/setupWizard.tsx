@@ -64,6 +64,9 @@ const useStyles = makeStyles((theme) =>
     logContainer: {
       fontFamily: "'Courier New', monospace",
       background: 'black',
+      width: '100%',
+      overflowY: 'auto',
+      wordBreak: 'break-all',
     },
   })
 );
@@ -262,10 +265,13 @@ async function runSetup(
     log += 'Saving configuration...';
     setLog(log);
     settings.saveConfig(newConfig);
-    api.app.reload();
-    api.app.exit();
+    log += 'Ok!\nInstallation completed!\n';
+    setLog(log);
   } catch (e) {
-    setLog((prev) => `${prev}\n\nAn error occurred: ${e.message}\n`);
+    setLog(
+      (prev) =>
+        `${prev}\n\n\u001b[0;31mAn error occurred: ${e.message}\u001b[0m\n`
+    );
   }
 }
 
@@ -499,12 +505,14 @@ export default function SetupWizard() {
               <Typography variant="h5" component="h3">
                 Installing...
               </Typography>
+              <Box>
+                <div
+                  className={classes.logContainer}
+                  dangerouslySetInnerHTML={{ __html: logToHtml(logContent) }}
+                />
+                <div ref={logRef} />
+              </Box>
               <LinearProgress />
-              <div
-                className={classes.logContainer}
-                dangerouslySetInnerHTML={{ __html: logToHtml(logContent) }}
-              />
-              <div ref={logRef} />
             </>
           )}
         </Paper>

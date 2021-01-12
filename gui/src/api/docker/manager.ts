@@ -475,9 +475,24 @@ export default class Manager {
   public async runSetupScript(
     cosmicUsername: string,
     cosmicPassword: string,
-    outputCallback: (a: string) => void
+    outputCallback: (a: string) => void,
+    debounceTime = 500
   ) {
-    const debouncedCallback = debounce(outputCallback, 500);
+    let debouncedCallback = outputCallback;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    if (debounceTime > 0) {
+      let accumulator = '';
+      debouncedCallback = (s: string) => {
+        accumulator += s;
+      };
+      const fnDebouncer = () => {
+        if (accumulator !== '') {
+          outputCallback(accumulator);
+          accumulator = '';
+        }
+      };
+      timer = setInterval(fnDebouncer, debounceTime);
+    }
     return new Promise((resolve, reject) => {
       this.execDockerCommandLive(
         [
@@ -491,10 +506,14 @@ export default class Manager {
         debouncedCallback,
         debouncedCallback,
         (c) => {
+          if (timer) clearInterval(timer);
           if (c === 0) resolve();
           else reject(new Error(`Unknown error (Code: ${c})`));
         }
-      ).catch((e) => reject(e));
+      ).catch((e) => {
+        if (timer) clearInterval(timer);
+        reject(e);
+      });
     });
   }
 

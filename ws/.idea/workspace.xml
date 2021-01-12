@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/docker/manager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,6 +250,7 @@
       <workItem from="1610277232920" duration="6102000" />
       <workItem from="1610379269155" duration="641000" />
       <workItem from="1610379924844" duration="5651000" />
+      <workItem from="1610433928858" duration="704000" />
     </task>
     <servers />
   </component>
