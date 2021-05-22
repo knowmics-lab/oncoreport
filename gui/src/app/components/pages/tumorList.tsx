@@ -48,7 +48,7 @@ export const TumorList = (props:any ) => {
         'head' : ['Tumor', 'Type', 'Sede', 'T', 'M', 'N'],
         fields: props.patient.tumors.map (tumor => {
           return {
-            'fields' : [tumor.name, tumor.type, tumor.sede, tumor.stadio.T, tumor.stadio.M, tumor.stadio.N,],
+            'fields' : [tumor.name, tumor.type, tumor.sede && tumor.sede[0] ? tumor.sede[0].name : '', tumor.stadio.T, tumor.stadio.M, tumor.stadio.N,],
             'data' : {
               'name' : 'Drugs',
               'head' : ['Drug', 'Start date', 'End date', 'Stop reasons', ''],
@@ -56,7 +56,11 @@ export const TumorList = (props:any ) => {
                 drug.name,
                 drug.start_date,
                 drug.end_date ? drug.end_date : 'in corso...',
-                JSON.stringify(drug.reasons.map( r => r.name )),
+                drug.reasons.reduce ((map:string, drug:any) => {
+                  if (map) map += ", ";
+                  map = map + drug.name;
+                  return map;
+                }, ""),
                 <Button size="small" variant="contained" color="secondary" disabled={drug.end_date != null}  onClick={async () => {
                   setDialogData({'drug':drug, index: i, 'tumor': tumor});
                 }}>Interrompi</Button>

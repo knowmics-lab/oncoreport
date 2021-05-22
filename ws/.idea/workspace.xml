@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/tumorForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/tumorForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Tumor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Tumor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/PatientTumor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/PatientTumor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,7 +187,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../spid/spid-test" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -256,6 +259,8 @@
       <workItem from="1610379924844" duration="5651000" />
       <workItem from="1610433928858" duration="704000" />
       <workItem from="1620391794152" duration="1194000" />
+      <workItem from="1621013561597" duration="12000" />
+      <workItem from="1621443357506" duration="9801000" />
     </task>
     <servers />
   </component>

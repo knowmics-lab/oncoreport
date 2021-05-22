@@ -19,7 +19,7 @@ class Tumor extends JsonResource
                 'id' => $this->id,
                 'name' => $this->name,
                 'type' => $this->pivot->type,
-                'sede' => "sede 1",
+                'sede' => new MedicineCollection($this->pivot->locations),
                 'association_id' => $this->pivot->id,
                 'stadio' => [
                     'T' => $this->pivot->T,

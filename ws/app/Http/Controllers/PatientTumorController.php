@@ -38,12 +38,8 @@ class PatientTumorController extends Controller
     public function detachAll($patient_id, $drug_id, Request $request){
 
         $reasons = json_decode($request->get('reasons', []));
-        error_log('ciao, togliamo ' . $drug_id . ' da ' . $patient_id);
-        error_log(json_encode($reasons));
+        error_log('ciao, togliamo ' . $drug_id . ' da ' . $patient_id . ' per queste ragioni ' . json_encode($reasons));
         $models = PatientTumor::where('patient_id','=',$patient_id)->get();
-
-
-
 
         foreach ($models as $model) {
             error_log(json_encode($model->drugs));

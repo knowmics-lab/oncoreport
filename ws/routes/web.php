@@ -22,8 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::get(
     '/',
     function (Request $request) {
-        return Auth::user();
-        return new PatientResource(Patient::find(7));
+        return new PatientResource(Patient::find(2));
         return redirect()->route('dashboard');
     }
 );

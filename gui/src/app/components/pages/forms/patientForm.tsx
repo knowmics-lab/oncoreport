@@ -108,6 +108,8 @@ export default function PatientForm() {
   const [openModal, setOpenModal] = useState<string| false>(false);
 
   const [testPatientPathology, setTestPatientPathology] = useState<SimpleMapArray<number[]>>({});
+
+
   useEffect(() => {
     runAsync(async () => {
       if (!diseases) {
@@ -232,10 +234,11 @@ export default function PatientForm() {
                 //d.diseases = testPatientPathology;
                 d.diseases = pathologyElements.filter(p => p != null).map ((p) => {return {'id':p.id, 'medicines':p.medicines.map(m => m.id)}});
                 d.tumors = tumorElements.map ( (tumor) => {
+                  console.log(JSON.stringify(tumor.sede));
                   return {
                     'id' : tumor.id,
                     'type' : tumor.type,
-                    'sede' : tumor.sede,
+                    'sede' : tumor.sede.map (s => s.id),
                     'stadio' : tumor.stadio,
                     'drugs' : tumor.drugs.map( (drug) => {
                       return {
@@ -248,8 +251,6 @@ export default function PatientForm() {
                   }
 
                 } );
-                //console.log('d: ' + JSON.stringify(d.diseases));
-                alert('manderò ' + JSON.stringify(d.diseases));
 
                 return runAsync(async (manager) => {
                   setSubmitting(true);
@@ -465,15 +466,16 @@ export default function PatientForm() {
 
       <div>{tumorElements.map((tumor) => {
         var values = tumor.drugs;
+
         return (
           <Dialog open={selectedTumor == tumor} onClose={() => {setSelectedTumor(false)}} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Aggiungi farmaci a {selectedTumor.name}</DialogTitle>
+          <DialogTitle id="form-dialog-title">Modifica {selectedTumor.name}</DialogTitle>
           <Formik
-              initialValues={{drugs: [], type: tumor?.type, sede: tumor?.sede, T: tumor?.stadio ? tumor?.stadio.T : null, N: tumor?.stadio ? tumor?.stadio.N : null, M: tumor?.stadio ? tumor?.stadio.M : null,}}
+              initialValues={{drugs: [], type: tumor?.type, sede: tumor && tumor.sede && tumor.sede != [] && tumor.sede[0] ? tumor.sede[0].id : null , T: tumor?.stadio ? tumor?.stadio.T : null, N: tumor?.stadio ? tumor?.stadio.N : null, M: tumor?.stadio ? tumor?.stadio.M : null,}}
               onSubmit={(d) => {
                 alert('cambiamo ' + JSON.stringify(selectedTumor) + ' in ' + JSON.stringify(d.sede));
                 selectedTumor.type = d.type;
-                selectedTumor.sede = d.sede;
+                selectedTumor.sede = [{'id': parseInt(d.sede)}];
                 selectedTumor.stadio.T = d.T;
                 selectedTumor.stadio.N = d.N;
                 selectedTumor.stadio.M = d.M;
@@ -500,7 +502,7 @@ export default function PatientForm() {
                       label="Sede"
                       emptyText="Select a sede"
                       addEmpty={false}
-                      options={{1:"sede 1", 2:"sede 2", 3:"sede 3"}}
+                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
                     />
                   </Grid>
 
@@ -599,14 +601,12 @@ export default function PatientForm() {
           </Form>
         </Formik>
       </Dialog>
-      {/**
 
-      <Button onClick={() => {setOpenTumorModal(true)}} variant="contained" color="secondary">Aggiungi tumori</Button>
- */}
+      {/**  Aggiungiamo un nuovo tumore */}
       <Dialog open={openTumorModal} onClose={() => {setOpenTumorModal(false)}} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Aggiungi tumori</DialogTitle>
         <Formik
-            initialValues={{tumor:null, drugs: [], type:null, T:null, N:null,M:null,}}
+            initialValues={{tumor:null, drugs: [], sede: null, type:null, T:null, N:null,M:null,}}
             onSubmit={(d) => {
               alert(JSON.stringify(d));
 
@@ -615,7 +615,7 @@ export default function PatientForm() {
                 'id':d.tumor.id,
                 'name':d.tumor.name,
                 'type':d.type,
-                'sede': null,
+                'sede': [{'id' : parseInt(d.sede)}],
                 'stadio': {'T':d.T, 'N':d.N, 'M':d.M},
                 'drugs': d.drugs
               });
@@ -656,7 +656,7 @@ export default function PatientForm() {
                       label="Sede"
                       emptyText="Select a sede"
                       addEmpty={false}
-                      options={["sede 1", "sede 2", "sede 3"]}
+                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
                     />
                   </Grid>
 

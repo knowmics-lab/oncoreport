@@ -12,7 +12,7 @@ export interface Patient extends IdentifiableEntity, TimedEntity {
   gender: Gender;
   disease: Disease;
   owner: unknown;
-  tumors: Array<{id: number, name: string, type?:string, stadio?:{T?:number, N?:number, M?:number}, drugs:{id:number, name:string, start_date?:string, end_date?:string}[]}>;
+  tumors: Array<{id: number, name: string, sede:any[], type?:string, stadio?:{T?:number, N?:number, M?:number}, drugs:{id:number, name:string, start_date?:string, end_date?:string}[]}>;
   diseases: any[];
   tumor?: number;
   type?: string;

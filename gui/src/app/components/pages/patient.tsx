@@ -119,8 +119,7 @@ export default function PatientForm() {
   }
 
   const theme = useTheme();
-
-  useEffect(() => {
+  function loadPatient(){
     runAsync(async () => {
       setLoading(true);
       if (id) {
@@ -133,6 +132,23 @@ export default function PatientForm() {
       }
       setLoading(false);
     });
+  }
+  useEffect(() => {
+    runAsync(async () => {
+      loadPatient();
+      /*
+      setLoading(true);
+      if (id) {
+        let p = await (await repository.fetch(+id)).refresh();
+        setPatient(p);
+        setDrugs(p.drugs);
+      } else {
+        setPatient(repository.new());
+
+      }
+      setLoading(false);
+      */
+    });
   }, [id, repository]);
 
   interface TabPanelProps {
@@ -140,6 +156,8 @@ export default function PatientForm() {
     index: any;
     value: any;
   }
+
+
 
   function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
@@ -173,9 +191,10 @@ export default function PatientForm() {
 
 
 
+
   return (
     <Paper elevation={1} className={classes.paper} style={{padding:0, borderRadius:10}}>
-      {loading || !patient ? (
+      { typeof(id) === typeof(undefined) || loading || !patient ? (
         <>
           <Grid container justify="center">
             <Grid item xs="auto">
@@ -289,17 +308,14 @@ export default function PatientForm() {
                       onSubmit={(d) => {
                         alert(JSON.stringify(d));
                         setSubmitting(true);
-                        console.log('url=' + 'http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(reasons));
-                        fetch('http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(reasons.map(r => r.id)))
+                        console.log('url=' + 'http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(d.ragioni));
+
+                        fetch('http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(d.ragioni))
                             .then(res => res.json()).then((data) => {
                                                               alert(JSON.stringify(data.data));
-                                                              //setDrugs(data.data);
-                                                              runAsync(async () => {
-                                                                setLoading(true);
-                                                                setPatient(await (await repository.fetch(+id)).refresh());
-                                                                setLoading(false);
-                                                              });
-                                                              setSubmitting(false);
+                                                              loadPatient();
+
+                                                             setSubmitting(false);
                               }).catch(console.log);
 
                         setStopDrug(false);}} >
