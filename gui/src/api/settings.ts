@@ -2,6 +2,8 @@ import Store from 'electron-store';
 import { api, is } from 'electron-util';
 import findFreePort from 'find-free-port';
 import { singleton } from 'tsyringe';
+import { ipcRenderer } from 'electron';
+import uniqid from 'uniqid';
 import type {
   AxiosHeaders,
   ConfigObjectType,
@@ -15,8 +17,7 @@ type Listener = (config: ConfigObjectType) => void;
 export default class Settings {
   private config: ConfigObjectType | undefined = undefined;
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  private listeners = new Map<object, Listener>();
+  private listeners = new Map<string, Listener>();
 
   constructor(private configStore: Store<ConfigObjectType>) {}
 
@@ -145,14 +146,15 @@ export default class Settings {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public subscribe(o: object, l: Listener): this {
-    this.listeners.set(o, l);
-    return this;
+  public subscribe(l: Listener): string {
+    const id = uniqid();
+    this.listeners.set(id, l);
+    return id;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public unsubscribe(o: object): this {
-    if (this.listeners.has(o)) this.listeners.delete(o);
+  public unsubscribe(id: string): this {
+    if (this.listeners.has(id)) this.listeners.delete(id);
     return this;
   }
 
@@ -160,6 +162,9 @@ export default class Settings {
     if (this.listeners.size > 0) {
       const cfg = this.getConfig();
       this.listeners.forEach((l) => l(cfg));
+    }
+    if (is.renderer) {
+      ipcRenderer.send('config-change');
     }
   }
 }

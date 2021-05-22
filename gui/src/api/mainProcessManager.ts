@@ -154,6 +154,7 @@ export default class MainProcessManager {
     ipcMain.on('config-change', () => {
       console.log('Reloading configuration');
       this.settings.reset();
+      this.dockerManager.config = this.settings.getConfig();
     });
   }
 

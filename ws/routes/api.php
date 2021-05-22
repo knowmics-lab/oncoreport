@@ -11,6 +11,11 @@ use App\Http\Controllers\Api\JobTypeController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PingController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\DrugController;
+use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\PatientTumorController;
+use App\Http\Controllers\TumorController;
+use App\Models\Reason;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', [PingController::class, 'ping']);
@@ -37,11 +42,23 @@ Route::apiResource('diseases', DiseaseController::class)->names(
     ]
 )->except(['create', 'store', 'update', 'destroy'])->middleware('auth:sanctum');
 
+Route::apiResource('tumors', TumorController::class)->except(['create', 'store', 'update', 'destroy']);
+Route::apiResource('drugs', DrugController::class)->except(['show','create', 'store', 'update', 'destroy']);
+Route::apiResource('medicines', MedicineController::class)->except(['show','create', 'store', 'update', 'destroy']);
+
 Route::apiResource('patients', PatientController::class)->names(
     [
         'show' => 'patients.show',
     ]
 )->middleware('auth:sanctum');
+
+
+
+Route::get('detach/{patient_id}/{tumor_id}/{drug_id}', [PatientTumorController::class, 'detach']);
+Route::get('detach/{patient_id}/{drug_id}', [PatientTumorController::class, 'detachAll']);
+Route::get('reasons', function () {
+    return Reason::all();
+});
 
 Route::apiResource('jobs', JobController::class)->names(
     [

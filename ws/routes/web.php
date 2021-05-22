@@ -3,6 +3,9 @@
 use App\Http\Livewire\Admin\User\Index as UserIndex;
 use App\Http\Livewire\Admin\User\Create as UserCreate;
 use App\Http\Livewire\Admin\User\Show as UserShow;
+use App\Http\Resources\Patient as PatientResource;
+use App\Http\Resources\PatientCollection;
+use App\Models\Patient;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,10 +21,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get(
     '/',
-    function () {
+    function (Request $request) {
+        return Auth::user();
+        return new PatientResource(Patient::find(7));
         return redirect()->route('dashboard');
     }
 );
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get(
     '/dashboard',

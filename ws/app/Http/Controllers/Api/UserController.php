@@ -58,6 +58,7 @@ class UserController extends Controller
                 'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
                 'password' => ['required', 'string', new Password()],
                 'admin'    => ['filled', 'boolean'],
+                'role'     => ['required', Rule::in(['oncologo','clinico'])]
             ]
         );
         $model = User::create(
@@ -68,6 +69,7 @@ class UserController extends Controller
                 'password'          => Hash::make($values['password']),
                 'remember_token'    => Str::random(10),
                 'admin'             => $values['admin'] ?? false,
+                'role'              => $values['role'],
             ]
         )->save();
 
@@ -112,6 +114,7 @@ class UserController extends Controller
             'password'     => ['required_with_all:new_password', 'password'],
             'new_password' => ['filled', 'string', new Password()],
             'admin'        => ['filled', 'boolean'],
+            'role'         => ['filled', Rule::in(['oncologo', 'clinico'])],
         ];
         if ($request->user()->admin) {
             unset($rules['password']);
@@ -129,6 +132,9 @@ class UserController extends Controller
         }
         if (isset($values['new_password'])) {
             $user->password = Hash::make($values['new_password']);
+        }
+        if (isset($values['role'])) {
+            $user->role = $values['role'];
         }
         $user->save();
 

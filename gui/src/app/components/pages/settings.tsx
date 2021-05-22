@@ -87,11 +87,6 @@ export default function Settings() {
       then: Yup.string().required(),
       otherwise: Yup.string().notRequired(),
     }),
-    // socketPath: Yup.string().when('local', {
-    //   is: true,
-    //   then: Yup.string().notRequired(),
-    //   otherwise: Yup.string().notRequired(),
-    // }),
     containerName: Yup.string().when('local', {
       is: true,
       then: Yup.string().required(),

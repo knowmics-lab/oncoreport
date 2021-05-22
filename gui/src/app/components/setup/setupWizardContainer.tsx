@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useService } from '../../../reactInjector';
 import { Settings } from '../../../api';
@@ -23,9 +23,20 @@ type Props = {
 export default function SetupWizardContainer({ children, header }: Props) {
   const classes = useStyles();
   const settings = useService(Settings);
+  const [configured, setConfigured] = useState(settings.isConfigured());
+
+  useEffect(() => {
+    const id = settings.subscribe((c) => {
+      setConfigured(c.configured || false);
+    });
+    return () => {
+      settings.unsubscribe(id);
+    };
+  }, [settings]);
+
   return (
     <>
-      {!settings.isConfigured() ? (
+      {configured ? (
         children
       ) : (
         <>

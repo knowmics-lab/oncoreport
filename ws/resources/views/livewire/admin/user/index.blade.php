@@ -72,7 +72,7 @@
                                                     {{ $user->email }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                                    {{ $user->admin ? 'Admin' : 'User' }}
+                                                    {{ $user->admin ? 'Admin' : $user->role }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                                                     <a href="{{ route('users-show', $user) }}"

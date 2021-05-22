@@ -19,6 +19,7 @@ export interface PatientBase {
   updated_at: string;
   updated_at_diff: string;
   owner: unknown;
+  drugs: {id:number, name:string}[];
 }
 
 export interface Patient extends PatientBase {

@@ -34,6 +34,13 @@
                                     </p>
                                     <x-jet-input-error for="state.password" class="mt-2"/>
                                 </div>
+                                <!-- role -->
+                                <div class="col-span-6">
+                                    <x-jet-label for="role" value="{{ __('Role') }}"/>
+                                    <x-jet-input id="role" type="text" class="mt-1 block w-full"
+                                                 wire:model.defer="state.role" autocomplete="role"/>
+                                    <x-jet-input-error for="state.role" class="mt-2"/>
+                                </div>
                                 <div class="col-span-6">
                                     <div class="flex items-start">
                                         <div class="flex items-center h-5">

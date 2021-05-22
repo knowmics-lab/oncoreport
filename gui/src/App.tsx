@@ -1,45 +1,71 @@
 import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
-import icon from '../assets/icon.svg';
+import {
+  createStyles,
+  GridList,
+  GridListTile,
+  Typography,
+  makeStyles,
+} from '@material-ui/core';
 import injector from './injector';
 import InjectorContext from './reactInjector/context';
 import Routes from './constants/routes.json';
+import Constants from './constants/system.json';
 import Layout from './app/layout';
 import * as Pages from './app/components/pages';
+import UNICT_LOGO from './resources/unict.png';
+import ThemeContext from './app/themeContext';
 
-const Hello = () => {
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    footerLight: {
+      textAlign: 'center',
+      position: 'fixed',
+      bottom: 0,
+      marginBottom: '20px',
+      width: '100% !important',
+    },
+    footerDark: {
+      textAlign: 'center',
+      position: 'fixed',
+      bottom: 0,
+      marginBottom: '20px',
+      width: '100% !important',
+      '& img': {
+        filter: 'invert(1)',
+      },
+    },
+  })
+);
+
+const Home = () => {
+  const classes = useStyles();
   return (
     <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
+      <Typography variant="overline">WELCOME</Typography>
+      <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold' }}>
+        OncoReport
+      </Typography>
+      <Typography gutterBottom>
+        <b>{`Version ${Constants.GUI_VERSION}`}</b>
+      </Typography>
+      <Typography>TODO text goes here</Typography>
+      <ThemeContext.Consumer>
+        {(dark) => (
+          <div className={dark ? classes.footerDark : classes.footerLight}>
+            <GridList cellHeight={55} cols={3}>
+              <GridListTile cols={1}>
+                <img
+                  src={UNICT_LOGO}
+                  alt="UNICT"
+                  style={{ height: '50px', width: 'auto' }}
+                />
+              </GridListTile>
+            </GridList>
+          </div>
+        )}
+      </ThemeContext.Consumer>
     </div>
   );
 };
@@ -68,6 +94,14 @@ export default function App() {
               component={Pages.Forms.PatientForm}
             />
             <Route
+              path={Routes.PATIENTS_TUMORS}
+              component={Pages.Forms.TumorForm}
+            ></Route>
+            <Route
+              path={Routes.PATIENT}
+              component={Pages.PatientPage}
+            ></Route>
+            <Route
               path={Routes.PATIENTS}
               exact
               component={Pages.PatientsPage}
@@ -77,7 +111,7 @@ export default function App() {
               exact
               component={Pages.SettingsPage}
             />
-            <Route path={Routes.HOME} exact component={Hello} />
+            <Route path={Routes.HOME} exact component={Home} />
           </Switch>
         </Layout>
       </Router>

@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import {
   CssBaseline,
   createMuiTheme,
-  Button,
   Toolbar,
+  IconButton,
+  Tooltip,
 } from '@material-ui/core';
 import MUILayout, {
   getCollapseBtn,
@@ -17,6 +18,8 @@ import MUILayout, {
   Root,
 } from '@mui-treasury/layout';
 import { darkMode } from 'electron-util';
+import Brightness4 from '@material-ui/icons/Brightness4';
+import Brightness7 from '@material-ui/icons/Brightness7';
 import {
   LayoutHeader,
   NavContent,
@@ -26,6 +29,7 @@ import {
   StartHandler,
 } from './components/layout';
 import SetupWizardContainer from './components/setup/setupWizardContainer';
+import ThemeContext from './themeContext';
 
 const Header = getHeader(styled);
 const DrawerSidebar = getDrawerSidebar(styled);
@@ -69,9 +73,7 @@ type Props = {
 };
 
 const Layout = ({ children, footer }: Props) => {
-  // @TODO enable and remove button for production
-  // const [dark, setDark] = React.useState(darkMode.isEnabled);
-  const [dark, setDark] = React.useState(true);
+  const [dark, setDark] = React.useState(darkMode.isEnabled);
 
   useEffect(() => {
     darkMode.onChange(() => {
@@ -89,57 +91,58 @@ const Layout = ({ children, footer }: Props) => {
     [dark]
   );
 
+  const switcherLabel = dark ? 'Switch to light theme' : 'Switch to dark theme';
+
   return (
-    <Root theme={theme} scheme={layout}>
-      <CssBaseline />
-      <SetupWizardContainer
-        header={
+    <ThemeContext.Provider value={dark}>
+      <Root theme={theme} scheme={layout}>
+        <CssBaseline />
+        <SetupWizardContainer
+          header={
+            <Header color={dark ? 'default' : 'primary'}>
+              <Toolbar>
+                <LayoutHeader />
+                <Tooltip title={switcherLabel}>
+                  <IconButton aria-label={switcherLabel}>
+                    {dark ? <Brightness7 /> : <Brightness4 />}
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </Header>
+          }
+        >
           <Header color={dark ? 'default' : 'primary'}>
             <Toolbar>
+              <SidebarTrigger sidebarId="primarySidebar" />
               <LayoutHeader />
-              <Button
-                style={{ marginRight: 16 }}
-                variant="contained"
-                color="primary"
-                onClick={() => setDark((v) => !v)}
-              >
-                Switch to {dark ? 'Light' : 'Dark'} mode
-              </Button>
+              <Tooltip title={switcherLabel}>
+                <IconButton
+                  aria-label={switcherLabel}
+                  onClick={() => setDark((v) => !v)}
+                >
+                  {dark ? <Brightness7 /> : <Brightness4 />}
+                </IconButton>
+              </Tooltip>
             </Toolbar>
           </Header>
-        }
-      >
-        <Header color={dark ? 'default' : 'primary'}>
-          <Toolbar>
-            <SidebarTrigger sidebarId="primarySidebar" />
-            <LayoutHeader />
-            <Button
-              style={{ marginRight: 16 }}
-              variant="contained"
-              color="primary"
-              onClick={() => setDark((v) => !v)}
-            >
-              Switch to {dark ? 'Light' : 'Dark'} mode
-            </Button>
-          </Toolbar>
-        </Header>
-        <DrawerSidebar sidebarId="primarySidebar">
-          <SidebarContent style={{ overflow: 'hidden' }}>
-            <NavContent />
-          </SidebarContent>
-          <CollapseBtn style={{ overflow: 'hidden' }} />
-        </DrawerSidebar>
-        <Content>
-          <ContentWrapper>
-            <StartHandler />
-            {children}
-            <Notifications />
-            <BlockingMessageHandler />
-          </ContentWrapper>
-        </Content>
-        {footer && <Footer>{footer}</Footer>}
-      </SetupWizardContainer>
-    </Root>
+          <DrawerSidebar sidebarId="primarySidebar">
+            <SidebarContent style={{ overflow: 'hidden' }}>
+              <NavContent />
+            </SidebarContent>
+            <CollapseBtn style={{ overflow: 'hidden' }} />
+          </DrawerSidebar>
+          <Content>
+            <ContentWrapper>
+              <StartHandler />
+              {children}
+              <Notifications />
+              <BlockingMessageHandler />
+            </ContentWrapper>
+          </Content>
+          {footer && <Footer>{footer}</Footer>}
+        </SetupWizardContainer>
+      </Root>
+    </ThemeContext.Provider>
   );
 };
 

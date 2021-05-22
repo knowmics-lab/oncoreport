@@ -25,6 +25,13 @@
                                                  wire:model.defer="state.email" autocomplete="name"/>
                                     <x-jet-input-error for="state.email" class="mt-2"/>
                                 </div>
+                                <!-- role -->
+                                <div class="col-span-6">
+                                    <x-jet-label for="role" value="{{ __('Role') }}"/>
+                                    <x-jet-input id="role" type="text" class="mt-1 block w-full"
+                                                 wire:model.defer="state.role" autocomplete="role"/>
+                                    <x-jet-input-error for="state.role" class="mt-2"/>
+                                </div>
                                 <div class="col-span-6">
                                     <x-jet-label for="password" value="{{ __('Password') }}"/>
                                     <x-jet-input id="password" type="password" class="mt-1 block w-full"

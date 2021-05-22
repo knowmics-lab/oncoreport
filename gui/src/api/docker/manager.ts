@@ -290,9 +290,8 @@ export default class Manager {
     timeout = 120000,
     maxTries = 3
   ) {
-    // @todo restore when the container is published
     if (displayLog) displayLog('');
-    // await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
+    await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
     try {
       await Utils.retryFunction(
         async (t: number) => {
@@ -307,8 +306,7 @@ export default class Manager {
             !first
           );
           if (odd) {
-            // @todo restore when the container is published
-            // await this.removeContainer();
+            await this.removeContainer();
           }
           return this.startContainer();
         },
@@ -408,7 +406,6 @@ export default class Manager {
         timeoutRunning
       );
       if (parse) {
-        console.log(stdout);
         return JSON.parse(stdout);
       }
       return stdout;
@@ -473,6 +470,51 @@ export default class Manager {
     throw new Error('Unable to exec command. Container is not running');
   }
 
+  public async runSetupScript(
+    cosmicUsername: string,
+    cosmicPassword: string,
+    outputCallback: (a: string) => void,
+    debounceTime = 500
+  ) {
+    let debouncedCallback = outputCallback;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    if (debounceTime > 0) {
+      let accumulator = '';
+      debouncedCallback = (s: string) => {
+        accumulator += s;
+      };
+      const fnDebouncer = () => {
+        if (accumulator !== '') {
+          outputCallback(accumulator);
+          accumulator = '';
+        }
+      };
+      timer = setInterval(fnDebouncer, debounceTime);
+    }
+    return new Promise((resolve, reject) => {
+      this.execDockerCommandLive(
+        [
+          'bash',
+          '/oncoreport/scripts/setup.bash',
+          '-u',
+          cosmicUsername,
+          '-p',
+          cosmicPassword,
+        ],
+        debouncedCallback,
+        debouncedCallback,
+        (c) => {
+          if (timer) clearInterval(timer);
+          if (c === 0) resolve();
+          else reject(new Error(`Unknown error (Code: ${c})`));
+        }
+      ).catch((e) => {
+        if (timer) clearInterval(timer);
+        reject(e);
+      });
+    });
+  }
+
   public async clearQueue(): Promise<unknown> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
@@ -516,8 +558,9 @@ export default class Manager {
   public async hasImage() {
     const images = await this.#client.listImages();
     return (
-      images.filter((r) =>
-        r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
+      images.filter(
+        (r) =>
+          r.RepoTags && r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
       ).length > 0
     );
   }
