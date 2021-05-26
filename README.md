@@ -88,7 +88,7 @@ For both pipeline you have to set the parameters :
 
 Examples
 ```
-bash pipeline_liquid_biopsy.bash -n Mario-s Rossi -g M -i AX6754R -a 45 -dp "DP<0" -af "AF>=0.4"  -t Colon\ Cancer -ip index/ -idx hg19 -th 4 -pp input -fq1 input/fastq/OGT_S2_R1_001.fastq -fq2 input/fastq/OGT_S2_R2_001.fastq -db Databases
+bash pipeline_liquid_biopsy.bash -n Mario -s Rossi -g M -i AX6754R -a 45 -dp "DP<0" -af "AF>=0.4"  -t Colon\ Cancer -ip index/ -idx hg19 -th 4 -pp input -fq1 input/fastq/OGT_S2_R1_001.fastq -fq2 input/fastq/OGT_S2_R2_001.fastq -db Databases
 ```
 ```
 bash  pipeline_tumVSnormal_docker.bash bash pipeline_liquid_biopsy.bash -g M -s Rossi -n Mario -i AX6754R -a 45 -t Colon\ Cancer -ip index/ -th 4 -pp input -idx hg19 -fq1 input/fastq/fastq_sample.fastq -nm1 input/normal/normal_sample.fastq -db Databases
