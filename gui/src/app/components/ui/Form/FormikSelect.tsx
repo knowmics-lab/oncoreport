@@ -25,8 +25,7 @@ export const FormikSelect = ({
   defaultValue = null,
   loading = false,
   getOptionDisabled=(option: Option) => {return false},
-  onChangeCallback = (option: Option) => {},
-
+  onChangeCallback,
 }) => {
 
   const onChange = //(e, value) => {form.setFieldValue(field.name, value.value)}
@@ -37,6 +36,7 @@ export const FormikSelect = ({
         ? (option as Option[]).map((item: Option) => item.value)
         : ( option ? (option as Option).value : null)
     );
+
     if (onChangeCallback){
       onChangeCallback(option);
     }

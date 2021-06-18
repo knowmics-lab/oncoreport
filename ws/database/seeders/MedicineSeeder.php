@@ -14,7 +14,8 @@ class MedicineSeeder extends Seeder
      */
     public function run()
     {
-        $path = '../databases/drugs.txt';
+        $path = realpath(env('RELATIVE_PATH_PREFIX') . env('DATABASES_PATH') . '/drugs.txt');
+        //$path = '../databases/drugs.txt';
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             while (!feof($fp) && ($line = @fgets($fp)) !== false){

@@ -65,14 +65,14 @@ function Row(props: {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow >
-                    {row.data.head.map ( h => <TableCell align="right" >{h}</TableCell> )}
+                    {row.data.head.map ( h => <TableCell align="right" ><Typography variant="body2" component="body2">{h}</Typography></TableCell> )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.data.fields.map( f =>
-                  <TableRow>
-                    {f.map( innerRow => <TableCell align="right">{innerRow}</TableCell> )}
-                  </TableRow> )}
+                    <TableRow>
+                      {f.map( innerRow => <TableCell align="right">{innerRow}</TableCell> )}
+                    </TableRow> )}
                   {/**
                   {row.drugs.map((drug:any, i:number) => (
                     <TableRow key={drug.id}>

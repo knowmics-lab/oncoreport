@@ -8,9 +8,11 @@
 namespace App\Models;
 
 use Auth;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -21,6 +23,16 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Patient extends Model
 {
     use HasFactory;
+
+    protected $guarded = ['email'];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    public function getAuthPassword(){
+        return $this->password;
+    }
 
     public const VALID_GENDERS = ['m', 'f'];
 
@@ -37,6 +49,9 @@ class Patient extends Model
         'age',
         'disease_id',
         'user_id',
+        'email',
+        'fiscal_number',
+        'password'
     ];
 
     /**

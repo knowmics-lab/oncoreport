@@ -48,6 +48,16 @@ export default class Patient extends Entity<PatientObject>
   @field({
     fillable: true,
   })
+  fiscalNumber = '';
+
+  @field({
+    fillable: true,
+  })
+  email = '';
+
+  @field({
+    fillable: true,
+  })
   diseases = [];
 
   @field({
@@ -70,7 +80,7 @@ export default class Patient extends Entity<PatientObject>
     fillable: false,
     readonly: true,
   })
-  drugs: {id: number, name:string}[] = [];
+  drugs: { id: number; name: string }[] = [];
 
   public constructor(adapter: PatientAdapter) {
     super(adapter);

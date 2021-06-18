@@ -1,10 +1,15 @@
 /* eslint-disable import/no-cycle */
-export { DiseaseAdapter, PatientAdapter, JobAdapter } from './adapters';
-export { DiseaseEntity, PatientEntity, JobEntity } from './entities';
+export { DiseaseAdapter, PatientAdapter, JobAdapter, TumorAdapter, PathologyAdapter, MedicineAdapter, ReasonAdapter, DrugAdapter } from './adapters';
+export { DiseaseEntity, PatientEntity, JobEntity, ResourceEntity  } from './entities';
 export {
   DiseaseRepository,
   PatientRepository,
   JobRepository,
+  TumorRepository,
+  DrugRepository,
+  MedicineRepository,
+  PathologyRepository,
+  ReasonRepository
 } from './repositories';
 export { DockerManager, DockerPullStatus } from './docker';
 export { default as Settings } from './settings';

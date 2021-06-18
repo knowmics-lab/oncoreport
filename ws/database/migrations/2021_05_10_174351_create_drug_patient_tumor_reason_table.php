@@ -15,9 +15,13 @@ class CreateDrugPatientTumorReasonTable extends Migration
     {
         Schema::create('drug_patient_tumor_reason', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('drug_patient_tumor_id');
+            $table->unsignedBigInteger('drug_patient_tumor_id');
             $table->unsignedBigInteger('reason_id');
             $table->timestamps();
+
+            $table->foreign('drug_patient_tumor_id')->references('id')->on('drug_patient_tumor')->onDelete('cascade');
+
+            //$table->foreign('drug_patient_tumor_id')->references('id')->on('drug_patient_tumor')->onDelete('cascade');
         });
     }
 

@@ -13,16 +13,11 @@ import {
 } from '@material-ui/core';
 import { generatePath } from 'react-router';
 import {
-  DiseaseEntity,
-  DiseaseRepository,
   PatientEntity,
   PatientRepository,
+  ReasonRepository,
+  ResourceEntity,
 } from '../../../api';
-import {
-  Gender,
-  SimpleMapArray,
-  TypeOfNotification,
-} from '../../../interfaces';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
 import Routes from '../../../constants/routes.json';
@@ -61,103 +56,95 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { TumorList } from './tumorList';
 
-import { Accordion, AccordionDetails, AccordionSummary, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useTheme } from '@material-ui/styles';
 import Button, { SubmitButton } from '../ui/Button';
 import { JobsByPatientPage } from '.';
 import { Field, Form, Formik } from 'formik';
 import { FormikSelect } from '../ui/Form/FormikSelect';
+import TextField from '../ui/Form/TextField';
+import Connector from '../../../api/adapters/connector';
+
 
 type MaybePatient = PatientEntity | undefined;
-type MaybeDiseases = SimpleMapArray<DiseaseEntity> | undefined;
 
 export default function PatientForm() {
   const classes = useStyles();
   const repository = useService(PatientRepository);
-  const diseasesRepository = useService(DiseaseRepository);
   const [loading, setLoading] = useState(false);
-  const [diseases, setDiseases] = useState<MaybeDiseases>();
-  const [pathologies, setPathologies] = useState<any[]>([]);
   const [patient, setPatient] = useState<MaybePatient>();
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
   const { id } = useParams<{ id?: string }>();
-  const [open, setOpen] = useState(false);
-  const [openTumorModal, setOpenTumorModal] = useState(false);
-
-  const [tumors, setTumors] = useState<{id: number, name: string}[]>();
-  const [tumorsOptions, setTumorOptions] = useState<{value: string, label:string}[]>();
-  const [drugs, setDrugs] = useState<{id: number, name: string}[]>([]);
-
-
-  const [pathologyElements, setPathologyElements] = useState<any[]>([]);
-  const [selectedPathology, setSelectedPathology] = useState<any | false>(false);
-
-  const [tumorElements, setTumorElements] = useState<any[]>([]);
-  const [selectedTumor, setSelectedTumor] = useState<any | false>(false);
-
-  const [pathologyChips, setPathologyChips] = useState<any>([]);
-  const [pathologyModals, setPathologyModals] = useState<any>([]);
-
-  const [openModal, setOpenModal] = useState<string| false>(false);
-
-  const [testPatientPathology, setTestPatientPathology] = useState<SimpleMapArray<number[]>>({});
-
   const [value, setValue] = useState<number>(0);
   const [expanded, setExpanded] = React.useState<number | false>(false);
   const [stopDrug, setStopDrug] = React.useState<any>(false);
 
+  const testDiv = (
+    <div style={{ display: 'none' }}>Questo div è solo un test</div>
+  );
+  const reasonsRepository = useService(ReasonRepository);
+  const [reasons, setReasons] = useState<ResourceEntity[] | undefined>();
+  const connector: Connector = useService(Connector);
 
-  const [update, setUpdate] = useState<number>(Math.random());
-
-
-  function forceUpdate(){
-    let v = Math.random();
-    while (v == update) v = Math.random();
-    setUpdate(v);
-  }
-
-  const theme = useTheme();
-  function loadPatient(){
+  function loadPatient() {
     runAsync(async () => {
       setLoading(true);
       if (id) {
         let p = await (await repository.fetch(+id)).refresh();
         setPatient(p);
-        setDrugs(p.drugs);
+        //setDrugs(p.drugs);
       } else {
         setPatient(repository.new());
-
       }
       setLoading(false);
     });
   }
+
   useEffect(() => {
     runAsync(async () => {
       loadPatient();
-      /*
-      setLoading(true);
-      if (id) {
-        let p = await (await repository.fetch(+id)).refresh();
-        setPatient(p);
-        setDrugs(p.drugs);
-      } else {
-        setPatient(repository.new());
-
-      }
-      setLoading(false);
-      */
     });
   }, [id, repository]);
+
+
+
+  useEffect(() => {
+    runAsync(async () => {
+      if (!reasons) {
+        setLoading(true);
+        const tmp = await reasonsRepository.fetchPage();
+        // In realtà questo non serve.
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+        setReasons(t);
+        setLoading(false);
+      }
+    });
+  }, [reasons, ReasonRepository]);
 
   interface TabPanelProps {
     children?: React.ReactNode;
     index: any;
     value: any;
   }
-
-
 
   function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
@@ -179,22 +166,84 @@ export default function PatientForm() {
     );
   }
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/reasons').then(res => res.json()).then((data) => {
-      setReasons(data.map((d: any) => {return {'id':d.id, 'name': d.name}}));
-    }).catch(console.log);
-   }, []);
 
-  const [reasons, setReasons] = useState<{id:number, name:string}[]>([]);
+  function reasonDialog(onSubmit: Function) {
+    const dRef:React.RefObject<any> = React.createRef();
+    return (
+      <Dialog
+        open={stopDrug}
+        onClose={() => {
+          setStopDrug(false);
+        }}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">
+          Perchè interrompere {stopDrug ? stopDrug.drug.name : ''} ?
+        </DialogTitle>
+        <Formik
+          initialValues={{ ragioni: [], comment: '' }}
+          onSubmit={(d) =>{
+            onSubmit(patient?.id, stopDrug.drug.id, d.ragioni, d.comment);
+            setStopDrug(false);
+          }}
+        >
+          <Form>
+            <DialogContent>
+              <DialogContentText>
+                Puoi selezionare una o più ragioni.
+              </DialogContentText>
+              <Field
+                name={'ragioni'}
+                isMulti
+                component={FormikSelect}
+                options={(reasons ?? []).map((r) => {
+                  return { value: r.id, label: r.name };
+                })}
+                label="perchè"
+                onChangeCallback={(options: any) => {
+
+                  dRef.current.style.display =
+                    options.filter((option: any) => {
+                      return option.label == 'altro';
+                    }).length > 0
+                      ? 'block'
+                      : 'none';
+                }}
+              />
+              <div ref={dRef} style={{ display: 'none' }}>
+                <TextField
+                  label="Spiegaci perchè interrompere"
+                  name="comment"
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => {
+                  setStopDrug(false);
+                }}
+                color="primary"
+              >
+                Cancel
+              </Button>
+              <SubmitButton text="Save" isSaving={submitting} />
+            </DialogActions>
+          </Form>
+        </Formik>
+      </Dialog>
+    );
+  }
+
 
   const backUrl = generatePath(Routes.PATIENTS);
 
-
-
-
   return (
-    <Paper elevation={1} className={classes.paper} style={{padding:0, borderRadius:10}}>
-      { typeof(id) === typeof(undefined) || loading || !patient ? (
+    <Paper
+      elevation={1}
+      className={classes.paper}
+      style={{ padding: 0, borderRadius: 10 }}
+    >
+      {typeof id === typeof undefined || loading || !patient ? (
         <>
           <Grid container justify="center">
             <Grid item xs="auto">
@@ -209,148 +258,220 @@ export default function PatientForm() {
         </>
       ) : (
         <>
-        <AppBar position="static" style={{borderTopLeftRadius:10, borderTopRightRadius:10}}>
-          <Tabs value={value} onChange={(event: React.ChangeEvent<{}>, newValue: number) => {
-              setValue(newValue);
-            }} aria-label="tabs">
-            <Tab label="Anagrafica"/>
-            <Tab label="Patologie pregresse"/>
-            <Tab label="Tumori attuali"/>
-            <Tab label="Drugs"/>
-            <Tab label="Analyses"/>
-          </Tabs>
-        </AppBar>
-        <div style={{padding:10}}>
-        <Typography variant="h5" component="h3">Cartella clinica di {patient.fullName}</Typography>
-        <TabPanel value={value} index={0}>
+          {testDiv}
 
-                <Grid container spacing={2}>
-                  <Typography variant="overline" display="block" gutterBottom >
-                    Patient code: {patient.code}
+          <AppBar
+            position="static"
+            style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+          >
+            <Tabs
+              value={value}
+              onChange={(_event: React.ChangeEvent<{}>, newValue: number) => {
+                setValue(newValue);
+              }}
+              aria-label="tabs"
+            >
+              <Tab label="Anagrafica" />
+              <Tab label="Patologie pregresse" />
+              <Tab label="Tumori attuali" />
+              <Tab label="Drugs" />
+              <Tab label="Analyses" />
+            </Tabs>
+          </AppBar>
+          <div style={{ padding: 10 }}>
+            <Typography variant="h5" component="h3">
+              Cartella clinica di {patient.fullName}
+            </Typography>
+            <TabPanel value={value} index={0}>
+              <Grid container spacing={2}>
+                <Typography variant="overline" display="block" gutterBottom>
+                  Patient code: {patient.code}
+                </Typography>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient name: {patient.first_name}
                   </Typography>
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom>Patient name: {patient.first_name}</Typography></Grid>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom >Patient surname: {patient.last_name}</Typography></Grid>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient surname: {patient.last_name}
+                  </Typography>
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom>Patient age: {patient.age}</Typography></Grid>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom >Patient gender: {patient.gender}</Typography></Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient age: {patient.age}
+                  </Typography>
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom>Patient email: {'email@email.com'}</Typography></Grid>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient gender: {patient.gender}
+                  </Typography>
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item sm><Typography variant="overline" display="block" gutterBottom>Patient desease: {patient.disease.name}</Typography></Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient email: {patient.email}
+                  </Typography>
                 </Grid>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient fiscal number: {patient.fiscalNumber}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item sm>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Patient desease: {patient.disease.name}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </TabPanel>
 
+            {/** Pathologies */}
+            <TabPanel value={value} index={1}>
+              {patient.diseases.map((disease: any) => (
+                <Accordion
+                  TransitionProps={{ unmountOnExit: true }}
+                  expanded={expanded == disease.id}
+                  onChange={(
+                    _event: React.ChangeEvent<{}>,
+                    isExpanded: boolean
+                  ) => {
+                    setExpanded(isExpanded ? disease.id : false);
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography>{disease.name}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Medicine</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {disease.medicines.map((medicine: any, _i: number) => (
+                            <TableRow>
+                              <TableCell>{medicine.name}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </TabPanel>
 
+            {/** Tumors */}
+            <TabPanel value={value} index={2}>
+              {patient && (
+                <Typography variant="h5" component="h3">
+                  Tumors list
+                </Typography>
+              )}
+              {patient && (
+                <>
+                  {!loading ? (
+                    <TumorList tumors={patient.tumors} patient={patient} reasons={reasons}/>
+                  ) : (
+                    <></>
+                  )}{' '}
+                </>
+              )}
+            </TabPanel>
 
-
-
-
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-        {patient.diseases.map((disease:any) =>
-            <Accordion TransitionProps={{ unmountOnExit: true }} expanded={expanded == disease.id} onChange={ (event: React.ChangeEvent<{}>, isExpanded: boolean) =>{setExpanded( isExpanded ? disease.id : false)}}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>{disease.name}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead><TableRow><TableCell>Medicine</TableCell></TableRow></TableHead>
-                    <TableBody>
-                      {disease.medicines.map((medicine:any, i:number) =>
-                      <TableRow>
-                        <TableCell>{medicine.name}</TableCell>
-                      </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </AccordionDetails>
-            </Accordion>
-        )}
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          {patient && (<Typography variant="h5" component="h3">Tumors list</Typography>)}
-          {patient && (<>{!loading ? <TumorList tumors={patient.tumors} patient={patient}/> : <></>} </>)}
-        </TabPanel>
-
+            {/** Drugs */}
             <TabPanel value={value} index={3}>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead><TableRow><TableCell>Drugs</TableCell><TableCell></TableCell></TableRow></TableHead>
-                    <TableBody>
-                      {patient.drugs.map((drug:any, i:number) =>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Drugs</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {patient.drugs.map((drug: any, i: number) => (
                       <TableRow>
                         <TableCell>{drug.name}</TableCell>
-                        <TableCell><Button size="small" variant="contained" color="secondary" disabled={drug.end_date != null}
-                          onClick={async () => {
-                            setStopDrug({'drug':drug, index: i});
-                          }}>Interrompi</Button>
-                      </TableCell>
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            color="secondary"
+                            disabled={drug.end_date != null}
+                            onClick={async () => {
+                              setStopDrug({ drug: drug, index: i });
+                            }}
+                          >
+                            Interrompi
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <Dialog open={stopDrug} onClose={() => {setStopDrug(false)}} aria-labelledby="form-dialog-title">
-                  <DialogTitle id="form-dialog-title">Perchè interrompere {stopDrug ? stopDrug.drug.name : ''} ?</DialogTitle>
-                  <Formik
-                      initialValues={{ragioni:[]}}
-                      onSubmit={(d) => {
-                        alert(JSON.stringify(d));
-                        setSubmitting(true);
-                        console.log('url=' + 'http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(d.ragioni));
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-                        fetch('http://localhost:8000/api/detach/'+patient.id+'/'+stopDrug.drug.id + '?reasons=' + JSON.stringify(d.ragioni))
-                            .then(res => res.json()).then((data) => {
-                                                              alert(JSON.stringify(data.data));
-                                                              loadPatient();
+              {reasonDialog(
+                (
+                  patient_id: number,
+                  drug_id: number,
+                  ragioni: number[],
+                  comment: string
+                ) => {
+                  setSubmitting(true);
 
-                                                             setSubmitting(false);
-                              }).catch(console.log);
+                  connector.callGet(
+                    'detach/' + patient_id + '/' + drug_id,
+                    { reasons: JSON.stringify(ragioni), comment: comment ?? '' }
+                  ).then((_data) => {
+                      loadPatient();
+                      setSubmitting(false);
+                    })
+                    .catch(console.log);
+                }
+              )}
 
-                        setStopDrug(false);}} >
-                    <Form>
-                      <DialogContent>
-                        <DialogContentText>Puoi selezionare una o più ragioni.</DialogContentText>
-                        <Field name={'ragioni'} isMulti component={FormikSelect} options={reasons.map((r) => {return {'value':r.id, 'label':r.name}})} label="perchè"/>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={() => {setStopDrug(false)}} color="primary">Cancel</Button>
-                        <SubmitButton  text="Save" isSaving={submitting}/>
-                      </DialogActions>
-                    </Form>
-                  </Formik>
-                </Dialog>
-        </TabPanel>
+            </TabPanel>
 
-        <TabPanel value={value} index={4}>
-          <JobsByPatientPage id={patient.id}/>
-        </TabPanel>
-                    <Grid container justify="space-between">
-                    <Grid item xs="auto">
-                      <Button
-                        variant="contained"
-                        color="default"
-                        href={backUrl}
-                      >
-                        <Icon className="fas fa-arrow-left" /> Go Back
-                      </Button>
-                    </Grid>
-                    <Grid item xs="auto">
-                      <Button color="primary" variant="contained" onClick={() => {history.push(generatePath(Routes.PATIENTS_EDIT, {id: patient.id,}));}}>Edit</Button>
-                    </Grid>
-                  </Grid>
-                  </div>
+            <TabPanel value={value} index={4}>
+              <JobsByPatientPage id={patient?.id} />
+            </TabPanel>
+            <Grid container justify="space-between">
+              <Grid item xs="auto">
+                <Button variant="contained" color="default" href={backUrl}>
+                  <Icon className="fas fa-arrow-left" /> Go Back
+                </Button>
+              </Grid>
+              <Grid item xs="auto">
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => {
+                    history.push(
+                      generatePath(Routes.PATIENTS_EDIT, { id: patient.id })
+                    );
+                  }}
+                >
+                  Edit
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
         </>
       )}
     </Paper>

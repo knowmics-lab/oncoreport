@@ -5,10 +5,10 @@ import { green } from '@material-ui/core/colors';
 import {
   Box,
   CircularProgress,
+  Divider,
   FormGroup,
   Grid,
   Icon,
-  Modal,
   Paper,
   Typography,
 } from '@material-ui/core';
@@ -20,9 +20,15 @@ import {
   DiseaseRepository,
   PatientEntity,
   PatientRepository,
+  ResourceEntity,
+  TumorRepository,
+  DrugRepository,
+  MedicineRepository,
+  PathologyRepository,
 } from '../../../../api';
 import {
   Gender,
+  Option,
   SimpleMapArray,
   TypeOfNotification,
 } from '../../../../interfaces';
@@ -33,17 +39,16 @@ import TextField from '../../ui/Form/TextField';
 import Button, { SubmitButton } from '../../ui/Button';
 import Routes from '../../../../constants/routes.json';
 
-import TumorField from './tumorForm';
 import { FormikSelect } from '../../ui/Form/FormikSelect';
-import { tmp } from '../../../../api/transferManager';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { DialogContent } from '@material-ui/core';
 import { DialogContentText } from '@material-ui/core';
 import { DialogActions } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
-import { isNullOrUndefined } from 'util';
 import { Autocomplete } from '@material-ui/lab';
+import { Tumor } from '../../../../interfaces/entities/tumor';
+import { Pathology } from '../../../../interfaces/entities/pathology';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -76,14 +81,23 @@ const useStyles = makeStyles((theme) =>
 
 type MaybePatient = PatientEntity | undefined;
 type MaybeDiseases = SimpleMapArray<DiseaseEntity> | undefined;
+type MaybeResources = ResourceEntity[] | undefined;
 
+type Options = Option[];
 export default function PatientForm() {
+
   const classes = useStyles();
   const repository = useService(PatientRepository);
   const diseasesRepository = useService(DiseaseRepository);
+  const drugsRepository = useService(DrugRepository);
+  const tumorsRepository = useService(TumorRepository);
+  const medicinesRepository = useService(MedicineRepository);
+  const pathologiesRepository = useService(PathologyRepository);
+
+
   const [loading, setLoading] = useState(false);
   const [diseases, setDiseases] = useState<MaybeDiseases>();
-  const [pathologies, setPathologies] = useState<any[]>([]);
+
   const [patient, setPatient] = useState<MaybePatient>();
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
@@ -91,23 +105,26 @@ export default function PatientForm() {
   const [open, setOpen] = useState(false);
   const [openTumorModal, setOpenTumorModal] = useState(false);
 
-  const [tumors, setTumors] = useState<{id: number, name: string}[]>();
-  const [tumorsOptions, setTumorOptions] = useState<{value: string, label:string}[]>();
-  const [drugs, setDrugs] = useState<{id: number, name: string}[]>();
+  const [pathologies, setPathologies] = useState<MaybeResources>();
+  const [pathologyOptions, setPathologyOptions] = useState<Option[]>([]);
 
+  const [tumors, setTumors] = useState<MaybeResources>();
+  const [tumorsOptions, setTumorOptions] = useState<Option[]>([]);
 
-  const [pathologyElements, setPathologyElements] = useState<any[]>([]);
-  const [selectedPathology, setSelectedPathology] = useState<any | false>(false);
+  const [drugs, setDrugs] = useState<MaybeResources>();
+  const [drugOptions, setDrugOptions] = useState<Option[]>([]);
 
-  const [tumorElements, setTumorElements] = useState<any[]>([]);
-  const [selectedTumor, setSelectedTumor] = useState<any | false>(false);
+  const [medicines, setMedicines] = useState<MaybeResources>();
+  const [medicineOptions, setMedicineOptions] = useState<Options>([]);
 
-  const [pathologyChips, setPathologyChips] = useState<any>([]);
-  const [pathologyModals, setPathologyModals] = useState<any>([]);
+  const [pathologyElements, setPathologyElements] = useState<Pathology[]>([]);
+  const [selectedPathology, setSelectedPathology] = useState<Pathology>();
+  const [showPathologyModal, setShowPathologyModal] = useState<boolean>(false);
 
-  const [openModal, setOpenModal] = useState<string| false>(false);
+  const [tumorElements, setTumorElements] = useState<Tumor[]>([]);
+  const [selectedTumor, setSelectedTumor] = useState<Tumor>();
+  const [showTumorModal, setShowTumorModal] = useState<boolean>(false);
 
-  const [testPatientPathology, setTestPatientPathology] = useState<SimpleMapArray<number[]>>({});
 
 
   useEffect(() => {
@@ -121,7 +138,6 @@ export default function PatientForm() {
             return map;
           }, {})
         );
-        setPathologies(tmp.data.map((d) => {return {'value': {'id': d.id, 'name':d.name}, 'label':d.name}}))
         setLoading(false);
       }
     });
@@ -129,18 +145,97 @@ export default function PatientForm() {
 
   useEffect(() => {
     runAsync(async () => {
+      if (!pathologies) {
+        setLoading(true);
+        const tmp = await pathologiesRepository.fetchPage();
+        // In realtà questo non serve.
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+        setPathologies(t);
+
+        setPathologyOptions(tmp.data.reduce<Option[]>((map, d) => {
+          map.push({'value':d, 'label':d.name});
+          return map;
+        }, []));
+        setLoading(false);
+      }
+    });
+  }, [pathologies, PathologyRepository]);
+
+  useEffect(() => {
+    runAsync(async () => {
+      if (!tumors) {
+        setLoading(true);
+        const tmp = await tumorsRepository.fetchPage();
+        // In realtà questo non serve.
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+        setTumors(t);
+
+        setTumorOptions(tmp.data.reduce<Option[]>((map, d) => {
+          map.push({'value':d, 'label':d.name});
+          return map;
+        }, []));
+        setLoading(false);
+      }
+    });
+  }, [tumors, TumorRepository]);
+
+  useEffect(() => {
+    runAsync(async () => {
+      if (!drugs) {
+        setLoading(true);
+        const tmp = await drugsRepository.fetchPage();
+        // In realtà questo non serve.
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+        setDrugs(t);
+
+        setDrugOptions(tmp.data.reduce<Option[]>((map, d) => {
+          map.push({'value':d, 'label':d.name});
+          return map;
+        }, []));
+        setLoading(false);
+      }
+    });
+  }, [drugs, DrugRepository]);
+
+  useEffect(() => {
+    runAsync(async () => {
+      if (!medicines) {
+        setLoading(true);
+        const tmp = await medicinesRepository.fetchPage();
+        // In realtà questo non serve.
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+        setMedicines(t);
+
+        setMedicineOptions(tmp.data.reduce<Option[]>((map, d) => {
+          map.push({'value':d, 'label':d.name});
+          return map;
+        }, []));
+        setLoading(false);
+      }
+    });
+  }, [medicines, MedicineRepository]);
+
+
+  useEffect(() => {
+    runAsync(async () => {
       setLoading(true);
       if (id) {
-
-
         let p = await (await repository.fetch(+id)).refresh();
-
         setPatient(p);
-        //setPathologyElements((await (await repository.fetch(+id)).refresh()).diseases);
-        //let tmp = await (await repository.fetch(+id)).refresh();
         setPathologyElements(p.diseases);
         setTumorElements(p.tumors)
-        //console.log(JSON.stringify (((tmp.diseases.map( d => d.name )))));
       } else {
         setPatient(repository.new());
       }
@@ -149,9 +244,7 @@ export default function PatientForm() {
     });
   }, [id, repository]);
 
-  // const diseaseIds = useMemo(() => Object.keys(diseases || {}).map((x) => +x), [
-  //   diseases,
-  // ]);
+
   const diseaseOptions = useMemo(() => {
     return Object.values(diseases || {}).reduce<SimpleMapArray<string>>(
       (map, d) => {
@@ -161,20 +254,6 @@ export default function PatientForm() {
       {}
     );
   }, [diseases]);
-
-
-  useEffect(() => {
-    fetch('http://localhost:8000/api/tumors').then(res => res.json()).then((data) => {
-      setTumors(data.data);
-      setTumorOptions(data.data.map((d: any) => {return {'value':d.id, 'label': d.name}}))
-    }).catch(console.log);
-   }, []);
-
-   useEffect(() => {
-     fetch('http://localhost:8000/api/drugs').then(res => res.json()).then((data) => {
-       setDrugs(data.data.map((d: any) => {return {'value':d.id, 'label': d.name}}));
-     }).catch(console.log);
-    }, []);
 
 
 
@@ -195,11 +274,6 @@ export default function PatientForm() {
   });
 
   const backUrl = generatePath(Routes.PATIENTS);
-
-
-
-
-
 
   return (
     <Paper elevation={1} className={classes.paper}>
@@ -229,27 +303,25 @@ export default function PatientForm() {
               initialValues={patient.toDataObject()}
               validationSchema={validationSchema}
               onSubmit={async (d) => {
-                //console.log(JSON.stringify(testPatientPathology));
-
-                //d.diseases = testPatientPathology;
+                //alert(JSON.stringify(d));
                 d.diseases = pathologyElements.filter(p => p != null).map ((p) => {return {'id':p.id, 'medicines':p.medicines.map(m => m.id)}});
                 d.tumors = tumorElements.map ( (tumor) => {
-                  console.log(JSON.stringify(tumor.sede));
                   return {
-                    'id' : tumor.id,
-                    'type' : tumor.type,
-                    'sede' : tumor.sede.map (s => s.id),
-                    'stadio' : tumor.stadio,
-                    'drugs' : tumor.drugs.map( (drug) => {
+                    'id'      : tumor.id,
+                    'name'    : '',
+                    'type'    : tumor.type,
+                    'sede'    : tumor.sede.map (s => s.id),
+                    'stadio'  : tumor.stadio,
+                    'drugs'   : tumor.drugs.map( (drug) => {
                       return {
-                        'id' : drug.id,
-                        'start_date' : drug.start_date,
-                        'end_date' : drug.end_date,
-                        'reasons' : drug.reasons.map ( reason => reason.id )
+                        'id'          : drug.id,
+                        'name'        : drug.name ?? '',
+                        'start_date'  : drug.start_date,
+                        'end_date'    : drug.end_date,
+                        'reasons'     : drug.reasons?.map ( reason => reason.id )
                       }
                     })
                   }
-
                 } );
 
                 return runAsync(async (manager) => {
@@ -262,8 +334,6 @@ export default function PatientForm() {
                   );
                   history.push(backUrl);
                 });
-
-
               }}
             >
 
@@ -279,17 +349,27 @@ export default function PatientForm() {
                     <TextField label="Last Name" name="last_name" required />
                   </Grid>
                 </Grid>
-                <TextField label="Age" name="age" type="number" required />
-                <SelectField
-                  name="gender"
-                  label="Gender"
-                  emptyText="Select a Gender"
-                  addEmpty={!patient.id}
-                  options={{
-                    [Gender.m]: 'Male',
-                    [Gender.f]: 'Female',
-                  }}
-                />
+                <Grid container spacing={2}>
+                  <Grid item md>
+                    <TextField label="Age" name="age" type="number" required />
+                  </Grid>
+                  <Grid item md>
+                    <SelectField
+                      name="gender"
+                      label="Gender"
+                      emptyText="Select a Gender"
+                      addEmpty={!patient.id}
+                      options={{
+                        [Gender.m]: 'Male',
+                        [Gender.f]: 'Female',
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                <TextField label="Email" name="email" type="email" required />
+                <TextField label="Fiscal Number" name="fiscalNumber" required />
+
                 <SelectField
                   name="disease"
                   label="Disease"
@@ -305,7 +385,7 @@ export default function PatientForm() {
                     <div style={{margin:'0.2em', display: 'inline-block'}}>
                     <Chip
                       label={pathology.name}
-                      onClick={() => {setSelectedPathology(pathology)}}
+                      onClick={() => {setSelectedPathology(pathology); setShowPathologyModal(true);}}
                       color="primary"
                       onDelete={() => {setPathologyElements(pathologyElements.filter((p) => {return p.id != pathology.id}))}}
                     /></div>);
@@ -319,7 +399,7 @@ export default function PatientForm() {
                     <div style={{margin:1, display: 'inline'}}>
                     <Chip
                       label={tumor.name}
-                      onClick={() => {setSelectedTumor(tumor)}}
+                      onClick={() => {setSelectedTumor(tumor); setShowTumorModal(true);}}
                       color="secondary"
                       onDelete={() => {setTumorElements(tumorElements.filter((p) => {return p.id != tumor.id}))}}
                     /></div>);
@@ -353,238 +433,27 @@ export default function PatientForm() {
                 </FormGroup>
               </Form>
             </Formik>
-
-
-
           )}
         </>
       )}
 
-
-
-            {/**
-            <div>{pathologyElements}</div>
-            <Formik
-              initialValues={{id:null}}
-              onSubmit={(d) => {
-
-
-                testPatientPathology[d.id.id] = [];
-                let tmp = [...pathologyElements];
-                tmp.push(
-                  <Formik
-                    initialValues={{drugs:[]}}
-
-                    onSubmit={(dd) => {
-                      alert(JSON.stringify('Aggiungiamo a ' + d.id.name+ ' Questi farmaci ' + JSON.stringify(dd.drugs)));
-                      testPatientPathology[d.id.id] = dd.drugs.map((drug) => {return drug.id});
-                      console.log(JSON.stringify(testPatientPathology));
-                    }}
-                  ><Form>
-                    <Field name={'drugs'} component={FormikSelect} isMulti options={pathologies} loading={loading} label={"Selezione farmaci usati per curare " + d.id.name}
-                      onChangeCallback={(drugs) => {
-                        testPatientPathology[d.id.id] = drugs.map((value) => value.value.id);
-                        console.log('nuovo valore per test: ' + JSON.stringify(testPatientPathology));
-                      }} />
-                    <SubmitButton text="Save drugs" isSaving={submitting} />
-                  </Form></Formik>
-                );
-                setPathologyElements(tmp);
-                console.log('test: ' + JSON.stringify(testPatientPathology));
-              }}
-            ><Form>
-              <Field name={'id'} component={FormikSelect} options={pathologies} loading={loading} label="Selezione patologie pregresse"/>
-              <SubmitButton text="Save pathology" isSaving={submitting} />
-            </Form></Formik>
-               */}
-
-{/*
-      <div style={{padding:10}}><Typography variant="overline" display="block" gutterBottom>Patologie pregresse</Typography>{ pathologyElements.map((pathology) => {
-        return (
-        <div style={{margin:'0.2em', display: 'inline-block'}}>
-        <Chip
-          label={pathology.name}
-          onClick={() => {setSelectedPathology(pathology)}}
-          color="primary"
-          onDelete={() => {setPathologyElements(pathologyElements.filter((p) => {return p.id != pathology.id}))}}
-        /></div>);
-      })}</div>
-    */}
-
-{/*
-      <Box style={{padding:10}}><Typography variant="overline" display="block" gutterBottom>Tumori</Typography>  { tumorElements.map((tumor) => {
-        return (
-        <div style={{margin:1, display: 'inline'}}>
-        <Chip
-          label={tumor.name}
-          onClick={() => {setSelectedTumor(tumor)}}
-          color="secondary"
-          onDelete={() => {setTumorElements(tumorElements.filter((p) => {return p.id != tumor.id}))}}
-        /></div>);
-      })}</Box>
-*/}
-
-      <div>{pathologyElements.map((pathology) => {
-        var values = pathology.medicines;
-        console.log(JSON.stringify(values));
-        return (
-          <Dialog open={selectedPathology == pathology} onClose={() => {setSelectedPathology(false)}} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Aggiungi farmaci a {selectedPathology.name}</DialogTitle>
-          <Formik
-              initialValues={{medicines: []}}
-              onSubmit={(d) => {
-                alert('cambiamo ' + JSON.stringify(selectedPathology.medicines) + ' in ' + JSON.stringify(d.medicines));
-                selectedPathology.medicines = d.medicines;
-                setSelectedPathology(false);}} >
-            <Form>
-              <DialogContent>
-                <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={pathologies}
-                  getOptionLabel={(option) => option.label}
-                  //style={{ width: 300 }}
-                  defaultValue={pathology.medicines.map( (m) => {return {'value':m, 'label':m.name}} )}
-                  autoComplete
-                  autoHighlight
-                  multiple
-
-                  onChange={(e, value) => { values = value.map((v) => v.value); alert(JSON.stringify(values))}}
-                  renderInput={(params) => <TextField {...params} label={'medicines'} name={pathology.name} variant="outlined" />}
-               />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => {setSelectedPathology(false)}} color="primary">Cancel</Button>
-                <Button onClick={() => {setSelectedPathology(false); selectedPathology.medicines = values; console.log(JSON.stringify(pathologyElements))}} color="primary">Save</Button>
-              </DialogActions>
-            </Form>
-          </Formik>
-        </Dialog>
-        );
-      })}</div>
-
-
-      <div>{tumorElements.map((tumor) => {
-        var values = tumor.drugs;
-
-        return (
-          <Dialog open={selectedTumor == tumor} onClose={() => {setSelectedTumor(false)}} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Modifica {selectedTumor.name}</DialogTitle>
-          <Formik
-              initialValues={{drugs: [], type: tumor?.type, sede: tumor && tumor.sede && tumor.sede != [] && tumor.sede[0] ? tumor.sede[0].id : null , T: tumor?.stadio ? tumor?.stadio.T : null, N: tumor?.stadio ? tumor?.stadio.N : null, M: tumor?.stadio ? tumor?.stadio.M : null,}}
-              onSubmit={(d) => {
-                alert('cambiamo ' + JSON.stringify(selectedTumor) + ' in ' + JSON.stringify(d.sede));
-                selectedTumor.type = d.type;
-                selectedTumor.sede = [{'id': parseInt(d.sede)}];
-                selectedTumor.stadio.T = d.T;
-                selectedTumor.stadio.N = d.N;
-                selectedTumor.stadio.M = d.M;
-                selectedTumor.drugs = values;
-                setSelectedTumor(false);
-              }} >
-            <Form>
-              <DialogContent>
-
-              <label>Vuoi aggiungere altre informazioni?</label>
-                <Grid container spacing={4}>
-                  <Grid item md>
-                    <SelectField
-                      name="type"
-                      label="Tipo"
-                      emptyText="Select a type"
-                      addEmpty={false}
-                      options={{"primary":"primario", "secondary":"secondario"}}
-                    />
-                  </Grid>
-                  <Grid item md>
-                    <SelectField
-                      name="sede"
-                      label="Sede"
-                      emptyText="Select a sede"
-                      addEmpty={false}
-                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
-                    />
-                  </Grid>
-
-                </Grid>
-
-                <Grid container spacing={3}>
-                <Grid item md>
-                <SelectField
-                  name="T"
-                  label="T"
-                  emptyText="Select T"
-                  addEmpty={false}
-                  options={["0", "1", "2","3"]}
-                />
-                </Grid>
-                <Grid item md>
-                <SelectField
-                  name="N"
-                  label="N"
-                  emptyText="Select N"
-                  addEmpty={false}
-                  options={["0", "1", "2","3"]}
-                /></Grid>
-                <Grid item md>
-                <SelectField
-                  name="M"
-                  label="M"
-                  emptyText="Select M"
-                  addEmpty={false}
-                  options={["0", "1", "2","3"]}
-                /></Grid>
-              </Grid>
-
-                <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={drugs?.map((d) => {return {'value':{'id':d.value, 'name':d.label, 'start_date':null, 'end_date':null, 'reasons':[]}, 'label':d.label}})}
-                  getOptionLabel={(option) => option.label}
-                  //style={{ width: 300 }}
-                  defaultValue={tumor.drugs.map( (m) => {return {'value':m, 'label':m.name}} )}
-                  autoComplete
-                  autoHighlight
-                  multiple
-
-
-                  onChange={(e, value) => { values = value.map((v) => v.value); alert(JSON.stringify(values))}}
-                  renderInput={(params) => <TextField {...params} label={'drugs'} name={tumor.name} variant="outlined" />}
-               />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => {setSelectedTumor(false)}} color="primary">Cancel</Button>
-                <SubmitButton onClick={() => {setSelectedTumor(false); selectedTumor.drugs = values; console.log(JSON.stringify(tumorElements))}} color="primary">Save</SubmitButton>
-              </DialogActions>
-            </Form>
-          </Formik>
-        </Dialog>
-        );
-      })}</div>
-{/**
-
-      <Button onClick={() => {setOpen(true)}} variant="contained" color="primary">Aggiungi patologie</Button>
- */}
       <Dialog open={open} onClose={() => {setOpen(false)}} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Aggiungi cose</DialogTitle>
+        <DialogTitle id="form-dialog-title">Aggiungi patologie pregresse</DialogTitle>
         <Formik
-            initialValues={{pathology:null, medicines: []}}
+            initialValues={{pathology:undefined, medicines: []}}
             onSubmit={(d) => {
-              alert(JSON.stringify(d));
               if(d.pathology !== null){
                 const _pathologyElements = [...pathologyElements];
                 _pathologyElements.push({'id':d.pathology.id, 'name':d.pathology.name, 'medicines':d.medicines});
-                //_pathologyElements[d.pathology.id] = {'id':d.pathology.id, 'name':d.pathology.name, 'medicines':d.medicines};
                 setPathologyElements(_pathologyElements);
               }
-
-              //handleStopDrug(dialogData.index, dialogData.tumor, dialogData.drug, d.ragioni);
-              setOpen(false);}} >
+              setOpen(false);
+            }}>
           <Form>
             <DialogContent style={{minWidth: 600}}>
               <DialogContentText>Seleziona la patologia pregressa.</DialogContentText>
-              <Field name={'pathology'} component={FormikSelect} options={pathologies} loading={loading} label="pahologies"
-                getOptionDisabled={(option) => {
+              <Field name={'pathology'} component={FormikSelect} options={pathologyOptions} loading={loading} label="pahologies"
+                getOptionDisabled={(option: Option) => {
                   for (let i = 0; i < pathologyElements.length; i++) {
                     if (pathologyElements[i].id == option.value.id) {return true;};
                   }
@@ -592,11 +461,11 @@ export default function PatientForm() {
                 }}
               />
               <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
-              <Field name={'medicines'} isMulti component={FormikSelect} options={pathologies} loading={loading} label="medicines"/>
+              <Field name={'medicines'} isMulti component={FormikSelect} options={medicineOptions} loading={loading} label="medicines"/>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => {setOpen(false)}} color="primary">Cancel</Button>
-              <SubmitButton onClick={() => {setOpen(false)}} color="primary">Save</SubmitButton>
+              <SubmitButton onClick={() => {setOpen(false)}} color="primary">Confirm</SubmitButton>
             </DialogActions>
           </Form>
         </Formik>
@@ -606,47 +475,56 @@ export default function PatientForm() {
       <Dialog open={openTumorModal} onClose={() => {setOpenTumorModal(false)}} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Aggiungi tumori</DialogTitle>
         <Formik
-            initialValues={{tumor:null, drugs: [], sede: null, type:null, T:null, N:null,M:null,}}
+            validationSchema = {
+              Yup.object().shape({
+                tumor: Yup.object().defined().required(),
+                type: Yup.mixed().oneOf(["primary", "secondary"]),
+                T: Yup.number().min(0).max(4),
+                M: Yup.number().min(0).max(4),
+                N: Yup.number().min(0).max(4),
+              })
+            }
+            initialValues={{tumor:undefined, drugs: [], sede: undefined, type:undefined, T:undefined, N:undefined,M:undefined,}}
             onSubmit={(d) => {
-              alert(JSON.stringify(d));
 
-              const _tumorElements = [...tumorElements];
-              _tumorElements.push({
-                'id':d.tumor.id,
-                'name':d.tumor.name,
-                'type':d.type,
-                'sede': [{'id' : parseInt(d.sede)}],
-                'stadio': {'T':d.T, 'N':d.N, 'M':d.M},
-                'drugs': d.drugs
-              });
-              setTumorElements(_tumorElements);
-
+              if(d.tumor){
+                const _tumorElements = [...tumorElements];
+                _tumorElements.push({
+                  'id'    : d.tumor.id,
+                  'name'  : d.tumor.name,
+                  'type'  : d.type,
+                  'sede'  : d.sede !== undefined ? [{'id' : parseInt(d.sede ?? '')}] : [],
+                  'stadio': {'T':d.T, 'N':d.N, 'M':d.M},
+                  'drugs' : d.drugs
+                });
+                setTumorElements(_tumorElements);
+              }
               //handleStopDrug(dialogData.index, dialogData.tumor, dialogData.drug, d.ragioni);
-              console.log(JSON.stringify(tumorElements));
-              setOpenTumorModal(false);}} >
+              //console.log(JSON.stringify(tumorElements));
+              setOpenTumorModal(false);
+              }} >
           <Form>
             <DialogContent>
               <DialogContentText>Seleziona il tumore da aggiungere.</DialogContentText>
               <Field name={'tumor'} component={FormikSelect}
-              options={tumors?.map( t => {return { 'value':t, 'label':t.name}})}
-              loading={loading} label="tumors"
-                getOptionDisabled={(option) => {
-                  //return false;
+                options={ tumorsOptions }
+                loading={loading} label="tumors"
+                getOptionDisabled={(option: Option) => {
                   for (let i = 0; i < tumorElements.length; i++) {
                     if (tumorElements[i].id == option.value.id) {return true;};
                   }
                   return false;
                 }}
               />
+              <DialogContentText>Vuoi aggiungere altre informazioni?</DialogContentText>
 
-              <label>Vuoi aggiungere altre informazioni?</label>
                 <Grid container spacing={4}>
                   <Grid item md>
                     <SelectField
                       name="type"
                       label="Tipo"
                       emptyText="Select a type"
-                      addEmpty={false}
+                      addEmpty={true}
                       options={{"primary":"primario", "secondary":"secondario"}}
                     />
                   </Grid>
@@ -655,7 +533,7 @@ export default function PatientForm() {
                       name="sede"
                       label="Sede"
                       emptyText="Select a sede"
-                      addEmpty={false}
+                      addEmpty={true}
                       options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
                     />
                   </Grid>
@@ -668,7 +546,7 @@ export default function PatientForm() {
                   name="T"
                   label="T"
                   emptyText="Select T"
-                  addEmpty={false}
+                  addEmpty={true}
                   options={["0", "1", "2","3"]}
                 />
                 </Grid>
@@ -677,7 +555,7 @@ export default function PatientForm() {
                   name="N"
                   label="N"
                   emptyText="Select N"
-                  addEmpty={false}
+                  addEmpty={true}
                   options={["0", "1", "2","3"]}
                 /></Grid>
                 <Grid item md>
@@ -685,24 +563,174 @@ export default function PatientForm() {
                   name="M"
                   label="M"
                   emptyText="Select M"
-                  addEmpty={false}
+                  addEmpty={true}
                   options={["0", "1", "2","3"]}
                 /></Grid>
               </Grid>
 
               <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
-              <Field name={'drugs'} isMulti component={FormikSelect}
-              options={drugs?.map((d) => {return {'value':{'id':d.value, 'name':d.label, 'start_date':null, 'end_date':null, 'reasons':[]}, 'label':d.label}})}
-              loading={loading} label="drugs"/>
+              <Field
+                name={'drugs'}
+                isMulti
+                component={FormikSelect}
+                options={ drugOptions }
+                loading={loading}
+                label="drugs"
+                />
             </DialogContent>
             <DialogActions>
               <Button onClick={() => {setOpenTumorModal(false)}} color="primary">Cancel</Button>
-              <SubmitButton onClick={() => {setOpenTumorModal(false)}} color="primary">Save</SubmitButton>
+              <SubmitButton >Confirm</SubmitButton>
             </DialogActions>
           </Form>
         </Formik>
       </Dialog>
 
+
+
+      <Dialog open={showPathologyModal} onClose={() => {setShowPathologyModal(false)}} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Aggiungi farmaci a {selectedPathology?.name}</DialogTitle>
+          <Formik
+              initialValues={{medicines: []}}
+              onSubmit={(d) => {
+                selectedPathology.medicines = d.medicines;
+                setShowPathologyModal(false);
+              }} >
+            <Form>
+              <DialogContent>
+                <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={medicineOptions}
+                  getOptionLabel={(option) => option.label ?? ''}
+                  defaultValue={ selectedPathology?.medicines.map( m => {return {'value':m, 'label':m.name ?? ''}} )}
+                  getOptionDisabled={(option: Option) => {
+                    for (let i = 0; i < selectedPathology?.medicines?.length; i++) {
+                      if (selectedPathology.medicines[i].id == option.value.id) {return true;};
+                    }
+                    return false;
+                  }}
+                  autoComplete
+                  autoHighlight
+                  multiple
+                  onChange={(e, value) => { selectedPathology.medicines = value.map((v) => v.value) }}
+                  renderInput={(params) => <TextField {...params} label={'medicines'} name={ selectedPathology?.name ?? ''} variant="outlined" />}
+               />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {setShowPathologyModal(false)}} color="primary">Cancel</Button>
+                <Button onClick={() => {setShowPathologyModal(false)}} color="primary">Confirm</Button>
+              </DialogActions>
+            </Form>
+          </Formik>
+        </Dialog>
+
+
+
+
+
+
+        <Dialog open={showTumorModal} onClose={() => {setShowTumorModal(false)}} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Modifica {selectedTumor?.name}</DialogTitle>
+          <Formik
+              initialValues={{
+                drugs: [],
+                type: selectedTumor?.type,
+                sede: selectedTumor && selectedTumor.sede && selectedTumor.sede != [] && selectedTumor.sede[0] ? selectedTumor.sede[0].id.toLocaleString()  : undefined ,
+                T: selectedTumor?.stadio ? selectedTumor?.stadio.T : undefined,
+                N: selectedTumor?.stadio ? selectedTumor?.stadio.N : undefined,
+                M: selectedTumor?.stadio ? selectedTumor?.stadio.M : undefined,
+              }}
+              onSubmit={(d) => {
+                selectedTumor.type = d.type;
+                selectedTumor.sede = d.sede ? [{'id': parseInt(d.sede)}] : [];
+                selectedTumor.stadio.T = d.T;
+                selectedTumor.stadio.N = d.N;
+                selectedTumor.stadio.M = d.M;
+                selectedTumor.drugs = selectedTumor.drugs;
+                setShowTumorModal(false);
+              }} >
+            <Form>
+              <DialogContent>
+              <Divider variant="middle" />
+
+              <label>Vuoi aggiungere altre informazioni?</label>
+                <Grid container spacing={4}>
+                  <Grid item md>
+                    <SelectField
+                      name="type"
+                      label="Tipo"
+                      emptyText="Select a type"
+                      addEmpty={true}
+                      options={{"primary":"primario", "secondary":"secondario"}}
+                    />
+                  </Grid>
+                  <Grid item md>
+                    <SelectField
+                      name="sede"
+                      label="Sede"
+                      emptyText="Select a sede"
+                      addEmpty={true}
+                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
+                    />
+                  </Grid>
+
+                </Grid>
+
+                <Grid container spacing={3}>
+                <Grid item md>
+                <SelectField
+                  name="T"
+                  label="T"
+                  emptyText="Select T"
+                  addEmpty={true}
+                  options={["0", "1", "2","3"]}
+                />
+                </Grid>
+                <Grid item md>
+                <SelectField
+                  name="N"
+                  label="N"
+                  emptyText="Select N"
+                  addEmpty={true}
+                  options={["0", "1", "2","3"]}
+                /></Grid>
+                <Grid item md>
+                <SelectField
+                  name="M"
+                  label="M"
+                  emptyText="Select M"
+                  addEmpty={true}
+                  options={["0", "1", "2","3"]}
+                /></Grid>
+              </Grid>
+
+                <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={ drugOptions }
+                  getOptionLabel = {(option) => option.label}
+                  defaultValue = { selectedTumor?.drugs?.map( drug => {return {'value':drug, 'label':drug.name ?? ''}}) }
+                  getOptionDisabled={(option: Option) => {
+                    for (let i = 0; i < selectedTumor?.drugs?.length; i++) {
+                      if (selectedTumor.drugs[i].id == option.value.id) {return true;};
+                    }
+                    return false;
+                  }}
+                  autoComplete
+                  autoHighlight
+                  multiple
+                  onChange={ (e, value) => { selectedTumor.drugs = value.map((v) => v.value) }}
+                  renderInput={(params) => <TextField {...params} label={'drugs'} name={selectedTumor?.name ?? ''} variant="outlined" />}
+               />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {setShowTumorModal(false)}} color="primary">Cancel</Button>
+                <SubmitButton color="primary">Confirm</SubmitButton>
+              </DialogActions>
+            </Form>
+          </Formik>
+        </Dialog>
 
     </Paper>
   );

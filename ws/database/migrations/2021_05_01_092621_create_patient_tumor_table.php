@@ -22,6 +22,8 @@ class CreatePatientTumorTable extends Migration
             $table->integer('N')->nullable();
             $table->integer('M')->nullable();
             $table->timestamps();
+
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
         });
     }
 

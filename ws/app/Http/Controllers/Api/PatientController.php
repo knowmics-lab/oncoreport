@@ -50,27 +50,35 @@ class PatientController extends Controller
         $this->authorize('create', Patient::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
+
+        error_log(json_encode($request->input()));
+
         $values = $this->validate(
             $request,
             [
-                'code'       => ['required', 'string', 'alpha_dash', 'max:255'],
-                'first_name' => ['required', 'string', 'max:255'],
-                'last_name'  => ['required', 'string', 'max:255'],
-                'gender'     => ['required', 'string', Rule::in(Patient::VALID_GENDERS)],
-                'age'        => ['required', 'integer', 'between:0,100'],
-                'disease_id' => ['required_without:disease', 'integer', 'exists:diseases,id'],
-                'disease'    => ['required_without:disease_id', 'string', 'exists:diseases,name'],
+                'code'          => ['required', 'string', 'alpha_dash', 'max:255'],
+                'first_name'    => ['required', 'string', 'max:255'],
+                'last_name'     => ['required', 'string', 'max:255'],
+                'gender'        => ['required', 'string', Rule::in(Patient::VALID_GENDERS)],
+                'age'           => ['required', 'integer', 'between:0,100'],
+                'disease_id'    => ['required_without:disease', 'integer', 'exists:diseases,id'],
+                'disease'       => ['required_without:disease_id', 'string', 'exists:diseases,name'],
+                'email'         => ['required', 'email:rfc,dns'],
+                'fiscalNumber'  => ['required', 'string']
             ]
         );
         $patient = Patient::create(
             [
-                'code'       => $values['code'],
-                'first_name' => $values['first_name'],
-                'last_name'  => $values['last_name'],
-                'gender'     => $values['gender'],
-                'age'        => $values['age'],
-                'disease_id' => $values['disease_id'] ?? Disease::whereName($values['disease'])->firstOrFail()->id,
-                'user_id'    => $request->user()->id,
+                'code'          => $values['code'],
+                'first_name'    => $values['first_name'],
+                'last_name'     => $values['last_name'],
+                'gender'        => $values['gender'],
+                'age'           => $values['age'],
+                'disease_id'    => $values['disease_id'] ?? Disease::whereName($values['disease'])->firstOrFail()->id,
+                'user_id'       => $request->user()->id,
+                "fiscal_number" => $values['fiscalNumber'],
+                "email"         => $values['email'],
+                'password'      => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
             ]
         );
         $patient->save();
@@ -142,11 +150,11 @@ class PatientController extends Controller
             foreach ($tumors as $tumor){
                 if($tumor['id']){
                     $tumor_ids[$tumor['id']] = [
-                        'type' => $tumor['type'],
+                        'type' => $tumor['type'] ?? null,
                         //'sede' => $tumor['sede'],
-                        'T' => $tumor['stadio'] ? $tumor['stadio']['T'] : null,
-                        'M' => $tumor['stadio'] ? $tumor['stadio']['M'] : null,
-                        'N' => $tumor['stadio'] ? $tumor['stadio']['N'] : null,
+                        'T' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
+                        'M' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
+                        'N' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
                     ];
                 }
             }
@@ -162,7 +170,8 @@ class PatientController extends Controller
                 foreach($drugs as $drug){
                     $drug_ids[$drug['id']] = [
                         'start_date' =>   array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
-                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null
+                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
+                        // 'comment' => array_key_exists('comment', $drug) ? $drug['comment'] : null, // prima fare la migrate
                     ];
                 }
                 //error_log('aggiorniamo le droghe per ' . json_encode($tumor['id']) . ' con ' . json_encode($drug_ids));
@@ -233,6 +242,8 @@ class PatientController extends Controller
             'age'        => ['filled', 'integer'],
             'disease_id' => ['filled', 'integer', 'exists:diseases,id'],
             'disease'    => ['filled', 'string', 'exists:diseases,name'],
+            'email'         => ['required', 'email:rfc,dns'],
+            'fiscalNumber'  => ['required', 'string']
         ];
         $values = $this->validate($request, $rules);
         $disease_id = $values['disease_id'] ?? (
@@ -245,6 +256,8 @@ class PatientController extends Controller
                 "gender"     => $values['gender'] ?? $patient->gender,
                 "age"        => $values['age'] ?? $patient->age,
                 "disease_id" => $disease_id,
+                "fiscal_number" => $values['fiscalNUmber'] ?? $patient->fiscal_number,
+                "email" => $values['email'] ?? $patient->email,
             ]
         )->save();
         $patient->save();
@@ -272,11 +285,11 @@ class PatientController extends Controller
 
             $tumor_ids = array_reduce($tumors, function($carry, $tumor){
                 $carry[$tumor['id']] = [
-                    'type' => $tumor['type'],
-                    //'sede' => $tumor['sede'],
-                    'T' => $tumor['stadio'] ? $tumor['stadio']['T'] : null,
-                    'M' => $tumor['stadio'] ? $tumor['stadio']['M'] : null,
-                    'N' => $tumor['stadio'] ? $tumor['stadio']['N'] : null,
+                    'type' => $tumor['type'] ?? null,
+                        //'sede' => $tumor['sede'],
+                        'T' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
+                        'M' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
+                        'N' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
                 ];
                 return $carry;
             });
@@ -309,10 +322,13 @@ class PatientController extends Controller
                 $drug_ids = array_reduce($drugs, function($_drugs, $drug){
                     $_drugs[$drug['id']] = [
                         'start_date' =>  array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
-                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null
+                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
+                        //'comment' => array_key_exists('comment', $drug) ? $drug['comment'] : null, //prima fare la migrate
                     ];
                     return $_drugs;
                 });
+
+                error_log('reduce andata bene');
 
                 /*
                 $drug_ids = array();
@@ -324,12 +340,11 @@ class PatientController extends Controller
                 }
                 */
 
-                //error_log('aggiorniamo le droghe per ' . json_encode($tumor['id']) . ' con ' . json_encode($drug_ids));
+                error_log('aggiorniamo le droghe per ' . json_encode($tumor['id']) . ' con ' . json_encode($drug_ids));
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
-
+                error_log('droghe aggiornate');
                 if ($tumor['sede']){
                     $location_ids = $tumor['sede'];
-
                     error_log('aggiorniamo la sede di ' . $tumor['id'] .' con ' . json_encode($location_ids));
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }

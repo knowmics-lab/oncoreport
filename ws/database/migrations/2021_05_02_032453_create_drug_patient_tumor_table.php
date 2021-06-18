@@ -19,8 +19,11 @@ class CreateDrugPatientTumorTable extends Migration
             $table->unsignedBigInteger('drug_id');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->string('comment')->nullable();
             //$table->unsignedBigInteger('reason_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('patient_tumor_id')->references('id')->on('patient_tumor')->onDelete('cascade');
         });
     }
 

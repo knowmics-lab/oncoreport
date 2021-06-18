@@ -35,6 +35,8 @@ class Patient extends JsonResource
                 'last_name'       => $this->last_name,
                 'age'             => $this->age,
                 'gender'          => $this->gender,
+                'email'           => $this->email,
+                'fiscalNumber'    => $this->fiscal_number,
                 'disease'         => Utils::flattenResource(new Disease($this->disease), $request),
                 'owner'           => $this->user? Utils::flattenResource(new User($this->user), $request) : null,
                 'created_at'      => $this->created_at,
@@ -43,7 +45,7 @@ class Patient extends JsonResource
                 'updated_at_diff' => $this->updated_at->diffForHumans(),
                 'tumors'          => new TumorCollection($this->tumors),
                 'diseases'        => new PathologyCollection($this->diseases),
-                'drugs' => new DrugCollection($this->drugs()->get()),
+                'drugs' => $this->drugs()->get(),
             ],
             'links' => [
                 'self'  => route('patients.show', $this->resource, false),

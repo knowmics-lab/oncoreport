@@ -18,6 +18,8 @@ class CreateDiseaseMedicinePatientTable extends Migration
             $table->unsignedBigInteger('disease_patient_id');
             $table->unsignedBigInteger('medicine_id');
             $table->timestamps();
+
+            $table->foreign('disease_patient_id')->references('id')->on('disease_patient')->onDelete('cascade');
         });
     }
 

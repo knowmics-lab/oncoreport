@@ -15,6 +15,7 @@ use App\Http\Controllers\DrugController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientTumorController;
 use App\Http\Controllers\TumorController;
+use App\Http\Resources\MedicineCollection;
 use App\Models\Reason;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,8 @@ Route::apiResource('patients', PatientController::class)->names(
 Route::get('detach/{patient_id}/{tumor_id}/{drug_id}', [PatientTumorController::class, 'detach']);
 Route::get('detach/{patient_id}/{drug_id}', [PatientTumorController::class, 'detachAll']);
 Route::get('reasons', function () {
+    error_log("called reasons");
+    return new MedicineCollection(Reason::all());
     return Reason::all();
 });
 

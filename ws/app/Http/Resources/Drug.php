@@ -23,6 +23,7 @@ class Drug extends JsonResource
             'start_date' => $this->pivot->start_date,
             'end_date' => $this->pivot->end_date,
             'reasons' => $this->pivot->reasons,
+            'comment' => $this->pivot->comment
         ] :
         [
             'id' => $this->id,

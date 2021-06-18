@@ -72,10 +72,10 @@
                         <div class="border-t border-gray-100"></div>
 
                         <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route(( \Illuminate\Support\Facades\Auth::guard('patient')->check() ? 'patient.logout' : 'logout')) }}">
                             @csrf
 
-                            <x-jet-dropdown-link href="{{ route('logout') }}"
+                            <x-jet-dropdown-link href="{{ route( ( \Illuminate\Support\Facades\Auth::guard('patient')->check() ? 'patient.logout' : 'logout')  ) }}"
                                                  onclick="event.preventDefault();
                                                             this.closest('form').submit();">
                                 {{ __('Logout') }}

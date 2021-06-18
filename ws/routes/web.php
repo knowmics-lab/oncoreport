@@ -19,10 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get(
-    '/',
+Route::get( '/',
     function (Request $request) {
-        return new PatientResource(Patient::find(2));
+        //return new PatientResource(Patient::find(1));
         return redirect()->route('dashboard');
     }
 );
@@ -47,3 +46,16 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
     '/admin/users/{user}',
     UserShow::class
 )->name('users-show');
+
+
+Route::prefix('patient')
+    ->as('patient.')
+    ->group(function() {
+        Route::get('home', '\App\Http\Controllers\PatientController@index')->name('home');
+        Route::namespace('\App\Http\Controllers\Auth\Patient')
+            ->group(function() {
+                Route::get('login', 'PatientAuthController@showLoginForm')->name('login');
+                Route::post('login', 'PatientAuthController@login')->name('login');
+                Route::post('logout', 'PatientAuthController@logout')->name('logout');
+            });
+    });
