@@ -7,6 +7,12 @@
         "laravel"
     ],
     "license": "MIT",
+    "repositories": {
+        "local": {
+            "type": "path",
+            "url": "repositories/spid-laravel"
+        }
+    },
     "require": {
         "php": "^7.4|^8.0",
         "ext-zip": "*",
@@ -20,7 +26,8 @@
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.0",
         "pda/pheanstalk": "~4.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "rickrk4/spid-laravel": "dev-master"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",

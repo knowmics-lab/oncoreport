@@ -13,8 +13,15 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
+        <!-- SPID Styles -->
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/spid-sp-access-button.min.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.js" defer></script>
+        <script src="{{ asset('js/app.js') }}"></script>
+        @stack('scripts')
     </head>
     <body>
         <div class="font-sans text-gray-900 antialiased">

@@ -46,6 +46,7 @@
             </div>
         </form>
         <br><p>Oppure puoi usare spid</p>
+        @include('spid-auth::spid-button')
 
     </x-jet-authentication-card>
 </x-guest-layout>

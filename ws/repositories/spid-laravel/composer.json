@@ -1,0 +1,54 @@
+{
+  "name": "rickrk4/spid-laravel",
+  "description": "Laravel Package for SPID authentication",
+  "keywords": ["SPID", "Laravel", "PHP"],
+  "homepage": "https://github.com/italia/spid-laravel",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Davide Porrovecchio - Agenzia per l'Italia Digitale",
+      "email": "davide.porrovecchio@agid.gov.it"
+    }
+  ],
+  "require": {
+    "php": ">=7.2.0",
+    "illuminate/config": ">=6.0",
+    "illuminate/support": ">=6.0",
+    "onelogin/php-saml": "4.0.0",
+    "cweagans/composer-patches": "^1.7",
+    "nesbot/carbon": "^2.46"
+  },
+  "require-dev": {
+    "pds/skeleton": "~1.0",
+    "phpunit/phpunit": "^8.1",
+    "orchestra/testbench": "~4.0",
+    "mockery/mockery": "^1.0",
+    "mikey179/vfsstream": "^1.6",
+    "friendsofphp/php-cs-fixer": "^2.14"
+  },
+  "autoload": {
+    "psr-4": {
+      "Italia\\SPIDAuth\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Italia\\SPIDAuth\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+        "providers": [
+            "Italia\\SPIDAuth\\ServiceProvider"
+        ]
+    },
+    "patches": {
+      "onelogin/php-saml": {
+        "Compatibility with SPID": "https://raw.githubusercontent.com/Rickrk4/spid-laravel/testing/patches/php-saml-4.0.0-spid.patch"
+      }
+    }
+  },
+  "archive": {
+    "exclude": ["/tests", "/certs", ".editorconfig", "php_cs.dist"]
+  }
+}
