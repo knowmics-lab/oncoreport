@@ -22,6 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LocationSeeder::class);
 
         //Test
-        $this->call(PatientSeeder::class);
+        // $this->call(PatientSeeder::class);
     }
 }
