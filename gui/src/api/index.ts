@@ -1,6 +1,21 @@
 /* eslint-disable import/no-cycle */
-export { DiseaseAdapter, PatientAdapter, JobAdapter, TumorAdapter, PathologyAdapter, MedicineAdapter, ReasonAdapter, DrugAdapter } from './adapters';
-export { DiseaseEntity, PatientEntity, JobEntity, ResourceEntity  } from './entities';
+export {
+  DiseaseAdapter,
+  PatientAdapter,
+  JobAdapter,
+  TumorAdapter,
+  PathologyAdapter,
+  MedicineAdapter,
+  ReasonAdapter,
+  DrugAdapter,
+  LocationAdapter,
+} from './adapters';
+export {
+  DiseaseEntity,
+  PatientEntity,
+  JobEntity,
+  ResourceEntity,
+} from './entities';
 export {
   DiseaseRepository,
   PatientRepository,
@@ -9,7 +24,8 @@ export {
   DrugRepository,
   MedicineRepository,
   PathologyRepository,
-  ReasonRepository
+  ReasonRepository,
+  LocationRepository,
 } from './repositories';
 export { DockerManager, DockerPullStatus } from './docker';
 export { default as Settings } from './settings';

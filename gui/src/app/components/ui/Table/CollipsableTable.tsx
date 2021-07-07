@@ -46,16 +46,6 @@ function Row(props: {
           </IconButton>
         </TableCell>
         {row.fields.map( f => <TableCell>{f}</TableCell>)}
-        {/*
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.type}</TableCell>
-        <TableCell align="right">{row.sede}</TableCell>
-        <TableCell align="right">{row.stadio.T}</TableCell>
-        <TableCell align="right">{row.stadio.M}</TableCell>
-        <TableCell align="right">{row.stadio.N}</TableCell>
-        */}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -65,7 +55,7 @@ function Row(props: {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow >
-                    {row.data.head.map ( h => <TableCell align="right" ><Typography variant="body2" component="body2">{h}</Typography></TableCell> )}
+                    {row.data.head.map ( h => <TableCell align="right" ><Typography variant="body2" component="body">{h}</Typography></TableCell> )}
                   </TableRow>
                 </TableHead>
                 <TableBody>

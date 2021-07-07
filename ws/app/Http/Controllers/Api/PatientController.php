@@ -85,73 +85,25 @@ class PatientController extends Controller
 
         if($request->input('diseases')){
             $diseases = $request->input('diseases');
-            error_log(json_encode($diseases));
-
-
             $disease_ids = array_column($diseases, 'id');
-            error_log(json_encode($disease_ids));
-
-
             $patient->diseases()->sync($disease_ids);
             foreach ($diseases as $disease) {
-                error_log('salviamo la patologia '.$disease['id'].' con le medicine '.json_encode($disease['medicines']));
                 $patient->diseases()->find($disease['id'])->pivot->medicines()->sync($disease['medicines']);
             }
         }
 
 
-        /*
-        if ($request->input('tumors')){
-            $tumors = $request->input('tumors');
-
-            $tumor_ids = array();
-            $drugs_ids = array();
-            foreach ($tumors as $tumor) {
-                if($tumor['id']){
-                    if(isset($tumor['stadio']))
-                        $tumor_ids[$tumor['id']] = ['type' => $tumor['type'], 'T' => $tumor['stadio']['T'], 'M' => $tumor['stadio']['M'], 'N' => $tumor['stadio']['N']];
-                    else
-                        $tumor_ids[$tumor['id']] = ['type' => $tumor['type']];
-
-                    if(array_key_exists('drugs',$tumor)){
-                        $drug_ids = array();
-                        foreach ($tumor['drugs'] as $drug) {
-                            $drug_ids[$drug['id']] = [
-                                'start_date' =>   array_key_exists('start_date', $drug) ? $drug['start_date'] : new DateTime('today'),
-                                'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null
-                            ];
-                        }
-                        $drugs_ids[$tumor['id']] = $drug_ids;
-                    }
-                }
-            }
-
-        }
-
-        $patient->tumors()->sync($tumor_ids);
-
-        foreach ($drugs_ids as $tumor_id => $drug_ids) {
-            $patient->tumors()->find($tumor_id)->pivot->drugs()->sync($drug_ids);
-        }
-        */
 
         // Nuova gestione.
         if ($request->input('tumors')){
-            error_log('log tumori');
 
             $tumors = $request->input('tumors');
-            error_log(json_encode($tumors));
-
-            //$tumor_ids = array_column($tumors, 'id');
-            //error_log('salviamo questi tumori: ' . json_encode($tumor_ids));
             $tumor_ids = array();
 
-            //$patient->tumors()->sync($tumor_ids);
             foreach ($tumors as $tumor){
                 if($tumor['id']){
                     $tumor_ids[$tumor['id']] = [
                         'type' => $tumor['type'] ?? null,
-                        //'sede' => $tumor['sede'],
                         'T' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
                         'M' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
                         'N' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
@@ -159,27 +111,21 @@ class PatientController extends Controller
                 }
             }
 
-            error_log('aggiorniamo i tumori: ' . json_encode(array_keys($tumor_ids)));
             $patient->tumors()->sync($tumor_ids);
-            error_log('tumori aggiornati');
             foreach ($tumors as $tumor) {
                 $drugs = $tumor['drugs'];
-                //error_log('adesso forse aggiorniamo il tumore ' . $tumor['id'] . ' con le drugs ' . json_encode(array_column($drugs, 'id')));
                 $drug_ids = array();
 
                 foreach($drugs as $drug){
                     $drug_ids[$drug['id']] = [
                         'start_date' =>   array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
                         'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
-                        // 'comment' => array_key_exists('comment', $drug) ? $drug['comment'] : null, // prima fare la migrate
                     ];
                 }
-                //error_log('aggiorniamo le droghe per ' . json_encode($tumor['id']) . ' con ' . json_encode($drug_ids));
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
 
                 if ($tumor['sede']){
                     $location_ids = $tumor['sede'];
-                    error_log("lo collego con " . json_encode($location_ids));
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }
 
@@ -293,56 +239,25 @@ class PatientController extends Controller
                 ];
                 return $carry;
             });
-            error_log(json_encode($tumor_ids));
 
-            /*
-            $tumor_ids = array();
-            //$patient->tumors()->sync($tumor_ids);
-            foreach ($tumors as $tumor){
-                if($tumor['id']){
-                    $tumor_ids[$tumor['id']] = [
-                        'type' => $tumor['type'],
-                        //'sede' => $tumor['sede'],
-                        'T' => $tumor['stadio'] ? $tumor['stadio']['T'] : null,
-                        'M' => $tumor['stadio'] ? $tumor['stadio']['M'] : null,
-                        'N' => $tumor['stadio'] ? $tumor['stadio']['N'] : null,
-                    ];
-                }
-            }
-            error_log(json_encode($tumor_ids));
-            */
-            error_log('aggiorniamo i tumori: ' . json_encode(array_keys($tumor_ids)));
             $patient->tumors()->sync($tumor_ids);
-            error_log('tumori aggiornati');
+
 
             foreach ($tumors as $tumor) {
                 $drugs = $tumor['drugs'];
-                //error_log('adesso forse aggiorniamo il tumore ' . $tumor['id'] . ' con le drugs ' . json_encode(array_column($drugs, 'id')));
 
                 $drug_ids = array_reduce($drugs, function($_drugs, $drug){
                     $_drugs[$drug['id']] = [
                         'start_date' =>  array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
                         'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
-                        //'comment' => array_key_exists('comment', $drug) ? $drug['comment'] : null, //prima fare la migrate
                     ];
                     return $_drugs;
                 });
 
-                error_log('reduce andata bene');
 
-                /*
-                $drug_ids = array();
-                foreach($drugs as $drug){
-                    $drug_ids[$drug['id']] = [
-                        'start_date' =>   array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
-                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null
-                    ];
-                }
-                */
-
-                error_log('aggiorniamo le droghe per ' . json_encode($tumor['id']) . ' con ' . json_encode($drug_ids));
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
                 error_log('droghe aggiornate');
+
                 if ($tumor['sede']){
                     $location_ids = $tumor['sede'];
                     error_log('aggiorniamo la sede di ' . $tumor['id'] .' con ' . json_encode($location_ids));

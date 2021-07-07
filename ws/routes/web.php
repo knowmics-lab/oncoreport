@@ -3,9 +3,9 @@
 use App\Http\Livewire\Admin\User\Index as UserIndex;
 use App\Http\Livewire\Admin\User\Create as UserCreate;
 use App\Http\Livewire\Admin\User\Show as UserShow;
-use App\Http\Resources\Patient as PatientResource;
-use App\Http\Resources\PatientCollection;
-use App\Models\Patient;
+//use App\Http\Resources\Patient as PatientResource;
+//use App\Http\Resources\PatientCollection;
+//use App\Models\Patient;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,7 +47,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
     UserShow::class
 )->name('users-show');
 
-
+/*
 Route::prefix('patient')
     ->as('patient.')
     ->group(function() {
@@ -59,3 +59,4 @@ Route::prefix('patient')
                 Route::post('logout', 'PatientAuthController@logout')->name('logout');
             });
     });
+*/

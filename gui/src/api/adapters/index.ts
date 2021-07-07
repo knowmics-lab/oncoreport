@@ -7,3 +7,4 @@ export { default as DrugAdapter } from './drug';
 export { default as MedicineAdapter } from './medicine';
 export { default as PathologyAdapter } from './pathology';
 export { default as ReasonAdapter } from './reason';
+export { default as LocationAdapter } from './location';

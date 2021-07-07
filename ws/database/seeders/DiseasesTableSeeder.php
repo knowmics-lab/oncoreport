@@ -14,8 +14,8 @@ class DiseasesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = realpath(env('RELATIVE_PATH_PREFIX') . env('DATABASES_PATH') . '/disease_list.txt');
-        //$path = realpath('../databases/disease_list.txt');
+        $path = realpath(env('DATABASES_PATH') . '/disease_list.txt');
+        $path = realpath('../databases/disease_list.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             fgets($fp);

@@ -5,7 +5,10 @@ import { ResourceEntity } from '../entities';
 import { MedicineAdapter } from '../adapters';
 
 @singleton()
-export default class Medicine extends Repository<ResourceObject, ResourceEntity> {
+export default class Medicine extends Repository<
+  ResourceObject,
+  ResourceEntity
+> {
   public constructor(adapter: MedicineAdapter) {
     super(adapter, ResourceEntity);
   }

@@ -25,6 +25,7 @@ import {
   DrugRepository,
   MedicineRepository,
   PathologyRepository,
+  LocationRepository
 } from '../../../../api';
 import {
   Gender,
@@ -93,7 +94,7 @@ export default function PatientForm() {
   const tumorsRepository = useService(TumorRepository);
   const medicinesRepository = useService(MedicineRepository);
   const pathologiesRepository = useService(PathologyRepository);
-
+  const locationsRepository = useService(LocationRepository);
 
   const [loading, setLoading] = useState(false);
   const [diseases, setDiseases] = useState<MaybeDiseases>();
@@ -125,6 +126,38 @@ export default function PatientForm() {
   const [selectedTumor, setSelectedTumor] = useState<Tumor>();
   const [showTumorModal, setShowTumorModal] = useState<boolean>(false);
 
+  const [locations, setLocations] = useState<MaybeResources>();
+  const [locationOptions, setLocationOptions] = useState<SimpleMapArray<string>>([]);
+
+  const allowCommittedDrugDelete = false;
+
+
+  useEffect(() => {
+    runAsync(async () => {
+      if (!locations) {
+        setLoading(true);
+
+        const tmp = await locationsRepository.fetchPage();
+
+        let t = tmp.data.reduce<ResourceEntity[]>((map, d) => {
+          map.push(d);
+          return map;
+        }, []);
+
+        setLocations(t);
+
+        setLocationOptions(
+          tmp.data.reduce<SimpleMapArray<string>>((map, d) => {
+            if (d.id) map[d.id] = d.name;
+            return map;
+          }, {})
+        );
+
+        //setLocationOptions({2:"sede 2", 1:"sede 1", 3:"sede 3"});
+        setLoading(false);
+      }
+    });
+  }, [diseases, diseasesRepository]);
 
 
   useEffect(() => {
@@ -382,7 +415,7 @@ export default function PatientForm() {
                 <div style={{padding:10}}><Typography variant="overline" display="block" gutterBottom>Patologie pregresse</Typography>
                 { pathologyElements.map((pathology) => {
                     return (
-                    <div style={{margin:'0.2em', display: 'inline-block'}}>
+                    <div style={{margin:'0.2em', display: 'inline-block'}} key={"p-" + pathology.id}>
                     <Chip
                       label={pathology.name}
                       onClick={() => {setSelectedPathology(pathology); setShowPathologyModal(true);}}
@@ -396,10 +429,10 @@ export default function PatientForm() {
                   <Box style={{padding:10}}><Typography variant="overline" display="block" gutterBottom>Tumori</Typography>
                   { tumorElements.map((tumor) => {
                     return (
-                    <div style={{margin:1, display: 'inline'}}>
+                    <div style={{margin:1, display: 'inline'}} key={"t-" + tumor.id}>
                     <Chip
                       label={tumor.name}
-                      onClick={() => {setSelectedTumor(tumor); setShowTumorModal(true);}}
+                      onClick={() => {setSelectedTumor(tumor); setShowTumorModal(true); }}
                       color="secondary"
                       onDelete={() => {setTumorElements(tumorElements.filter((p) => {return p.id != tumor.id}))}}
                     /></div>);
@@ -534,7 +567,7 @@ export default function PatientForm() {
                       label="Sede"
                       emptyText="Select a sede"
                       addEmpty={true}
-                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
+                      options={locationOptions}
                     />
                   </Grid>
 
@@ -644,9 +677,9 @@ export default function PatientForm() {
               onSubmit={(d) => {
                 selectedTumor.type = d.type;
                 selectedTumor.sede = d.sede ? [{'id': parseInt(d.sede)}] : [];
-                selectedTumor.stadio.T = d.T;
-                selectedTumor.stadio.N = d.N;
-                selectedTumor.stadio.M = d.M;
+                selectedTumor.stadio.T = d.T ?? '';
+                selectedTumor.stadio.N = d.N ?? '';
+                selectedTumor.stadio.M = d.M ?? '';
                 selectedTumor.drugs = selectedTumor.drugs;
                 setShowTumorModal(false);
               }} >
@@ -671,7 +704,7 @@ export default function PatientForm() {
                       label="Sede"
                       emptyText="Select a sede"
                       addEmpty={true}
-                      options={{2:"sede 2", 1:"sede 1", 3:"sede 3"}}
+                      options={locationOptions}
                     />
                   </Grid>
 
@@ -710,7 +743,8 @@ export default function PatientForm() {
                   id="combo-box-demo"
                   options={ drugOptions }
                   getOptionLabel = {(option) => option.label}
-                  defaultValue = { selectedTumor?.drugs?.map( drug => {return {'value':drug, 'label':drug.name ?? ''}}) }
+                  getOptionSelected = { (o1, o2) => {return o1.value.id == o2.value.id} }
+                  defaultValue = { selectedTumor?.drugs?.map( drug => {return {'value': {'id' : drug.id, 'name': drug.name ?? ''}, 'label':drug.name ?? ''}}) }
                   getOptionDisabled={(option: Option) => {
                     for (let i = 0; i < selectedTumor?.drugs?.length; i++) {
                       if (selectedTumor.drugs[i].id == option.value.id) {return true;};
@@ -722,7 +756,17 @@ export default function PatientForm() {
                   multiple
                   onChange={ (e, value) => { selectedTumor.drugs = value.map((v) => v.value) }}
                   renderInput={(params) => <TextField {...params} label={'drugs'} name={selectedTumor?.name ?? ''} variant="outlined" />}
+                  renderTags={(tagValue, getTagProps) =>
+                    tagValue.map((option, index) => (
+                      <Chip
+                        label={option.label}
+                        {...getTagProps({ index })}
+                        disabled={selectedTumor?.drugs.filter(d => d.id == option.value.id)[0].end_date != null || allowCommittedDrugDelete }
+                      />
+                    ))
+                  }
                />
+               <Typography variant="overline" color="secondary">*Rimuovere i farmaci da qui per cancellarli dalla storia del paziente anzichè interromperli.</Typography>
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => {setShowTumorModal(false)}} color="primary">Cancel</Button>

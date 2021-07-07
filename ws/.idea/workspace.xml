@@ -37,10 +37,6 @@
       <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_060141_create_disease_medicine_patient_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_08_060141_create_disease_medicine_patient_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_10_174351_create_drug_patient_tumor_reason_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_10_174351_create_drug_patient_tumor_reason_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/MedicineSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/MedicineSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/TumorSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/TumorSeeder.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
@@ -297,7 +293,6 @@
       <workItem from="1621443357506" duration="9801000" />
       <workItem from="1621756015957" duration="147000" />
       <workItem from="1623750630438" duration="5253000" />
-      <workItem from="1623756457092" duration="1483000" />
     </task>
     <servers />
   </component>
@@ -314,7 +309,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

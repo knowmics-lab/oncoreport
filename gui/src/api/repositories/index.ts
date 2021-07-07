@@ -6,3 +6,4 @@ export { default as DrugRepository } from './drug';
 export { default as MedicineRepository } from './medicine';
 export { default as PathologyRepository } from './pathology';
 export { default as ReasonRepository } from './reason';
+export { default as LocationRepository } from './location';
