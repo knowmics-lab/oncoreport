@@ -26,11 +26,11 @@ an_pat<- paste0('<div class="card-body">
                                         Name: ',cargs[1],'<br>
                                         Sex: ',cargs[4],'</div>
            <div class="span4">Age: ',cargs[5],'<br>
-                                        City: ',cargs[12],'<br>
-                                        Phone: ',cargs[13],'</div>
+                                        City: ',cargs[11],'<br>
+                                        Phone: ',cargs[12],'</div>
            <div class="span3">Sample Name: ',cargs[3],'<br>
-                                        Cancer Site: ',cargs[11],'<br>
-                                        Stage: ',cargs[14],'</div>
+                                        Cancer Site: ',cargs[10],'<br>
+                                        Stage: ',cargs[13],'</div>
          </div>')
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(therapeutic, 2), 1), 1), 2), 2)
 an_html<-read_html(an_pat)
@@ -594,6 +594,110 @@ xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_variantdetails
 xml_replace(node_to_be_replaced, xml_table_evidence)
 write_html(therapeutic, paste0("project/report_html/",cargs[7],"/therapeutic.html"))
+
+
+
+#
+#DRUG INTERACTIONS TAB
+#
+if (!require("DT")) install.packages("DT")
+#cargs<-c("BL19-26_DNA_S1",1)
+cat("DRUG INTERACTIONS - ",cargs)
+#drugs<- read.csv("Databases/drug_drug_interactions_light.txt", sep = "\t")
+drugs<- read.csv("project/Databases/drug_drug_interactions_light.txt", sep = "\t")
+#drug_com<-read.table(paste0("project/txt/",cargs[1],"_drug.txt"), sep = "\n")
+
+#drug_com<-tryCatch(read.table(paste0("txt/BL19-37_S2_drug.txt"), sep = "\n"), error=function(e) NULL)
+drug_ind<-drug_recommended
+#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere 
+#salvate in un file individuato nel path come commento seguente.
+#drug_com<-tryCatch(read.table(paste0("project/txt/",cargs[1],"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
+drug_com<-tryCatch(read.table(paste0(cargs[14]), sep = "\n"), error=function(e) NULL)
+drug_ind<- unique(drug_ind)
+drug_com<- unique(drug_com)
+drug_com<-unlist(drug_com)
+
+drugs_upper<- drugs
+drugs_upper$Drug2_name<- toupper(drugs_upper$Drug2_name)
+drugs_comorbidities<- drugs[which(drugs_upper$Drug2_name %in% toupper(drug_com)),]
+drug_indications<- drugs[which(drugs_upper$Drug2_name %in% toupper(drug_ind)),]
+
+interactions_comorbidities<- drugs_comorbidities[which(toupper(drugs_comorbidities$Drug1_name) %in% toupper(drug_com)),]
+interactions_indications<- drug_indications[which(toupper(drug_indications$Drug1_name) %in% toupper(drug_ind)),]
+all_interactions<- rbind(drugs_comorbidities, drug_indications)
+exist_interactions<- all_interactions[which(all_interactions$Drug1_name %in% c(drug_com,drug_ind)),]
+
+
+#Drug interactions
+library(DT)
+options(knitr.table.format = "html")
+drug_drug_int <- (read_html("project/html_source/report/drugdrug.html"))
+# an<-xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
+# an_pat<- paste0('<div class="card-body">
+#            <div class="span4">Surname: ',cargs[3],'<br>
+#                                         Name: ',cargs[2],'<br>
+#                                         Sex: ',cargs[4],'</div>
+#            <div class="span4">Age: ',cargs[5],'<br>
+#                                         City: ',cargs[7],'<br>
+#                                         Phone: ',cargs[8],'</div>
+#            <div class="span3">Sample Name: ',cargs[10],'<br>
+#                                         Cancer Site: ',cargs[6],'<br>
+#                                         Stage: ',cargs[9],'</div>
+#          </div>')
+
+an<-xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
+xml_replace(an, an_xml)
+
+
+
+#substitute 1 div and 1 script to connect table existent drug interaction
+children_drugdrug<-xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 3)
+b <- exist_interactions[,c(2,4,5)]
+if(nrow(b)>0)
+{
+  xml_remove(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 2), 2))
+  colnames(b)[1] <- "Drug"
+  colnames(b)[2] <- "interact with drug"
+  rownames(b) <- 1:nrow(b)
+  html_drug<- datatable(b,width = "100%") 
+  htmlwidgets::saveWidget(html_drug, paste0("project/report_html/",cargs[7],"/exs_drug.html"))
+  drug_table <- (read_html(paste0("project/report_html/",cargs[7],"/exs_drug.html")))
+  xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
+  node_to_be_replaced <- children_drugdrug
+  xml_replace(node_to_be_replaced, xml_table_drugdrug)
+  children_drugdrug<-xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 4)
+  xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 2)
+  node_to_be_replaced <- children_drugdrug
+  xml_replace(node_to_be_replaced, xml_table_drugdrug)
+}
+
+children_drugdrug<-xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 6)
+b <- all_interactions[,c(2,4,5)]
+if(nrow(b)>0)
+{
+  xml_remove(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 5), 2))
+  colnames(b)[1] <- "Drug"
+  colnames(b)[2] <- "interact with drug"
+  rownames(b) <- 1:nrow(b)
+  html_drug<- datatable(b,width = "100%") 
+  htmlwidgets::saveWidget(html_drug,paste0("project/report_html/",cargs[7],"/all_drug.html"))
+  drug_table <- (read_html(paste0("project/report_html/",cargs[7],"/all_drug.html")))
+  #substitute 1 div and 1 script to connect table drug interaction
+  xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
+  node_to_be_replaced <- children_drugdrug
+  xml_replace(node_to_be_replaced, xml_table_drugdrug)
+  children_drugdrug<-xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 7)
+  xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 2)
+  node_to_be_replaced <- children_drugdrug
+  xml_replace(node_to_be_replaced, xml_table_drugdrug)
+}
+
+system(paste0("chmod -R 777 project/report_html/"))
+write_html(drug_drug_int, paste0("project/report_html/",cargs[7],"/drugdrug.html"))
+
+
+
+
 
 #
 ## PharmGKB variant {.tabset}
