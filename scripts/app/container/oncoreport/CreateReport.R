@@ -17,7 +17,7 @@ children_hidden <- xml_children(xml_child(xml_child(xml_child(xml_child(xml_chil
 list_therapeutic_indication<- list(children_highlight, children_hidden)
 
 
-cargs=commandArgs(trailingOnly = TRUE)
+cargs <- commandArgs(trailingOnly = TRUE)
 #cargs<-c("nome","cognome","id","maschio","30","Colon Cancer","ngs-15","/mnt/oncoreport/project","/mnt/oncoreport/project/Databases","lb")
 
 cat("Args:",cargs,"\n")

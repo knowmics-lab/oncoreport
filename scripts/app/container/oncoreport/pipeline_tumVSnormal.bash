@@ -126,18 +126,26 @@ while [ -n "$1" ]; do
     fi
     shift
     ;;
-    -site | -st) site="$2"
-        echo "The value provided for organ is $site"
-    shift;;
-    -stage | -st) stage="$2"
-        echo "The value provided for stage is $stage"
-    shift;;
-    -city) city="$2"
-        echo "The value provided for city is $city"
-    shift;;
-    -phone) phone="$2"
-        echo "The value provided for phone is $phone"
-    shift;;
+  -site | -st)
+    site="$2"
+    echo "The value provided for organ is $site"
+    shift
+    ;;
+  -stage | -sg)
+    stage="$2"
+    echo "The value provided for stage is $stage"
+    shift
+    ;;
+  -city)
+    city="$2"
+    echo "The value provided for city is $city"
+    shift
+    ;;
+  -phone)
+    phone="$2"
+    echo "The value provided for phone is $phone"
+    shift
+    ;;
   -tumor | -t)
     tumor="$2"
     echo "The value provided for patient tumor is $tumor"
@@ -185,8 +193,7 @@ if { [[ -z "$fastq1" ]] || [[ -z "$normal1" ]]; } && { [[ -z "$ubamt" ]] || [[ -
   exit_abnormal_usage "One input file should be specified."
 fi
 
-
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]]  || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   exit_abnormal_usage "All parameters must be passed"
 fi
 
@@ -398,9 +405,9 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PA
 # REPORT CREATION
 
 # ESMO GUIDELINES
-mkdir $PATH_OUTPUT/${FASTQ1_NAME}
-chmod -R 777 $PATH_OUTPUT/${FASTQ1_NAME}
-bash $PATH_PROJECT/html_source/esmo/4_list_url.sh -t "${site}" -i "${FASTQ1_NAME}"
+mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
+chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
+bash "$PATH_PROJECT/html_source/esmo/4_list_url.sh" -t "${site}" -i "${FASTQ1_NAME}"
 #html source è una cartella che dobbiamo sempre far scaricare col docker in cui c'è il template di partenza del report
 
 echo "Report creation"
@@ -408,9 +415,6 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$drug_path"
 #Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage" || exit_abnormal_code "Unable to create report" 121
 
 #Rscript "$ONCOREPORT_SCRIPT_PATH/drug_interactions.R" "$FASTQ1_NAME" "$name" "$surname" "$gender" "$age" "$site" "$city" "$phone" "$stage" "$id" || exit_abnormal_code "Unable to create report" 122
-
-
-
 
 { rm -r "$PATH_SAM_TUMOR" &&
   rm -r "$PATH_BAM_ANNO_TUMOR" &&
