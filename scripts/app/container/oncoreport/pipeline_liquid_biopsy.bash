@@ -379,10 +379,8 @@ chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
 bash "$PATH_PROJECT/html_source/esmo/4_list_url.sh" -t "${site}" -i "${FASTQ1_NAME}"
 #html source è una cartella in cui c'è il template di partenza del report
 
-Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$drug_path" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
-#Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage"  || exit_abnormal_code "Unable to create report" 120
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$depth" "$AF" "$drug_path" || exit_abnormal_code "Unable to create report" 120
 
-#Rscript "$ONCOREPORT_SCRIPT_PATH/drug_interactions.R" "$FASTQ1_NAME" "$name" "$surname" "$gender" "$age" "$site" "$city" "$phone" "$stage" "$id" || exit_abnormal_code "Unable to create report" 121
 
 echo "Removing folders"
 { rm -r "$PATH_TRIM" &&
