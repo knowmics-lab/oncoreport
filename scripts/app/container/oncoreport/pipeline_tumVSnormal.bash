@@ -8,10 +8,13 @@ usage() {
   echo "Usage: $0 [-gender/-g patient gender ]
   [-surname/-s patient surname ]
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
+  [-city/-c where patient lives] [-phone/-ph telephone number of the patient]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
+  [-site/-st site of the tumor] [-stage/-sg stage of the tumor]
   [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
   [-genome/-gn genome version: hg19 or hg38]
+  [-drug_path/-d_path file path where comorbid drugs are listed (.txt, one drug per row)]
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
   [-normal1/-nm1 first fastq sample]
@@ -97,6 +100,11 @@ while [ -n "$1" ]; do
     echo "The value provided for patient surname is $surname"
     shift
     ;;
+  -drug_path | -dpath)
+    drug_path="$2"
+    echo "The path for comorbid drugs is $drug_path"
+    shift
+    ;;
   -id | -i)
     id="$2"
     echo "The value provided for patient ID is $id"
@@ -118,6 +126,18 @@ while [ -n "$1" ]; do
     fi
     shift
     ;;
+    -site | -st) site="$2"
+        echo "The value provided for organ is $site"
+    shift;;
+    -stage | -st) stage="$2"
+        echo "The value provided for stage is $stage"
+    shift;;
+    -city) city="$2"
+        echo "The value provided for city is $city"
+    shift;;
+    -phone) phone="$2"
+        echo "The value provided for phone is $phone"
+    shift;;
   -tumor | -t)
     tumor="$2"
     echo "The value provided for patient tumor is $tumor"
@@ -165,7 +185,8 @@ if { [[ -z "$fastq1" ]] || [[ -z "$normal1" ]]; } && { [[ -z "$ubamt" ]] || [[ -
   exit_abnormal_usage "One input file should be specified."
 fi
 
-if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
+
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]]  || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   exit_abnormal_usage "All parameters must be passed"
 fi
 
@@ -376,8 +397,20 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PA
 
 # REPORT CREATION
 
+# ESMO GUIDELINES
+mkdir $PATH_OUTPUT/${FASTQ1_NAME}
+chmod -R 777 $PATH_OUTPUT/${FASTQ1_NAME}
+bash $PATH_PROJECT/html_source/esmo/4_list_url.sh -t "${site}" -i "${FASTQ1_NAME}"
+#html source è una cartella che dobbiamo sempre far scaricare col docker in cui c'è il template di partenza del report
+
 echo "Report creation"
-R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 121
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$drug_path" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" || exit_abnormal_code "Unable to create report" 121
+#Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage" || exit_abnormal_code "Unable to create report" 121
+
+#Rscript "$ONCOREPORT_SCRIPT_PATH/drug_interactions.R" "$FASTQ1_NAME" "$name" "$surname" "$gender" "$age" "$site" "$city" "$phone" "$stage" "$id" || exit_abnormal_code "Unable to create report" 122
+
+
+
 
 { rm -r "$PATH_SAM_TUMOR" &&
   rm -r "$PATH_BAM_ANNO_TUMOR" &&

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Oncoreport</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="../assets/css/bootstrap.css" rel="stylesheet">
+  <style type="text/css">
+    body {
+      padding-top: 20px;
+      padding-bottom: 60px;
+    }
+
+    /* Custom container */
+    .container {
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+    .container > hr {
+      margin: 60px 0;
+    }
+
+    /* Main marketing message and sign up button */
+    .jumbotron {
+      margin: 80px 0;
+      text-align: center;
+    }
+    .jumbotron h1 {
+      font-size: 100px;
+      line-height: 1;
+    }
+    .jumbotron .lead {
+      font-size: 24px;
+      line-height: 1.25;
+    }
+    .jumbotron .btn {
+      font-size: 21px;
+      padding: 14px 24px;
+    }
+
+    /* Supporting marketing content */
+    .marketing {
+      margin: 60px 0;
+    }
+    .marketing p + h4 {
+      margin-top: 28px;
+    }
+
+
+    /* Customize the navbar links to be fill the entire space of the .navbar */
+    .navbar .navbar-inner {
+      padding: 0;
+    }
+    .navbar .nav {
+      margin: 0;
+      display: table;
+      width: 100%;
+    }
+    .navbar .nav li {
+      display: table-cell;
+      width: 1%;
+      float: none;
+    }
+    .navbar .nav li a {
+      font-weight: bold;
+      text-align: center;
+      border-left: 1px solid rgba(255,255,255,.75);
+      border-right: 1px solid rgba(0,0,0,.1);
+    }
+    .navbar .nav li:first-child a {
+      border-left: 0;
+      border-radius: 3px 0 0 3px;
+    }
+    .navbar .nav li:last-child a {
+      border-right: 0;
+      border-radius: 0 3px 3px 0;
+    }
+  </style>
+  <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="../assets/ico/favicon.png">
+
+
+    <script src="jquery.js"></script>    <script> 
+      $(function(){
+        $("#includedContent").load("prova_drug_int.html"); 
+      });
+    </script> 
+
+
+  </head>
+
+  <body>
+
+
+    <div class="container">
+
+      <div class="masthead">
+        <h3 class="muted">Mutation report</h3>
+                <div class="card text-dark bg-light mb-3" style="max-width: 100%;">
+          <div class="card-header"><b>Patient's Information</b></div>
+          <div class="card-body">
+           <div class="span4">Surname:<br>
+                              Name:<br>
+                              Sex:</div>
+           <div class="span4">Age:<br>
+                              Address:<br></div>
+           <div class="span3">...</div>
+         </div>
+       </div>
+       <br>
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <ul class="nav">
+                <li><a href="therapeutic.html" >Therapeutic indication</a></li>
+                <li><a href="drugdrug.html">Drug-Drug Interaction</a></li>
+                <li><a href="drugfood.html">Drug-Food interaction</a></li>
+                <li class="active"><a href="esmoguide.html">
+                  <span style='color: #32502d'>E</span>
+                  <span style='color: #6e1e50'>S</span>
+                  <span style='color: #7d8232'>M</span>
+                  <span style='color: #1f325f'>O</span> guidelines</a></li> 
+                  <li><a href="pharmgkb.html">Drug response</a></li>
+                  <li><a href="mutations.html">Mutations annotations</a></li>
+                  <li><a href="offlabel.html">Off label drug</a></li>
+                  <li><a href="cosmic.html">Known resistance</a></li>
+                  <li><a href="reference.html">Reference Details</a></li>
+                </ul>
+              </div>
+            </div>
+          </div><!-- /.navbar -->
+        </div>
+
+
+
+        <div class="row">
+          <div class="span12">
+            <div class="row">
+              <div class="span2">
+                <div class="panel" >
+                  <div class="panel-heading"><h4> BRCA in Breast Cancer </h4></div>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_3.0.0.0.html')">-BRCA testing</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_5.2.0.0.html')">--Chemoprevention [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.1.0.0.html')">--Prophylactic surgery, overview [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.2.0.0.html')">--Prophylactic bilateral mastectomy [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.3.0.0.html')">--Prophylactic bilateral salpingo-oophorectomy [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_8.1.0.0.html')">--Treatment [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_8.2.0.0.html')">--Systemic treatment [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.2.0.0.html')">--Mutation detection, summary [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.3.1.0.html')">--Risk reduction non surical options, summary [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.3.2.0.html')">--Risk reduction surical options, summary [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.1.0.html')">--Breast cancer treatment in BRCA mutations, summary [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.1.0.html')">--Surgical treatment of breast cancer in BRCA, summary [BRCA]</button>
+                  <button type="button" class="button-esmo" onclick="setURL('http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.2.0.html')">--Systemic treatment of breast cancer in BRCA, summary [BRCA]</button>
+                
+                  </div>
+
+              </div>
+              <div class="span10">
+
+                <iframe src="../assets/clinicalesmo.jpeg" name="iframe_a" id="iframe_a" height="800px" width="99.5%" title="Iframe Example"></iframe>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+<div class="alert alert-error">
+            <i class="icon-warning-sign icon-black"></i> <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare professional.</div>
+      </div>
+
+
+    <!-- Le javascript
+      ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+
+      <script>
+        function setURL(url){
+          document.getElementById('iframe_a').src = url;
+        }
+      </script>
+      <script src="../assets/js/jquery.js"></script>
+      <script src="../assets/js/bootstrap-transition.js"></script>
+      <script src="../assets/js/bootstrap-alert.js"></script>
+      <script src="../assets/js/bootstrap-modal.js"></script>
+      <script src="../assets/js/bootstrap-dropdown.js"></script>
+      <script src="../assets/js/bootstrap-scrollspy.js"></script>
+      <script src="../assets/js/bootstrap-tab.js"></script>
+      <script src="../assets/js/bootstrap-tooltip.js"></script>
+      <script src="../assets/js/bootstrap-popover.js"></script>
+      <script src="../assets/js/bootstrap-button.js"></script>
+      <script src="../assets/js/bootstrap-collapse.js"></script>
+      <script src="../assets/js/bootstrap-carousel.js"></script>
+      <script src="../assets/js/bootstrap-typeahead.js"></script>
+      <script type="text/javascript">
+        $(function() {
+          $(window).load(function() {
+            $('.show-all-start').each(function() {
+              var t=$(this);
+              t.find('a[role="tab"]').each(function () { $(this).click(); });
+              t.find('a[role="tab"]').first().click();
+            });
+
+            $('a.my_ref_link').click(function () {
+              var t = $(this), id=t.data('id'), o=$(id);
+              o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
+              var tabId = o.closest('.tab-pane').attr('id');
+              console.log(tabId);
+              o.closest('.tabset').find('a[href="#'+tabId+'"]').click()
+              console.log(o.closest('.tabset').find('a[href="#'+tabId+'"]'));
+              $('body').scrollTo(id)
+            });
+          });
+        });
+      </script>
+
+    </body>
+    </html>

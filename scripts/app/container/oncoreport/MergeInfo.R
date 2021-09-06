@@ -3,6 +3,7 @@ args <- commandArgs(trailingOnly = TRUE)
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(RCurl))
+suppressPackageStartupMessages(library(tidyr))
 
 thisFile <- function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
@@ -130,9 +131,151 @@ civic <- read.csv(paste0(project.path, "/txt/", sample.name, "_civic.txt"),
                   sep = "\t", colClasses = c("character"))
 cgi <- read.csv(paste0(project.path, "/txt/", sample.name, "_cgi.txt"),
                 sep = "\t", colClasses = c("character"))
-def <- merge(civic, cgi, all = TRUE)
-write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
+
+def <- merge(civic,cgi,all=TRUE)
+def$Clinical_significance[def$Clinical_significance == "Responsive"] <- "Sensitivity/Response"
+def$Clinical_significance[def$Clinical_significance == "Resistant"] <- "Resistance"
+drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep="\t", quote="", na.strings = c("","NA"))
+def$Drug <- as.character(def$Drug)
+m <- max(sapply(strsplit(def$Drug, ","), length))
+b <- vector()
+for(i in 1:m){
+  a <- paste0("Drug_", i)
+  b <- c(b,a)
+}
+def <- separate(def, Drug, b, sep=",", remove=FALSE)
+
+for(i in 1:m){
+  colnames(drug)[1] <- paste0("Drug_", i)
+  colnames(drug)[2] <-  paste0("approved_",i)
+  drug[,2] <- as.character(drug[,2])
+  def <- merge(def,drug, all.x=TRUE)
+  def[length(def)][is.na(def[length(def)])] <- ""
+}
+
+x1 <- grepl("approved",colnames(def))
+x1 <- def[x1]
+a <- colnames(x1)
+def <- def %>%
+unite(Approved, a, sep=",", na.rm = FALSE)
+def <- def[,c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type", "Evidence_type", "Evidence_level", "Evidence_direction",
+                              "Clinical_significance", "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved")]
+
+def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl=T)
+
+                #Score
+                def$Chromosome <- gsub("chr", "", def$Chromosome)
+                def$Chromosome <- as.numeric(def$Chromosome)
+                def$Start <- as.numeric(def$Start)
+                def$Stop <- as.numeric(def$Stop)
+                a <- read.csv(paste0(database.path, "/Colnames_dbNSFP.txt"), sep="\t")
+                a <- as.vector(t(a))
+                a[1:5] <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
+
+                #cat(database.path,"/dbNSFP_hg38")
+                files_db <- list.files(paste0(project.path,"/",database.path, "/dbNSFP_hg38"),  full.names=TRUE, recursive=TRUE)
+                tot <- data.frame()
+                db_join <- function(i, y){
+                  x <- fread(i)
+                  colnames(x) <- a
+                  colnames(x)[1] <- "Chromosome"
+                  x$Chromosome <- as.numeric(x$Chromosome)
+                  z <- inner_join(x,y)
+                  tot <- rbind(tot,z)
+                }
+                tot <- lapply(files_db, db_join, def)
+                tot <- as.data.frame(do.call(rbind, tot))
+
+                if(dim(tot)[1]!=0)
+                {
+                matr <- apply(tot, 1, function(row){
+                  var0 <- if(row["SIFT_pred"] == "D"){
+                    1  #Deleterio
+                  } else if (row["SIFT_pred"] == "."){
+                    -1
+                  } else {
+                    0 #Tolerate/Benign/Unknown
+                  }
+                  var1 <- if(row["MutationTaster_pred"] == "A"){
+                    1
+                  } else if (row["MutationTaster_pred"] == "D"){
+                    0.7
+                  } else if (row["MutationTaster_pred"] == "N"){
+                    0.3
+                  } else if (row["MutationTaster_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  var2 <- if(row["MutationAssessor_pred"] == "H"){
+                    1
+                  } else if (row["MutationAssessor_pred"] == "M"){
+                    0.7
+                  } else if (row["MutationAssessor_pred"] == "L"){
+                    0.3
+                  } else if (row["MutationAssessor_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  var3 <- if(row["LRT_pred"] == "D"){
+                    1
+                  } else if (row["LRT_pred"] == "." | row["LRT_pred"] == "U"){
+                    -1
+                  } else {
+                    0
+                  }
+                  var4 <- if(row["FATHMM_pred"] == "D"){
+                    1
+                  } else if (row["FATHMM_pred"] == "."){
+                    -1
+                  }else {
+                    0
+                  }
+                  var5 <- if(row["PROVEAN_pred"] == "D"){
+                    1
+                  } else if (row["PROVEAN_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  var6 <- if(row["fathmm-MKL_coding_pred"] == "D"){
+                    1
+                  } else if (row["fathmm-MKL_coding_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  var7 <- if(row["MetaSVM_pred"] == "D"){
+                    1
+                  } else if (row["MetaSVM_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  var8 <- if(row["MetaLR_pred"] == "D"){
+                    1
+                  } else if (row["MetaSVM_pred"] == "."){
+                    -1
+                  } else {
+                    0
+                  }
+                  matr <- sum(var0, var1, var2, var3, var4, var5, var6, var7, var8)
+                  return(matr)
+                })
+
+                tot$Score <- matr
+                def <- merge(tot,def, all= TRUE)
+                def$Score[is.na(def$Score)] <- 0
+                def <- def[,c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type", "Evidence_type", "Evidence_level", "Evidence_direction",
+                               "Clinical_significance", "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome", "Start", "Stop", "Ref_base", "Var_base","Type", "Approved", "Score")]
+                }else{
+                	def$Score<-0
+                }
+                def$Chromosome <- paste0("chr", def$Chromosome)
+write.table(def, paste0(project.path, "/txt/", sample.name ,"_definitive.txt"),
+            quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
+
 
 #Food interactions
 pharm <- read.csv(paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
