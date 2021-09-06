@@ -204,7 +204,7 @@ export default function PatientForm() {
 
                   dRef.current.style.display =
                     options.filter((option: any) => {
-                      return option.label == 'altro';
+                      return option.label == 'other';
                     }).length > 0
                       ? 'block'
                       : 'none';

@@ -40,7 +40,7 @@ class Create extends Component
             'state.email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'state.password' => ['nullable', 'string', new Password()],
             'state.admin'    => ['sometimes', 'boolean'],
-            'state.role' => ['sometimes', Rule::in(['oncologo', 'clinico'])],
+            'state.role' => ['sometimes', Rule::in(config('constants.roles'))],
         ];
     }
 

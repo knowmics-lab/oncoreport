@@ -51,7 +51,7 @@ class PatientController extends Controller
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
 
-        error_log(json_encode($request->input()));
+        #error_log(json_encode($request->input()));
 
         $values = $this->validate(
             $request,
@@ -173,9 +173,9 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient): PatientResource
     {
-        error_log('ciao');
+        #error_log('ciao');
         $data = $request->input();
-        error_log(json_encode($data));
+        #error_log(json_encode($data));
 
         $this->authorize('update', $patient);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
@@ -223,10 +223,10 @@ class PatientController extends Controller
 
 
         if ($request->input('tumors')){
-            error_log('log tumori');
+            #error_log('log tumori');
 
             $tumors = $request->input('tumors');
-            error_log(json_encode($tumors));
+            #error_log(json_encode($tumors));
 
 
             $tumor_ids = array_reduce($tumors, function($carry, $tumor){
@@ -256,11 +256,11 @@ class PatientController extends Controller
 
 
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
-                error_log('droghe aggiornate');
+                #error_log('droghe aggiornate');
 
                 if ($tumor['sede']){
                     $location_ids = $tumor['sede'];
-                    error_log('aggiorniamo la sede di ' . $tumor['id'] .' con ' . json_encode($location_ids));
+                    #error_log('aggiorniamo la sede di ' . $tumor['id'] .' con ' . json_encode($location_ids));
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }
 

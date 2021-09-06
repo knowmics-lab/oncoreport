@@ -11,7 +11,7 @@ class TumorController extends Controller
 {
 
     public function index(Request $request){
-        error_log('tumors requested');
+        #error_log('tumors requested');
         return new TumorCollection(Tumor::all());
     }
 

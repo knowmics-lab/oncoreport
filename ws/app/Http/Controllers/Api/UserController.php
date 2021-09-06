@@ -48,6 +48,7 @@ class UserController extends Controller
      */
     public function store(Request $request): UserResource
     {
+
         $this->authorize('create', User::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
@@ -58,7 +59,7 @@ class UserController extends Controller
                 'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
                 'password' => ['required', 'string', new Password()],
                 'admin'    => ['filled', 'boolean'],
-                'role'     => ['required', Rule::in(['oncologo','clinico'])]
+                'role'     => ['required', Rule::in(config('constants.roles'))]
             ]
         );
         $model = User::create(
@@ -114,7 +115,7 @@ class UserController extends Controller
             'password'     => ['required_with_all:new_password', 'password'],
             'new_password' => ['filled', 'string', new Password()],
             'admin'        => ['filled', 'boolean'],
-            'role'         => ['filled', Rule::in(['oncologo', 'clinico'])],
+            'role'         => ['filled', Rule::in(config('constants.roles'))],
         ];
         if ($request->user()->admin) {
             unset($rules['password']);

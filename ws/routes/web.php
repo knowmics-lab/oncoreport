@@ -26,6 +26,12 @@ Route::get( '/',
     }
 );
 
+Route::get('test', function () {
+    $a = ['doctor', 'technical'];
+    $b = config('constants.roles');
+    return $a == $b;
+});
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get(
     '/dashboard',

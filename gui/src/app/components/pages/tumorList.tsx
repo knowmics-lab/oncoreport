@@ -56,7 +56,7 @@ export const TumorList = (props:any ) => {
                 onChangeCallback={(options: any) => {
                   dRef.current.style.display =
                     options.filter((option: any) => {
-                      return option.label == 'altro';
+                      return option.label == 'other';
                     }).length > 0
                       ? 'block'
                       : 'none';
@@ -120,7 +120,7 @@ export const TumorList = (props:any ) => {
                 drug.start_date,
                 drug.end_date ? drug.end_date : 'in corso...',
                 drug.reasons.reduce ((map:string, drug:any) => {
-                  if(drug.name == "altro") return map;
+                  if(drug.name == "other") return map;
                   if (map) map += ", ";
                   map = map + drug.name;
                   return map;

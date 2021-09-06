@@ -38,7 +38,7 @@ class Show extends Component
             'state.email'    => ['required', 'string', 'email', 'max:255', $uniqueRule],
             'state.password' => ['nullable', 'string', new Password()],
             'state.admin'    => ['sometimes', 'boolean'],
-            'state.role'     => ['sometimes', Rule::in(['oncologo', 'clinico'])],
+            'state.role'     => ['sometimes', Rule::in(config('constants.roles'))],
         ];
     }
 
