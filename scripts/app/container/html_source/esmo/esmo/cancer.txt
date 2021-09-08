@@ -1,8 +1,0 @@
-60	ENAS5643_4.4.0.0	1st line Tx. of NSCLC w/o oncogenic driver
-60	ENAS5643_6.3.11.2	Beyond first-line treatment, summary
-60	ENAS5643_6.3.12.2	Beyond first-line treatment, summary [mNSCLC]
-60	ENAS5643_4.11.2.0	Beyond first-line treatment [mNSCLC]
-60	ENAS5643_4.12.2.0	Beyond first-line treatment [mNSCLC]
-60	ENAS5643_3.4.0.0	Clinical classification UICC TNM 8 [mNSCLC]
-60	ENAS5643_2.1.0.0	Diagnosis, overview [mNSCLC]
-60	ENAS5643_6.1.1.0	Diagnosis [mNSCLC]

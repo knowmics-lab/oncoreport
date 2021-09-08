@@ -4,33 +4,53 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(kableExtra))
 suppressPackageStartupMessages(library(stringr))
-therapeutic <- (read_html("project/html_source/report/therapeutic.html"))
-drugdrug <- as_list(read_html("project/html_source/report/drugdrug.html"))
-
-esmoguide <- as_list(read_html("project/html_source/report/esmoguide.html"))
 
 
+cargs <- commandArgs(trailingOnly = TRUE)
 
+pt_name<-cargs[1]
+pt_surname<-cargs[2]
+pt_sample_name<-cargs[3]
+pt_sex<-cargs[4]
+pt_age<-cargs[5]
+pt_tumor<-cargs[6]
+pt_fastq<-cargs[7]
+path_project<-cargs[8]
+path_db<-cargs[9]
+tumor_type<- cargs[10]
+pt_tumor_site<-cargs[11]
+pt_city<-cargs[12]
+pt_phone<-cargs[13]
+pt_tumor_stage<-cargs[14]
+pt_path_file_comorbid<-cargs[15]
+path_html_source<- cargs[16]
 
+if(tumor_type=="lb")
+{
+
+  depth<-cargs[17]
+  af<- cargs[18]
+}
+
+therapeutic <- (read_html(paste0(path_html_source,"/therapeutic.html")))
+drugdrug <- as_list(read_html(paste0(path_html_source,"/drugdrug.html")))
+esmoguide <- as_list(read_html(paste0(path_html_source,"/esmoguide.html")))
 children_highlight <- xml_children(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(therapeutic, 2), 1), 2), 4), 1), 1), 1), 2), 1), 1))
 children_hidden <- xml_children(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(therapeutic, 2), 1), 2), 4), 1), 2), 2), 1), 1))
 list_therapeutic_indication<- list(children_highlight, children_hidden)
 
 
-cargs <- commandArgs(trailingOnly = TRUE)
-#cargs<-c("nome","cognome","id","maschio","30","Colon Cancer","ngs-15","/mnt/oncoreport/project","/mnt/oncoreport/project/Databases","lb")
-
 cat("Args:",cargs,"\n")
 an_pat<- paste0('<div class="card-body">
-           <div class="span4">Surname: ',cargs[2],'<br>
-                                        Name: ',cargs[1],'<br>
-                                        Sex: ',cargs[4],'</div>
-           <div class="span4">Age: ',cargs[5],'<br>
-                                        City: ',cargs[11],'<br>
-                                        Phone: ',cargs[12],'</div>
-           <div class="span3">Sample Name: ',cargs[3],'<br>
-                                        Cancer Site: ',cargs[10],'<br>
-                                        Stage: ',cargs[13],'</div>
+           <div class="span4">Surname: ',pt_surname,'<br>
+                                        Name: ',pt_name,'<br>
+                                        Sex: ',pt_sex,'</div>
+           <div class="span4">Age: ',pt_age,'<br>
+                                        City: ',pt_city,'<br>
+                                        Phone: ',pt_phone,'</div>
+           <div class="span3">Sample Name: ',pt_sample_name,'<br>
+                                        Cancer Site: ',pt_tumor_site,'<br>
+                                        Stage: ',pt_tumor_stage,'</div>
          </div>')
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(therapeutic, 2), 1), 1), 2), 2)
 an_html<-read_html(an_pat)
@@ -40,18 +60,18 @@ xml_replace(an, an_xml)
 
 
 #cat(cargs)
-dir.create(paste0("project/report_html/",cargs[7]))
+dir.create(paste0(path_project,"/",pt_fastq))
 source("imports.R", local = knitr::knit_global())
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
-if(cargs[[10]]=="tumnorm")
+if(tumor_type=="tumnorm")
 {
   sample.type <- "Tumor and Blood Biopsy"
 } else {
   sample.type <- "Liquid Biopsy"
 }
-pat<-data.frame(Name=cargs[1],Surname= cargs[2], ID=cargs[3],Gender=cargs[4], Age=cargs[5],
-                Sample=sample.type, Tumor=cargs[6])
+pat<-data.frame(Name=pt_name,Surname= pt_surname, ID=pt_sample_name,Gender=pt_sex, Age=pt_age,
+                Sample=sample.type, Tumor=pt_tumor)
 patient_info<-kable(pat) %>%
   kable_styling(bootstrap_options = c("striped", "hover","responsive"))
 xml_patient_info<-kable_as_xml(patient_info)
@@ -70,16 +90,16 @@ options(knitr.table.format = "html")
 order_id<-c()
 order_evidence<-c()
 try({
-  x_url<-read.csv(paste0(cargs[[8]],"/txt/reference/",cargs[7],".txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,".txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x_trial<-read.csv(paste0(cargs[8],"/txt/trial/", cargs[7],".txt"), sep= "\t")
+  x_trial<-read.csv(paste0(path_project,"/txt/trial/", pt_fastq,".txt"), sep= "\t")
   list.all.trials<-unique(x_trial$Clinical_trial)
 
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7], "_definitive.txt"), sep= "\t", colClasses = c("character"))
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses = c("character"))
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
@@ -87,7 +107,7 @@ try({
 
   x$id<- 1:nrow(x)
 
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
 
   empty <- T
   if(nrow(x)!=0)
@@ -363,7 +383,7 @@ try({
           vec_df <- vec_df[match(cr, vec_df$score),]
           veccr <- as.vector(vec_df$col)
 
-          if(cargs[10]=="tumnorm")
+          if(tumor_type=="tumnorm")
             ya <- ya[,-which(names(ya)=="Type")]
           order_evidence<- rbind(order_evidence, ya)
           table_therapeutic<-
@@ -397,9 +417,9 @@ try({
 
 #xml_table_therapeutic<-kable_as_xml(table_therapeutic)
 drug_recommended<- unlist(strsplit(x$Drug,","))
-write(drug_recommended, paste0("project/txt/",cargs[7],"_drug.txt"))
+write(drug_recommended, paste0(path_project,"/txt/",pt_fastq,"_drug.txt"))
 
-write_html(therapeutic, paste0("project/report_html/",cargs[7],"/therapeutic.html"))
+write_html(therapeutic, paste0(path_project,"/",pt_fastq,"/therapeutic.html"))
 
 
 
@@ -413,20 +433,20 @@ array_table<-c()
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],".txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,".txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7], "_definitive.txt"), sep= "\t", colClasses=c("character"))
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses=c("character"))
   x$Score <- NULL
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   x$id<- 1:nrow(x)
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
   empty <- T
   if(nrow(x)!=0)
   {
@@ -505,15 +525,15 @@ try({
   }
 }, silent = FALSE)
 #cat("ANCORA ATTIVO\n")
-#cat("1-project/report_html/",cargs[7],"/therapeutic.html\n")
+#cat("1-project/report_html/",pt_fastq,"/therapeutic.html\n")
 #xml_table_evidence<-kable_as_xml(kable(paste(array_table,collapse=" "), "html", escape = FALSE))
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 #cat(xml_table_evidence)
 node_to_be_replaced <- children_evidence
-#cat("1-project/report_html/",cargs[7],"/therapeutic.html\n")
+#cat("1-project/report_html/",pt_fastq,"/therapeutic.html\n")
 xml_replace(node_to_be_replaced, xml_table_evidence)
-#cat("2-project/report_html/",cargs[7],"/therapeutic.html\n")
-write_html(therapeutic, paste0("project/report_html/",cargs[7],"/therapeutic.html"))
+#cat("2-project/report_html/",pt_fastq,"/therapeutic.html\n")
+write_html(therapeutic, paste0(path_project,"/",pt_fastq,"/therapeutic.html"))
 
 cat(cargs)
 #
@@ -527,17 +547,17 @@ children_variantdetails <- xml_child(xml_child(xml_child(xml_child(xml_child(xml
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  cat(paste0(cargs[8],"/txt/",cargs[7], "_definitive.txt"),"\n")
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7], "_definitive.txt"), sep= "\t", colClasses=c("character"))
-  cat(paste0(cargs[9],"/Disease.txt"),"\n")
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  cat(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"),"\n")
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses=c("character"))
+  cat(paste0(path_db,"/Disease.txt"),"\n")
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   #cat("1\n")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
   #cat("2\n")
   x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
   if(nrow(x)>0)
   {
     x$Var_base <- as.character(x$Var_base)
@@ -593,7 +613,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_variantdetails
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(therapeutic, paste0("project/report_html/",cargs[7],"/therapeutic.html"))
+write_html(therapeutic, paste0(path_project,"/",pt_fastq,"/therapeutic.html"))
 
 
 
@@ -605,14 +625,14 @@ if (!require("DT")) install.packages("DT")
 cat("DRUG INTERACTIONS - ",cargs)
 #drugs<- read.csv("Databases/drug_drug_interactions_light.txt", sep = "\t")
 drugs<- read.csv("project/Databases/drug_drug_interactions_light.txt", sep = "\t")
-#drug_com<-read.table(paste0("project/txt/",cargs[1],"_drug.txt"), sep = "\n")
+#drug_com<-read.table(paste0("project/txt/",pt_name,"_drug.txt"), sep = "\n")
 
 #drug_com<-tryCatch(read.table(paste0("txt/BL19-37_S2_drug.txt"), sep = "\n"), error=function(e) NULL)
 drug_ind<-drug_recommended
 #Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere 
 #salvate in un file individuato nel path come commento seguente.
-#drug_com<-tryCatch(read.table(paste0("project/txt/",cargs[1],"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
-drug_com<-tryCatch(read.table(paste0(cargs[14]), sep = "\n"), error=function(e) NULL)
+#drug_com<-tryCatch(read.table(paste0("project/txt/",pt_name,"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
+drug_com<-tryCatch(read.table(paste0(pt_path_file_comorbid), sep = "\n"), error=function(e) NULL)
 drug_ind<- unique(drug_ind)
 drug_com<- unique(drug_com)
 drug_com<-unlist(drug_com)
@@ -631,18 +651,18 @@ exist_interactions<- all_interactions[which(all_interactions$Drug1_name %in% c(d
 #Drug interactions
 library(DT)
 options(knitr.table.format = "html")
-drug_drug_int <- (read_html("project/html_source/report/drugdrug.html"))
+drug_drug_int <- (read_html(paste0(path_html_source,"/drugdrug.html")))
 # an<-xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
 # an_pat<- paste0('<div class="card-body">
-#            <div class="span4">Surname: ',cargs[3],'<br>
-#                                         Name: ',cargs[2],'<br>
-#                                         Sex: ',cargs[4],'</div>
-#            <div class="span4">Age: ',cargs[5],'<br>
-#                                         City: ',cargs[7],'<br>
-#                                         Phone: ',cargs[8],'</div>
-#            <div class="span3">Sample Name: ',cargs[10],'<br>
-#                                         Cancer Site: ',cargs[6],'<br>
-#                                         Stage: ',cargs[9],'</div>
+#            <div class="span4">Surname: ',pt_sample_name,'<br>
+#                                         Name: ',pt_surname,'<br>
+#                                         Sex: ',pt_sex,'</div>
+#            <div class="span4">Age: ',pt_age,'<br>
+#                                         City: ',pt_fastq,'<br>
+#                                         Phone: ',path_project,'</div>
+#            <div class="span3">Sample Name: ',tumor_type,'<br>
+#                                         Cancer Site: ',pt_tumor,'<br>
+#                                         Stage: ',path_db,'</div>
 #          </div>')
 
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
@@ -660,8 +680,8 @@ if(nrow(b)>0)
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
   html_drug<- datatable(b,width = "100%") 
-  htmlwidgets::saveWidget(html_drug, paste0("project/report_html/",cargs[7],"/exs_drug.html"))
-  drug_table <- (read_html(paste0("project/report_html/",cargs[7],"/exs_drug.html")))
+  htmlwidgets::saveWidget(html_drug, paste0(path_project,"/",pt_fastq,"/exs_drug.html"))
+  drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/exs_drug.html")))
   xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
   node_to_be_replaced <- children_drugdrug
   xml_replace(node_to_be_replaced, xml_table_drugdrug)
@@ -680,8 +700,8 @@ if(nrow(b)>0)
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
   html_drug<- datatable(b,width = "100%") 
-  htmlwidgets::saveWidget(html_drug,paste0("project/report_html/",cargs[7],"/all_drug.html"))
-  drug_table <- (read_html(paste0("project/report_html/",cargs[7],"/all_drug.html")))
+  htmlwidgets::saveWidget(html_drug,paste0(path_project,"/",pt_fastq,"/all_drug.html"))
+  drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/all_drug.html")))
   #substitute 1 div and 1 script to connect table drug interaction
   xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
   node_to_be_replaced <- children_drugdrug
@@ -693,7 +713,7 @@ if(nrow(b)>0)
 }
 
 system(paste0("chmod -R 777 project/report_html/"))
-write_html(drug_drug_int, paste0("project/report_html/",cargs[7],"/drugdrug.html"))
+write_html(drug_drug_int, paste0(path_project,"/",pt_fastq,"/drugdrug.html"))
 
 
 
@@ -703,7 +723,7 @@ write_html(drug_drug_int, paste0("project/report_html/",cargs[7],"/drugdrug.html
 ## PharmGKB variant {.tabset}
 #
 cat("PHARMGKB - Variant Mutation\n")
-pharmgkb <- (read_html("project/html_source/report/pharmgkb.html"))
+pharmgkb <- (read_html(paste0(path_html_source,"/pharmgkb.html")))
 children_phgkb<-xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(pharmgkb, 2), 1), 2), 4), 1), 1), 1)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(pharmgkb, 2), 1), 1), 2), 2)
@@ -714,11 +734,11 @@ id_evidence<-0
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url <- read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_pharm.txt"), sep= "\t")
+  x_url <- read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_pharm.txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x<-read.csv(paste0(cargs[8],"/txt/", cargs[7],"_pharm.txt"), sep= "\t", colClasses=c("character"))
+  x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_pharm.txt"), sep= "\t", colClasses=c("character"))
   x[is.na(x)] <- " "
   x$Drug <- as.character(x$Drug , levels=(x$Drug))
   x$Drug <- gsub(", ",",",x$Drug,fixed = T)
@@ -753,7 +773,7 @@ try({
       ya$Drug <- gsub(",",", ",ya$Drug,fixed = T)
       ya <- ya[,c("Evidence","Gene","Variant","Drug","Clinical_significance","Type","Details","Reference")]
       names(ya) <- c("#","Gene","Variant","Drug","Clinical Significance","Type","Details","References")
-      if(cargs[10]=="tumnorm")
+      if(tumor_type=="tumnorm")
         ya <- ya[,-which(names(ya)=="Type")]
       array_table<-rbind(array_table, ya)
       empty <- F
@@ -773,7 +793,7 @@ array_table<- kable(array_table,"html", escape = FALSE) %>%
 xml_table_evidence<-kable_as_xml(paste((array_table),collapse=" "))
 node_to_be_replaced <- children_phgkb
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(pharmgkb, paste0("project/report_html/",cargs[7],"/pharmgkb.html"))
+write_html(pharmgkb, paste0(path_project,"/",pt_fastq,"/pharmgkb.html"))
 
 
 
@@ -788,11 +808,11 @@ options(knitr.table.format = "html")
 id_evidence<-0
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url <- read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_pharm.txt"), sep= "\t")
+  x_url <- read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_pharm.txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_pharm.txt"), sep= "\t", colClasses=c("character"))
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_pharm.txt"), sep= "\t", colClasses=c("character"))
   x[is.na(x)] <- " "
   x$Drug <- as.character(x$Drug , levels=(x$Drug))
   x$Gene <- as.character(x$Gene , levels=(x$Gene))
@@ -845,7 +865,7 @@ array_table<-kable(array_table,"html", escape = FALSE) %>%
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_phgkb_ed
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(pharmgkb, paste0("project/report_html/",cargs[7],"/pharmgkb.html"))
+write_html(pharmgkb, paste0(path_project,"/",pt_fastq,"/pharmgkb.html"))
 
 
 
@@ -862,7 +882,7 @@ options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
 
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_pharm.txt"), sep= "\t", colClasses=c("character"))
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_pharm.txt"), sep= "\t", colClasses=c("character"))
   x[is.na(x)] <- " "
   x$Gene <- as.character(x$Gene , levels=(x$Gene))
   x$Var_base<-as.character(x$Var_base)
@@ -911,7 +931,7 @@ array_table<-kable(array_table,"html", escape = FALSE) %>%
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_phgkb_vd
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(pharmgkb, paste0("project/report_html/",cargs[7],"/pharmgkb.html"))
+write_html(pharmgkb, paste0(path_project,"/",pt_fastq,"/pharmgkb.html"))
 
 
 ##
@@ -919,28 +939,28 @@ write_html(pharmgkb, paste0("project/report_html/",cargs[7],"/pharmgkb.html"))
 ##
 
 cat("MUTATIONS - Annotations\n")
-mutations <- (read_html("project/html_source/report/mutations.html"))
+mutations <- (read_html(paste0(path_html_source,"/mutations.html")))
 children_mutations<-xml_child(xml_child(xml_child(xml_child(mutations, 2), 1), 2), 3)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(mutations, 2), 1), 1), 2), 2)
 xml_replace(an, an_xml)
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  xref<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_refgene.txt"), sep= "\t", colClasses=c("character"))
-  xclin<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_clinvar.txt"), sep="\t", colClasses=c("character"))
+  xref<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_refgene.txt"), sep= "\t", colClasses=c("character"))
+  xclin<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_clinvar.txt"), sep="\t", colClasses=c("character"))
   xcr<-merge(xref,xclin, all.x=TRUE)
   xcr <- format.data.frame(xcr, digits = NULL, na.encode = FALSE)
   xcr[is.na(xcr)] <- " "
   xcr <- xcr[,c("Gene", "Chromosome", "Stop", "Ref_base", "Var_base", "Change_type", "Clinical_significance","Type")]
   names(xcr) <- c("Gene", "Chromosome", "Position", "Ref_base", "Var_base",
                   "Change Type", "Clinical Significance","Type")
-  if(cargs[10]!="tumnorm")
+  if(tumor_type!="tumnorm")
     xcr$Type  <- factor(xcr$Type , levels = c("Somatic", "Germline"))
   xcr <- xcr[order(xcr$Type,xcr$Gene,as.integer(xcr$Position)),]
   rownames(xcr) <- NULL
   if(nrow(xcr)>0)
   {
-    if(cargs[10]=="tumnorm")
+    if(tumor_type=="tumnorm")
       xcr <- xcr[,-which(names(xcr)=="Type")]
     array_table<-c(array_table,kable(xcr) %>%
                      kable_styling(bootstrap_options = c("striped", "hover","responsive")) %>%
@@ -955,7 +975,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_mutations
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(mutations, paste0("project/report_html/",cargs[7],"/mutations.html"))
+write_html(mutations, paste0(path_project,"/",pt_fastq,"/mutations.html"))
 
 
 
@@ -963,7 +983,7 @@ write_html(mutations, paste0("project/report_html/",cargs[7],"/mutations.html"))
 
 ## Off labels Drug  {.tabset}
 cat("OFFLABEL - drug\n")
-offlabel <- (read_html("project/html_source/report/offlabel.html"))
+offlabel <- (read_html(paste0(path_html_source,"/offlabel.html")))
 children_offlabel_vm<-xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(offlabel, 2), 1), 2), 4), 1), 1)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(offlabel, 2), 1), 1), 2), 2)
@@ -973,20 +993,20 @@ xml_replace(an, an_xml)
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_off.txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x_trial<-read.csv(paste0(cargs[8],"/txt/trial/", cargs[7],"_off.txt"), sep= "\t")
+  x_trial<-read.csv(paste0(path_project,"/txt/trial/", pt_fastq,"_off.txt"), sep= "\t")
   list.all.trials<-unique(x_trial$Clinical_trial)
 
-  x<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_definitive.txt"), sep= "\t", colClasses=c("character"))
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  x<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1222,7 +1242,7 @@ try({
     names(ya) <- c("#","Disease","Gene","Variant","Drug","Evidence Type","Clinical Significance",
                    "Evidence Level","Type","Details","Trials","References", "Confidence Score", "AIFA", "EMA", "FDA", "year")
 
-    if(cargs[10]=="tumnorm")
+    if(tumor_type=="tumnorm")
       ya <- ya[,-which(names(ya)=="Type")]
     df_total<-ya[,-which(names(ya)=="Disease")]
     if(nrow(df_total)>0)
@@ -1271,7 +1291,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_offlabel_vm
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(offlabel, paste0("project/report_html/",cargs[7],"/offlabel.html"))
+write_html(offlabel, paste0(path_project,"/",pt_fastq,"/offlabel.html"))
 
 
 ### Evidence Detail
@@ -1282,18 +1302,18 @@ array_table<-c()
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_off.txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
   x_url <- x_url[,c("PMID","Reference")]
   x_url$PMID <- as.character(x_url$PMID)
 
-  x<-read.csv(paste0(cargs[8],"/txt/", cargs[7],"_definitive.txt"), sep= "\t", colClasses=c("character"))
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1373,7 +1393,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_offlabel_ed
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(offlabel, paste0("project/report_html/",cargs[7],"/offlabel.html"))
+write_html(offlabel, paste0(path_project,"/",pt_fastq,"/offlabel.html"))
 
 
 cat("OFFLABEL - Variants details\n")
@@ -1384,14 +1404,14 @@ array_table<-c()
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x<-read.csv(paste0(cargs[8],"/txt/", cargs[7],"_definitive.txt"), sep= "\t", colClasses=c("character"))
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   cat("OFFLABEL-VD-1\n")
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=cargs[6],,drop=F]
+  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
   x$Var_base <- as.character(x$Var_base)
   x$Ref_base<-as.character(x$Ref_base)
   if(nrow(x)>0)
@@ -1433,13 +1453,13 @@ try({
 array_table<-kable(array_table) %>%
   kable_styling(bootstrap_options = c("striped", "hover","responsive"))
 #cat("OFFLABEL-VD-2\n")
-#cat(cargs[7],"\n")
+#cat(pt_fastq,"\n")
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 #cat("OFFLABEL-VD-2.1\n")
 node_to_be_replaced <- children_offlabel_vd
 xml_replace(node_to_be_replaced, xml_table_evidence)
 #cat("OFFLABEL-VD-3\n")
-write_html(offlabel, paste0("project/report_html/",cargs[7],"/offlabel.html"))
+write_html(offlabel, paste0(path_project,"/",pt_fastq,"/offlabel.html"))
 #cat("OFFLABEL-VD-4\n")
 
 
@@ -1448,7 +1468,7 @@ write_html(offlabel, paste0("project/report_html/",cargs[7],"/offlabel.html"))
 
 cat("COSMIC - Resistant mutations\n")
 ## Cosmic {.tabset}
-cosmic <- (read_html("project/html_source/report/cosmic.html"))
+cosmic <- (read_html(paste0(path_html_source,"/cosmic.html")))
 children_cosmic_drm<-xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(cosmic, 2), 1), 2), 4), 1), 1)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(cosmic, 2), 1), 1), 2), 2)
@@ -1458,11 +1478,11 @@ xml_replace(an, an_xml)
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_cosmic.txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_cosmic.txt"), sep= "\t")
   x_url <- x_url[,c("PMID","Reference")]
   x_url$PMID <- as.character(x_url$PMID)
 
-  cosm<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_cosmic.txt"), sep= "\t", colClasses=c("character"))
+  cosm<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_cosmic.txt"), sep= "\t", colClasses=c("character"))
   cosm <- cosm[,c("Gene","Variant","Drug","Primary.Tissue","PMID")]
   cosm <- unique(cosm)
 
@@ -1504,7 +1524,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_cosmic_drm
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(cosmic, paste0("project/report_html/",cargs[7],"/cosmic.html"))
+write_html(cosmic, paste0(path_project,"/",pt_fastq,"/cosmic.html"))
 
 cat("COSMIC - Variant details\n")
 ### Variant Details
@@ -1514,7 +1534,7 @@ array_table<-c()
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x<-read.csv(paste0(cargs[8],"/txt/", cargs[7],"_cosmic.txt"), sep= "\t", colClasses=c("character"))
+  x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_cosmic.txt"), sep= "\t", colClasses=c("character"))
   if(nrow(x)>0)
   {
     x[is.na(x$Var_base),"Var_base"] <- "T"
@@ -1548,7 +1568,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_cosmic_vd
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(cosmic, paste0("project/report_html/",cargs[7],"/cosmic.html"))
+write_html(cosmic, paste0(path_project,"/",pt_fastq,"/cosmic.html"))
 
 
 
@@ -1560,7 +1580,7 @@ write_html(cosmic, paste0("project/report_html/",cargs[7],"/cosmic.html"))
 ## Drug-Food Interactions
 ##
 cat("DRUGFOOD - Food Interactions\n")
-drugfood <- (read_html("project/html_source/report/drugfood.html"))
+drugfood <- (read_html(paste0(path_html_source,"/drugfood.html")))
 children_drugfood<-xml_child(xml_child(xml_child(xml_child(drugfood, 2), 1), 2), 3)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(drugfood, 2), 1), 1), 2), 2)
@@ -1568,7 +1588,7 @@ xml_replace(an, an_xml)
 #Food interactions
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  k<-read.csv(paste0(cargs[8],"/txt/",cargs[7],"_drugfood.txt"), sep="\t")
+  k<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_drugfood.txt"), sep="\t")
   k <- k[,c("Drug","Food_interaction")]
   if(nrow(k)>0)
   {
@@ -1590,7 +1610,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_drugfood
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(drugfood, paste0("project/report_html/",cargs[7],"/drugfood.html"))
+write_html(drugfood, paste0(path_project,"/",pt_fastq,"/drugfood.html"))
 
 
 
@@ -1605,7 +1625,7 @@ write_html(drugfood, paste0("project/report_html/",cargs[7],"/drugfood.html"))
 ##
 ##
 cat("REFERENCE - Mutations\n")
-reference <- (read_html("project/html_source/report/reference.html"))
+reference <- (read_html(paste0(path_html_source,"/reference.html")))
 children_reference_mut<-xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(reference, 2), 1), 2), 4), 1), 1)
 array_table<-c()
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(reference, 2), 1), 1), 2), 2)
@@ -1615,7 +1635,7 @@ xml_replace(an, an_xml)
 options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],".txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,".txt"), sep= "\t")
   link1 <- x_url[,c("Reference","PMID","Citation")]
   link1 <- link1[!duplicated(x_url[,c("PMID")]),]
   if(nrow(link1)>0)
@@ -1649,7 +1669,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_reference_mut
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(reference, paste0("project/report_html/",cargs[7],"/reference.html"))
+write_html(reference, paste0(path_project,"/",pt_fastq,"/reference.html"))
 
 
 ### Pharm
@@ -1661,7 +1681,7 @@ options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 #pharm
 try({
-  x_url_p<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_pharm.txt"), sep= "\t")
+  x_url_p<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_pharm.txt"), sep= "\t")
   link1 <- x_url_p[,c("Reference","PMID")]
   if(nrow(link1)>0)
   {
@@ -1693,7 +1713,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_reference_pharm
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(reference, paste0("project/report_html/",cargs[7],"/reference.html"))
+write_html(reference, paste0(path_project,"/",pt_fastq,"/reference.html"))
 
 
 
@@ -1705,8 +1725,8 @@ options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 #Off label
 try({
-  x_url<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_off.txt"), sep= "\t")
-  dis<-read.csv(paste0(cargs[9],"/Disease.txt"), sep= "\t")
+  x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
+  dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x_url<- merge(dis, x_url, by= "Disease")
   x_url$Disease <- NULL
   colnames(x_url)[1] <- "Disease"
@@ -1743,7 +1763,7 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_reference_drug
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(reference, paste0("project/report_html/",cargs[7],"/reference.html"))
+write_html(reference, paste0(path_project,"/",pt_fastq,"/reference.html"))
 
 
 ### Cosmic
@@ -1754,7 +1774,7 @@ options(knitr.table.format = "html")
 #cargs=commandArgs(trailingOnly = TRUE)
 #Cosmic
 try({
-  cosm<-read.csv(paste0(cargs[8],"/txt/reference/",cargs[7],"_cosmic.txt"), sep= "\t")
+  cosm<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_cosmic.txt"), sep= "\t")
   link1 <- cosm[,c("Reference","PMID")]
   if(nrow(link1)>0)
   {
@@ -1787,18 +1807,18 @@ try({
 xml_table_evidence<-kable_as_xml(paste(array_table,collapse=" "))
 node_to_be_replaced <- children_reference_cosmic
 xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(reference, paste0("project/report_html/",cargs[7],"/reference.html"))
+write_html(reference, paste0(path_project,"/",pt_fastq,"/reference.html"))
 
 ##
 ## ESMO Guidelines
 ##
 cat("ESMOGUIDELINES\n")
-esmoguide <- (read_html("project/html_source/report/esmoguide.html"))
+esmoguide <- (read_html(paste0(path_html_source,"/esmoguide.html")))
 an<-xml_child(xml_child(xml_child(xml_child(xml_child(esmoguide, 2), 1), 1), 2), 2)
 xml_replace(an, an_xml)
 children_esmoguide <- xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(esmoguide, 2), 1), 2), 1), 1), 1), 1)
-cat("project/report_html/",cargs[7],"/esmo_",cargs[11],".html\n")
-esmo_personalized <- read_html(paste0("project/report_html/",cargs[7],"/esmo_",cargs[11],".html"))
+cat(path_project,"/",pt_fastq,"/esmo_",pt_tumor_site,".html\n")
+esmo_personalized <- read_html(paste0(path_project,"/",pt_fastq,"/esmo_",pt_tumor_site,".html"))
 xml_esmo <- xml_child(xml_child(esmo_personalized, 1), 1)
 xml_replace(children_esmoguide, xml_esmo)
-write_html(esmoguide, paste0("project/report_html/",cargs[7],"/esmoguide.html"))
+write_html(esmoguide, paste0(path_project,"/",pt_fastq,"/esmoguide.html"))
