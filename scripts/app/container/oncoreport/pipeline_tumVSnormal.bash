@@ -193,7 +193,7 @@ if { [[ -z "$fastq1" ]] || [[ -z "$normal1" ]]; } && { [[ -z "$ubamt" ]] || [[ -
   exit_abnormal_usage "One input file should be specified."
 fi
 
-if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]] || [[ -z "$gender" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
   exit_abnormal_usage "All parameters must be passed"
 fi
 
@@ -407,12 +407,11 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PA
 # ESMO GUIDELINES
 mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
 chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
-bash "$PATH_PROJECT/html_source/esmo/4_list_url.sh" -t "${site}" -i "${FASTQ1_NAME}"
+bash "$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh" -t "${site}" -i "${FASTQ1_NAME}" -o "$PATH_PROJECT"
 #html source è una cartella che dobbiamo sempre far scaricare col docker in cui c'è il template di partenza del report
 
 echo "Report creation"
-Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage" "$drug_path" || exit_abnormal_code "Unable to create report" 121
-
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE"|| exit_abnormal_code "Unable to create report" 121
 
 { rm -r "$PATH_SAM_TUMOR" &&
   rm -r "$PATH_BAM_ANNO_TUMOR" &&
