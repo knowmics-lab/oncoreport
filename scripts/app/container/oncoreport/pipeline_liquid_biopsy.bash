@@ -8,10 +8,13 @@ usage() {
   echo "Usage: $0 [-depth/-dp analysis depth ] [-gender/-g patient gender ]
   [-surname/-s patient surname ] [-allfreq/-af filter-expression of AF ]
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
+  [-city/-c where patient lives] [-phone/-ph telephone number of the patient]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
+  [-site/-st site of the tumor] [-stage/-sg stage of the tumor]
   [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
   [-genome/-gn index must be hg19 or hg38]
+  [-drug_path/-d_path file path where comorbid drugs are listed (.txt, one drug per row)]
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
   [-ubam/-ub ubam sample]
@@ -86,6 +89,11 @@ while [ -n "$1" ]; do
     echo "The value provided for patient surname is $surname"
     shift
     ;;
+  -drug_path | -dpath)
+    drug_path="$2"
+    echo "The path for comorbid drugs is $drug_path"
+    shift
+    ;;
   -id | -i)
     id="$2"
     echo "The value provided for patient ID is $id"
@@ -105,6 +113,26 @@ while [ -n "$1" ]; do
     elif ((age < 0)); then
       exit_abnormal_usage "Error: Age must be greater than zero."
     fi
+    shift
+    ;;
+  -site | -st)
+    site="$2"
+    echo "The value provided for organ is $site"
+    shift
+    ;;
+  -stage | -sg)
+    stage="$2"
+    echo "The value provided for stage is $stage"
+    shift
+    ;;
+  -city)
+    city="$2"
+    echo "The value provided for city is $city"
+    shift
+    ;;
+  -phone)
+    phone="$2"
+    echo "The value provided for phone is $phone"
     shift
     ;;
   -tumor | -t)
@@ -154,7 +182,7 @@ if [[ -z "$fastq1" ]] && { [[ -z "$ubam" ]] || [[ -z "$paired" ]]; } && [[ -z "$
   exit_abnormal_usage "One input file should be specified."
 fi
 
-if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$index_path" ]] || [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]] || [[ -z "$index" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$database" ]] || [[ -z "$project_path" ]]; then
   exit_abnormal_usage "All parameters must be passed"
 fi
 
@@ -345,7 +373,14 @@ echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 119
 
 echo "Report creation"
-R -e "setwd('${ONCOREPORT_SCRIPT_PATH}'); rmarkdown::render('${ONCOREPORT_SCRIPT_PATH}/CreateReport.Rmd',output_file='$PATH_OUTPUT/report.html')" --args "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" || exit_abnormal_code "Unable to create report" 120
+
+mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
+chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
+bash "$PATH_PROJECT/html_source/esmo/4_list_url.sh" -t "${site}" -i "${FASTQ1_NAME}"
+#html source è una cartella in cui c'è il template di partenza del report
+
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$depth" "$AF" "$drug_path" || exit_abnormal_code "Unable to create report" 120
+
 
 echo "Removing folders"
 { rm -r "$PATH_TRIM" &&
