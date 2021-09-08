@@ -45,9 +45,9 @@ Route::apiResource('diseases', DiseaseController::class)->names(
 )->except(['create', 'store', 'update', 'destroy'])->middleware('auth:sanctum');
 
 Route::apiResource('tumors', TumorController::class)->except(['create', 'store', 'update', 'destroy']);
-Route::apiResource('drugs', DrugController::class)->except(['show','create', 'store', 'update', 'destroy']);
-Route::apiResource('medicines', MedicineController::class)->except(['show','create', 'store', 'update', 'destroy']);
-Route::apiResource('locations', LocationController::class)->except(['show','create', 'store', 'update', 'destroy']);
+Route::apiResource('drugs', DrugController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
+Route::apiResource('medicines', MedicineController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
+Route::apiResource('locations', LocationController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
 Route::apiResource('patients', PatientController::class)->names(
     [
         'show' => 'patients.show',
@@ -55,16 +55,14 @@ Route::apiResource('patients', PatientController::class)->names(
 )->middleware('auth:sanctum');
 
 
-
-Route::get('detach/{patient_id}/{tumor_id}/{drug_id}', [PatientTumorController::class, 'detach'])->middleware('auth:sanctum');
+Route::get('detach/{patient_id}/{tumor_id}/{drug_id}', [PatientTumorController::class, 'detach'])->middleware(
+    'auth:sanctum'
+);
 Route::get('detach/{patient_id}/{drug_id}', [PatientTumorController::class, 'detachAll'])->middleware('auth:sanctum');
 
 
-
 Route::get('reasons', function () {
-    error_log("called reasons");
     return new MedicineCollection(Reason::all());
-    return Reason::all();
 });
 
 Route::apiResource('jobs', JobController::class)->names(
