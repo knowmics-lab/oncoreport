@@ -379,6 +379,7 @@ chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
 bash "$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh" -t "${site}" -i "${FASTQ1_NAME}" -o "$PATH_PROJECT"
 #html source è una cartella in cui c'è il template di partenza del report
 
+
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
 
 echo "Removing folders"

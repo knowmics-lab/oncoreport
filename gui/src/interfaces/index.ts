@@ -36,10 +36,12 @@ export {
 export type {
   DiseaseObject,
   PatientObject,
+  PathologyObject,
   JobPath,
   JobConfig,
   JobOutput,
   JobObject,
+  ResourceObject,
 } from './entities';
 export type { default as Collection } from './collection';
 export type { ConfigObjectType } from './settings';
@@ -63,3 +65,6 @@ export type {
   PushNotificationFunction,
 } from './notifications';
 export type { UsesUpload } from './ui';
+
+export type {Option} from './option';
+export type {Resource} from './resource';

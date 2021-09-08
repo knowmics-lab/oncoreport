@@ -28,7 +28,14 @@ export default class Patient implements Adapter<PatientObject> {
       last_name: patient.last_name,
       gender: patient.gender,
       age: patient.age,
+      email: patient.email,
+      fiscalNumber: patient.fiscalNumber,
       disease_id: patient.disease.id,
+      tumors: patient.tumors || null,
+      diseases: patient.diseases || null,
+      tumor: patient.tumor || null,
+      type: patient.type || null,
+      drugs: patient.drugs || null,
     });
     if (!result.data) {
       throw new ApiValidationError(
@@ -52,8 +59,14 @@ export default class Patient implements Adapter<PatientObject> {
       first_name: patient.first_name,
       last_name: patient.last_name,
       gender: patient.gender,
+      email: patient.email,
+      fiscalNumber: patient.fiscalNumber,
       age: patient.age,
       disease_id: patient.disease.id,
+      tumors: patient.tumors || null,
+      diseases: patient.diseases || null,
+      tumor: patient.tumor || null,
+      type: patient.type || null,
     });
     if (!result.data) {
       throw new ApiValidationError(

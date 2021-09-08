@@ -34,6 +34,19 @@
                                     </p>
                                     <x-jet-input-error for="state.password" class="mt-2"/>
                                 </div>
+
+                                <div class="col-span-6">
+                                    <x-jet-label for="role" value="{{ __('Role') }}"/>
+                                <select id="role"  class="form-select px-4 py-3 rounded block mt-1 w-full" wire:model.defer="state.role" name="role">
+                                    <option value="{{config('constants.roles')[0]}}" selected>
+                                        {{ucfirst(config('constants.roles')[0])}}
+                                    </option>
+                                    <option value="{{config('constants.roles')[1]}}">
+                                        {{ucfirst(config('constants.roles')[1])}}
+                                    </option>
+                                </select>
+                                </div>
+
                                 <div class="col-span-6">
                                     <div class="flex items-start">
                                         <div class="flex items-center h-5">

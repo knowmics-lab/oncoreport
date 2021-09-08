@@ -3,6 +3,9 @@
 use App\Http\Livewire\Admin\User\Index as UserIndex;
 use App\Http\Livewire\Admin\User\Create as UserCreate;
 use App\Http\Livewire\Admin\User\Show as UserShow;
+//use App\Http\Resources\Patient as PatientResource;
+//use App\Http\Resources\PatientCollection;
+//use App\Models\Patient;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,12 +19,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get(
-    '/',
-    function () {
+Route::get( '/',
+    function (Request $request) {
+        //return new PatientResource(Patient::find(1));
         return redirect()->route('dashboard');
     }
 );
+
+Route::get('test', function () {
+    $a = ['doctor', 'technical'];
+    $b = config('constants.roles');
+    return $a == $b;
+});
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get(
     '/dashboard',
@@ -42,3 +52,17 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
     '/admin/users/{user}',
     UserShow::class
 )->name('users-show');
+
+/*
+Route::prefix('patient')
+    ->as('patient.')
+    ->group(function() {
+        Route::get('home', '\App\Http\Controllers\PatientController@index')->name('home');
+        Route::namespace('\App\Http\Controllers\Auth\Patient')
+            ->group(function() {
+                Route::get('login', 'PatientAuthController@showLoginForm')->name('login');
+                Route::post('login', 'PatientAuthController@login')->name('login');
+                Route::post('logout', 'PatientAuthController@logout')->name('logout');
+            });
+    });
+*/

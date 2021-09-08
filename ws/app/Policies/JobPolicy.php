@@ -49,6 +49,8 @@ class JobPolicy
      */
     public function create(User $user)
     {
+        // Solo i clinici possono avviare una analisi
+        return $user->role == 'clinico';
         return true;
     }
 
@@ -62,6 +64,8 @@ class JobPolicy
      */
     public function update(User $user, Job $job)
     {
+        // Solo i clinici possono avviare una analisi
+        return $user->role == 'clinico';
         return $user->admin || $job->user_id === $user->id;
     }
 

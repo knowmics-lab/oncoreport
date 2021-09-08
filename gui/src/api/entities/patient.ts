@@ -41,10 +41,46 @@ export default class Patient extends Entity<PatientObject>
   last_name = '';
 
   @field({
+    fillable: true,
+  })
+  tumors = [];
+
+  @field({
+    fillable: true,
+  })
+  fiscalNumber = '';
+
+  @field({
+    fillable: true,
+  })
+  email = '';
+
+  @field({
+    fillable: true,
+  })
+  diseases = [];
+
+  @field({
+    fillable: true,
+  })
+  tumor = 0;
+
+  @field({
+    fillable: true,
+  })
+  type = '';
+
+  @field({
     fillable: false,
     readonly: true,
   })
   owner: unknown = {};
+
+  @field({
+    fillable: false,
+    readonly: true,
+  })
+  drugs: { id: number; name: string }[] = [];
 
   public constructor(adapter: PatientAdapter) {
     super(adapter);

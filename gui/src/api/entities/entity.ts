@@ -181,6 +181,7 @@ export default abstract class Entity<T extends IdentifiableEntity>
         this.notify(EntityEvent.CREATE);
       } else {
         newData = await this.adapter.update((this as unknown) as T);
+        //console.log(newData);
         this.fillDataArray(newData);
         this.notify(EntityEvent.UPDATE);
       }
@@ -217,6 +218,7 @@ export default abstract class Entity<T extends IdentifiableEntity>
     const fillables = getArrayMeta(fillableKey, this) as string[];
     const tokens = getEntityTokens(this);
     const fields = Object.keys(d).filter((f) => fillables.includes(f));
+
     for (const k of fields) {
       const data = get(d, k);
       if (tokens.has(k)) {
@@ -249,6 +251,7 @@ export default abstract class Entity<T extends IdentifiableEntity>
         set(o, k, data);
       }
     }
+
     Object.assign(this, o);
     return this;
   }

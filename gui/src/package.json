@@ -18,5 +18,8 @@
     "@mui-treasury/components": "^1.9.2",
     "@mui-treasury/styles": "^1.13.1",
     "@mui-treasury/mockup": "^1.2.10"
+  },
+  "devDependencies": {
+    "@types/react-select": "^4.0.15"
   }
 }
