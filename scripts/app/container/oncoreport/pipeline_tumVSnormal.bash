@@ -411,10 +411,8 @@ bash "$PATH_PROJECT/html_source/esmo/4_list_url.sh" -t "${site}" -i "${FASTQ1_NA
 #html source è una cartella che dobbiamo sempre far scaricare col docker in cui c'è il template di partenza del report
 
 echo "Report creation"
-Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$drug_path" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" || exit_abnormal_code "Unable to create report" 121
-#Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage" || exit_abnormal_code "Unable to create report" 121
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$organ" "$site" "$city" "$phone" "$stage" "$drug_path" || exit_abnormal_code "Unable to create report" 121
 
-#Rscript "$ONCOREPORT_SCRIPT_PATH/drug_interactions.R" "$FASTQ1_NAME" "$name" "$surname" "$gender" "$age" "$site" "$city" "$phone" "$stage" "$id" || exit_abnormal_code "Unable to create report" 122
 
 { rm -r "$PATH_SAM_TUMOR" &&
   rm -r "$PATH_BAM_ANNO_TUMOR" &&
