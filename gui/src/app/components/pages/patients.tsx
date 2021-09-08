@@ -66,6 +66,20 @@ export default function Patients() {
             );
           },
         },
+
+        {
+          shown: true,
+          color: 'default',
+          icon: 'fas fa-pencil-alt',
+          tooltip: 'detail',
+          onClick: (_e, data) => {
+            history.push(
+              generatePath(Routes.PATIENT, {
+                id: data.id,
+              })
+            );
+          },
+        },
         {
           shown: true,
           color: 'secondary',

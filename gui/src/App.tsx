@@ -93,6 +93,14 @@ export default function App() {
               component={Pages.Forms.PatientForm}
             />
             <Route
+              path={Routes.PATIENTS_TUMORS}
+              component={Pages.Forms.TumorForm}
+            ></Route>
+            <Route
+              path={Routes.PATIENT}
+              component={Pages.PatientPage}
+            ></Route>
+            <Route
               path={Routes.PATIENTS}
               exact
               component={Pages.PatientsPage}

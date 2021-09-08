@@ -1,5 +1,6 @@
 import { Nullable } from './common';
 import { DiseaseCollectionItem } from './diseases';
+import { Resource } from './resource';
 
 export enum Gender {
   m = 'm',
@@ -13,12 +14,15 @@ export interface PatientBase {
   last_name: string;
   age: number;
   gender: Gender;
+  email: string;
+  fiscalNumber: string;
   disease: DiseaseCollectionItem;
   created_at: string;
   created_at_diff: string;
   updated_at: string;
   updated_at_diff: string;
   owner: unknown;
+  drugs: Resource[];
 }
 
 export interface Patient extends PatientBase {

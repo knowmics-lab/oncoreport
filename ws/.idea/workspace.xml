@@ -2,12 +2,45 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/esmo/esmo/4_list_url.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/esmo/esmo/4_list_url.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/report/cosmic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/report/cosmic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/auth/patient/login.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/patient/dashboard.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/patient/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/repositories/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/repositories/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/tumorList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/tumorList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FormikSelect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FormikSelect.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/CollipsableTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/CollipsableTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/patients.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/patients.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TumorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TumorController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Drug.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Drug.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/PatientTumor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/PatientTumor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_01_092621_create_patient_tumor_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_01_092621_create_patient_tumor_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_02_032453_create_drug_patient_tumor_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_02_032453_create_drug_patient_tumor_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_060056_create_disease_patient_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_08_060056_create_disease_patient_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_060141_create_disease_medicine_patient_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_08_060141_create_disease_medicine_patient_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_10_174351_create_drug_patient_tumor_reason_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_10_174351_create_drug_patient_tumor_reason_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,7 +217,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console/Commands" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../spid/spid-test" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -255,12 +288,27 @@
       <workItem from="1610379269155" duration="641000" />
       <workItem from="1610379924844" duration="5651000" />
       <workItem from="1610433928858" duration="704000" />
-      <workItem from="1630913829058" duration="6060000" />
+      <workItem from="1620391794152" duration="1194000" />
+      <workItem from="1621013561597" duration="12000" />
+      <workItem from="1621443357506" duration="9801000" />
+      <workItem from="1621756015957" duration="147000" />
+      <workItem from="1623750630438" duration="5253000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

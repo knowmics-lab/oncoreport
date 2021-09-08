@@ -38,6 +38,7 @@ class Show extends Component
             'state.email'    => ['required', 'string', 'email', 'max:255', $uniqueRule],
             'state.password' => ['nullable', 'string', new Password()],
             'state.admin'    => ['sometimes', 'boolean'],
+            'state.role'     => ['sometimes', Rule::in(config('constants.roles'))],
         ];
     }
 
@@ -69,6 +70,7 @@ class Show extends Component
         if (isset($this->state['password']) && !empty($this->state['password'])) {
             $this->user->password = Hash::make($this->state['password']);
         }
+        $this->user->role = $this->state['role'];
         $this->user->save();
         $this->emit('saved');
         $this->emit('refresh-navigation-dropdown');
