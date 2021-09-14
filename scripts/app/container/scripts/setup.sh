@@ -4,6 +4,7 @@
 mkdir -p /oncoreport/tmp || exit 100
 mkdir /oncoreport/databases || exit 101
 mkdir /oncoreport/scripts || exit 102
+mv /html_source /oncoreport/html_source || exit 102
 
 (
   cd /oncoreport &&
@@ -112,7 +113,7 @@ mv /PrepareCOSMIC.R /oncoreport/scripts || exit 125
 mv /MergeInfo.R /oncoreport/scripts || exit 126
 mv /imports.R /oncoreport/scripts || exit 127
 mv /Functions.R /oncoreport/scripts || exit 128
-mv /CreateReport.Rmd /oncoreport/scripts || exit 129
+mv /CreateReport.R /oncoreport/scripts || exit 129
 mv /pipeline_tumVSnormal.bash /oncoreport/scripts || exit 130
 mv /pipeline_liquid_biopsy.bash /oncoreport/scripts || exit 131
 mv /prepare_cosmic.bash /oncoreport/scripts || exit 132

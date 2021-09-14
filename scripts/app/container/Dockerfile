@@ -86,21 +86,22 @@ ADD databases/hg19/pharm_database_hg19.txt          /pharm_database_hg19.txt
 ADD databases/hg19/cgi_original_hg19.txt            /cgi_original_hg19.txt
 ADD databases/hg38/pharm_database_hg38.txt          /pharm_database_hg38.txt
 ADD databases/hg38/cgi_original_hg38.txt            /cgi_original_hg38.txt
+ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
+ADD oncoreport/CreateReport.R                       /CreateReport.R
+ADD oncoreport/Functions.R                          /Functions.R
+ADD oncoreport/genkey.sh                            /genkey.sh
+ADD oncoreport/imports.R                            /imports.R
+ADD oncoreport/MergeInfo.R                          /MergeInfo.R
+ADD oncoreport/path.bash                            /path.bash
+ADD oncoreport/pipeline_liquid_biopsy.bash          /pipeline_liquid_biopsy.bash
+ADD oncoreport/pipeline_tumVSnormal.bash            /pipeline_tumVSnormal.bash
+ADD oncoreport/prepare_cosmic.bash                  /prepare_cosmic.bash
+ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
 ADD oncoreport/PrepareCOSMIC.R                      /PrepareCOSMIC.R
 ADD oncoreport/PrepareDatabases_build.R             /PrepareDatabases_build.R
-ADD oncoreport/MergeInfo.R                          /MergeInfo.R
-ADD oncoreport/imports.R                            /imports.R
-ADD oncoreport/Functions.R                          /Functions.R
-ADD oncoreport/CreateReport.Rmd                     /CreateReport.Rmd
-ADD oncoreport/pipeline_tumVSnormal.bash            /pipeline_tumVSnormal.bash
-ADD oncoreport/pipeline_liquid_biopsy.bash          /pipeline_liquid_biopsy.bash
-ADD oncoreport/prepare_cosmic.bash                  /prepare_cosmic.bash
 ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
-ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
-ADD oncoreport/path.bash                            /path.bash
-ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
-ADD oncoreport/genkey.sh                            /genkey.sh
 ADD oncoreport/setup.bash                           /setup.bash
+ADD html_source                                     /html_source
 COPY ws.tgz                                         /ws.tgz
 
 RUN chmod 755 /usr/local/bin/*.sh

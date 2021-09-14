@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../scripts/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/.idea/scripts.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +175,9 @@
     </include_path>
   </component>
   <component name="ProjectId" id="1jskRk1M2jq36EWcN2niQbwU8st" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -179,8 +187,9 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../spid/spid-test" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../scripts" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -257,6 +266,7 @@
       <workItem from="1621756015957" duration="147000" />
       <workItem from="1623750630438" duration="5253000" />
       <workItem from="1631086609068" duration="608000" />
+      <workItem from="1631620739082" duration="576000" />
     </task>
     <servers />
   </component>
