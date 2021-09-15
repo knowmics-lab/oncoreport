@@ -75,7 +75,7 @@ export default class Job extends Repository<JobObject, JobEntity> {
     patient: Patient,
     listener: RefreshListener
   ): string {
-    if (!patient.id) throw new EntityError('Invalid patient object');
+    if (!patient.id) throw new EntityError('Invalid patient object' + JSON.stringify(patient));
     const id = uniqid();
     if (!has(this.refreshListenersByPatient, patient.id)) {
       set(this.refreshListenersByPatient, patient.id, {});

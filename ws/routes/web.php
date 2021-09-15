@@ -53,7 +53,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
     UserShow::class
 )->name('users-show');
 
-/*
+
 Route::prefix('patient')
     ->as('patient.')
     ->group(function() {
@@ -65,4 +65,4 @@ Route::prefix('patient')
                 Route::post('logout', 'PatientAuthController@logout')->name('logout');
             });
     });
-*/
+

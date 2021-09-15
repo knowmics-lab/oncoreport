@@ -83,7 +83,7 @@ import Connector from '../../../api/adapters/connector';
 
 type MaybePatient = PatientEntity | undefined;
 
-export default function PatientForm() {
+export default function PatientForm(props: { id: number }) {
   const classes = useStyles();
   const repository = useService(PatientRepository);
   const [loading, setLoading] = useState(false);
@@ -109,6 +109,7 @@ export default function PatientForm() {
         let p = await (await repository.fetch(+id)).refresh();
         setPatient(p);
         //setDrugs(p.drugs);
+        console.log(JSON.stringify(props));
       } else {
         setPatient(repository.new());
       }
