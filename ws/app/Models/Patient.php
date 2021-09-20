@@ -51,7 +51,13 @@ class Patient extends Model
         'user_id',
         'email',
         'fiscal_number',
-        'password'
+        'password',
+        'location_id',
+        'T',
+        'M',
+        'N',
+        'telephone',
+        'city'
     ];
 
     /**

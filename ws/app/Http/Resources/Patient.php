@@ -38,7 +38,8 @@ class Patient extends JsonResource
                 'gender'          => $this->gender,
                 'email'           => $this->email,
                 'fiscalNumber'    => $this->fiscal_number,
-
+                'telephone'       => $this->telephone ?? "",
+                'city'            => $this->city ?? "",
                 'disease'         => Utils::flattenResource(new Disease($this->disease), $request),
                 'disease_stage'   => ['T' => $this->T, 'M' => $this->M, 'N' => $this->N],
                 'disease_site_id'    => $this->location_id, #Utils::flattenResource(new Location(LocationModel::first()), $request),

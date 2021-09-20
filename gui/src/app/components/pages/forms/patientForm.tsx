@@ -302,6 +302,8 @@ export default function PatientForm() {
     gender: Yup.mixed()
       .oneOf([Gender.m, Gender.f] as Gender[])
       .defined(),
+    telephone: Yup.string(),
+    city: Yup.string(),
     disease: Yup.number().defined(),
     disease_stage: Yup.object({
         T: Yup.number().min(0).max(4).defined(),
@@ -409,7 +411,8 @@ export default function PatientForm() {
 
                 <TextField label="Email" name="email" type="email" required />
                 <TextField label="Fiscal Number" name="fiscalNumber" required />
-
+                <TextField label="Telephone" name="telephone" type="string"/>
+                <TextField label="City" name="city"/>
                 <SelectField
                   name="disease"
                   label="Disease"

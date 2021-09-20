@@ -32,8 +32,9 @@ Route::get( '/',
 );
 
 Route::get('test', function (Request $request) {
-    $p = Patient::first();
-    return $p->stage();
+    //$p = Patient::first();
+    //return $p->stage();
+    return Patient::first();
     return new PatientResource(Patient::first());
 });
 

@@ -53,6 +53,16 @@ export default class Patient extends Entity<PatientObject>
   @field({
     fillable: true,
   })
+  telephone = null;
+
+  @field({
+    fillable: true,
+  })
+  city = null;
+
+  @field({
+    fillable: true,
+  })
   tumors = [];
 
   @field({

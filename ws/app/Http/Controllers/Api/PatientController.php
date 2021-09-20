@@ -69,7 +69,9 @@ class PatientController extends Controller
                 'disease_stage'         => ['required'],
                 'disease'               => ['required_without:disease_id', 'string', 'exists:diseases,name'],
                 'email'                 => ['required', 'email:rfc,dns'],
-                'fiscalNumber'          => ['required', 'string']
+                'fiscalNumber'          => ['required', 'string'],
+                'telephone'             => ['string', 'nullable'],
+                'city'                  => ['string', 'nullable'],
             ]
         );
         error_log("richiesta validata");
@@ -88,6 +90,8 @@ class PatientController extends Controller
                 'user_id'       => $request->user()->id,
                 "fiscal_number" => $values['fiscalNumber'],
                 "email"         => $values['email'],
+                'telephone'     => $values['telephone'] ?? null,
+                'city'          => $values['city'] ?? null,
                 'password'      => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
             ]
         );
@@ -196,14 +200,13 @@ class PatientController extends Controller
             'gender'     => ['filled', 'string', Rule::in(Patient::VALID_GENDERS)],
             'age'        => ['filled', 'integer'],
             'disease_id' => ['filled', 'integer', 'exists:diseases,id'],
-            #'stage_T'       => ['required', 'integer', 'between:0,4'],
-            #'stage_M'       => ['required', 'integer', 'between:0,4'],
-            #'stage_N'       => ['required', 'integer', 'between:0,4'],
             'disease_site_id'       => ['required'],
             'disease_stage'         => ['required'],
             'disease'    => ['filled', 'string', 'exists:diseases,name'],
             'email'         => ['required', 'email:rfc,dns'],
-            'fiscalNumber'  => ['required', 'string']
+            'fiscalNumber'  => ['required', 'string'],
+            'telephone'     => ['string', 'nullable'],
+            'city'          => ['string', 'nullable'],
         ];
         $values = $this->validate($request, $rules);
         $disease_id = $values['disease_id'] ?? (
@@ -222,6 +225,8 @@ class PatientController extends Controller
                 'location_id'   => $values['disease_site_id'],
                 "fiscal_number" => $values['fiscalNUmber'] ?? $patient->fiscal_number,
                 "email" => $values['email'] ?? $patient->email,
+                'telephone' => $values['telephone'] ?? null,
+                'city'      => $values['city']  ?? null,
             ]
         )->save();
         $patient->save();
