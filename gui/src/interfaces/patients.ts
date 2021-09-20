@@ -17,6 +17,8 @@ export interface PatientBase {
   email: string;
   fiscalNumber: string;
   disease: DiseaseCollectionItem;
+  disease_stage: any;
+  disease_site_id: number;
   created_at: string;
   created_at_diff: string;
   updated_at: string;

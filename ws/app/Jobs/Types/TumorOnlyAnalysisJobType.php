@@ -122,7 +122,12 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 $depthFilter,
                 '-af',
                 $alleleFractionFilter,
+                '-st',
+                $patient->site->name,
+                '-sg',
+                $patient->stage(),
             ];
+
             if ($this->fileExists($vcf)) {
                 $command = [...$command, '-v', $vcf];
             } elseif ($this->fileExists($bam)) {

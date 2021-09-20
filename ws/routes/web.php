@@ -3,6 +3,12 @@
 use App\Http\Livewire\Admin\User\Index as UserIndex;
 use App\Http\Livewire\Admin\User\Create as UserCreate;
 use App\Http\Livewire\Admin\User\Show as UserShow;
+use App\Http\Resources\Location as LocationResurce;
+use App\Http\Resources\Patient as PatientResource;
+use App\Http\Resources\User;
+use App\Models\Location;
+use App\Models\Patient;
+use App\Utils;
 //use App\Http\Resources\Patient as PatientResource;
 //use App\Http\Resources\PatientCollection;
 //use App\Models\Patient;
@@ -21,15 +27,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( '/',
     function (Request $request) {
-        //return new PatientResource(Patient::find(1));
         return redirect()->route('dashboard');
     }
 );
 
-Route::get('test', function () {
-    $a = ['doctor', 'technical'];
-    $b = config('constants.roles');
-    return $a == $b;
+Route::get('test', function (Request $request) {
+    $p = Patient::first();
+    return $p->stage();
+    return new PatientResource(Patient::first());
 });
 
 

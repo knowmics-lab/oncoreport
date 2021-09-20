@@ -22,6 +22,10 @@ class CreatePatientsTable extends Migration
                 $table->string('last_name');
                 $table->enum('gender', ['m', 'f']);
                 $table->tinyInteger('age');
+                $table->integer('T')->nullable();
+                $table->integer('N')->nullable();
+                $table->integer('M')->nullable();
+                $table->unsignedBigInteger('location_id')->nullable();
                 $table->string('email');
                 $table->string('fiscal_number')->unique();
                 $table->unsignedBigInteger('user_id')->nullable()->index();

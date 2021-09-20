@@ -12,6 +12,8 @@ export interface Patient extends IdentifiableEntity, TimedEntity {
   email: string;
   gender: Gender;
   disease: Disease;
+  disease_stage: {'T': number, 'M': number, 'N':number};
+  disease_site_id: number;
   owner: unknown;
   tumors: Array<{
     id: number;

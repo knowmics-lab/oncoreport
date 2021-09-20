@@ -7,6 +7,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Location as LocationModel;
 use App\Utils;
 use Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -37,7 +38,10 @@ class Patient extends JsonResource
                 'gender'          => $this->gender,
                 'email'           => $this->email,
                 'fiscalNumber'    => $this->fiscal_number,
+
                 'disease'         => Utils::flattenResource(new Disease($this->disease), $request),
+                'disease_stage'   => ['T' => $this->T, 'M' => $this->M, 'N' => $this->N],
+                'disease_site_id'    => $this->location_id, #Utils::flattenResource(new Location(LocationModel::first()), $request),
                 'owner'           => $this->user? Utils::flattenResource(new User($this->user), $request) : null,
                 'created_at'      => $this->created_at,
                 'created_at_diff' => $this->created_at->diffForHumans(),
@@ -46,6 +50,7 @@ class Patient extends JsonResource
                 'tumors'          => new TumorCollection($this->tumors),
                 'diseases'        => new PathologyCollection($this->diseases),
                 'drugs' => $this->drugs()->get(),
+
             ],
             'links' => [
                 'self'  => route('patients.show', $this->resource, false),

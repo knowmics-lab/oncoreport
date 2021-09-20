@@ -116,6 +116,10 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 $threads,
                 '-gn',
                 $genome,
+                '-st',
+                $patient->site->name,
+                '-sg',
+                $patient->stage(),
             ];
             if ($this->fileExists($vcf)) {
                 $command = [...$command, '-v', $vcf];

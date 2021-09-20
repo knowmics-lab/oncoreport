@@ -153,7 +153,6 @@ export default function PatientForm() {
           }, {})
         );
 
-        //setLocationOptions({2:"sede 2", 1:"sede 1", 3:"sede 3"});
         setLoading(false);
       }
     });
@@ -303,7 +302,15 @@ export default function PatientForm() {
     gender: Yup.mixed()
       .oneOf([Gender.m, Gender.f] as Gender[])
       .defined(),
-    //disease: Yup.number().defined(),
+    disease: Yup.number().defined(),
+    disease_stage: Yup.object({
+        T: Yup.number().min(0).max(4).defined(),
+        M: Yup.number().min(0).max(4).defined(),
+        N: Yup.number().min(0).max(4).defined(),
+      })
+    .defined(),
+    disease_site_id: Yup.number().defined(),
+
   });
 
   const backUrl = generatePath(Routes.PATIENTS);
@@ -409,7 +416,50 @@ export default function PatientForm() {
                   emptyText="Select a Disease"
                   addEmpty={!patient.id}
                   options={diseaseOptions}
+                  required
                 />
+
+                <Grid container spacing={3}>
+                  <Grid item md>
+                  <SelectField
+                    name="disease_stage.T"
+                    label="T"
+                    emptyText="Select T"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                    required
+                  />
+                  </Grid>
+                  <Grid item md>
+                  <SelectField
+                    name="disease_stage.N"
+                    label="N"
+                    emptyText="Select N"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                    required
+                  /></Grid>
+                  <Grid item md>
+                  <SelectField
+                    name="disease_stage.M"
+                    label="M"
+                    emptyText="Select M"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                    required
+                  /></Grid>
+              </Grid>
+
+              <Grid item md>
+                    <SelectField
+                      name="disease_site_id"
+                      label="Site"
+                      emptyText="Select a site"
+                      addEmpty={true}
+                      options={locationOptions}
+                      required
+                    />
+                  </Grid>
 
                 <Grid container>
                 <div style={{padding:10}}><Typography variant="overline" display="block" gutterBottom>Patologie pregresse</Typography>
@@ -565,7 +615,7 @@ export default function PatientForm() {
                     <SelectField
                       name="sede"
                       label="Sede"
-                      emptyText="Select a sede"
+                      emptyText="Select a site"
                       addEmpty={true}
                       options={locationOptions}
                     />
@@ -574,31 +624,31 @@ export default function PatientForm() {
                 </Grid>
 
                 <Grid container spacing={3}>
-                <Grid item md>
-                <SelectField
-                  name="T"
-                  label="T"
-                  emptyText="Select T"
-                  addEmpty={true}
-                  options={["0", "1", "2","3"]}
-                />
-                </Grid>
-                <Grid item md>
-                <SelectField
-                  name="N"
-                  label="N"
-                  emptyText="Select N"
-                  addEmpty={true}
-                  options={["0", "1", "2","3"]}
-                /></Grid>
-                <Grid item md>
-                <SelectField
-                  name="M"
-                  label="M"
-                  emptyText="Select M"
-                  addEmpty={true}
-                  options={["0", "1", "2","3"]}
-                /></Grid>
+                  <Grid item md>
+                  <SelectField
+                    name="T"
+                    label="T"
+                    emptyText="Select T"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                  />
+                  </Grid>
+                  <Grid item md>
+                  <SelectField
+                    name="N"
+                    label="N"
+                    emptyText="Select N"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                  /></Grid>
+                  <Grid item md>
+                  <SelectField
+                    name="M"
+                    label="M"
+                    emptyText="Select M"
+                    addEmpty={true}
+                    options={["0", "1", "2","3"]}
+                  /></Grid>
               </Grid>
 
               <DialogContentText>Seleziona i farmaci usati fino ad ora.</DialogContentText>

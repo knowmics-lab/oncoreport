@@ -24,6 +24,16 @@ export default class Patient extends Entity<PatientObject>
     withEntity: Disease,
   })
   disease!: Disease;
+  @field({
+    fillable: true,
+  })
+  disease_stage: any;
+
+  @field({
+    fillable: true,
+  })
+  disease_site_id: number;
+
 
   @field({
     fillable: true,

@@ -119,6 +119,23 @@ class Patient extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+
+    public function stage()
+    {
+        $stage = "";
+        if ($this->T != null)
+            $stage = $stage . "t" . $this->T;
+        if ($this->N != null)
+        $stage = $stage . "n" . $this->N;
+        if ($this->M != null)
+            $stage = $stage . "m" . $this->M;
+        return $stage;
+    }
+
     public function tumors(){
         return $this->belongsToMany(Tumor::class)->using(PatientTumor::class)->withPivot('id')->withTimestamps()->withPivot(['type', 'T', 'M', 'N']);
     }
