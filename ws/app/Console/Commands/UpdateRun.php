@@ -29,10 +29,35 @@ class UpdateRun extends Command
     protected $description = 'Runs the update script';
 
     /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle(): int
+    {
+        $retCode = $this->runScript('pre_update.bash');
+        if ($retCode !== 0) {
+            return $retCode;
+        }
+        $retCode = $this->call(
+            'migrate',
+            [
+                '--force' => true,
+                '--no-interaction' => true,
+            ]
+        );
+        if ($retCode !== 0) {
+            return $retCode;
+        }
+
+        return $this->runScript('post_update.bash', true);
+    }
+
+    /**
      * Execute an update script
      *
-     * @param string $script
-     * @param bool   $warn
+     * @param  string  $script
+     * @param  bool  $warn
      *
      * @return int
      */
@@ -66,31 +91,5 @@ class UpdateRun extends Command
         }
 
         return 0;
-    }
-
-
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle(): int
-    {
-        $retCode = $this->runScript('pre_update.bash');
-        if ($retCode !== 0) {
-            return $retCode;
-        }
-        $retCode = $this->call(
-            'migrate',
-            [
-                '--force'          => true,
-                '--no-interaction' => true,
-            ]
-        );
-        if ($retCode !== 0) {
-            return $retCode;
-        }
-
-        return $this->runScript('post_update.bash', true);
     }
 }

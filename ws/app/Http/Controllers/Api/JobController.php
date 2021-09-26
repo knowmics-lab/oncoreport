@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Job as JobResource;
 use App\Http\Resources\JobCollection;
-use App\Jobs\DeleteJobDirectory;
 use App\Jobs\Request as JobRequest;
 use App\Jobs\Types\AbstractJob;
 use App\Jobs\Types\Factory;
@@ -27,10 +26,33 @@ class JobController extends Controller
 {
 
     /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \App\Http\Resources\JobCollection
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function index(Request $request): JobCollection
+    {
+        $this->authorize('viewAny', Job::class);
+        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $query = Job::query();
+        if ($request->has('deep_type')) {
+            $type = $request->get('deep_type');
+            if ($type) {
+                $query = Job::deepTypeFilter($type);
+            }
+        }
+
+        return $this->buildJobCollection($request, $query);
+    }
+
+    /**
      * Starting from a query, this method creates a job collection
      *
-     * @param \Illuminate\Http\Request              $request
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      *
      * @return \App\Http\Resources\JobCollection
      */
@@ -56,35 +78,11 @@ class JobController extends Controller
         );
     }
 
-
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \App\Http\Resources\JobCollection
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function index(Request $request): JobCollection
-    {
-        $this->authorize('viewAny', Job::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        $query = Job::query();
-        if ($request->has('deep_type')) {
-            $type = $request->get('deep_type');
-            if ($type) {
-                $query = Job::deepTypeFilter($type);
-            }
-        }
-
-        return $this->buildJobCollection($request, $query);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Patient      $patient
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Patient  $patient
      *
      * @return \App\Http\Resources\JobCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -108,29 +106,9 @@ class JobController extends Controller
     }
 
     /**
-     * Prepare array for nested validation
-     *
-     * @param array $specs
-     *
-     * @return array
-     */
-    private function prepareNestedValidation(array $specs): array
-    {
-        $nestedSpecs = [];
-        foreach ($specs as $field => $rules) {
-            if (!Str::startsWith($field, 'parameters.')) {
-                $field = 'parameters.' . $field;
-            }
-            $nestedSpecs[$field] = $rules;
-        }
-
-        return $nestedSpecs;
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Validation\ValidationException
@@ -166,15 +144,15 @@ class JobController extends Controller
         $validParameters = $validParameters['parameters'] ?? [];
         $job = Job::create(
             [
-                'sample_code'    => $validValues['sample_code'],
-                'name'           => $validValues['name'],
-                'job_type'       => $type,
-                'status'         => Job::READY,
+                'sample_code' => $validValues['sample_code'],
+                'name' => $validValues['name'],
+                'job_type' => $type,
+                'status' => Job::READY,
                 'job_parameters' => [],
-                'job_output'     => [],
-                'log'            => '',
-                'patient_id'     => $patientId,
-                'user_id'        => $request->user()->id,
+                'job_output' => [],
+                'log' => '',
+                'patient_id' => $patientId,
+                'user_id' => $request->user()->id,
             ]
         );
         $job->setParameters(Arr::dot($validParameters));
@@ -185,10 +163,30 @@ class JobController extends Controller
     }
 
     /**
+     * Prepare array for nested validation
+     *
+     * @param  array  $specs
+     *
+     * @return array
+     */
+    private function prepareNestedValidation(array $specs): array
+    {
+        $nestedSpecs = [];
+        foreach ($specs as $field => $rules) {
+            if (!Str::startsWith($field, 'parameters.')) {
+                $field = 'parameters.' . $field;
+            }
+            $nestedSpecs[$field] = $rules;
+        }
+
+        return $nestedSpecs;
+    }
+
+    /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Job          $job
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -204,8 +202,8 @@ class JobController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Job          $job
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Validation\ValidationException
@@ -254,8 +252,8 @@ class JobController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Job          $job
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -290,8 +288,8 @@ class JobController extends Controller
     /**
      * Submit the specified resource for execution
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Job          $job
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
      *
      * @return \App\Http\Resources\Job
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -311,8 +309,8 @@ class JobController extends Controller
     /**
      * Upload a file to the specified job
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Job          $job
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      * @throws \Illuminate\Auth\Access\AuthorizationException

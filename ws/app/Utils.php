@@ -7,7 +7,6 @@
 
 namespace App;
 
-use App\Exceptions\CommandException;
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use Exception;
@@ -17,7 +16,6 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Throwable;
 use ZipArchive;
 
 final class Utils
@@ -41,10 +39,10 @@ final class Utils
     /**
      * Runs a shell command and checks for successful completion of execution
      *
-     * @param array         $command
-     * @param string|null   $cwd
-     * @param int|null      $timeout
-     * @param callable|null $callback
+     * @param  array  $command
+     * @param  string|null  $cwd
+     * @param  int|null  $timeout
+     * @param  callable|null  $callback
      *
      * @return string|null
      */
@@ -66,8 +64,8 @@ final class Utils
     /**
      * Map command exception to message
      *
-     * @param \Symfony\Component\Process\Exception\ProcessFailedException $e
-     * @param array                                                       $errorCodeMap
+     * @param  \Symfony\Component\Process\Exception\ProcessFailedException  $e
+     * @param  array  $errorCodeMap
      *
      * @return \App\Exceptions\ProcessingJobException|\App\Exceptions\IgnoredException
      */
@@ -90,8 +88,8 @@ final class Utils
     /**
      * Build a zip archive from a folder
      *
-     * @param string $inputFolder
-     * @param string $zipArchive
+     * @param  string  $inputFolder
+     * @param  string  $zipArchive
      *
      * @return bool
      */
@@ -104,7 +102,10 @@ final class Utils
         $zip = new ZipArchive();
         $zip->open($zipArchive, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         /** @var SplFileInfo[] $files */
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($rootPath),
+            RecursiveIteratorIterator::LEAVES_ONLY
+        );
         foreach ($files as $name => $file) {
             if (!$file->isDir()) {
                 $filePath = $file->getRealPath();
@@ -120,8 +121,8 @@ final class Utils
     /**
      * Recursively set chmod
      *
-     * @param string $inputFolder
-     * @param int    $mode
+     * @param  string  $inputFolder
+     * @param  int  $mode
      *
      * @return bool
      */
@@ -143,8 +144,8 @@ final class Utils
     /**
      * Flatten a resource object removing data and links sections
      *
-     * @param \Illuminate\Http\Resources\Json\JsonResource $resource
-     * @param \Illuminate\Http\Request                     $request
+     * @param  \Illuminate\Http\Resources\Json\JsonResource  $resource
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return array
      */

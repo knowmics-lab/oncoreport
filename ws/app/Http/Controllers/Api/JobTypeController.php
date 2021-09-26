@@ -17,7 +17,7 @@ class JobTypeController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -27,7 +27,7 @@ class JobTypeController extends Controller
 
         return response()->json(
             [
-                'data'  => Factory::listTypes()->keyBy('id'),
+                'data' => Factory::listTypes()->keyBy('id'),
             ]
         );
     }
@@ -35,8 +35,8 @@ class JobTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string                   $type
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -54,7 +54,7 @@ class JobTypeController extends Controller
 
         return response()->json(
             [
-                'data'  => $res,
+                'data' => $res,
                 'links' => [
                     'self' => route('job-types.show', $id, false),
                 ],

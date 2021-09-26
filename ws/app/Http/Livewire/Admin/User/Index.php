@@ -18,7 +18,7 @@ class Index extends Component
     use WithPagination;
 
     /**
-     * @param \App\Models\User $user
+     * @param  \App\Models\User  $user
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

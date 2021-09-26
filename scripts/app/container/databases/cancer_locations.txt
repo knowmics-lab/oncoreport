@@ -1,0 +1,15 @@
+AIDS-Related
+Breast
+Digestive/Gastrointestinal
+Endocrine and Neuroendocrine
+Eye
+Genitourinary
+Germ Cell
+Gynecologic
+Head and Neck
+Hematologic/Blood
+Musculoskeletal
+Neurologic
+Respiratory/Thoracic
+Skin
+Unknown Primary

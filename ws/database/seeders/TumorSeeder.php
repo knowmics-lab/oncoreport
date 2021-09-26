@@ -15,14 +15,16 @@ class TumorSeeder extends Seeder
     public function run()
     {
         $path = realpath(env('DATABASES_PATH') . '/cancer_types.txt');
-        $path = '../databases/cancer_types.txt';
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
-            while (!feof($fp) && ($line = @fgets($fp)) !== false){
-                Tumor::create(['name' => trim($line)])->save();
+            while (!feof($fp) && ($line = @fgets($fp)) !== false) {
+                Tumor::firstOrCreate(
+                    [
+                        'name' => trim($line),
+                    ]
+                );
             }
             @fclose($fp);
         }
-
     }
 }

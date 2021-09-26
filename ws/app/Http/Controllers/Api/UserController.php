@@ -24,7 +24,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\UserCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -40,7 +40,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\User
      * @throws \Illuminate\Validation\ValidationException
@@ -48,7 +48,6 @@ class UserController extends Controller
      */
     public function store(Request $request): UserResource
     {
-
         $this->authorize('create', User::class);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
@@ -59,7 +58,7 @@ class UserController extends Controller
                 'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
                 'password' => ['required', 'string', new Password()],
                 'admin'    => ['filled', 'boolean'],
-                'role'     => ['required', Rule::in(config('constants.roles'))]
+                'role'     => ['required', Rule::in(config('constants.roles'))],
             ]
         );
         $model = User::create(
@@ -80,8 +79,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User         $user
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
      *
      * @return \App\Http\Resources\User
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -97,8 +96,8 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User         $user
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
      *
      * @return \App\Http\Resources\User
      * @throws \Illuminate\Validation\ValidationException
@@ -145,8 +144,8 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User         $user
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
@@ -172,8 +171,8 @@ class UserController extends Controller
     /**
      * Make a new token for the provided user
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User         $user
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException

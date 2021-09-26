@@ -14,20 +14,22 @@ class ReasonSeeder extends Seeder
      */
     public function run()
     {
-
-
         $path = realpath(env('DATABASES_PATH') . '/reasons.txt');
-        $path = '../databases/reasons.txt';
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
-            while (!feof($fp) && ($line = @fgets($fp)) !== false){
-                Reason::create(['name' => trim($line)])->save();
+            while (!feof($fp) && ($line = @fgets($fp)) !== false) {
+                Reason::firstOrCreate(
+                    [
+                        'name' => trim($line),
+                    ]
+                );
             }
             @fclose($fp);
         }
-
-        #Reason::create(['name' => 'rigetto'])->save();
-        #Reason::create(['name' => 'reazione allergica'])->save();
-        Reason::create(['name' => 'other'])->save();
+        Reason::firstOrCreate(
+            [
+                'name' => 'other',
+            ]
+        );
     }
 }

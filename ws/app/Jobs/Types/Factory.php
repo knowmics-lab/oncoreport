@@ -34,7 +34,7 @@ class Factory
     /**
      * Given a Job Model, this method builds an object that will be able to process this job
      *
-     * @param \App\Models\Job $jobModel
+     * @param  \App\Models\Job  $jobModel
      *
      * @return \App\Jobs\Types\AbstractJob
      * @throws \App\Exceptions\ProcessingJobException
@@ -65,7 +65,7 @@ class Factory
     /**
      * Checks if a job type exists
      *
-     * @param string $type
+     * @param  string  $type
      *
      * @return bool
      */
@@ -89,8 +89,8 @@ class Factory
     /**
      * Implementation of virtual static methods
      *
-     * @param string $name
-     * @param array  $arguments
+     * @param  string  $name
+     * @param  array  $arguments
      *
      * @return mixed
      * @throws \App\Exceptions\ProcessingJobException
@@ -161,7 +161,7 @@ class Factory
                         $constructor = $r->getConstructor();
                         if ($constructor !== null && $constructor->getNumberOfRequiredParameters() === 1) {
                             $list[] = [
-                                'id'          => Str::snake($file->getBasename('.php')),
+                                'id' => Str::snake($file->getBasename('.php')),
                                 'description' => call_user_func([$class, 'description']),
                             ];
                         }

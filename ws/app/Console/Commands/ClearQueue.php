@@ -8,10 +8,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Job;
-use App\Utils;
 use Illuminate\Console\Command;
 use Queue;
-use Symfony\Component\Process\Process;
 
 class ClearQueue extends Command
 {

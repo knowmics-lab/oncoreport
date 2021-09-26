@@ -4,24 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Drug as ResourcesDrug;
 use App\Http\Resources\DrugCollection;
-use App\Http\Resources\Patient as ResourcesPatient;
-use App\Models\Drug;
 use App\Models\Patient;
 use App\Models\PatientTumor;
 use DateTime;
 use Illuminate\Http\Request;
 
-use App\Http\Resources\Patient as PatientResource;
-use App\Http\Resources\PatientCollection;
-use Auth;
-use Response;
-
 class PatientTumorController extends Controller
 {
     public function detach($patient_id, $tumor_id, $drug_id, Request $request)
     {
-
-
         $reasons = json_decode($request->get('reasons', []));
         #error_log('ciao');
         #error_log(json_encode($reasons));
@@ -31,18 +22,19 @@ class PatientTumorController extends Controller
 
         $comment = $request->get('comment', null);
         #error_log("comment: " . json_encode($comment));
-        if ($comment)
+        if ($comment) {
             $model->drugs()->updateExistingPivot($drug->id, ['comment' => $comment]);
+        }
 
         $drug->pivot->reasons()->sync($reasons);
 
         return new ResourcesDrug($model->drugs()->findOrFail($drug_id));
+
         return $model->drugs;
     }
 
     public function detachAll($patient_id, $drug_id, Request $request)
     {
-
         #error_log('ciao');
         $reasons = json_decode($request->get('reasons', []));
 
@@ -67,11 +59,12 @@ class PatientTumorController extends Controller
                 #error_log('fatto tutto');
 
                 $comment = $request->get("comment", null);
-                if($comment)
+                if ($comment) {
                     $model->drugs()->updateExistingPivot($drug->id, ['comment' => $comment]);
-
+                }
             }
         }
+
         return new DrugCollection(Patient::findOrFail($patient_id)->drugs()->get());
     }
 }

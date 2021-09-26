@@ -10,10 +10,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Disease as DiseaseResource;
 use App\Http\Resources\DiseaseCollection;
-use App\Jobs\Types\Factory;
 use App\Models\Disease;
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DiseaseController extends Controller
@@ -22,7 +19,7 @@ class DiseaseController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\DiseaseCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -38,8 +35,8 @@ class DiseaseController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Disease      $disease
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Disease  $disease
      *
      * @return \App\Http\Resources\Disease
      * @throws \Illuminate\Auth\Access\AuthorizationException

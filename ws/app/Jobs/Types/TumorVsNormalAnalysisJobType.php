@@ -11,7 +11,6 @@ use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Utils;
 use Exception;
-use Hamcrest\Util;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -64,6 +63,100 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
     }
 
     /**
+     * Returns a description for this job
+     *
+     * @return string
+     */
+    public static function description(): string
+    {
+        return 'Runs the tumor vs normal analysis';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function displayName(): string
+    {
+        return 'Tumor VS Normal';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function validationSpec(Request $request): array
+    {
+        $parameters = (array)$request->get('parameters', []);
+
+        return [
+            'paired'        => ['filled', 'boolean'],
+            'tumor'         => ['required', 'array'],
+            'tumor.fastq1'  => [
+                'nullable',
+                'required_without_all:parameters.tumor.ubam,parameters.tumor.bam,parameters.vcf',
+            ],
+            'tumor.fastq2'  => [
+                'nullable',
+                Rule::requiredIf(
+                    static function () use ($parameters) {
+                        $fastq = data_get($parameters, 'tumor.fastq1');
+
+                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
+                    }
+                ),
+            ],
+            'tumor.ubam'    => [
+                'nullable',
+                'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.vcf',
+            ],
+            'tumor.bam'     => [
+                'nullable',
+                'required_without_all:parameters.tumor.fastq1,parameters.tumor.ubam,parameters.vcf',
+            ],
+            'normal'        => ['required', 'array'],
+            'normal.fastq1' => [
+                'nullable',
+                'required_with:parameters.tumor.fastq1',
+                'required_without_all:parameters.normal.ubam,parameters.normal.bam,parameters.vcf',
+            ],
+            'normal.fastq2' => [
+                'nullable',
+                'required_with:tumor.fastq2',
+                Rule::requiredIf(
+                    static function () use ($parameters) {
+                        $fastq = data_get($parameters, 'normal.fastq1');
+
+                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
+                    }
+                ),
+            ],
+            'normal.ubam'   => [
+                'nullable',
+                'required_with:parameters.tumor.ubam',
+                'required_without_all:parameters.normal.fastq1,parameters.normal.bam,parameters.vcf',
+            ],
+            'normal.bam'    => [
+                'nullable',
+                'required_with:parameters.tumor.bam',
+                'required_without_all:parameters.normal.fastq1,parameters.normal.ubam,parameters.vcf',
+            ],
+            'vcf'           => [
+                'nullable',
+                'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.tumor.ubam,parameters.normal.fastq1,parameters.normal.bam,parameters.normal.ubam',
+            ],
+            'genome'        => ['filled', Rule::in(Utils::VALID_GENOMES)],
+            'threads'       => ['filled', 'integer'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function patientInputState(): string
+    {
+        return self::PATIENT_REQUIRED;
+    }
+
+    /**
      * Handles all the computation for this job.
      * This function should throw a ProcessingJobException if something went wrong during the computation.
      * If no exceptions are thrown the job is considered as successfully completed.
@@ -76,7 +169,10 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
         try {
             $this->log('Starting analysis.');
             $patient = $this->model->patient;
-            throw_unless($patient, new ProcessingJobException('This job is not tied to any patient. Unable to run the analysis.'));
+            throw_unless(
+                $patient,
+                new ProcessingJobException('This job is not tied to any patient. Unable to run the analysis.')
+            );
             $paired = (bool)$this->model->getParameter('paired', false);
             $tumorFastq1 = $this->model->getParameter('tumor.fastq1');
             $tumorFastq2 = $this->model->getParameter('tumor.fastq2');
@@ -154,7 +250,9 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                         $normalFastq2,
                     ];
                 } else {
-                    throw new ProcessingJobException('Unable to validate second fastq files with a paired-end analysis.');
+                    throw new ProcessingJobException(
+                        'Unable to validate second fastq files with a paired-end analysis.'
+                    );
                 }
             } else {
                 throw new ProcessingJobException('No valid input files have been specified.');
@@ -217,10 +315,16 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             $this->log('Writing output');
             $this->setOutput(
                 [
-                    'tumorBamOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/mark_dup_tumor/nodup.bam'),
-                    'normalBamOutputFile' => $this->getFilePathsForOutput($outputRelative . '/mark_dup_normal/nodup.bam'),
+                    'tumorBamOutputFile'  => $this->getFilePathsForOutput(
+                        $outputRelative . '/mark_dup_tumor/nodup.bam'
+                    ),
+                    'normalBamOutputFile' => $this->getFilePathsForOutput(
+                        $outputRelative . '/mark_dup_normal/nodup.bam'
+                    ),
                     'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
-                    'vcfPASSOutputFile'   => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
+                    'vcfPASSOutputFile'   => $this->getFilePathsForOutput(
+                        $outputRelative . '/pass_filtered/variants.vcf'
+                    ),
                     'textOutputFiles'     => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
                     'reportOutputFile'    => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
                 ]
@@ -231,83 +335,6 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             throw_if($e instanceof IgnoredException, $e);
             throw new ProcessingJobException('An error occurred during job processing.', 0, $e);
         }
-    }
-
-    /**
-     * Returns a description for this job
-     *
-     * @return string
-     */
-    public static function description(): string
-    {
-        return 'Runs the tumor vs normal analysis';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function displayName(): string
-    {
-        return 'Tumor VS Normal';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function validationSpec(Request $request): array
-    {
-        $parameters = (array)$request->get('parameters', []);
-
-        return [
-            'paired'        => ['filled', 'boolean'],
-            'tumor'         => ['required', 'array'],
-            'tumor.fastq1'  => ['nullable', 'required_without_all:parameters.tumor.ubam,parameters.tumor.bam,parameters.vcf'],
-            'tumor.fastq2'  => [
-                'nullable',
-                Rule::requiredIf(
-                    static function () use ($parameters) {
-                        $fastq = data_get($parameters, 'tumor.fastq1');
-
-                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
-                    }
-                ),
-            ],
-            'tumor.ubam'    => ['nullable', 'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.vcf'],
-            'tumor.bam'     => ['nullable', 'required_without_all:parameters.tumor.fastq1,parameters.tumor.ubam,parameters.vcf'],
-            'normal'        => ['required', 'array'],
-            'normal.fastq1' => [
-                'nullable',
-                'required_with:parameters.tumor.fastq1',
-                'required_without_all:parameters.normal.ubam,parameters.normal.bam,parameters.vcf',
-            ],
-            'normal.fastq2' => [
-                'nullable',
-                'required_with:tumor.fastq2',
-                Rule::requiredIf(
-                    static function () use ($parameters) {
-                        $fastq = data_get($parameters, 'normal.fastq1');
-
-                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
-                    }
-                ),
-            ],
-            'normal.ubam'   => [
-                'nullable',
-                'required_with:parameters.tumor.ubam',
-                'required_without_all:parameters.normal.fastq1,parameters.normal.bam,parameters.vcf',
-            ],
-            'normal.bam'    => [
-                'nullable',
-                'required_with:parameters.tumor.bam',
-                'required_without_all:parameters.normal.fastq1,parameters.normal.ubam,parameters.vcf',
-            ],
-            'vcf'           => [
-                'nullable',
-                'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.tumor.ubam,parameters.normal.fastq1,parameters.normal.bam,parameters.normal.ubam',
-            ],
-            'genome'        => ['filled', Rule::in(Utils::VALID_GENOMES)],
-            'threads'       => ['filled', 'integer'],
-        ];
     }
 
     /**
@@ -341,13 +368,5 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
         }
 
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function patientInputState(): string
-    {
-        return self::PATIENT_REQUIRED;
     }
 }

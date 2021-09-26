@@ -51,7 +51,6 @@ Cervical Cancer	Cervical Cancer
 Cervical Squamous Cell Carcinoma	Cervical Cancer
 Cervix	Cervix Cancer
 Cervix squamous cell	Cervix Cancer
-Cervix Carcinoma	Cervix Cancer
 Cholangiocarcinoma	Cholangiocarcinoma
 Chordoma	Chordoma
 Chronic Leukemia	Leukemia
@@ -275,7 +274,7 @@ Tuberous Sclerosis	Tuberous Sclerosis
 Tumor Of Exocrine Pancreas	Pancreatic Cancer
 Ureter Small Cell Carcinoma	Ureter Small Cell Carcinoma
 Urinary tract carcinoma	Urinary tract carcinoma
-Urothelial Carcinoma	Bladder Cancer
+Urothelial Carcinoma	Urothelial Carcinoma
 Uterine Cancer	Uterine Cancer
 Uterine Corpus Endometrial Carcinoma	Uterine Cancer
 Uterine Corpus Serous Adenocarcinoma	Uterine Cancer

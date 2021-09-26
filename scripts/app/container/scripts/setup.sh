@@ -2,7 +2,7 @@
 
 # Create Web Service Directory
 mkdir -p /oncoreport/tmp || exit 100
-mkdir /oncoreport/databases || exit 101
+mv /databases /oncoreport/databases || exit 101
 mkdir /oncoreport/scripts || exit 102
 mv /html_source /oncoreport/html_source || exit 102
 
@@ -114,13 +114,13 @@ cd /oncoreport/tmp/ || exit 99
     mv ncbiRefSeq.txt /oncoreport/databases/ncbiRefSeq_hg19.txt
 ) || exit 117
 
-mv /Disease.txt /oncoreport/databases/ || exit 118
-mv /disease_list.txt /oncoreport/databases/ || exit 119
-mv /Drug_food.txt /oncoreport/databases/ || exit 120
-mv /pharm_database_hg19.txt /oncoreport/databases/ || exit 121
-mv /cgi_original_hg19.txt /oncoreport/databases/ || exit 122
-mv /pharm_database_hg38.txt /oncoreport/databases/ || exit 123
-mv /cgi_original_hg38.txt /oncoreport/databases/ || exit 124
+#mv /Disease.txt /oncoreport/databases/ || exit 118
+#mv /disease_list.txt /oncoreport/databases/ || exit 119
+#mv /Drug_food.txt /oncoreport/databases/ || exit 120
+#mv /pharm_database_hg19.txt /oncoreport/databases/ || exit 121
+#mv /cgi_original_hg19.txt /oncoreport/databases/ || exit 122
+#mv /pharm_database_hg38.txt /oncoreport/databases/ || exit 123
+#mv /cgi_original_hg38.txt /oncoreport/databases/ || exit 124
 
 # Copy scripts
 mv /PrepareCOSMIC.R /oncoreport/scripts || exit 125

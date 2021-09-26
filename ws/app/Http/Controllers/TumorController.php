@@ -10,12 +10,14 @@ use Illuminate\Http\Request;
 class TumorController extends Controller
 {
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         #error_log('tumors requested');
         return new TumorCollection(Tumor::all());
     }
 
-    public function show(Request $request, Tumor $tumor){
-       return new ResourcesTumor($tumor);
+    public function show(Request $request, Tumor $tumor)
+    {
+        return new ResourcesTumor($tumor);
     }
 }

@@ -20,7 +20,7 @@ class Job extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return array
      */
@@ -42,7 +42,10 @@ class Job extends JsonResource
                 'updated_at'      => $this->updated_at,
                 'updated_at_diff' => $this->updated_at->diffForHumans(),
                 'owner'           => Utils::flattenResource(new User($this->user), $request),
-                'patient'         => $this->patient ? Utils::flattenResource(new Patient($this->patient), $request) : null,
+                'patient'         => $this->patient ? Utils::flattenResource(
+                    new Patient($this->patient),
+                    $request
+                ) : null,
             ],
             'links' => [
                 'self'    => route('jobs.show', $this->resource, false),

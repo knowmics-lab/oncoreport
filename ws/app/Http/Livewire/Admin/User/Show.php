@@ -45,7 +45,7 @@ class Show extends Component
     /**
      * Prepare the component.
      *
-     * @param \App\Models\User $user
+     * @param  \App\Models\User  $user
      *
      * @return void
      */

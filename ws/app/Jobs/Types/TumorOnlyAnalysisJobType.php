@@ -61,6 +61,78 @@ class TumorOnlyAnalysisJobType extends AbstractJob
     }
 
     /**
+     * Returns a description for this job
+     *
+     * @return string
+     */
+    public static function description(): string
+    {
+        return 'Runs the tumor-only analysis';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function displayName(): string
+    {
+        return 'Tumor Only';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function validationSpec(Request $request): array
+    {
+        $parameters = (array)$request->get('parameters', []);
+
+        return [
+            'paired'                          => ['filled', 'boolean'],
+            'fastq1'                          => [
+                'nullable',
+                'required_without_all:parameters.ubam,parameters.bam,parameters.vcf',
+            ],
+            'fastq2'                          => [
+                'nullable',
+                Rule::requiredIf(
+                    static function () use ($parameters) {
+                        $fastq = data_get($parameters, 'fastq1');
+
+                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
+                    }
+                ),
+            ],
+            'ubam'                            => [
+                'nullable',
+                'required_without_all:parameters.fastq1,parameters.bam,parameters.vcf',
+            ],
+            'bam'                             => [
+                'nullable',
+                'required_without_all:parameters.fastq1,parameters.ubam,parameters.vcf',
+            ],
+            'vcf'                             => [
+                'nullable',
+                'required_without_all:parameters.fastq1,parameters.bam,parameters.ubam',
+            ],
+            'genome'                          => ['filled', Rule::in(Utils::VALID_GENOMES)],
+            'threads'                         => ['filled', 'integer'],
+            'depthFilter'                     => ['filled', 'array'],
+            'depthFilter.comparison'          => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
+            'depthFilter.value'               => ['filled', 'numeric'],
+            'alleleFractionFilter'            => ['filled', 'array'],
+            'alleleFractionFilter.comparison' => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
+            'alleleFractionFilter.value'      => ['filled', 'numeric'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function patientInputState(): string
+    {
+        return self::PATIENT_REQUIRED;
+    }
+
+    /**
      * Handles all the computation for this job.
      * This function should throw a ProcessingJobException if something went wrong during the computation.
      * If no exceptions are thrown the job is considered as successfully completed.
@@ -73,7 +145,10 @@ class TumorOnlyAnalysisJobType extends AbstractJob
         try {
             $this->log('Starting analysis.');
             $patient = $this->model->patient;
-            throw_unless($patient, new ProcessingJobException('This job is not tied to any patient. Unable to run the analysis.'));
+            throw_unless(
+                $patient,
+                new ProcessingJobException('This job is not tied to any patient. Unable to run the analysis.')
+            );
             $paired = (bool)$this->model->getParameter('paired', false);
             $fastq1 = $this->model->getParameter('fastq1');
             $fastq2 = $this->model->getParameter('fastq2');
@@ -82,7 +157,10 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $vcf = $this->model->getParameter('vcf');
             $genome = $this->model->getParameter('genome', Utils::VALID_GENOMES[0]);
             $threads = $this->model->getParameter('threads', 1);
-            $depthFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter('depthFilter.comparison', 'lt')];
+            $depthFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
+                'depthFilter.comparison',
+                'lt'
+            )];
             $depthFilterValue = (double)$this->model->getParameter('depthFilter.value', 0);
             $alleleFractionFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
                 'alleleFractionFilter.comparison',
@@ -152,7 +230,9 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                         $fastq2,
                     ];
                 } else {
-                    throw new ProcessingJobException('Unable to validate second fastq files with a paired-end analysis.');
+                    throw new ProcessingJobException(
+                        'Unable to validate second fastq files with a paired-end analysis.'
+                    );
                 }
             } else {
                 throw new ProcessingJobException('No valid input files have been specified.');
@@ -226,58 +306,6 @@ class TumorOnlyAnalysisJobType extends AbstractJob
     }
 
     /**
-     * Returns a description for this job
-     *
-     * @return string
-     */
-    public static function description(): string
-    {
-        return 'Runs the tumor-only analysis';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function displayName(): string
-    {
-        return 'Tumor Only';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function validationSpec(Request $request): array
-    {
-        $parameters = (array)$request->get('parameters', []);
-
-        return [
-            'paired'                          => ['filled', 'boolean'],
-            'fastq1'                          => ['nullable', 'required_without_all:parameters.ubam,parameters.bam,parameters.vcf'],
-            'fastq2'                          => [
-                'nullable',
-                Rule::requiredIf(
-                    static function () use ($parameters) {
-                        $fastq = data_get($parameters, 'fastq1');
-
-                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
-                    }
-                ),
-            ],
-            'ubam'                            => ['nullable', 'required_without_all:parameters.fastq1,parameters.bam,parameters.vcf'],
-            'bam'                             => ['nullable', 'required_without_all:parameters.fastq1,parameters.ubam,parameters.vcf'],
-            'vcf'                             => ['nullable', 'required_without_all:parameters.fastq1,parameters.bam,parameters.ubam'],
-            'genome'                          => ['filled', Rule::in(Utils::VALID_GENOMES)],
-            'threads'                         => ['filled', 'integer'],
-            'depthFilter'                     => ['filled', 'array'],
-            'depthFilter.comparison'          => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
-            'depthFilter.value'               => ['filled', 'numeric'],
-            'alleleFractionFilter'            => ['filled', 'array'],
-            'alleleFractionFilter.comparison' => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
-            'alleleFractionFilter.value'      => ['filled', 'numeric'],
-        ];
-    }
-
-    /**
      * @inheritDoc
      */
     public function isInputValid(): bool
@@ -308,13 +336,5 @@ class TumorOnlyAnalysisJobType extends AbstractJob
         }
 
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function patientInputState(): string
-    {
-        return self::PATIENT_REQUIRED;
     }
 }
