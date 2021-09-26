@@ -68,12 +68,19 @@ cd /oncoreport/tmp/ || exit 99
     mv nightly-ClinicalEvidenceSummaries.tsv /oncoreport/databases/civic.txt
 ) || exit 113
 
+#(
+#  wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2020/clinvar_20200327.vcf.gz &&
+#    [ -f clinvar_20200327.vcf.gz ] &&
+#    gunzip clinvar_20200327.vcf.gz &&
+#    [ -f clinvar_20200327.vcf ] &&
+#    mv clinvar_20200327.vcf /oncoreport/databases/clinvar_hg38.vcf
+#) || exit 114
 (
-  wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2020/clinvar_20200327.vcf.gz &&
-    [ -f clinvar_20200327.vcf.gz ] &&
-    gunzip clinvar_20200327.vcf.gz &&
-    [ -f clinvar_20200327.vcf ] &&
-    mv clinvar_20200327.vcf /oncoreport/databases/clinvar_hg38.vcf
+  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2021/clinvar_20210912.vcf.gz &&
+    [ -f clinvar_20210912.vcf.gz ] &&
+    gunzip clinvar_20210912.vcf.gz &&
+    [ -f clinvar_20210912.vcf ] &&
+    mv clinvar_20210912.vcf /oncoreport/databases/clinvar_hg38.vcf
 ) || exit 114
 
 (
@@ -84,12 +91,19 @@ cd /oncoreport/tmp/ || exit 99
     mv ncbiRefSeq.txt /oncoreport/databases/ncbiRefSeq_hg38.txt
 ) || exit 115
 
+#(
+#  wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2020/clinvar_20200327.vcf.gz &&
+#    [ -f clinvar_20200327.vcf.gz ] &&
+#    gunzip clinvar_20200327.vcf.gz &&
+#    [ -f clinvar_20200327.vcf ] &&
+#    mv clinvar_20200327.vcf /oncoreport/databases/clinvar_hg19.vcf
+#) || exit 116
 (
-  wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2020/clinvar_20200327.vcf.gz &&
-    [ -f clinvar_20200327.vcf.gz ] &&
-    gunzip clinvar_20200327.vcf.gz &&
-    [ -f clinvar_20200327.vcf ] &&
-    mv clinvar_20200327.vcf /oncoreport/databases/clinvar_hg19.vcf
+  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2021/clinvar_20210912.vcf.gz &&
+    [ -f clinvar_20210912.vcf.gz ] &&
+    gunzip clinvar_20210912.vcf.gz &&
+    [ -f clinvar_20210912.vcf ] &&
+    mv clinvar_20210912.vcf /oncoreport/databases/clinvar_hg19.vcf
 ) || exit 116
 
 (
