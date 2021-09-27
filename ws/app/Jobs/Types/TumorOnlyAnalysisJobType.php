@@ -200,7 +200,22 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 $depthFilter,
                 '-af',
                 $alleleFractionFilter,
+                '-st',
+                $patient->site->name,
+                '-sg',
+                $patient->stage(),
+                '-d_path',
+                realpath(env('DATABASES_PATH') . env('DRUGS_FILE')),
             ];
+
+            if ($patient->city != null){
+                $command = [...$command, '-c', $patient->city];
+            }
+            if ($patient->telephone != null){
+                $command = [...$command, '-ph', $patient->telephone];
+            }
+
+
             if ($this->fileExists($vcf)) {
                 $command = [...$command, '-v', $vcf];
             } elseif ($this->fileExists($bam)) {

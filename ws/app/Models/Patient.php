@@ -45,6 +45,12 @@ class Patient extends Model
         'email',
         'fiscal_number',
         'password',
+        'location_id',
+        'T',
+        'M',
+        'N',
+        'telephone',
+        'city'
     ];
     /**
      * The accessors to append to the model's array form.
@@ -116,10 +122,25 @@ class Patient extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function tumors()
+    public function site(): BelongsTo
     {
-        return $this->belongsToMany(Tumor::class)->using(PatientTumor::class)->withPivot('id')->withTimestamps(
-        )->withPivot(['type', 'T', 'M', 'N']);
+        return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+
+    public function stage()
+    {
+        $stage = "";
+        if ($this->T != null)
+            $stage = $stage . "t" . $this->T;
+        if ($this->N != null)
+        $stage = $stage . "n" . $this->N;
+        if ($this->M != null)
+            $stage = $stage . "m" . $this->M;
+        return $stage;
+    }
+
+    public function tumors(){
+        return $this->belongsToMany(Tumor::class)->using(PatientTumor::class)->withPivot('id')->withTimestamps()->withPivot(['type', 'T', 'M', 'N']);
     }
 
     public function drugs()

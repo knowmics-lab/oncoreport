@@ -51,22 +51,30 @@ class PatientController extends Controller
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
 
-        #error_log(json_encode($request->input()));
+        error_log(json_encode($request->input()));
 
         $values = $this->validate(
             $request,
             [
-                'code'         => ['required', 'string', 'alpha_dash', 'max:255'],
-                'first_name'   => ['required', 'string', 'max:255'],
-                'last_name'    => ['required', 'string', 'max:255'],
-                'gender'       => ['required', 'string', Rule::in(Patient::VALID_GENDERS)],
-                'age'          => ['required', 'integer', 'between:0,100'],
-                'disease_id'   => ['required_without:disease', 'integer', 'exists:diseases,id'],
-                'disease'      => ['required_without:disease_id', 'string', 'exists:diseases,name'],
-                'email'        => ['required', 'email:rfc,dns'],
-                'fiscalNumber' => ['required', 'string'],
+                'code'                  => ['required', 'string', 'alpha_dash', 'max:255'],
+                'first_name'            => ['required', 'string', 'max:255'],
+                'last_name'             => ['required', 'string', 'max:255'],
+                'gender'                => ['required', 'string', Rule::in(Patient::VALID_GENDERS)],
+                'age'                   => ['required', 'integer', 'between:0,100'],
+                'disease_id'            => ['required_without:disease', 'integer', 'exists:diseases,id'],
+                #'stage_T'       => ['required', 'integer', 'between:0,4'],
+                #'stage_M'       => ['required', 'integer', 'between:0,4'],
+                #'stage_N'       => ['required', 'integer', 'between:0,4'],
+                'disease_site_id'       => ['required'],
+                'disease_stage'         => ['required'],
+                'disease'               => ['required_without:disease_id', 'string', 'exists:diseases,name'],
+                'email'                 => ['required', 'email:rfc,dns'],
+                'fiscalNumber'          => ['required', 'string'],
+                'telephone'             => ['string', 'nullable'],
+                'city'                  => ['string', 'nullable'],
             ]
         );
+        error_log("richiesta validata");
         $patient = Patient::create(
             [
                 'code'          => $values['code'],
@@ -75,9 +83,15 @@ class PatientController extends Controller
                 'gender'        => $values['gender'],
                 'age'           => $values['age'],
                 'disease_id'    => $values['disease_id'] ?? Disease::whereName($values['disease'])->firstOrFail()->id,
+                'T'             => $values['disease_stage']['T'],
+                'M'             => $values['disease_stage']['M'],
+                'N'             => $values['disease_stage']['N'],
+                'location_id'   => $values['disease_site_id'],
                 'user_id'       => $request->user()->id,
                 "fiscal_number" => $values['fiscalNumber'],
                 "email"         => $values['email'],
+                'telephone'     => $values['telephone'] ?? null,
+                'city'          => $values['city'] ?? null,
                 'password'      => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
             ]
         );
@@ -129,7 +143,7 @@ class PatientController extends Controller
                     $location_ids = $tumor['sede'];
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }
-                /* //Todo: aggiornare anche le ragioni. da testare.
+                /* //Todo: update reasons. must be tested.
                     foreach($drugs as $drug){
                         $reason_ids = array_column($drug['reasons'] ?? [], 'id');
                         $patient->tumors()->find($tumor['id'])->pivot->drugs()->find($drug['id'])->pivot->reasons()->sync($reason_ids);
@@ -171,23 +185,26 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient): PatientResource
     {
-        #error_log('ciao');
         $data = $request->input();
-        #error_log(json_encode($data));
+        error_log(json_encode($data));
 
         $this->authorize('update', $patient);
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
         abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
         $rules = [
-            'code'         => ['filled', 'string', 'alpha_dash', 'max:255'],
-            'first_name'   => ['filled', 'string', 'max:255'],
-            'last_name'    => ['filled', 'string', 'max:255'],
-            'gender'       => ['filled', 'string', Rule::in(Patient::VALID_GENDERS)],
-            'age'          => ['filled', 'integer'],
-            'disease_id'   => ['filled', 'integer', 'exists:diseases,id'],
-            'disease'      => ['filled', 'string', 'exists:diseases,name'],
-            'email'        => ['required', 'email:rfc,dns'],
-            'fiscalNumber' => ['required', 'string'],
+            'code'       => ['filled', 'string', 'alpha_dash', 'max:255'],
+            'first_name' => ['filled', 'string', 'max:255'],
+            'last_name'  => ['filled', 'string', 'max:255'],
+            'gender'     => ['filled', 'string', Rule::in(Patient::VALID_GENDERS)],
+            'age'        => ['filled', 'integer'],
+            'disease_id' => ['filled', 'integer', 'exists:diseases,id'],
+            'disease_site_id'       => ['required'],
+            'disease_stage'         => ['required'],
+            'disease'    => ['filled', 'string', 'exists:diseases,name'],
+            'email'         => ['required', 'email:rfc,dns'],
+            'fiscalNumber'  => ['required', 'string'],
+            'telephone'     => ['string', 'nullable'],
+            'city'          => ['string', 'nullable'],
         ];
         $values = $this->validate($request, $rules);
         $disease_id = $values['disease_id'] ?? (
@@ -195,14 +212,20 @@ class PatientController extends Controller
             )->id : $patient->disease_id);
         $patient->forceFill(
             [
-                "code"          => $values['code'] ?? $patient->code,
-                "first_name"    => $values['first_name'] ?? $patient->first_name,
-                "last_name"     => $values['last_name'] ?? $patient->last_name,
-                "gender"        => $values['gender'] ?? $patient->gender,
-                "age"           => $values['age'] ?? $patient->age,
-                "disease_id"    => $disease_id,
+                "code"       => $values['code'] ?? $patient->code,
+                "first_name" => $values['first_name'] ?? $patient->first_name,
+                "last_name"  => $values['last_name'] ?? $patient->last_name,
+                "gender"     => $values['gender'] ?? $patient->gender,
+                "age"        => $values['age'] ?? $patient->age,
+                "disease_id" => $disease_id,
+                'T'             => $values['disease_stage']['T'],
+                'M'             => $values['disease_stage']['M'],
+                'N'             => $values['disease_stage']['N'],
+                'location_id'   => $values['disease_site_id'],
                 "fiscal_number" => $values['fiscalNUmber'] ?? $patient->fiscal_number,
-                "email"         => $values['email'] ?? $patient->email,
+                "email" => $values['email'] ?? $patient->email,
+                'telephone' => $values['telephone'] ?? null,
+                'city'      => $values['city']  ?? null,
             ]
         )->save();
         $patient->save();

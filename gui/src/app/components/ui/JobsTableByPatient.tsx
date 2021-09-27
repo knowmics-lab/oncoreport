@@ -31,6 +31,7 @@ export default function JobsTableByPatient({
   sortable,
   onPageChange,
 }: TableProps) {
+
   const [data, setData] = useState<Collection<JobEntity> | undefined>(
     undefined
   );
