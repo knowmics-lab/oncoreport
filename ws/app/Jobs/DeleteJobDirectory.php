@@ -36,7 +36,7 @@ class DeleteJobDirectory implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param \App\Models\Job $model
+     * @param  \App\Models\Job  $model
      */
     public function __construct(JobModel $model)
     {

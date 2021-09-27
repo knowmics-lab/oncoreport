@@ -16,25 +16,29 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create(
+        User::firstOrCreate(
+            [
+                'email' => 'admin@admin',
+            ],
             [
                 'name'              => 'admin',
-                'email'             => 'admin@admin',
                 'email_verified_at' => now(),
                 'password'          => Hash::make('password'),
                 'remember_token'    => Str::random(10),
                 'admin'             => true,
             ]
-        )->save();
-        User::create(
+        );
+        User::firstOrCreate(
+            [
+                'email' => 'user@user',
+            ],
             [
                 'name'              => 'user',
-                'email'             => 'user@user',
                 'email_verified_at' => now(),
                 'password'          => Hash::make('password'),
                 'remember_token'    => Str::random(10),
                 'admin'             => false,
             ]
-        )->save();
+        );
     }
 }

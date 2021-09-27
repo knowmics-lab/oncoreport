@@ -18,7 +18,7 @@ class JobPolicy
     /**
      * Determine whether the user can view any jobs.
      *
-     * @param \App\Models\User $user
+     * @param  \App\Models\User  $user
      *
      * @return mixed
      */
@@ -30,8 +30,8 @@ class JobPolicy
     /**
      * Determine whether the user can view the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -43,7 +43,7 @@ class JobPolicy
     /**
      * Determine whether the user can create jobs.
      *
-     * @param \App\Models\User $user
+     * @param  \App\Models\User  $user
      *
      * @return mixed
      */
@@ -51,14 +51,15 @@ class JobPolicy
     {
         // Solo i clinici possono avviare una analisi
         return $user->role == 'clinico';
+
         return true;
     }
 
     /**
      * Determine whether the user can update the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -66,14 +67,15 @@ class JobPolicy
     {
         // Solo i clinici possono avviare una analisi
         return $user->role == 'clinico';
+
         return $user->admin || $job->user_id === $user->id;
     }
 
     /**
      * Determine whether the user can delete the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -85,8 +87,8 @@ class JobPolicy
     /**
      * Determine whether the user can restore the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -98,8 +100,8 @@ class JobPolicy
     /**
      * Determine whether the user can permanently delete the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -111,8 +113,8 @@ class JobPolicy
     /**
      * Determine whether the user can submit the job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */
@@ -124,8 +126,8 @@ class JobPolicy
     /**
      * Determine whether the user can upload files to a job.
      *
-     * @param \App\Models\User $user
-     * @param \App\Models\Job  $job
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Job  $job
      *
      * @return mixed
      */

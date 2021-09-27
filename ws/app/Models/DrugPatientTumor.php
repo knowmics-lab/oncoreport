@@ -14,6 +14,6 @@ class DrugPatientTumor extends Pivot
      */
     public function reasons(): BelongsToMany
     {
-        return $this->belongsToMany(Reason::class, 'drug_patient_tumor_reason','drug_patient_tumor_id','reason_id');
+        return $this->belongsToMany(Reason::class, 'drug_patient_tumor_reason', 'drug_patient_tumor_id', 'reason_id');
     }
 }

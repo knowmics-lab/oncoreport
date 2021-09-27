@@ -14,12 +14,12 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @param \Illuminate\Http\Request              $request
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param callable|null                         $callback
-     * @param string                                $defaultOrderField
-     * @param string                                $defaultOrdering
-     * @param int                                   $defaultPerPage
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  callable|null  $callback
+     * @param  string  $defaultOrderField
+     * @param  string  $defaultOrdering
+     * @param  int  $defaultPerPage
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */

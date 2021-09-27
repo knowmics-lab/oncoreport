@@ -9,7 +9,6 @@ namespace App\Http\Resources;
 
 use App\Models\Location as LocationModel;
 use App\Utils;
-use Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -22,7 +21,7 @@ class Patient extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return array
      */
@@ -51,7 +50,6 @@ class Patient extends JsonResource
                 'tumors'          => new TumorCollection($this->tumors),
                 'diseases'        => new PathologyCollection($this->diseases),
                 'drugs' => $this->drugs()->get(),
-
             ],
             'links' => [
                 'self'  => route('patients.show', $this->resource, false),

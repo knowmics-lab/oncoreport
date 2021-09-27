@@ -7,9 +7,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\ServiceProvider;
 use TusPhp\Config as TusConfig;
 use TusPhp\Tus\Server as TusServer;
-use Illuminate\Support\ServiceProvider;
 
 class TusServiceProvider extends ServiceProvider
 {
@@ -28,7 +28,7 @@ class TusServiceProvider extends ServiceProvider
         TusConfig::set(
             [
                 'file' => [
-                    'dir'  => storage_path('app/tus_cache/'),
+                    'dir' => storage_path('app/tus_cache/'),
                     'name' => 'tus_php.server.cache',
                 ],
             ]

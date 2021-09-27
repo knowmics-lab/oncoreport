@@ -4,7 +4,7 @@
 
 mkdir repo || exit
 cd repo || exit
-git clone https://github.com/gretep/oncoreport.git
+git clone git@github.com:gretep/oncoreport.git
 cd oncoreport || exit
 tar -zcvf ../../ws.tgz ws/
 cd ../../ || exit

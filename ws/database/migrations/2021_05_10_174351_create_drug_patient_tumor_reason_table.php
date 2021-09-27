@@ -20,7 +20,6 @@ class CreateDrugPatientTumorReasonTable extends Migration
             $table->timestamps();
 
             $table->foreign('drug_patient_tumor_id')->references('id')->on('drug_patient_tumor')->onDelete('cascade');
-
             //$table->foreign('drug_patient_tumor_id')->references('id')->on('drug_patient_tumor')->onDelete('cascade');
         });
     }

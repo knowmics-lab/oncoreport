@@ -32,6 +32,7 @@ Bile Duct Adenocarcinoma	Bile Duct Adenocarcinoma
 Biliary Tract Cancer	Biliary Tract Cancer
 Billiary tract	Billiary tract
 Bladder	Bladder Cancer
+Bladder Cancer	Bladder Cancer
 Bladder Carcinoma	Bladder Cancer
 Bladder Urothelial Carcinoma	Bladder Cancer
 Bone Epithelioid Hemangioma	Bone Cancer

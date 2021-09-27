@@ -16,7 +16,6 @@ import * as Pages from './app/components/pages';
 import UNICT_LOGO from './resources/unict.png';
 import ThemeContext from './app/themeContext';
 
-
 const useStyles = makeStyles(() =>
   createStyles({
     footerLight: {

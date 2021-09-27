@@ -265,6 +265,7 @@
     "ansi-to-html": "^0.6.14",
     "axios": "^0.21.0",
     "byte-size": "^7.0.0",
+    "caniuse-lite": "^1.0.30001260",
     "check-internet-connected": "^2.0.5",
     "clsx": "^1.1.1",
     "cp-file": "^9.0.0",

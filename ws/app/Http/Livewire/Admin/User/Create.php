@@ -25,7 +25,7 @@ class Create extends Component
         'email'    => '',
         'password' => '',
         'admin'    => false,
-        'role' => '',
+        'role'     => '',
     ];
 
     /**
@@ -40,7 +40,7 @@ class Create extends Component
             'state.email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'state.password' => ['nullable', 'string', new Password()],
             'state.admin'    => ['sometimes', 'boolean'],
-            'state.role' => ['sometimes', Rule::in(config('constants.roles'))],
+            'state.role'     => ['sometimes', Rule::in(config('constants.roles'))],
         ];
     }
 
@@ -63,7 +63,7 @@ class Create extends Component
                 'password'          => Hash::make($this->state['password']),
                 'remember_token'    => Str::random(10),
                 'admin'             => $this->state['admin'] ?? false,
-                'role' => $this->state['role'],
+                'role'              => $this->state['role'],
             ]
         )->save();
         $this->emit('refresh-navigation-dropdown');

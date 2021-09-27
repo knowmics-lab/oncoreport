@@ -73,8 +73,8 @@ class Job extends Model
      * Scope a query to filter for job_type.
      * If a job is a group then it uses the type of the first grouped job.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \App\Models\Patient                   $patient
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Models\Patient  $patient
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -87,8 +87,8 @@ class Job extends Model
      * Scope a query to filter for job_type.
      * If a job is a group then it uses the type of the first grouped job.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string                                $type
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -111,6 +111,18 @@ class Job extends Model
     }
 
     /**
+     * Returns a default name if its value is null
+     *
+     * @param  string|null  $value
+     *
+     * @return string
+     */
+    public function getNameAttribute(?string $value): string
+    {
+        return $value ?? ($this->readableJobType() . ' Job of ' . $this->created_at->diffForHumans());
+    }
+
+    /**
      * Returns the readable job type
      *
      * @return string
@@ -121,21 +133,9 @@ class Job extends Model
     }
 
     /**
-     * Returns a default name if its value is null
-     *
-     * @param string|null $value
-     *
-     * @return string
-     */
-    public function getNameAttribute(?string $value): string
-    {
-        return $value ?? ($this->readableJobType() . ' Job of ' . $this->created_at->diffForHumans());
-    }
-
-    /**
      * Returns a default sample code if its value is null
      *
-     * @param string|null $value
+     * @param  string|null  $value
      *
      * @return string
      */
@@ -163,7 +163,7 @@ class Job extends Model
     /**
      * Set the status attribute.
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function setStatusAttribute(string $value): void
     {
@@ -186,7 +186,7 @@ class Job extends Model
     /**
      * Set the log attribute.
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function setLogAttribute(string $value): void
     {
@@ -214,6 +214,28 @@ class Job extends Model
     }
 
     /**
+     * Returns the absolute path of the job storage directory
+     *
+     * @return string
+     */
+    public function getAbsoluteJobDirectory(): string
+    {
+        return $this->absoluteJobPath($this->getJobDirectory());
+    }
+
+    /**
+     * Returns the absolute path of a job path
+     *
+     * @param  string  $path
+     *
+     * @return string
+     */
+    public function absoluteJobPath(string $path): string
+    {
+        return storage_path('app/public/' . $path);
+    }
+
+    /**
      * Returns the path of the job storage directory
      *
      * @return string
@@ -231,32 +253,23 @@ class Job extends Model
     }
 
     /**
-     * Returns the absolute path of the job storage directory
+     * Returns the absolute path of a temporary file in the job directory
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
      *
      * @return string
      */
-    public function getAbsoluteJobDirectory(): string
+    public function getJobTempFileAbsolute(string $prefix = '', string $suffix = ''): string
     {
-        return $this->absoluteJobPath($this->getJobDirectory());
-    }
-
-    /**
-     * Returns the absolute path of a job path
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    public function absoluteJobPath(string $path): string
-    {
-        return storage_path('app/public/' . $path);
+        return $this->absoluteJobPath($this->getJobTempFile($prefix, $suffix));
     }
 
     /**
      * Returns the path of a temporary file in the job directory
      *
-     * @param string $prefix
-     * @param string $suffix
+     * @param  string  $prefix
+     * @param  string  $suffix
      *
      * @return string
      */
@@ -268,42 +281,29 @@ class Job extends Model
     }
 
     /**
-     * Returns the absolute path of a temporary file in the job directory
-     *
-     * @param string $prefix
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function getJobTempFileAbsolute(string $prefix = '', string $suffix = ''): string
-    {
-        return $this->absoluteJobPath($this->getJobTempFile($prefix, $suffix));
-    }
-
-    /**
-     * Returns the path of a file in the job directory
-     *
-     * @param string $prefix
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function getJobFile(string $prefix = '', string $suffix = ''): string
-    {
-        return $this->getJobDirectory() . '/' . $prefix . Str::slug($this->name) . $suffix;
-    }
-
-    /**
      * Returns the absolute path of a file in the job directory
      *
-     * @param string $prefix
-     * @param string $suffix
+     * @param  string  $prefix
+     * @param  string  $suffix
      *
      * @return string
      */
     public function getJobFileAbsolute(string $prefix = '', string $suffix = ''): string
     {
         return $this->absoluteJobPath($this->getJobFile($prefix, $suffix));
+    }
+
+    /**
+     * Returns the path of a file in the job directory
+     *
+     * @param  string  $prefix
+     * @param  string  $suffix
+     *
+     * @return string
+     */
+    public function getJobFile(string $prefix = '', string $suffix = ''): string
+    {
+        return $this->getJobDirectory() . '/' . $prefix . Str::slug($this->name) . $suffix;
     }
 
     /**
@@ -376,8 +376,8 @@ class Job extends Model
      * Set the value of one or more output data.
      * If $parameter is an associative array sets multiple parameters at the same time.
      *
-     * @param array|string $parameter
-     * @param null|mixed   $value
+     * @param  array|string  $parameter
+     * @param  null|mixed  $value
      *
      * @return $this
      */
@@ -402,8 +402,8 @@ class Job extends Model
     /**
      * Get the value of an output data
      *
-     * @param string|array|null $parameter
-     * @param mixed             $default
+     * @param  string|array|null  $parameter
+     * @param  mixed  $default
      *
      * @return mixed
      */
@@ -427,8 +427,8 @@ class Job extends Model
     /**
      * Set the value of a parameter
      *
-     * @param string $parameter
-     * @param mixed  $value
+     * @param  string  $parameter
+     * @param  mixed  $value
      *
      * @return $this
      */
@@ -442,9 +442,23 @@ class Job extends Model
     }
 
     /**
+     * Set parameters of this job
+     *
+     * @param  array  $parameters
+     *
+     * @return $this
+     */
+    public function setParameters(array $parameters): self
+    {
+        $this->job_parameters = [];
+
+        return $this->addParameters($parameters);
+    }
+
+    /**
      * Add parameters to this job
      *
-     * @param array $parameters
+     * @param  array  $parameters
      *
      * @return $this
      */
@@ -460,24 +474,10 @@ class Job extends Model
     }
 
     /**
-     * Set parameters of this job
-     *
-     * @param array $parameters
-     *
-     * @return $this
-     */
-    public function setParameters(array $parameters): self
-    {
-        $this->job_parameters = [];
-
-        return $this->addParameters($parameters);
-    }
-
-    /**
      * Get the value of a parameter
      *
-     * @param string|array|null $parameter
-     * @param mixed             $default
+     * @param  string|array|null  $parameter
+     * @param  mixed  $default
      *
      * @return mixed
      */
@@ -501,9 +501,9 @@ class Job extends Model
     /**
      * Append text to the log
      *
-     * @param string $text
-     * @param bool   $appendNewLine
-     * @param bool   $commit
+     * @param  string  $text
+     * @param  bool  $appendNewLine
+     * @param  bool  $commit
      */
     public function appendLog(string $text, bool $appendNewLine = true, bool $commit = true): void
     {

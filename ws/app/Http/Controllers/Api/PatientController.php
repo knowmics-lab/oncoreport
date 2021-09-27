@@ -23,7 +23,7 @@ class PatientController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\PatientCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -39,7 +39,7 @@ class PatientController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return \App\Http\Resources\Patient
      * @throws \Illuminate\Validation\ValidationException
@@ -97,7 +97,7 @@ class PatientController extends Controller
         );
         $patient->save();
 
-        if($request->input('diseases')){
+        if ($request->input('diseases')) {
             $diseases = $request->input('diseases');
             $disease_ids = array_column($diseases, 'id');
             $patient->diseases()->sync($disease_ids);
@@ -107,20 +107,18 @@ class PatientController extends Controller
         }
 
 
-
         // Nuova gestione.
-        if ($request->input('tumors')){
-
+        if ($request->input('tumors')) {
             $tumors = $request->input('tumors');
-            $tumor_ids = array();
+            $tumor_ids = [];
 
-            foreach ($tumors as $tumor){
-                if($tumor['id']){
+            foreach ($tumors as $tumor) {
+                if ($tumor['id']) {
                     $tumor_ids[$tumor['id']] = [
                         'type' => $tumor['type'] ?? null,
-                        'T' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
-                        'M' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
-                        'N' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
+                        'T'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
+                        'M'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
+                        'N'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
                     ];
                 }
             }
@@ -128,21 +126,23 @@ class PatientController extends Controller
             $patient->tumors()->sync($tumor_ids);
             foreach ($tumors as $tumor) {
                 $drugs = $tumor['drugs'];
-                $drug_ids = array();
+                $drug_ids = [];
 
-                foreach($drugs as $drug){
+                foreach ($drugs as $drug) {
                     $drug_ids[$drug['id']] = [
-                        'start_date' =>   array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
-                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
+                        'start_date' => array_key_exists(
+                            'start_date',
+                            $drug
+                        ) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
+                        'end_date'   => array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
                     ];
                 }
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
 
-                if ($tumor['sede']){
+                if ($tumor['sede']) {
                     $location_ids = $tumor['sede'];
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }
-
                 /* //Todo: update reasons. must be tested.
                     foreach($drugs as $drug){
                         $reason_ids = array_column($drug['reasons'] ?? [], 'id');
@@ -150,9 +150,7 @@ class PatientController extends Controller
                     }
                 */
             }
-
         }
-
 
 
         return new PatientResource($patient);
@@ -161,8 +159,8 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Patient      $patient
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Patient  $patient
      *
      * @return \App\Http\Resources\Patient
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -178,8 +176,8 @@ class PatientController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Patient      $patient
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Patient  $patient
      *
      * @return \App\Http\Resources\Patient
      * @throws \Illuminate\Validation\ValidationException
@@ -210,7 +208,8 @@ class PatientController extends Controller
         ];
         $values = $this->validate($request, $rules);
         $disease_id = $values['disease_id'] ?? (
-            isset($values['disease']) ? Disease::whereName($values['disease'])->firstOrFail()->id : $patient->disease_id);
+            isset($values['disease']) ? Disease::whereName($values['disease'])->firstOrFail(
+            )->id : $patient->disease_id);
         $patient->forceFill(
             [
                 "code"       => $values['code'] ?? $patient->code,
@@ -233,7 +232,7 @@ class PatientController extends Controller
 
 
         /** Update relationships */
-        if($request->input('diseases')){
+        if ($request->input('diseases')) {
             $diseases = $request->input('diseases');
             $disease_ids = array_column($diseases, 'id');
             $patient->diseases()->sync($disease_ids);
@@ -245,21 +244,22 @@ class PatientController extends Controller
         }
 
 
-        if ($request->input('tumors')){
+        if ($request->input('tumors')) {
             #error_log('log tumori');
 
             $tumors = $request->input('tumors');
             #error_log(json_encode($tumors));
 
 
-            $tumor_ids = array_reduce($tumors, function($carry, $tumor){
+            $tumor_ids = array_reduce($tumors, function ($carry, $tumor) {
                 $carry[$tumor['id']] = [
                     'type' => $tumor['type'] ?? null,
-                        //'sede' => $tumor['sede'],
-                        'T' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
-                        'M' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
-                        'N' => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
+                    //'sede' => $tumor['sede'],
+                    'T'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['T'] ?? null : null,
+                    'M'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['M'] ?? null : null,
+                    'N'    => $tumor['stadio'] && $tumor['stadio'] != [] ? $tumor['stadio']['N'] ?? null : null,
                 ];
+
                 return $carry;
             });
 
@@ -269,11 +269,15 @@ class PatientController extends Controller
             foreach ($tumors as $tumor) {
                 $drugs = $tumor['drugs'];
 
-                $drug_ids = array_reduce($drugs, function($_drugs, $drug){
+                $drug_ids = array_reduce($drugs, function ($_drugs, $drug) {
                     $_drugs[$drug['id']] = [
-                        'start_date' =>  array_key_exists('start_date', $drug) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
-                        'end_date'   =>  array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
+                        'start_date' => array_key_exists(
+                            'start_date',
+                            $drug
+                        ) && $drug['start_date'] ? $drug['start_date'] : new DateTime('today'),
+                        'end_date'   => array_key_exists('end_date', $drug) ? $drug['end_date'] : null,
                     ];
+
                     return $_drugs;
                 });
 
@@ -281,12 +285,11 @@ class PatientController extends Controller
                 $patient->tumors()->find($tumor['id'])->pivot->drugs()->sync($drug_ids);
                 #error_log('droghe aggiornate');
 
-                if ($tumor['sede']){
+                if ($tumor['sede']) {
                     $location_ids = $tumor['sede'];
                     #error_log('aggiorniamo la sede di ' . $tumor['id'] .' con ' . json_encode($location_ids));
                     $patient->tumors()->find($tumor['id'])->pivot->locations()->sync($location_ids);
                 }
-
                 /* //Todo: aggiornare anche le ragioni. da testare.
                     foreach($drugs as $drug){
                         $reason_ids = array_column($drug['reasons'] ?? [], 'id');
@@ -294,7 +297,6 @@ class PatientController extends Controller
                     }
                 */
             }
-
         }
 
 
@@ -304,8 +306,8 @@ class PatientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Patient      $patient
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Patient  $patient
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception

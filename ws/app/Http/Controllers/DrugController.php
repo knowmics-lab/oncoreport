@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 
 class DrugController extends Controller
 {
-    public function index(Request $reques){
+    public function index(Request $reques)
+    {
         return new DrugCollection(Drug::all());
     }
 }

@@ -40,28 +40,6 @@ class TestJobType extends AbstractJob
     }
 
     /**
-     * Handles all the computation for this job.
-     * This function should throw a ProcessingJobException if something went wrong during the computation.
-     * If no exceptions are thrown the job is considered as successfully completed.
-     *
-     * @throws \App\Exceptions\ProcessingJobException
-     */
-    public function handle(): void
-    {
-        try {
-            $this->log('Starting the test job!');
-            if ($this->model->patient_id !== null) {
-                $this->log('This job is tied to the patient "' . $this->model->patient->full_name . '".');
-            }
-            $name = $this->model->getParameter('name', Auth::user()->name);
-            $this->model->setOutput('greetings', 'Hello ' . $name . '!!');
-            $this->log('Test job ended');
-        } catch (Exception $e) {
-            throw new ProcessingJobException('An error occurred during job processing.', 0, $e);
-        }
-    }
-
-    /**
      * Returns a description for this job
      *
      * @return string
@@ -86,5 +64,27 @@ class TestJobType extends AbstractJob
     public static function patientInputState(): string
     {
         return self::PATIENT_OPTIONAL;
+    }
+
+    /**
+     * Handles all the computation for this job.
+     * This function should throw a ProcessingJobException if something went wrong during the computation.
+     * If no exceptions are thrown the job is considered as successfully completed.
+     *
+     * @throws \App\Exceptions\ProcessingJobException
+     */
+    public function handle(): void
+    {
+        try {
+            $this->log('Starting the test job!');
+            if ($this->model->patient_id !== null) {
+                $this->log('This job is tied to the patient "' . $this->model->patient->full_name . '".');
+            }
+            $name = $this->model->getParameter('name', Auth::user()->name);
+            $this->model->setOutput('greetings', 'Hello ' . $name . '!!');
+            $this->log('Test job ended');
+        } catch (Exception $e) {
+            throw new ProcessingJobException('An error occurred during job processing.', 0, $e);
+        }
     }
 }

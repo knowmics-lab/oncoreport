@@ -15,16 +15,15 @@ class DiseasesTableSeeder extends Seeder
     public function run(): void
     {
         $path = realpath(env('DATABASES_PATH') . '/disease_list.txt');
-        $path = realpath('../databases/disease_list.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             fgets($fp);
             while (!feof($fp) && ($line = @fgets($fp)) !== false) {
-                Disease::create(
+                Disease::firstOrCreate(
                     [
                         'name' => trim($line),
                     ]
-                )->save();
+                );
             }
             @fclose($fp);
         }
