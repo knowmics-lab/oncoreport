@@ -192,7 +192,7 @@ export default function Wizard<E>({
   const bottomNavigation = (() => {
     return (
       <FormGroup row className={classes.formControl}>
-        <Grid container justify="flex-start">
+        <Grid container justifyContent="flex-start">
           <Grid item xs="auto">
             <div className={classes.buttonWrapper}>{backButtonElement}</div>
           </Grid>

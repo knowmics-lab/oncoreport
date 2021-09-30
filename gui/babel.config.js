@@ -57,6 +57,13 @@ module.exports = (api) => {
       require('@babel/plugin-proposal-json-strings'),
       require('babel-plugin-transform-typescript-metadata'),
 
+      // Added to suppress warnings
+      [
+        require('@babel/plugin-proposal-private-property-in-object'),
+        { loose: true },
+      ],
+      [require('@babel/plugin-proposal-private-methods'), { loose: true }],
+
       ...(development ? developmentPlugins : productionPlugins),
     ],
   };

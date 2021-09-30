@@ -1,4 +1,4 @@
-export {
+export type {
   IdentifiableEntity,
   TimedEntity,
   SimpleMapArray,
@@ -65,6 +65,5 @@ export type {
   PushNotificationFunction,
 } from './notifications';
 export type { UsesUpload } from './ui';
-
-export type {Option} from './option';
-export type {Resource} from './resource';
+export type { Option } from './option';
+export type { Resource } from './resource';

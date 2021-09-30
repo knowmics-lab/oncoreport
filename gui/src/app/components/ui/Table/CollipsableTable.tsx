@@ -13,12 +13,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Button from '@material-ui/core/Button';
-
-
-
-
-
 
 const useRowStyles = makeStyles({
   root: {
@@ -30,39 +24,57 @@ const useRowStyles = makeStyles({
 
 function Row(props: {
   row: {
-    fields:any[],
-    data:{head:string[], name:string,  fields:any[]}}[],
-  }) {
-  const { row }= props;
+    fields: any[];
+    data: { head: string[]; name: string; fields: any[] };
+  }[];
+}) {
+  const { row } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
   return (
-    <React.Fragment>
+    <>
       <TableRow className={classes.root}>
         <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {row.fields.map( f => <TableCell>{f}</TableCell>)}
+        {row.fields.map((f) => (
+          <TableCell>{f}</TableCell>
+        ))}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">{row.data.name}</Typography>
+              <Typography variant="h6" gutterBottom component="div">
+                {row.data.name}
+              </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
-                  <TableRow >
-                    {row.data.head.map ( h => <TableCell align="right" ><Typography variant="body2" component="body">{h}</Typography></TableCell> )}
+                  <TableRow>
+                    {row.data.head.map((h) => (
+                      <TableCell align="right">
+                        <Typography variant="body2" component="body">
+                          {h}
+                        </Typography>
+                      </TableCell>
+                    ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.data.fields.map( f =>
+                  {row.data.fields.map((f) => (
                     <TableRow>
-                      {f.map( innerRow => <TableCell align="right">{innerRow}</TableCell> )}
-                    </TableRow> )}
+                      {f.map((innerRow) => (
+                        <TableCell align="right">{innerRow}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
                   {/**
                   {row.drugs.map((drug:any, i:number) => (
                     <TableRow key={drug.id}>
@@ -86,25 +98,34 @@ function Row(props: {
           </Collapse>
         </TableCell>
       </TableRow>
-    </React.Fragment>
+    </>
   );
 }
 
-export default function CollapsibleTable( props: {
-  data: { head:string[], name:string,  fields:any[], innerField:{head:string[], name:string,  fields:any[]}}[],
+export default function CollapsibleTable(props: {
+  data: {
+    head: string[];
+    name: string;
+    fields: any[];
+    innerField: { head: string[]; name: string; fields: any[] };
+  }[];
 }) {
-  const {data} = props;
+  const { data } = props;
   return (
     <TableContainer component={Paper}>
       <Table aria-label={data.name}>
         <TableHead>
           <TableRow>
-            <TableCell component="th" scope="row"/>
-              {data.head.map( h => <TableCell>{h}</TableCell> )}
+            <TableCell component="th" scope="row" />
+            {data.head.map((h) => (
+              <TableCell>{h}</TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.fields.map( row =>  <Row row={row} /> )}
+          {data.fields.map((row) => (
+            <Row row={row} />
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

@@ -69,7 +69,11 @@ export default function Settings() {
       pushSimple('Settings saved!', TypeOfNotification.success);
       setIsSaving(false);
     } catch (e) {
-      pushSimple(`An error occurred: ${e.message}!`, TypeOfNotification.error);
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+      pushSimple(
+        `An error occurred: ${errorMessage}!`,
+        TypeOfNotification.error
+      );
       setIsSaving(false);
       throw e;
     }
@@ -168,7 +172,7 @@ export default function Settings() {
             </Collapse>
             <TextField label="API key" name="apiKey" />
             <FormGroup row className={classes.formControl}>
-              <Grid container justify="flex-end">
+              <Grid container justifyContent="flex-end">
                 <Grid item xs="auto">
                   <div className={classes.buttonWrapper}>
                     <Button

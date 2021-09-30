@@ -246,12 +246,12 @@ export default function PatientForm(props: { id: number }) {
     >
       {typeof id === typeof undefined || loading || !patient ? (
         <>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Grid item xs="auto">
               <CircularProgress color="inherit" />
             </Grid>
           </Grid>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Grid item xs="auto">
               Please wait...
             </Grid>
@@ -452,7 +452,7 @@ export default function PatientForm(props: { id: number }) {
             <TabPanel value={value} index={4}>
               <JobsByPatientPage id={patient?.id} />
             </TabPanel>
-            <Grid container justify="space-between">
+            <Grid container justifyContent="space-between">
               <Grid item xs="auto">
                 <Button variant="contained" color="default" href={backUrl}>
                   <Icon className="fas fa-arrow-left" /> Go Back

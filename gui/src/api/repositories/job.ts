@@ -75,7 +75,8 @@ export default class Job extends Repository<JobObject, JobEntity> {
     patient: Patient,
     listener: RefreshListener
   ): string {
-    if (!patient.id) throw new EntityError('Invalid patient object' + JSON.stringify(patient));
+    if (!patient.id)
+      throw new EntityError(`Invalid patient object${JSON.stringify(patient)}`);
     const id = uniqid();
     if (!has(this.refreshListenersByPatient, patient.id)) {
       set(this.refreshListenersByPatient, patient.id, {});
@@ -93,8 +94,8 @@ export default class Job extends Repository<JobObject, JobEntity> {
 
   private notifyRefreshByPatient(patient: Patient, page?: number) {
     if (!patient.id) throw new EntityError('Invalid patient object');
-    Object.values(
-      get(this.refreshListenersByPatient, patient.id, {})
-    ).forEach((l) => (l as RefreshListener)(patient, page));
+    Object.values(get(this.refreshListenersByPatient, patient.id, {})).forEach(
+      (l) => (l as RefreshListener)(patient, page)
+    );
   }
 }

@@ -64,7 +64,3 @@ export default function Toolbar({ actions, state }: Props) {
     </MaterialToolbar>
   );
 }
-
-Toolbar.defaultProps = {
-  title: null,
-};

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import {
   CssBaseline,
-  createMuiTheme,
+  createTheme,
   Toolbar,
   IconButton,
   Tooltip,
@@ -83,7 +83,7 @@ const Layout = ({ children, footer }: Props) => {
 
   const theme = React.useMemo(
     () =>
-      createMuiTheme({
+      createTheme({
         palette: {
           type: dark ? 'dark' : 'light',
         },

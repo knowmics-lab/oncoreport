@@ -2,6 +2,7 @@ import IdentifiableEntity from '../common/identifiableEntity';
 import TimedEntity from '../common/timedEntity';
 import { Disease } from './disease';
 import { Gender } from '../enums';
+import { Nullable } from '../common';
 
 export interface Patient extends IdentifiableEntity, TimedEntity {
   code: string;
@@ -10,11 +11,11 @@ export interface Patient extends IdentifiableEntity, TimedEntity {
   age: number;
   fiscalNumber: string;
   email: string;
-  city?: string;
-  telephone?: string;
+  city?: Nullable<string>;
+  telephone?: Nullable<string>;
   gender: Gender;
   disease: Disease;
-  disease_stage: {'T': number, 'M': number, 'N':number};
+  disease_stage: { T: number; M: number; N: number };
   disease_site_id: number;
   owner: unknown;
   tumors: Array<{

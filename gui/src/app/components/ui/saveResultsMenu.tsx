@@ -49,13 +49,13 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
       key={`popup-menu-job-${id}`}
     >
       {(popupState) => {
-        const iconProps = ({
+        const iconProps = {
           size,
           color: 'inherit',
           title: 'Save',
           ...bindTrigger(popupState),
           key: `popup-button-job-${id}`,
-        } as unknown) as IconButtonType;
+        } as unknown as IconButtonType;
         return (
           <>
             <IconButton {...iconProps}>

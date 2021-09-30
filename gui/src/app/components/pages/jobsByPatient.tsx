@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   Backdrop,
   CircularProgress,
@@ -38,12 +38,11 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-export default function Patients(props: any) {
+export default function Patients() {
   const classes = useStyles();
   const jobsRepository = useService(JobRepository);
   const patientsRepository = useService(PatientRepository);
-  // eslint-disable-next-line react/destructuring-assignment
-  const patientId: number = props.match.params.id //props.id; // +useParams<{ id: string }>().id;
+  const patientId: number = +useParams<{ id: string }>().id;
   const [patient, setPatient] = useState<PatientEntity | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   const [submittingJobs, setSubmittingJobs] = useState<number[]>([]);
@@ -151,7 +150,6 @@ export default function Patients(props: any) {
   }, [currentPage, jobsRepository, patient, settings, submittingJobs]);
 
   return (
-
     <>
       {patient ? (
         <>

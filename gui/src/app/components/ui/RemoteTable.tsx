@@ -146,8 +146,8 @@ export default function RemoteTable<
         count={totalRows || 0}
         rowsPerPage={rowsPerPage || 15}
         page={(currentPage || 1) - 1}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
   );

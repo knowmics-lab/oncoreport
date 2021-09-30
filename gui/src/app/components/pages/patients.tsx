@@ -70,7 +70,7 @@ export default function Patients() {
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-pencil-alt',
+          icon: 'fas fa-eye',
           tooltip: 'detail',
           onClick: (_e, data) => {
             history.push(

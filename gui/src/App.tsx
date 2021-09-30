@@ -2,8 +2,8 @@ import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import {
   createStyles,
-  GridList,
-  GridListTile,
+  ImageList,
+  ImageListItem,
   Typography,
   makeStyles,
 } from '@material-ui/core';
@@ -53,15 +53,15 @@ const Home = () => {
       <ThemeContext.Consumer>
         {(dark) => (
           <div className={dark ? classes.footerDark : classes.footerLight}>
-            <GridList cellHeight={55} cols={3}>
-              <GridListTile cols={1}>
+            <ImageList rowHeight={55} cols={3}>
+              <ImageListItem cols={1}>
                 <img
                   src={UNICT_LOGO}
                   alt="UNICT"
                   style={{ height: '50px', width: 'auto' }}
                 />
-              </GridListTile>
-            </GridList>
+              </ImageListItem>
+            </ImageList>
           </div>
         )}
       </ThemeContext.Consumer>
@@ -92,14 +92,11 @@ export default function App() {
               path={Routes.PATIENTS_EDIT}
               component={Pages.Forms.PatientForm}
             />
-            <Route
-              path={Routes.PATIENTS_TUMORS}
-              component={Pages.Forms.TumorForm}
-            ></Route>
-            <Route
-              path={Routes.PATIENT}
-              component={Pages.PatientPage}
-            ></Route>
+            {/* <Route */}
+            {/*  path={Routes.PATIENTS_TUMORS} */}
+            {/*  component={Pages.Forms.TumorForm} */}
+            {/* /> */}
+            <Route path={Routes.PATIENT} component={Pages.PatientPage} />
             <Route
               path={Routes.PATIENTS}
               exact
