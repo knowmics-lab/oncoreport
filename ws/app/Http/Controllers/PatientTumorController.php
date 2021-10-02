@@ -14,14 +14,11 @@ class PatientTumorController extends Controller
     public function detach($patient_id, $tumor_id, $drug_id, Request $request)
     {
         $reasons = json_decode($request->get('reasons', []));
-        #error_log('ciao');
-        #error_log(json_encode($reasons));
         $model = PatientTumor::where('patient_id', '=', $patient_id)->where('tumor_id', '=', $tumor_id)->firstOrFail();
         $drug = $model->drugs()->findOrFail($drug_id);
         $model->drugs()->updateExistingPivot($drug->id, ['end_date' => new DateTime('today')]);
 
         $comment = $request->get('comment', null);
-        #error_log("comment: " . json_encode($comment));
         if ($comment) {
             $model->drugs()->updateExistingPivot($drug->id, ['comment' => $comment]);
         }

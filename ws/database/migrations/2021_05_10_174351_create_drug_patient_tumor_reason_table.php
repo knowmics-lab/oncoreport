@@ -11,7 +11,7 @@ class CreateDrugPatientTumorReasonTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('drug_patient_tumor_reason', function (Blueprint $table) {
             $table->id();
@@ -29,7 +29,7 @@ class CreateDrugPatientTumorReasonTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('drug_patient_tumor_reason');
     }

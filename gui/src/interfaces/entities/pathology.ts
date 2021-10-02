@@ -1,5 +1,5 @@
-import { Resource } from "../resource";
+import { Resource } from '../resource';
 
-export interface Pathology extends Resource{
+export interface Pathology extends Resource {
   medicines: Resource[];
 }

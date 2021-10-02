@@ -7,8 +7,10 @@ import { ResourceAdapter } from '../adapters';
 import { field } from './entity';
 
 @injectable()
-export default class Resource extends Entity<ResourceObject>
-  implements ResourceObject {
+export default class Resource
+  extends Entity<ResourceObject>
+  implements ResourceObject
+{
   @field({
     fillable: true,
   })
