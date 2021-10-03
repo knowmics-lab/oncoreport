@@ -11,6 +11,7 @@ import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces';
 import PullStatus from './pullStatus';
 import { AuthTokenResult, PullEvent } from './types';
+import { Stream } from 'stream';
 
 @injectable()
 export default class Manager {
@@ -162,6 +163,8 @@ export default class Manager {
         );
       } catch (e) {
         if (!(e instanceof TimeoutError)) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           if (e.statusCode && e.statusCode === 404) {
             return 'not found';
           }
@@ -332,7 +335,7 @@ export default class Manager {
       await this.cleanupBootedFile();
       const container = this.getContainer();
       container.start();
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         let timer: ReturnType<typeof setInterval>;
         const fnTimer = async () => {
           const currentStatus = await this.checkContainerStatus();
@@ -399,7 +402,7 @@ export default class Manager {
         () => {
           return new Promise((resolve) => {
             exec.inspect((_e, d) => {
-              resolve(d && d.Running);
+              resolve(!!(d && d.Running));
             });
           });
         },
@@ -460,7 +463,7 @@ export default class Manager {
         () => {
           return new Promise((resolve) => {
             exec.inspect((_e, d) => {
-              resolve(d && d.Running);
+              resolve(!!(d && d.Running));
             });
           });
         },
@@ -491,7 +494,7 @@ export default class Manager {
       };
       timer = setInterval(fnDebouncer, debounceTime);
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.execDockerCommandLive(
         [
           'bash',
@@ -533,7 +536,7 @@ export default class Manager {
     return new Promise((resolve, reject) => {
       this.#client.pull(
         SystemConstants.DOCKER_IMAGE_NAME,
-        (e: unknown, stream: unknown) => {
+        (e: unknown, stream: Stream) => {
           if (e) {
             reject(e);
           } else {

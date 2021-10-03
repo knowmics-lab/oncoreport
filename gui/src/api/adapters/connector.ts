@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios, { AxiosResponse, Method } from 'axios';
 import { set } from 'lodash';
 import { singleton } from 'tsyringe';
@@ -73,7 +74,9 @@ export default class Connector {
         data,
       };
     } catch (e) {
+      // @ts-ignore
       if (e.response) {
+        // @ts-ignore
         const { response } = e;
         const parsedResponse = Connector.parseErrorResponse(
           response

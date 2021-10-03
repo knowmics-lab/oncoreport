@@ -1,152 +1,198 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from "@material-ui/core";
-//import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Field, Form, Formik } from "formik";
-import React, {useState} from 'react';
-import Button, { SubmitButton } from "../ui/Button";
-import { FormikSelect } from "../ui/Form/FormikSelect";
-import CollapsibleTable from "../ui/Table/CollipsableTable";
-import TextField from '../ui/Form/TextField';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from '@material-ui/core';
+import { Field, Form, Formik } from 'formik';
+import React, { useCallback, useMemo, useState } from 'react';
 import PauseCircleFilledRoundedIcon from '@material-ui/icons/PauseCircleFilledRounded';
-import Connector from "../../../api/adapters/connector";
-import { useService } from "../../../reactInjector";
-import { Resource } from "../../../interfaces";
+import Button, { SubmitButton } from '../ui/Button';
+import { FormikSelect } from '../ui/Form/FormikSelect';
+import CollapsibleTable from '../ui/Table/CollipsableTable';
+import TextField from '../ui/Form/TextField';
+import Connector from '../../../api/adapters/connector';
+import { useService } from '../../../reactInjector';
+import { PatientEntity, ResourceEntity } from '../../../api';
+import { Drug } from '../../../interfaces/entities/drug';
 
+type DialogData = undefined | { index: number; drug: Drug; tumor: any };
+interface ReasonDialogProps {
+  onSubmit: (
+    drugId: number,
+    tumorId: number,
+    reasons: number[],
+    comment: string,
+    setSubmitting: (state: boolean) => void
+  ) => void;
+  dialogData: DialogData;
+  setDialogData: (data: DialogData) => void;
+  availableReasons: ResourceEntity[];
+}
 
-
-
-export const TumorList = (props:any ) => {
-  //const [expanded, setExpanded] = React.useState<number | false>(false);
-  const [dialogData, setDialogData] = useState< {index: number, drug: any, tumor:any} | false >(false);
-  //const [reasons, setReasons] = useState<{id:number, name:string}[]>([]);
-  const [update, setUpdate] = useState<number>(Math.random());
-  const reasons: Resource[] = props.reasons ?? [];
-  const connector: Connector  = useService(Connector);
-  function reasonDialog(onSubmit: Function) {
-    const dRef: React.RefObject<any> = React.createRef();
-    return (
-      <Dialog
-        open={dialogData != false}
-        onClose={() => {
-          setDialogData(false);
+function ReasonDialog({
+  onSubmit,
+  dialogData,
+  setDialogData,
+  availableReasons,
+}: ReasonDialogProps) {
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const onClose = useCallback(() => setDialogData(undefined), [setDialogData]);
+  const otherReasons = useMemo(
+    () =>
+      availableReasons
+        .filter((r) => r.name.toLowerCase().startsWith('other'))
+        .map((r) => r.id),
+    [availableReasons]
+  );
+  return (
+    <Dialog open={!!dialogData} onClose={onClose}>
+      <DialogTitle>Suspension reasons for {dialogData?.drug.name}</DialogTitle>
+      <Formik<{ reasons: number[]; comment: string }>
+        initialValues={{ reasons: [], comment: '' }}
+        onSubmit={(d) => {
+          onSubmit(
+            dialogData?.drug.id ?? 0,
+            dialogData?.tumor.id ?? 0,
+            d.reasons,
+            d.comment,
+            setSubmitting
+          );
+          onClose();
         }}
-        aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">
-          Perchè interrompere {dialogData ? dialogData.drug.name : ''} ?
-        </DialogTitle>
-        <Formik
-          initialValues={{ ragioni: [], comment: '' }}
-          onSubmit={(d) =>{
-            //alert(d.comment);
-            onSubmit(d);
-            setDialogData(false);
-          }}
-        >
-          <Form>
-            <DialogContent>
-              <DialogContentText>Puoi selezionare una o più ragioni.</DialogContentText>
-              <Field
-                name={'ragioni'}
-                isMulti
-                component={FormikSelect}
-                options={reasons.map((r) => {
-                  return { value: r.id, label: r.name };
-                })}
-                label="perchè"
-                onChangeCallback={(options: any) => {
-                  dRef.current.style.display =
-                    options.filter((option: any) => {
-                      return option.label == 'other';
-                    }).length > 0
-                      ? 'block'
-                      : 'none';
-                }}
-              />
-              <div ref={dRef} style={{ display: 'none' }}>
-                <TextField label="Spiegaci perchè interrompere" name="comment"/>
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  setDialogData(false);
-                }}
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <SubmitButton text="Save"/>
-            </DialogActions>
-          </Form>
-        </Formik>
-      </Dialog>
-    );
-  }
+        {({ values: { reasons } }) => {
+          const hasOthers = otherReasons.some((i) => reasons.includes(i));
+          return (
+            <Form>
+              <DialogContent>
+                <DialogContentText>
+                  Select one or more reasons
+                </DialogContentText>
+                <Field
+                  name="reasons"
+                  isMulti
+                  component={FormikSelect}
+                  options={availableReasons.map((r) => ({
+                    value: r.id,
+                    label: r.name,
+                  }))}
+                />
+                {hasOthers && (
+                  <TextField
+                    label="Why are you suspending this drug?"
+                    name="comment"
+                  />
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={onClose} color="primary">
+                  Cancel
+                </Button>
+                <SubmitButton text="Suspend" isSaving={submitting} />
+              </DialogActions>
+            </Form>
+          );
+        }}
+      </Formik>
+    </Dialog>
+  );
+}
 
-  function forceUpdate(){
-    let v = Math.random();
-    while (v == update) v = Math.random();
-    setUpdate(v);
-  }
+interface TumorListProps {
+  availableReasons: ResourceEntity[];
+  patient: PatientEntity;
+  refreshPatient: () => void;
+}
 
+const TumorList = ({
+  availableReasons,
+  patient,
+  refreshPatient,
+}: TumorListProps) => {
+  const [dialogData, setDialogData] = useState<DialogData>();
+  const connectorService = useService(Connector);
 
-  function handleStopDrug(index:number, tumor:any, drug: any, reasons: number[], comment:string){
-    let url = 'http://localhost:8000/api/detach/'+props.patient.id+'/'+tumor.id+'/'+drug.id + '?reasons=' + JSON.stringify(reasons) + (comment ? "&comment="+comment:'');
-    console.log(url);
-
-    connector.callGet('detach/'+props.patient.id+'/'+tumor.id+'/'+drug.id, { reasons: JSON.stringify(reasons), comment: comment ?? '' })
-    //fetch(url).then(res => res.json())
-    .then((data: any) => {
-      tumor.drugs[index] = data.data.data;
-      forceUpdate();
-    }).catch(console.log);
-  }
+  const stopDrugHandler: ReasonDialogProps['onSubmit'] = (
+    drugId,
+    tumorId,
+    reasons,
+    comment,
+    setSubmitting
+  ) => {
+    const endpoint = `detach/${patient.id}/${tumorId}/${drugId}`;
+    const params = { reasons, comment };
+    connectorService
+      .callPost(endpoint, params)
+      .then(() => {
+        setSubmitting(false);
+        refreshPatient();
+        return true;
+      })
+      .catch((e) => {
+        console.log(e);
+        setSubmitting(false);
+      });
+  };
 
   return (
     <>
-
-    <CollapsibleTable data = {
-      {
-        name : 'Tumors',
-        head : ['Tumor', 'Type', 'Sede', 'T', 'M', 'N'],
-        fields: props.patient.tumors.map ((tumor:any) => {
-          return {
-            'fields' : [tumor.name, tumor.type, tumor.sede && tumor.sede[0] ? tumor.sede[0].name : '', tumor.stadio.T, tumor.stadio.M, tumor.stadio.N,],
-            'data' : {
-              'name' : 'Drugs',
-              'head' : ['Drug', 'Start date', 'End date', 'Stop reasons', ''],
-              'fields' : tumor.drugs.map ( (drug:any, i:number) => [
-                drug.name,
-                drug.start_date,
-                drug.end_date ? drug.end_date : 'in corso...',
-                drug.reasons.reduce ((map:string, drug:any) => {
-                  if(drug.name == "other") return map;
-                  if (map) map += ", ";
-                  map = map + drug.name;
-                  return map;
-                }, "") + (drug.comment ? ", " + drug.comment : ""),
-                <IconButton
-                  size="small"
-                  color="secondary"
-                  disabled={drug.end_date != null}
-                  onClick={async () => {
-                    setDialogData({'drug':drug, index: i, 'tumor': tumor});
-                  }}><PauseCircleFilledRoundedIcon /></IconButton>
-              ])
-            }
-          }
-        })
-      }
-    }/>
-
-
-
-    {reasonDialog( (d: any) => {
-      if(dialogData !== false)
-        handleStopDrug(dialogData.index, dialogData.tumor, dialogData.drug, d.ragioni, d.comment);
-      setDialogData(false);
-    })}
-
-     </>
+      <CollapsibleTable
+        head={['Tumor', 'Type', 'Location', 'T', 'N', 'M']}
+        data={patient.tumors.map((tumor: any) => ({
+          id: tumor.id,
+          row: [
+            tumor.name,
+            tumor.type,
+            tumor.sede && tumor.sede[0] ? tumor.sede[0].name : '',
+            tumor.stadio.T,
+            tumor.stadio.N,
+            tumor.stadio.M,
+          ],
+          nestedTable: {
+            name: `Drugs for ${tumor.name}`,
+            head: ['Drug', 'Start date', 'End date', 'Suspension reasons', ''],
+            data: tumor.drugs.map((drug: Drug, i: number) => {
+              const reasonNamesArray = (drug.reasons ?? [])
+                .map((reason) => reason.name)
+                .filter((r) => !r?.toLowerCase().startsWith('other'));
+              if (drug.comment) reasonNamesArray.push(drug.comment);
+              return {
+                id: drug.id,
+                data: [
+                  drug.name,
+                  drug.start_date,
+                  drug.end_date ? drug.end_date : 'ongoing...',
+                  reasonNamesArray.join(', '),
+                  <IconButton
+                    key={`suspend-button-${tumor.id}-${drug.id}`}
+                    size="small"
+                    color="secondary"
+                    disabled={!!drug.end_date}
+                    title={drug.end_date ? 'Suspended' : 'Suspend'}
+                    onClick={async () => {
+                      setDialogData({ drug, index: i, tumor });
+                    }}
+                  >
+                    <PauseCircleFilledRoundedIcon />
+                  </IconButton>,
+                ],
+              };
+            }),
+          },
+        }))}
+      />
+      <ReasonDialog
+        onSubmit={stopDrugHandler}
+        dialogData={dialogData}
+        setDialogData={setDialogData}
+        availableReasons={availableReasons}
+      />
+    </>
   );
-}
+};
+
+export default TumorList;

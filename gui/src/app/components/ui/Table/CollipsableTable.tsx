@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -14,117 +15,122 @@ import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
-const useRowStyles = makeStyles({
+interface NestedRowData {
+  id: number;
+  data: React.ReactNode[];
+}
+
+interface RowData {
+  id: number;
+  row: React.ReactNode[];
+  nestedTable: {
+    name: string;
+    head: string[];
+    data: NestedRowData[];
+  };
+}
+
+const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
       borderBottom: 'unset',
     },
   },
-});
+  stickyStyle: {
+    backgroundColor: theme.palette.background.default,
+  },
+}));
 
-function Row(props: {
-  row: {
-    fields: any[];
-    data: { head: string[]; name: string; fields: any[] };
-  }[];
-}) {
-  const { row } = props;
+const Row = ({ id, row, nestedTable }: RowData) => {
+  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const classes = useRowStyles();
-
+  const colSpan = row.length + 1;
   return (
     <>
       <TableRow className={classes.root}>
         <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+          {nestedTable && (
+            <IconButton size="small" onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          )}
         </TableCell>
-        {row.fields.map((f) => (
-          <TableCell>{f}</TableCell>
+        {row.map((f, i) => (
+          <TableCell key={`row-${id}-cell-${i}`}>{f}</TableCell>
         ))}
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                {row.data.name}
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    {row.data.head.map((h) => (
-                      <TableCell align="right">
-                        <Typography variant="body2" component="body">
-                          {h}
-                        </Typography>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.data.fields.map((f) => (
+      {nestedTable && (
+        <TableRow>
+          <TableCell
+            style={{ paddingBottom: 0, paddingTop: 0 }}
+            colSpan={colSpan}
+          >
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  {nestedTable.name}
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
                     <TableRow>
-                      {f.map((innerRow) => (
-                        <TableCell align="right">{innerRow}</TableCell>
+                      {nestedTable.head.map((h) => (
+                        <TableCell
+                          key={`nested-table-cell-${id}-head-${h}`}
+                          align="right"
+                        >
+                          <Typography variant="body2">{h}</Typography>
+                        </TableCell>
                       ))}
                     </TableRow>
-                  ))}
-                  {/**
-                  {row.drugs.map((drug:any, i:number) => (
-                    <TableRow key={drug.id}>
-                      <TableCell component="th" scope="row">
-                        {drug.name}
-                      </TableCell>
-                      <TableCell>{drug.start_date}</TableCell>
-                      <TableCell align="right">{drug.end_date}</TableCell>
-                      <TableCell align="right">
-                        {JSON.stringify(drug.reasons.map (r => r.name))}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="contained" color="secondary" disabled={drug.end_date != null} >Interrompi</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                   */}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {nestedTable.data.map((f) => (
+                      <TableRow key={`nested-table-cell-${id}-row-${f.id}`}>
+                        {f.data.map((d, i) => (
+                          <TableCell
+                            key={`nested-table-cell-${id}-row-${f.id}-column-${i}`}
+                            align="right"
+                          >
+                            {d}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
+};
+
+interface CollapsibleTableProps {
+  head: string[];
+  data: RowData[];
 }
 
-export default function CollapsibleTable(props: {
-  data: {
-    head: string[];
-    name: string;
-    fields: any[];
-    innerField: { head: string[]; name: string; fields: any[] };
-  }[];
-}) {
-  const { data } = props;
+export default function CollapsibleTable({
+  head,
+  data,
+}: CollapsibleTableProps) {
+  const classes = useStyles();
   return (
     <TableContainer component={Paper}>
-      <Table aria-label={data.name}>
+      <Table>
         <TableHead>
-          <TableRow>
+          <TableRow className={classes.stickyStyle}>
             <TableCell component="th" scope="row" />
-            {data.head.map((h) => (
-              <TableCell>{h}</TableCell>
+            {head.map((h) => (
+              <TableCell key={`table-cell-${h}`}>{h}</TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.fields.map((row) => (
-            <Row row={row} />
+          {data.map((row) => (
+            <Row key={`table-row-${row.id}`} {...row} />
           ))}
         </TableBody>
       </Table>
