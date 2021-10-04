@@ -39,14 +39,14 @@ export default {
     raw: T,
     callback: (k: keyof T) => boolean
   ): Omit<T, K> {
-    return (Object.keys(raw)
+    return Object.keys(raw)
       .filter((k) => callback(k as keyof T))
       .reduce((obj, key) => {
         return {
           ...obj,
           [key]: raw[key as keyof T],
         };
-      }, {}) as unknown) as Omit<T, K>;
+      }, {}) as unknown as Omit<T, K>;
   },
   toArray(list: unknown) {
     return Array.prototype.slice.call(list || [], 0);
@@ -85,8 +85,8 @@ export default {
       }) as Promise<never>,
     ]);
   },
-  async waitExists(filePath: string, timeout = 0): Promise<never> {
-    return new Promise((resolve, reject) => {
+  async waitExists(filePath: string, timeout = 0): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       let timer: ReturnType<typeof setTimeout> | null = null;
       const closeWatcher = () => {
         if (watcher !== null) {

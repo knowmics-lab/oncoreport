@@ -1,5 +1,5 @@
-import { SortingDirection } from '../enums';
 import { Dispatch, SetStateAction } from 'react';
+import { SortingDirection } from '../enums';
 
 export type { default as IdentifiableEntity } from './identifiableEntity';
 export type { default as TimedEntity } from './timedEntity';

@@ -133,6 +133,7 @@ const TumorList = ({
         return true;
       })
       .catch((e) => {
+        // eslint-disable-next-line no-console
         console.log(e);
         setSubmitting(false);
       });

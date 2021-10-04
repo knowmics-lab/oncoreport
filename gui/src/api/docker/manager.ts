@@ -4,6 +4,7 @@ import Client from 'dockerode';
 import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
 import { inject, injectable } from 'tsyringe';
+import { Stream } from 'stream';
 import Utils from '../utils';
 import SystemConstants from '../../constants/system.json';
 import type { ConfigObjectType } from '../../interfaces';
@@ -11,7 +12,6 @@ import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces';
 import PullStatus from './pullStatus';
 import { AuthTokenResult, PullEvent } from './types';
-import { Stream } from 'stream';
 
 @injectable()
 export default class Manager {

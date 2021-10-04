@@ -1,10 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  JobEntity,
-  JobRepository,
-  Settings,
-  Utils,
-} from '../../../api';
+import { JobEntity, JobRepository, Settings, Utils } from '../../../api';
 import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';

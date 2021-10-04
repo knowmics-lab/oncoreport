@@ -43,19 +43,6 @@ export default function Patients() {
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-tint',
-          tooltip: 'Analysis',
-          onClick: (_e, data) => {
-            history.push(
-              generatePath(Routes.JOBS_BY_PATIENT, {
-                id: data.id,
-              })
-            );
-          },
-        },
-        {
-          shown: true,
-          color: 'default',
           icon: 'fas fa-pencil-alt',
           tooltip: 'Edit',
           onClick: (_e, data) => {
@@ -66,15 +53,27 @@ export default function Patients() {
             );
           },
         },
-
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-eye',
-          tooltip: 'detail',
+          icon: 'fas fa-fw fa-eye',
+          tooltip: 'Clinical records',
           onClick: (_e, data) => {
             history.push(
               generatePath(Routes.PATIENT, {
+                id: data.id,
+              })
+            );
+          },
+        },
+        {
+          shown: true,
+          color: 'default',
+          icon: 'fas fa-tint',
+          tooltip: 'Analysis',
+          onClick: (_e, data) => {
+            history.push(
+              generatePath(Routes.JOBS_BY_PATIENT, {
                 id: data.id,
               })
             );

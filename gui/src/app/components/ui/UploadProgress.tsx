@@ -38,7 +38,12 @@ export default function UploadProgress({
     <>
       {isUploading && (
         <FormGroup row className={classes.formControl}>
-          <Grid container justifyContent="center" alignItems="center" spacing={1}>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            spacing={1}
+          >
             <Grid item xs={12}>
               <Box fontWeight="fontWeightMedium">{`Uploading ${uploadFile}...`}</Box>
             </Grid>

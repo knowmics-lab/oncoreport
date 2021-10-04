@@ -14,7 +14,7 @@ export default function NotificationsList() {
     return function cleanup() {
       manager.unsubscribe(handlerId);
     };
-  }, [notifications]);
+  }, [manager, notifications]);
   const makeCloseNotification = (k: string) => () => {
     manager.close(k);
     manager.destroy(k);

@@ -12,6 +12,7 @@ export function runAsync(
       `An error occurred: ${e.message}`,
       TypeOfNotification.error
     );
+    // eslint-disable-next-line no-console
     console.error(e); // TODO: remove...only for debug
     if (catchFn) catchFn(e);
   });
