@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTumorsTable extends Migration
+class AddPrimaryDiseaseIdToPatientsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateTumorsTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('tumors', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
+        Schema::table(
+            'patients',
+            static function (Blueprint $table) {
+                $table->foreignId('primary_disease_id')->nullable()->constrained('patient_diseases')->nullOnDelete();
+            }
+        );
     }
 
     /**
@@ -27,6 +28,6 @@ class CreateTumorsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tumors');
+        //
     }
 }

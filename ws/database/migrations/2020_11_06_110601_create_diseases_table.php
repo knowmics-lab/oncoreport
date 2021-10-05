@@ -17,8 +17,11 @@ class CreateDiseasesTable extends Migration
             'diseases',
             static function (Blueprint $table) {
                 $table->id();
+                $table->string('icd10_code')->unique();
                 $table->string('name');
+                $table->boolean('tumor')->default(false);
                 $table->timestamps();
+                $table->softDeletes();
             }
         );
     }

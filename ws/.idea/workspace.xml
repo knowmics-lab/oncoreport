@@ -2,23 +2,45 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/LoadingSection.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryFetchOne.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/connector.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/connector.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/yarn.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Constants.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_120601_create_patient_diseases_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/constants.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/constants.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_100000_create_password_resets_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_100000_create_password_resets_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_200000_add_two_factor_columns_to_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_200000_add_two_factor_columns_to_users_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_19_000000_create_failed_jobs_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_19_000000_create_failed_jobs_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_04_211618_create_sessions_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_04_211618_create_sessions_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215656_add_admin_column_to_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215656_add_role_column_to_users_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215800_create_jobs_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_215800_create_jobs_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_153106_add_patient_id_to_jobs_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_153358_add_disease_id_to_patients_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_01_092259_create_tumors_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_153358_add_primary_disease_id_to_patients_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_01_092621_create_patient_tumor_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_02_032106_create_drugs_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_02_032106_create_drugs_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_02_032453_create_drug_patient_tumor_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_02_032453_create_patient_drugs_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_02_083224_create_medicines_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_060056_create_disease_patient_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_060141_create_disease_medicine_patient_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_074512_create_reasons_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_08_074512_create_suspension_reasons_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_08_074631_create_disease_medicine_patient_reason_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_08_074631_create_patient_drug_suspension_reason_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_10_174351_create_drug_patient_tumor_reason_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_19_165753_create_locations_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110753_create_locations_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_19_170451_create_location_patient_tumor_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_10_03_100134_add_fields_to_patients_table.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="DONT_SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
@@ -202,19 +224,19 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../scripts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/database/migrations" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.PHP" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/database/migrations" />
       <recent name="$PROJECT_DIR$/app/Console/Commands" />
       <recent name="$PROJECT_DIR$/app/Jobs/Types" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
       <recent name="$PROJECT_DIR$/app/Http/Resources" />
-      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/databases" />
@@ -286,6 +308,8 @@
       <workItem from="1632690324582" duration="131000" />
       <workItem from="1633112284559" duration="2216000" />
       <workItem from="1633255030467" duration="3290000" />
+      <workItem from="1633336371001" duration="1157000" />
+      <workItem from="1633417683092" duration="7175000" />
     </task>
     <servers />
   </component>

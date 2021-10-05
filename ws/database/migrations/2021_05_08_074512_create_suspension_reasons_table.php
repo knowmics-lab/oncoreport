@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLocationPatientTumorTable extends Migration
+class CreateSuspensionReasonsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateLocationPatientTumorTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('location_patient_tumor', function (Blueprint $table) {
+        Schema::create('suspension_reasons', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('patient_tumor_id');
-            $table->unsignedBigInteger('location_id');
+            $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +28,6 @@ class CreateLocationPatientTumorTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('location_patient_tumor');
+        Schema::dropIfExists('suspension_reasons');
     }
 }

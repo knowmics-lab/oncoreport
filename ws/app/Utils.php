@@ -35,7 +35,6 @@ final class Utils
 
     public const TUMOR_NORMAL_TYPE = 'tumor-vs-normal';
 
-
     /**
      * Runs a shell command and checks for successful completion of execution
      *

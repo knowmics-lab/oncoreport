@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDrugPatientTumorTable extends Migration
+class CreatePatientDrugsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,15 @@ class CreateDrugPatientTumorTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('drug_patient_tumor', function (Blueprint $table) {
+        Schema::create('patient_drugs', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('patient_tumor_id');
-            $table->unsignedBigInteger('drug_id');
+            $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('drug_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('patient_disease_id')->nullable()->constrained()->nullOnDelete();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->string('comment')->nullable();
-            //$table->unsignedBigInteger('reason_id')->nullable();
             $table->timestamps();
-
-            $table->foreign('patient_tumor_id')->references('id')->on('patient_tumor')->onDelete('cascade');
         });
     }
 
@@ -34,6 +32,6 @@ class CreateDrugPatientTumorTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('drug_patient_tumor');
+        Schema::dropIfExists('patient_drugs');
     }
 }

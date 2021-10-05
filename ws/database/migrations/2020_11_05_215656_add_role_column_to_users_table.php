@@ -1,10 +1,11 @@
 <?php
 
+use App\Constants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDiseaseIdToPatientsTable extends Migration
+class AddRoleColumnToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +15,9 @@ class AddDiseaseIdToPatientsTable extends Migration
     public function up(): void
     {
         Schema::table(
-            'patients',
+            'users',
             static function (Blueprint $table) {
-                $table->unsignedBigInteger('disease_id')->after('age')->index();
-                $table->foreign('disease_id', 'disease_id_to_diseases_foreign_key')
-                      ->references('id')->on('diseases')->restrictOnDelete();
+                $table->enum('role', Constants::ROLES);
             }
         );
     }
@@ -31,10 +30,9 @@ class AddDiseaseIdToPatientsTable extends Migration
     public function down(): void
     {
         Schema::table(
-            'patients',
+            'users',
             static function (Blueprint $table) {
-                $table->dropForeign('disease_id_to_diseases_foreign_key');
-                $table->dropColumn('disease_id');
+                $table->dropColumn('admin');
             }
         );
     }

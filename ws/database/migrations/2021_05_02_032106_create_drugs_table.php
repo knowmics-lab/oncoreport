@@ -13,10 +13,12 @@ class CreateDrugsTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('drugs', function (Blueprint $table) {
+        Schema::create('drugs', static function (Blueprint $table) {
             $table->id();
+            $table->string('drugbank_id')->unique();
             $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

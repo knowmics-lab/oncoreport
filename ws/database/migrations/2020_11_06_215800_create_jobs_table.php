@@ -24,9 +24,8 @@ class CreateJobsTable extends Migration
                 $table->json('job_parameters');
                 $table->json('job_output');
                 $table->longText('log');
-                $table->unsignedBigInteger('user_id')->index();
-                $table->foreign('user_id', 'user_id_to_user_foreign_key')->references('id')->on('users')
-                      ->onDelete('cascade')->onUpdate('cascade');
+                $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('patient_id')->nullable()->constrained()->nullOnDelete();
                 $table->timestamps();
             }
         );
