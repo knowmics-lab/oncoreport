@@ -637,15 +637,15 @@ drug_ind<- unique(drug_ind)
 drug_com<- unique(drug_com)
 drug_com<-unlist(drug_com)
 
-drugs_upper<- drugs
-drugs_upper$Drug2_name<- toupper(drugs_upper$Drug2_name)
-drugs_comorbidities<- drugs[which(drugs_upper$Drug2_name %in% toupper(drug_com)),]
-drug_indications<- drugs[which(drugs_upper$Drug2_name %in% toupper(drug_ind)),]
-
-interactions_comorbidities<- drugs_comorbidities[which(toupper(drugs_comorbidities$Drug1_name) %in% toupper(drug_com)),]
-interactions_indications<- drug_indications[which(toupper(drug_indications$Drug1_name) %in% toupper(drug_ind)),]
+unique_id_drugs<- unique(drugs[,1:2])
+drug_ind<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_ind)]
+drug_com<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_com)]
+drugs_comorbidities<- drugs[which(drugs$Drug2_code %in% drug_com),]
+drug_indications<- drugs[which(drugs$Drug2_code %in% drug_ind),]
+interactions_comorbidities<- drugs_comorbidities[which(drugs_comorbidities$Drug1_code %in% drug_com),]
+interactions_indications<- drug_indications[which(drug_indications$Drug1_code %in% drug_ind),]
 all_interactions<- rbind(drugs_comorbidities, drug_indications)
-exist_interactions<- all_interactions[which(all_interactions$Drug1_name %in% c(drug_com,drug_ind)),]
+exist_interactions<- all_interactions[which(all_interactions$Drug1_code %in% c(drug_com,drug_ind)),]
 
 
 #Drug interactions
