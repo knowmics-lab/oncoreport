@@ -639,7 +639,7 @@ drug_com<-unlist(drug_com)
 
 unique_id_drugs<- unique(drugs[,1:2])
 drug_ind<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_ind)]
-drug_com<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_com)]
+#drug_com<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_com)]
 drugs_comorbidities<- drugs[which(drugs$Drug2_code %in% drug_com),]
 drug_indications<- drugs[which(drugs$Drug2_code %in% drug_ind),]
 interactions_comorbidities<- drugs_comorbidities[which(drugs_comorbidities$Drug1_code %in% drug_com),]
