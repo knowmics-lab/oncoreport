@@ -7,10 +7,9 @@
 
 namespace App\Models;
 
+use App\Constants;
 use App\Jobs\Types\Factory;
-use DB;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -21,13 +20,6 @@ use Storage;
  */
 class Job extends Model
 {
-    use HasFactory;
-
-    public const READY      = 'ready';
-    public const QUEUED     = 'queued';
-    public const PROCESSING = 'processing';
-    public const COMPLETED  = 'completed';
-    public const FAILED     = 'failed';
 
     /**
      * The attributes that are mass assignable.
@@ -42,8 +34,8 @@ class Job extends Model
         'job_parameters',
         'job_output',
         'log',
+        'owner_id',
         'patient_id',
-        'user_id',
     ];
 
     /**
@@ -52,7 +44,7 @@ class Job extends Model
      * @var array
      */
     protected $attributes = [
-        'job_type'       => self::READY,
+        'job_type'       => Constants::READY,
         'job_parameters' => "{}",
         'job_output'     => "{}",
         'log'            => '',
@@ -80,7 +72,7 @@ class Job extends Model
      */
     public function scopeByPatient(Builder $query, Patient $patient): Builder
     {
-        return $query->whereNotNull('patient_id')->where('patient_id', '=', $patient->id);
+        return $query->whereNotNull('patient_id')->where('patient_id', $patient->id);
     }
 
     /**
@@ -94,20 +86,7 @@ class Job extends Model
      */
     public function scopeDeepTypeFilter(Builder $query, string $type): Builder
     {
-        return $query->where('job_type', '=', $type)->orWhere(
-            static function (Builder $builder) use ($type) {
-                return $builder->where('job_type', '=', 'samples_group_job_type')
-                               ->whereRaw('JSON_CONTAINS_PATH(job_output, \'one\', \'$.jobs\')')
-                               ->whereExists(
-                                   static function (\Illuminate\Database\Query\Builder $query) use ($type) {
-                                       $query->select(DB::raw(1))
-                                             ->from('jobs', 'j1')
-                                             ->whereRaw('j1.id = jobs.job_output->>"$.jobs[0]"')
-                                             ->where('j1.job_type', '=', $type);
-                                   }
-                               );
-            }
-        );
+        return $query->where('job_type', $type);
     }
 
     /**
@@ -149,15 +128,15 @@ class Job extends Model
      */
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+        return $this->belongsTo(Patient::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**
@@ -167,18 +146,8 @@ class Job extends Model
      */
     public function setStatusAttribute(string $value): void
     {
-        if (!in_array(
-            $value,
-            [
-                self::READY,
-                self::QUEUED,
-                self::PROCESSING,
-                self::COMPLETED,
-                self::FAILED,
-            ],
-            true
-        )) {
-            $value = self::READY;
+        if (!in_array($value, Constants::JOB_STATES, true)) {
+            $value = Constants::READY;
         }
         $this->attributes['status'] = $value;
     }
@@ -196,7 +165,7 @@ class Job extends Model
             array_map(
                 static function ($line) {
                     $line = preg_replace('/\033\[([0-9;]+)m/i', '', $line);
-                    if (strpos($line, "\r") === false) {
+                    if (!str_contains($line, "\r")) {
                         return $line;
                     }
                     $arr = array_filter(explode("\r", $line));
@@ -323,7 +292,7 @@ class Job extends Model
      */
     public function canBeModified(): bool
     {
-        return $this->status === self::READY;
+        return $this->status === Constants::READY;
     }
 
     /**
@@ -333,7 +302,7 @@ class Job extends Model
      */
     public function canBeDeleted(): bool
     {
-        return in_array($this->status, [self::READY, self::COMPLETED, self::FAILED], true);
+        return in_array($this->status, [Constants::READY, Constants::COMPLETED, Constants::FAILED], true);
     }
 
     /**
@@ -343,7 +312,7 @@ class Job extends Model
      */
     public function hasCompleted(): bool
     {
-        return in_array($this->status, [self::COMPLETED, self::FAILED], true);
+        return in_array($this->status, [Constants::COMPLETED, Constants::FAILED], true);
     }
 
     /**
@@ -354,7 +323,7 @@ class Job extends Model
      */
     public function shouldNotRun(): bool
     {
-        return in_array($this->status, [self::PROCESSING, self::COMPLETED, self::FAILED], true);
+        return in_array($this->status, [Constants::PROCESSING, Constants::COMPLETED, Constants::FAILED], true);
     }
 
     /**
@@ -366,8 +335,7 @@ class Job extends Model
      */
     public function setStatus($newStatus): self
     {
-        $this->status = $newStatus;
-        $this->save();
+        $this->update(['status' => $newStatus]);
 
         return $this;
     }
@@ -407,7 +375,7 @@ class Job extends Model
      *
      * @return mixed
      */
-    public function getOutput($parameter = null, $default = null)
+    public function getOutput($parameter = null, $default = null): mixed
     {
         if ($parameter === null) {
             return $this->job_output;
@@ -481,7 +449,7 @@ class Job extends Model
      *
      * @return mixed
      */
-    public function getParameter($parameter = null, $default = null)
+    public function getParameter($parameter = null, $default = null): mixed
     {
         if ($parameter === null) {
             return $this->job_parameters;

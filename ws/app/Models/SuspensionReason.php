@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Drug extends Model
+class SuspensionReason extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'drugbank_id',
         'name',
     ];
-
 }

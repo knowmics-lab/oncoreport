@@ -7,16 +7,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * @mixin IdeHelperDisease
- */
 class Disease extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -24,15 +20,13 @@ class Disease extends Model
      * @var array
      */
     protected $fillable = [
+        'icd10_code',
         'name',
+        'tumor',
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function patients(): HasMany
-    {
-        return $this->hasMany(Patient::class, 'disease_id', 'id');
-    }
+    protected $casts = [
+        'tumor' => 'bool',
+    ];
 
 }

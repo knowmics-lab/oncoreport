@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +20,7 @@ class CreatePatientDiseasesTable extends Migration
                 $table->id();
                 $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
                 $table->foreignId('disease_id')->constrained()->cascadeOnDelete();
-                $table->enum('type', ['primary', 'secondary'])->nullable();
+                $table->enum('type', Constants::TUMOR_TYPES)->nullable();
                 $table->integer('T')->nullable();
                 $table->integer('N')->nullable();
                 $table->integer('M')->nullable();

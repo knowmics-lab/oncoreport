@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,7 @@ class CreatePatientsTable extends Migration
                 $table->string('code');
                 $table->string('first_name');
                 $table->string('last_name');
-                $table->enum('gender', ['m', 'f']);
+                $table->enum('gender', Constants::GENDERS);
                 $table->tinyInteger('age');
                 $table->string('email');
                 $table->string('fiscal_number')->unique();

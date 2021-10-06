@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,7 @@ class CreateJobsTable extends Migration
                 $table->string('sample_code')->nullable()->index();
                 $table->string('name')->nullable()->default(null);
                 $table->string('job_type');
-                $table->enum('status', ['ready', 'queued', 'processing', 'completed', 'failed'])->default('ready');
+                $table->enum('status', Constants::JOB_STATES)->default(Constants::READY);
                 $table->json('job_parameters');
                 $table->json('job_output');
                 $table->longText('log');

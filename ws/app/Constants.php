@@ -16,5 +16,20 @@ class Constants
         self::PATIENT,
     ];
 
+    public const GENDERS     = ['m', 'f'];
+    public const TUMOR_TYPES = ['primary', 'secondary'];
+
+    public const READY      = 'ready';
+    public const QUEUED     = 'queued';
+    public const PROCESSING = 'processing';
+    public const COMPLETED  = 'completed';
+    public const FAILED     = 'failed';
+    public const JOB_STATES = [
+        self::READY,
+        self::QUEUED,
+        self::PROCESSING,
+        self::COMPLETED,
+        self::FAILED,
+    ];
 
 }
