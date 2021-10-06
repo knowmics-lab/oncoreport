@@ -20,7 +20,7 @@ export default function Header() {
   // <Typography noWrap color="textSecondary" className={classes.header} />
   return (
     <>
-      <Grid container justify="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <img
           src={APP_LOGO}
           alt="OncoReport"

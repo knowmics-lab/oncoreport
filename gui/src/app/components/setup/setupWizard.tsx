@@ -98,7 +98,12 @@ function CosmicForm({ label }: { label?: boolean }) {
   const classes = useStyles();
   return (
     <>
-      <Grid container justify="space-evenly" alignItems="center" spacing={2}>
+      <Grid
+        container
+        justifyContent="space-evenly"
+        alignItems="center"
+        spacing={2}
+      >
         {label && (
           <Grid item md={2} className={classes.bold}>
             COSMIC Account:
@@ -160,7 +165,12 @@ function Step1({ values }: Props) {
           ? ' local docker container and your COSMIC account.'
           : ' remote server.'}
       </Typography>
-      <Grid container justify="space-around" alignItems="center" spacing={3}>
+      <Grid
+        container
+        justifyContent="space-around"
+        alignItems="center"
+        spacing={3}
+      >
         <Grid item xs>
           <SelectField
             label="API Protocol"
@@ -176,7 +186,12 @@ function Step1({ values }: Props) {
           <TextField label="API Port" name="apiPort" type="number" required />
         </Grid>
       </Grid>
-      <Grid container justify="space-around" alignItems="center" spacing={3}>
+      <Grid
+        container
+        justifyContent="space-around"
+        alignItems="center"
+        spacing={3}
+      >
         <Grid item md>
           <TextField label="API Path" name="apiPath" required />
         </Grid>
@@ -269,7 +284,9 @@ async function runSetup(
   } catch (e) {
     setLog(
       (prev) =>
-        `${prev}\n\n\u001b[0;31mAn error occurred: ${e.message}\u001b[0m\n`
+        `${prev}\n\n\u001b[0;31mAn error occurred: ${
+          e instanceof Error ? e.message : 'Unknown error'
+        }\u001b[0m\n`
     );
   }
 }

@@ -7,8 +7,10 @@ import { field } from './entity';
 import Disease from './disease';
 
 @injectable()
-export default class Patient extends Entity<PatientObject>
-  implements PatientObject {
+export default class Patient
+  extends Entity<PatientObject>
+  implements PatientObject
+{
   @field({
     fillable: true,
   })
@@ -24,16 +26,16 @@ export default class Patient extends Entity<PatientObject>
     withEntity: Disease,
   })
   disease!: Disease;
-  @field({
-    fillable: true,
-  })
-  disease_stage: any;
 
   @field({
     fillable: true,
   })
-  disease_site_id: number;
+  disease_stage = { T: 0, N: 0, M: 0 };
 
+  @field({
+    fillable: true,
+  })
+  disease_site_id = -1;
 
   @field({
     fillable: true,

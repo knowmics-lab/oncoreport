@@ -81,9 +81,10 @@ export default function FileSelector({
 }: Props) {
   const classes = useStyles();
   const [files, setFiles] = React.useState<File[]>(value || []);
-  const processedFilters = React.useMemo(() => processFiltersList(filters), [
-    filters,
-  ]);
+  const processedFilters = React.useMemo(
+    () => processFiltersList(filters),
+    [filters]
+  );
 
   const processFiles = async (paths: string[]): Promise<File[]> => {
     return Promise.all(

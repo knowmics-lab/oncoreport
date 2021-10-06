@@ -7,8 +7,10 @@ import { DiseaseAdapter } from '../adapters';
 import { field } from './entity';
 
 @injectable()
-export default class Disease extends Entity<DiseaseObject>
-  implements DiseaseObject {
+export default class Disease
+  extends Entity<DiseaseObject>
+  implements DiseaseObject
+{
   @field({
     fillable: true,
   })

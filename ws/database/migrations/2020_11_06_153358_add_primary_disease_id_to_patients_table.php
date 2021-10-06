@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddAdminColumnToUsersTable extends Migration
+class AddPrimaryDiseaseIdToPatientsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,9 @@ class AddAdminColumnToUsersTable extends Migration
     public function up(): void
     {
         Schema::table(
-            'users',
+            'patients',
             static function (Blueprint $table) {
-                $table->boolean('admin')->default(false);
+                $table->foreignId('primary_disease_id')->nullable()->constrained('patient_diseases')->nullOnDelete();
             }
         );
     }
@@ -28,11 +28,6 @@ class AddAdminColumnToUsersTable extends Migration
      */
     public function down(): void
     {
-        Schema::table(
-            'users',
-            static function (Blueprint $table) {
-                $table->dropColumn('admin');
-            }
-        );
+        //
     }
 }

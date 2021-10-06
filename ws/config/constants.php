@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'roles' => ['doctor', 'technical']
+    'roles' => ['doctor', 'technical', 'patient'],
 ];

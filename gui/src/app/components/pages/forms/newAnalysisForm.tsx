@@ -201,7 +201,12 @@ function Step1({ values }: Step1Prop) {
       {type === JobTypes.tumorOnly && (
         <>
           <FormGroup row className={classes.formControl}>
-            <Grid container justify="center" alignItems="baseline" spacing={1}>
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="baseline"
+              spacing={1}
+            >
               <Grid item xs={6} md={4}>
                 <SelectField
                   label="Depth filter"
@@ -286,7 +291,12 @@ function Step2({ values, uploadState, setFieldValue }: Step2Prop) {
         )}
       </Typography>
       <FormGroup row className={classes.formControl}>
-        <Grid container justify="space-evenly" alignItems="center" spacing={3}>
+        <Grid
+          container
+          justifyContent="space-evenly"
+          alignItems="center"
+          spacing={3}
+        >
           <Grid item xs={2}>
             {!isVcf ? 'Tumor sample' : 'VCF file'}
           </Grid>
@@ -318,7 +328,7 @@ function Step2({ values, uploadState, setFieldValue }: Step2Prop) {
         <FormGroup row className={classes.formControl}>
           <Grid
             container
-            justify="space-evenly"
+            justifyContent="space-evenly"
             alignItems="center"
             spacing={3}
           >
@@ -364,27 +374,8 @@ function Step2({ values, uploadState, setFieldValue }: Step2Prop) {
   );
 }
 
-export default function NewAnalysisForm() {
-  const classes = useStyles();
-  const repository = useService(PatientRepository);
-  const jobRepository = useService(JobRepository);
-  const transferManager = useService(TransferManager);
-  const [loading, setLoading] = useState(false);
-  const [patient, setPatient] = useState<MaybePatient>();
-  const [uploadState, uploadCallbacks] = useUpload();
-  const [submitting, setSubmitting] = useState(false);
-  const history = useHistory();
-  const { id } = useParams<{ id: string }>();
-
-  useEffect(() => {
-    runAsync(async () => {
-      setLoading(true);
-      setPatient(await (await repository.fetch(+id)).refresh());
-      setLoading(false);
-    });
-  }, [id, repository]);
-
-  const validationSchema = Yup.object().shape({
+function useValidationSchema() {
+  return Yup.object().shape({
     sample_code: Yup.string()
       .defined()
       .max(255)
@@ -438,6 +429,29 @@ export default function NewAnalysisForm() {
       otherwise: Yup.object().notRequired(),
     }),
   });
+}
+
+export default function NewAnalysisForm() {
+  const classes = useStyles();
+  const repository = useService(PatientRepository);
+  const jobRepository = useService(JobRepository);
+  const transferManager = useService(TransferManager);
+  const [loading, setLoading] = useState(false);
+  const [patient, setPatient] = useState<MaybePatient>();
+  const [uploadState, uploadCallbacks] = useUpload();
+  const [submitting, setSubmitting] = useState(false);
+  const history = useHistory();
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    runAsync(async () => {
+      setLoading(true);
+      setPatient(await (await repository.fetch(+id)).refresh());
+      setLoading(false);
+    });
+  }, [id, repository]);
+
+  const validationSchema = useValidationSchema();
 
   const jobData: LocalData = {
     inputType: 'fastq',
@@ -459,12 +473,12 @@ export default function NewAnalysisForm() {
     <Paper elevation={1} className={classes.paper}>
       {loading || !patient ? (
         <>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Grid item xs="auto">
               <CircularProgress color="inherit" />
             </Grid>
           </Grid>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Grid item xs="auto">
               Please wait...
             </Grid>

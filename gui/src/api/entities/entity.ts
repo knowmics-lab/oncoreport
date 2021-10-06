@@ -96,7 +96,8 @@ export type NumberPartial<T> = {
 type Fillable<T> = Partial<T> | NumberPartial<T>;
 
 export default abstract class Entity<T extends IdentifiableEntity>
-  implements IdentifiableEntity {
+  implements IdentifiableEntity
+{
   protected data: SimpleMapType<any> = {};
 
   protected adapter: Adapter<T>;
@@ -164,7 +165,7 @@ export default abstract class Entity<T extends IdentifiableEntity>
 
   public async delete(): Promise<this> {
     if (!this.isDeleted && !this.isNew) {
-      await this.adapter.delete((this as unknown) as T);
+      await this.adapter.delete(this as unknown as T);
       this.notify(EntityEvent.DELETE);
     }
     this.isDeleted = true;
@@ -176,12 +177,12 @@ export default abstract class Entity<T extends IdentifiableEntity>
     if (this.dirty) {
       let newData;
       if (this.isNew) {
-        newData = await this.adapter.create((this as unknown) as T);
+        newData = await this.adapter.create(this as unknown as T);
         this.fillDataArray(newData);
         this.notify(EntityEvent.CREATE);
       } else {
-        newData = await this.adapter.update((this as unknown) as T);
-        //console.log(newData);
+        newData = await this.adapter.update(this as unknown as T);
+        // console.log(newData);
         this.fillDataArray(newData);
         this.notify(EntityEvent.UPDATE);
       }

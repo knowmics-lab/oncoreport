@@ -5,8 +5,11 @@ import {
 import Entity, { field } from './entity';
 
 export default abstract class TimedEntity<
-  T extends IdentifiableEntity & ITimedEntity
-> extends Entity<T> implements ITimedEntity {
+    T extends IdentifiableEntity & ITimedEntity
+  >
+  extends Entity<T>
+  implements ITimedEntity
+{
   @field({
     fillable: false,
     readonly: true,

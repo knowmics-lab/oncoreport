@@ -46,10 +46,10 @@ function useCreateHOC<C extends ReactComponent>(
 
   if (options && options.forwardRef === true) {
     // eslint-disable-next-line react/display-name
-    const forwarded = (forwardRef((props: any, ref: any) => {
+    const forwarded = forwardRef((props: any, ref: any) => {
       const targetProps = useGetProps(props);
       return <Target ref={ref} {...targetProps} />;
-    }) as unknown) as C;
+    }) as unknown as C;
     forwarded.displayName = createDisplayName(Target);
     return forwarded;
   }
@@ -62,7 +62,7 @@ function useCreateHOC<C extends ReactComponent>(
 
   InjectedComponent.displayName = createDisplayName(Target);
 
-  return (InjectedComponent as unknown) as C;
+  return InjectedComponent as unknown as C;
 }
 
 export function injectContainer(propName: string, options?: Options) {

@@ -11,12 +11,14 @@ class CreateDrugsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('drugs', function (Blueprint $table) {
+        Schema::create('drugs', static function (Blueprint $table) {
             $table->id();
+            $table->string('drugbank_id')->unique();
             $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,7 +27,7 @@ class CreateDrugsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('drugs');
     }

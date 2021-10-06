@@ -49,19 +49,19 @@ export default function Header<
   const classes = useStyles();
   const sf = (column: NormalColumn<D, E>): keyof E =>
     column.sortingField || column.dataField;
-  const makeChangeHandler = (column: keyof E) => (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {
-    const oldDirection = get(sorting, column, null);
-    const newDirection =
-      oldDirection === null ? 'desc' : oldDirection === 'desc' ? 'asc' : null;
-    const newSorting =
-      newDirection === null
-        ? Utils.filterByKey(sorting, (k) => k !== column)
-        : { ...sorting, [column]: newDirection };
-    changeSorting(newSorting);
-    event.preventDefault();
-  };
+  const makeChangeHandler =
+    (column: keyof E) =>
+    (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+      const oldDirection = get(sorting, column, null);
+      const newDirection =
+        oldDirection === null ? 'desc' : oldDirection === 'desc' ? 'asc' : null;
+      const newSorting =
+        newDirection === null
+          ? Utils.filterByKey(sorting, (k) => k !== column)
+          : { ...sorting, [column]: newDirection };
+      changeSorting(newSorting);
+      event.preventDefault();
+    };
   return (
     <TableHead>
       <TableRow>

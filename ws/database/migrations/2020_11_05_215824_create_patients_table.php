@@ -22,22 +22,13 @@ class CreatePatientsTable extends Migration
                 $table->string('last_name');
                 $table->enum('gender', ['m', 'f']);
                 $table->tinyInteger('age');
-                $table->integer('T')->nullable();
-                $table->integer('N')->nullable();
-                $table->integer('M')->nullable();
-                $table->unsignedBigInteger('location_id')->nullable();
                 $table->string('email');
                 $table->string('fiscal_number')->unique();
                 $table->string('telephone')->nullable();
                 $table->string('city')->nullable();
-                $table->unsignedBigInteger('user_id')->nullable()->index();
-                $table->foreign('user_id', 'user_id_to_patient_foreign_key')
-                      ->references('id')->on('users')
-                      ->onDelete('set null')->onUpdate('set null');
+                $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamps();
-
-                $table->string('password');
-                $table->rememberToken();
             }
         );
     }

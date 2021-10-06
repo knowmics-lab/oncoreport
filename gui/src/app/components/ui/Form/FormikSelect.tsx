@@ -1,9 +1,7 @@
-import { TextField } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import { FieldProps } from "formik";
-import React from "react";
-import Select from "react-select";
-import { OptionsType, ValueType } from "react-select/lib/types";
+import { TextField } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import { FieldProps } from 'formik';
+import React from 'react';
 
 interface Option {
   label: string;
@@ -11,7 +9,7 @@ interface Option {
 }
 
 interface FormikSelectProps extends FieldProps {
-  options: OptionsType<Option>;
+  options: Option[];
   isMulti?: boolean;
 }
 
@@ -24,69 +22,60 @@ export const FormikSelect = ({
   label = '',
   defaultValue = null,
   loading = false,
-  getOptionDisabled=(option: Option) => {return false},
+  getOptionDisabled = (option: Option) => {
+    return false;
+  },
   onChangeCallback,
 }) => {
-
-  const onChange = //(e, value) => {form.setFieldValue(field.name, value.value)}
-  (e:any, option: ValueType<Option | Option[]>) => {
+  const onChange = (_e: unknown, option: Option | Option[] | null) => {
+    // (e, value) => {form.setFieldValue(field.name, value.value)}
     form.setFieldValue(
       field.name,
       isMulti
         ? (option as Option[]).map((item: Option) => item.value)
-        : ( option ? (option as Option).value : null)
+        : option
+        ? (option as Option).value
+        : null
     );
 
-    if (onChangeCallback){
+    if (onChangeCallback) {
       onChangeCallback(option);
     }
 
-    if(defaultValue){
-    console.log(JSON.stringify(defaultValue[0]));
-    console.log(JSON.stringify(options[0]));
-}
-
+    // if (defaultValue) {
+    //   console.log(JSON.stringify(defaultValue[0]));
+    //   console.log(JSON.stringify(options[0]));
+    // }
   };
 
   const getValue = () => {
-
     if (options) {
       return isMulti
-        ? options.filter((option: Option) => field.value.indexOf(option.value) >= 0)
+        ? options.filter(
+            (option: Option) => field.value.indexOf(option.value) >= 0
+          )
         : options.find((option: Option) => option.value === field.value);
-    } else {
-      return isMulti ? [] : ("" as any);
     }
+    return isMulti ? [] : ('' as any);
   };
 
   return (
-
-
-
     <Autocomplete
       id="combo-box-demo"
       options={options}
       getOptionLabel={(option) => option.label}
-      //style={{ width: 300 }}
       autoComplete
       autoHighlight
       style={style}
       value={getValue()}
       onChange={onChange}
-      getOptionDisabled= {getOptionDisabled}
+      getOptionDisabled={getOptionDisabled}
       multiple={isMulti}
-      renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
+      renderInput={(params) => (
+        <TextField {...params} label={label} variant="outlined" />
+      )}
     />
-
-
   );
 };
 
-/**    <Select
-      name={field.name}
-      value={getValue()}
-      onChange={onChange}
-      options={options}
-      isMulti={isMulti}
-      placeholder={label}
-    /> */
+export default FormikSelect;

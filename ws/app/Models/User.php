@@ -7,6 +7,7 @@
 
 namespace App\Models;
 
+use App\Constants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,9 +16,6 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
-/**
- * @mixin IdeHelperUser
- */
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -39,15 +37,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'admin' => false,
-    ];
-
-    /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
@@ -66,7 +55,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'admin'             => 'boolean',
     ];
 
     /**
@@ -83,7 +71,7 @@ class User extends Authenticatable
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(Job::class, 'user_id', 'id');
+        return $this->hasMany(Job::class, 'owner_id');
     }
 
     /**
@@ -91,7 +79,12 @@ class User extends Authenticatable
      */
     public function patients(): HasMany
     {
-        return $this->hasMany(Patient::class, 'user_id', 'id');
+        return $this->hasMany(Patient::class, 'owner_id');
+    }
+
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->role === Constants::ADMIN;
     }
 
     /**
@@ -102,7 +95,7 @@ class User extends Authenticatable
     public function statistics(): array
     {
         $stats = [];
-        if ($this->admin) {
+        if ($this->is_admin) {
             $stats['jobs'] = [
                 'all'        => Job::count(),
                 'ready'      => Job::whereStatus(Job::READY)->count(),
