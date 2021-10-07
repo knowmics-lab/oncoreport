@@ -98,20 +98,20 @@ class User extends Authenticatable
         if ($this->is_admin) {
             $stats['jobs'] = [
                 'all'        => Job::count(),
-                'ready'      => Job::whereStatus(Job::READY)->count(),
-                'queued'     => Job::whereStatus(Job::QUEUED)->count(),
-                'processing' => Job::whereStatus(Job::PROCESSING)->count(),
-                'failed'     => Job::whereStatus(Job::FAILED)->count(),
-                'completed'  => Job::whereStatus(Job::COMPLETED)->count(),
+                'ready'      => Job::whereStatus(Constants::READY)->count(),
+                'queued'     => Job::whereStatus(Constants::QUEUED)->count(),
+                'processing' => Job::whereStatus(Constants::PROCESSING)->count(),
+                'failed'     => Job::whereStatus(Constants::FAILED)->count(),
+                'completed'  => Job::whereStatus(Constants::COMPLETED)->count(),
             ];
         } else {
             $stats['jobs'] = [
                 'all'        => Job::whereUserId($this->id)->count(),
-                'ready'      => Job::whereUserId($this->id)->whereStatus(Job::READY)->count(),
-                'queued'     => Job::whereUserId($this->id)->whereStatus(Job::QUEUED)->count(),
-                'processing' => Job::whereUserId($this->id)->whereStatus(Job::PROCESSING)->count(),
-                'failed'     => Job::whereUserId($this->id)->whereStatus(Job::FAILED)->count(),
-                'completed'  => Job::whereUserId($this->id)->whereStatus(Job::COMPLETED)->count(),
+                'ready'      => Job::whereUserId($this->id)->whereStatus(Constants::READY)->count(),
+                'queued'     => Job::whereUserId($this->id)->whereStatus(Constants::QUEUED)->count(),
+                'processing' => Job::whereUserId($this->id)->whereStatus(Constants::PROCESSING)->count(),
+                'failed'     => Job::whereUserId($this->id)->whereStatus(Constants::FAILED)->count(),
+                'completed'  => Job::whereUserId($this->id)->whereStatus(Constants::COMPLETED)->count(),
             ];
         }
 
