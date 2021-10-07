@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Patient as PatientResource;
+use App\Http\Resources\PatientResource as PatientResource;
 use App\Http\Resources\PatientCollection;
 use App\Models\Disease;
 use App\Models\Patient;
@@ -41,7 +41,7 @@ class PatientController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \App\Http\Resources\Patient
+     * @return \App\Http\Resources\PatientResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -162,7 +162,7 @@ class PatientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Patient  $patient
      *
-     * @return \App\Http\Resources\Patient
+     * @return \App\Http\Resources\PatientResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, Patient $patient): PatientResource
@@ -179,7 +179,7 @@ class PatientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Patient  $patient
      *
-     * @return \App\Http\Resources\Patient
+     * @return \App\Http\Resources\PatientResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

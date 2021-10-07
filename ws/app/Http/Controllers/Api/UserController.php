@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\UserResource as UserResource;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
 use Hash;
@@ -42,7 +42,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \App\Http\Resources\User
+     * @return \App\Http\Resources\UserResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -82,7 +82,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
      *
-     * @return \App\Http\Resources\User
+     * @return \App\Http\Resources\UserResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, User $user): UserResource
@@ -99,7 +99,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
      *
-     * @return \App\Http\Resources\User
+     * @return \App\Http\Resources\UserResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

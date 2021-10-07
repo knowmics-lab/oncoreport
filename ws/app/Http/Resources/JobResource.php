@@ -7,14 +7,13 @@
 
 namespace App\Http\Resources;
 
-use App\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\Job
  * @package App\Http\Resources
  */
-class Job extends JsonResource
+class JobResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,7 +22,7 @@ class Job extends JsonResource
      *
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id'              => $this->id,
@@ -39,11 +38,8 @@ class Job extends JsonResource
             'created_at_diff' => $this->created_at->diffForHumans(),
             'updated_at'      => $this->updated_at,
             'updated_at_diff' => $this->updated_at->diffForHumans(),
-            'owner'           => Utils::flattenResource(new User($this->user), $request),
-            'patient'         => $this->patient ? Utils::flattenResource(
-                new Patient($this->patient),
-                $request
-            ) : null,
+            'owner'           => new UserResource($this->whenLoaded('owner')),
+            'patient'         => new PatientResource($this->whenLoaded('patient')),
         ];
     }
 }

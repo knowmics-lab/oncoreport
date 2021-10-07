@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Disease as DiseaseResource;
+use App\Http\Resources\DiseaseResource as DiseaseResource;
 use App\Http\Resources\DiseaseCollection;
 use App\Models\Disease;
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class DiseaseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Disease  $disease
      *
-     * @return \App\Http\Resources\Disease
+     * @return \App\Http\Resources\DiseaseResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, Disease $disease): DiseaseResource

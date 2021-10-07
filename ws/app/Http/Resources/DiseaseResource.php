@@ -14,7 +14,7 @@ use JetBrains\PhpStorm\ArrayShape;
  * @mixin \App\Models\Disease
  * @package App\Http\Resources
  */
-class Disease extends JsonResource
+class DiseaseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

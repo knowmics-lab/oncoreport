@@ -3,9 +3,9 @@
 use App\Http\Livewire\Admin\User\Index as UserIndex;
 use App\Http\Livewire\Admin\User\Create as UserCreate;
 use App\Http\Livewire\Admin\User\Show as UserShow;
-use App\Http\Resources\Location as LocationResurce;
-use App\Http\Resources\Patient as PatientResource;
-use App\Http\Resources\User;
+use App\Http\Resources\LocationResource as LocationResurce;
+use App\Http\Resources\PatientResource as PatientResource;
+use App\Http\Resources\UserResource;
 use App\Models\Location;
 use App\Models\Patient;
 use App\Utils;

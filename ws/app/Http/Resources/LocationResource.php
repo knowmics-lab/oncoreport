@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\ArrayShape;
  * @mixin \App\Models\Location
  * @package App\Http\Resources
  */
-class Location extends JsonResource
+class LocationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

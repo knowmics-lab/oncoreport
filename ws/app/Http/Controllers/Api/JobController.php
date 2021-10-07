@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Job as JobResource;
+use App\Http\Resources\JobResource as JobResource;
 use App\Http\Resources\JobCollection;
 use App\Jobs\Request as JobRequest;
 use App\Jobs\Types\AbstractJob;
@@ -110,7 +110,7 @@ class JobController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \App\Http\Resources\Job
+     * @return \App\Http\Resources\JobResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -188,7 +188,7 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Job  $job
      *
-     * @return \App\Http\Resources\Job
+     * @return \App\Http\Resources\JobResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, Job $job): JobResource
@@ -205,7 +205,7 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Job  $job
      *
-     * @return \App\Http\Resources\Job
+     * @return \App\Http\Resources\JobResource
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -291,7 +291,7 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Job  $job
      *
-     * @return \App\Http\Resources\Job
+     * @return \App\Http\Resources\JobResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function submit(Request $request, Job $job): JobResource

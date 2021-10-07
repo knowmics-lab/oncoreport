@@ -7,16 +7,13 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Location as LocationModel;
-use App\Utils;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class User
  * @mixin \App\Models\Patient
  * @package App\Http\Resources
  */
-class Patient extends JsonResource
+class PatientResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -28,34 +25,25 @@ class Patient extends JsonResource
     public function toArray($request): array
     {
         return [
-            'data'  => [
-                'id'              => $this->id,
-                'code'            => $this->code,
-                'first_name'      => $this->first_name,
-                'last_name'       => $this->last_name,
-                'age'             => $this->age,
-                'gender'          => $this->gender,
-                'email'           => $this->email,
-                'fiscalNumber'    => $this->fiscal_number,
-                'telephone'       => $this->telephone ?? "",
-                'city'            => $this->city ?? "",
-                'disease'         => Utils::flattenResource(new DiseaseResource($this->disease), $request),
-                'disease_stage'   => ['T' => $this->T, 'M' => $this->M, 'N' => $this->N],
-                'disease_site_id'    => $this->location_id,#Utils::flattenResource(new Location(LocationModel::first()), $request),
-                'owner'           => $this->user? Utils::flattenResource(new User($this->user), $request) : null,
-                'created_at'      => $this->created_at,
-                'created_at_diff' => $this->created_at->diffForHumans(),
-                'updated_at'      => $this->updated_at,
-                'updated_at_diff' => $this->updated_at->diffForHumans(),
-                'tumors'          => new TumorCollection($this->tumors),
-                'diseases'        => new PathologyCollection($this->diseases),
-                'drugs' => $this->drugs()->get(),
-            ],
-            'links' => [
-                'self'  => route('patients.show', $this->resource, false),
-                'owner' => $this->user ? route('users.show', $this->user, false) : null,
-                'jobs'  => route('jobs.by.patient', $this->id, false),
-            ],
+            'id'              => $this->id,
+            'code'            => $this->code,
+            'first_name'      => $this->first_name,
+            'last_name'       => $this->last_name,
+            'age'             => $this->age,
+            'gender'          => $this->gender,
+            'email'           => $this->email,
+            'fiscalNumber'    => $this->fiscal_number,
+            'telephone'       => $this->telephone ?? '',
+            'city'            => $this->city ?? '',
+            'diseases'        => PatientDiseaseResource::collection($this->whenLoaded('diseases')),
+            'primaryDisease'  => new PatientDiseaseResource($this->whenLoaded('primaryDisease')),
+            'drugs'           => PatientDrugResource::collection($this->whenLoaded('drugs')),
+            'user'            => new UserResource($this->whenLoaded('user')),
+            'owner'           => new UserResource($this->whenLoaded('owner')),
+            'created_at'      => $this->created_at,
+            'created_at_diff' => $this->created_at->diffForHumans(),
+            'updated_at'      => $this->updated_at,
+            'updated_at_diff' => $this->updated_at->diffForHumans(),
         ];
     }
 }

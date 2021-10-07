@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Drug as ResourcesDrug;
+use App\Http\Resources\DrugResource as ResourcesDrug;
 use App\Http\Resources\DrugCollection;
 use App\Models\Patient;
 use App\Models\PatientTumor;

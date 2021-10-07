@@ -5,11 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JetBrains\PhpStorm\ArrayShape;
 
-/**
- * @mixin \App\Models\Drug
- * @package App\Http\Resources
- */
-class DrugResource extends JsonResource
+class SuspensionReasonResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,18 +15,16 @@ class DrugResource extends JsonResource
      * @return array
      */
     #[ArrayShape([
-        'id'              => "int",
-        'drugbank_id'     => "string",
-        'name'            => "string",
-        'created_at'      => "\Illuminate\Support\Carbon|null",
-        'created_at_diff' => "string",
-        'updated_at'      => "\Illuminate\Support\Carbon|null",
-        'updated_at_diff' => "string",
+        'id'              => "mixed",
+        'name'            => "mixed",
+        'created_at'      => "mixed",
+        'created_at_diff' => "mixed",
+        'updated_at'      => "mixed",
+        'updated_at_diff' => "mixed",
     ])] public function toArray($request): array
     {
         return [
             'id'              => $this->id,
-            'drugbank_id'     => $this->drugbank_id,
             'name'            => $this->name,
             'created_at'      => $this->created_at,
             'created_at_diff' => $this->created_at->diffForHumans(),
