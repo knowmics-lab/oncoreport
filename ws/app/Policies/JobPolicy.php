@@ -7,6 +7,7 @@
 
 namespace App\Policies;
 
+use App\Constants;
 use App\Models\Job;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -20,9 +21,9 @@ class JobPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return true;
     }
@@ -33,11 +34,19 @@ class JobPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Job  $job
      *
-     * @return mixed
+     * @return bool
      */
-    public function view(User $user, Job $job)
+    public function view(User $user, Job $job): bool
     {
-        return $user->admin || $job->user_id === $user->id;
+        $role = $user->role;
+
+        return
+            // Admins or technical staff can view all jobs
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can view their own patient's jobs
+            ($role === Constants::DOCTOR && ($job->owner_id === null || $job->owner_id === $user->id)) ||
+            // Patients can view their own data
+            ($role === Constants::PATIENT && $job->patient_id === $user->id);
     }
 
     /**
@@ -45,14 +54,11 @@ class JobPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
-        // Solo i clinici possono avviare una analisi
-        return $user->role == 'clinico';
-
-        return true;
+        return $user->role !== Constants::PATIENT;
     }
 
     /**
@@ -61,14 +67,17 @@ class JobPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Job  $job
      *
-     * @return mixed
+     * @return bool
      */
-    public function update(User $user, Job $job)
+    public function update(User $user, Job $job): bool
     {
-        // Solo i clinici possono avviare una analisi
-        return $user->role == 'clinico';
+        $role = $user->role;
 
-        return $user->admin || $job->user_id === $user->id;
+        return
+            // Admins or technical staff can update all jobs
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can update their own patient's jobs
+            ($role === Constants::DOCTOR && ($job->owner_id === null || $job->owner_id === $user->id));
     }
 
     /**
@@ -77,37 +86,19 @@ class JobPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Job  $job
      *
-     * @return mixed
+     * @return bool
      */
-    public function delete(User $user, Job $job)
+    public function delete(User $user, Job $job): bool
     {
-        return $user->admin || $job->user_id === $user->id;
-    }
+        $role = $user->role;
 
-    /**
-     * Determine whether the user can restore the job.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Job  $job
-     *
-     * @return mixed
-     */
-    public function restore(User $user, Job $job)
-    {
-        return $user->admin || $job->user_id === $user->id;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the job.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Job  $job
-     *
-     * @return mixed
-     */
-    public function forceDelete(User $user, Job $job)
-    {
-        return $user->admin || $job->user_id === $user->id;
+        return
+            // Admins or technical staff can delete all jobs
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can delete their own patient's jobs
+            ($role === Constants::DOCTOR && ($job->owner_id === null || $job->owner_id === $user->id)) ||
+            // Patients can delete their own data
+            ($role === Constants::PATIENT && $job->patient_id === $user->id);
     }
 
     /**
@@ -116,11 +107,17 @@ class JobPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Job  $job
      *
-     * @return mixed
+     * @return bool
      */
-    public function submitJob(User $user, Job $job)
+    public function submit(User $user, Job $job): bool
     {
-        return $user->admin || $job->user_id === $user->id;
+        $role = $user->role;
+
+        return
+            // Admins or technical staff can submit all jobs
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can submit their own patient's jobs
+            ($role === Constants::DOCTOR && ($job->owner_id === null || $job->owner_id === $user->id));
     }
 
     /**
@@ -129,10 +126,16 @@ class JobPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Job  $job
      *
-     * @return mixed
+     * @return bool
      */
-    public function uploadJob(User $user, Job $job)
+    public function upload(User $user, Job $job): bool
     {
-        return $user->admin || $job->user_id === $user->id;
+        $role = $user->role;
+
+        return
+            // Admins or technical staff can upload files to all jobs
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can upload files to their own patient's jobs
+            ($role === Constants::DOCTOR && ($job->owner_id === null || $job->owner_id === $user->id));
     }
 }

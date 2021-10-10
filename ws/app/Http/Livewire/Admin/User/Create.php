@@ -7,7 +7,9 @@
 
 namespace App\Http\Livewire\Admin\User;
 
+use App\Constants;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,7 +26,6 @@ class Create extends Component
         'name'     => '',
         'email'    => '',
         'password' => '',
-        'admin'    => false,
         'role'     => '',
     ];
 
@@ -39,8 +40,7 @@ class Create extends Component
             'state.name'     => ['required', 'string', 'max:255'],
             'state.email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'state.password' => ['nullable', 'string', new Password()],
-            'state.admin'    => ['sometimes', 'boolean'],
-            'state.role'     => ['sometimes', Rule::in(config('constants.roles'))],
+            'state.role'     => ['sometimes', Rule::in(Constants::ROLES)],
         ];
     }
 
@@ -50,11 +50,10 @@ class Create extends Component
      * @return mixed
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function submit()
+    public function submit(): mixed
     {
         $this->authorize('create', User::class);
         $this->validate();
-        error_log($this->state['role']);
         User::create(
             [
                 'name'              => $this->state['name'],
@@ -62,7 +61,6 @@ class Create extends Component
                 'email_verified_at' => now(),
                 'password'          => Hash::make($this->state['password']),
                 'remember_token'    => Str::random(10),
-                'admin'             => $this->state['admin'] ?? false,
                 'role'              => $this->state['role'],
             ]
         )->save();
@@ -76,10 +74,10 @@ class Create extends Component
     /**
      * Renders this component
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function render()
+    public function render(): View
     {
         $this->authorize('create', User::class);
 

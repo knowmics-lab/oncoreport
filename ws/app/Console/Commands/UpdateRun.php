@@ -42,7 +42,17 @@ class UpdateRun extends Command
         $retCode = $this->call(
             'migrate',
             [
-                '--force' => true,
+                '--force'          => true,
+                '--no-interaction' => true,
+            ]
+        );
+        if ($retCode !== 0) {
+            return $retCode;
+        }
+        $retCode = $this->call(
+            'db:seed',
+            [
+                '--force'          => true,
                 '--no-interaction' => true,
             ]
         );

@@ -31,7 +31,7 @@ class PingController extends Controller
      * @return mixed
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function user(Request $request)
+    public function user(Request $request): mixed
     {
         $this->authorize('view', $request->user());
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');

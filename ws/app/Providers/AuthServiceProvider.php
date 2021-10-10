@@ -3,12 +3,15 @@
 namespace App\Providers;
 
 use App\Models\Disease;
+use App\Models\Drug;
 use App\Models\Job;
+use App\Models\Location;
 use App\Models\Patient;
+use App\Models\SuspensionReason;
 use App\Models\User;
-use App\Policies\DiseasePolicy;
 use App\Policies\JobPolicy;
 use App\Policies\PatientPolicy;
+use App\Policies\ResourcePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -20,10 +23,13 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        User::class    => UserPolicy::class,
-        Job::class     => JobPolicy::class,
-        Patient::class => PatientPolicy::class,
-        Disease::class => DiseasePolicy::class,
+        Disease::class          => ResourcePolicy::class,
+        Drug::class             => ResourcePolicy::class,
+        Job::class              => JobPolicy::class,
+        Location::class         => ResourcePolicy::class,
+        Patient::class          => PatientPolicy::class,
+        SuspensionReason::class => ResourcePolicy::class,
+        User::class             => UserPolicy::class,
     ];
 
     /**

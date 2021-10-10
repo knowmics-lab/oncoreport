@@ -11,7 +11,56 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
+
+    /**
+     * Checks if the current user token has the requested abilities.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|array  $abilities
+     * @param  string  $message
+     */
+    protected function tokenCan(
+        Request $request,
+        string|array $abilities,
+        string $message = 'You are not allowed to perform this action with the current credentials.'
+    ): void {
+        if (is_string($abilities)) {
+            $abilities = [$abilities];
+        }
+        foreach ($abilities as $ability) {
+            abort_unless($request->user()->tokenCan($ability), 403, $message);
+        }
+    }
+
+    /**
+     * Checks if the current user can perform an action.
+     * The check is performed on both policies and tokens.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|array|null  $tokenAbilities
+     * @param  mixed|null  $policyAbility
+     * @param  mixed|array|null  $policyArguments
+     * @param  string  $tokenMessage
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function tokenAuthorize(
+        Request $request,
+        string|array|null $tokenAbilities = null,
+        mixed $policyAbility = null,
+        mixed $policyArguments = null,
+        string $tokenMessage = 'You are not allowed to perform this action with the current credentials.'
+    ): void {
+        if ($policyAbility !== null && $policyArguments !== null) {
+            $this->authorize($policyAbility, $policyArguments);
+        }
+        if ($tokenAbilities !== null) {
+            $this->tokenCan($request, $tokenAbilities, $tokenMessage);
+        }
+    }
 
     /**
      * @param  \Illuminate\Http\Request  $request

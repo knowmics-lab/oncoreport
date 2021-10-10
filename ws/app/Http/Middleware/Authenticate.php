@@ -1,4 +1,9 @@
 <?php
+/**
+ * @noinspection PhpInconsistentReturnPointsInspection
+ * @noinspection ReturnTypeCanBeDeclaredInspection
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace App\Http\Middleware;
 
@@ -16,9 +21,6 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {
-            if ($request->routeIs('patient.*')) {
-                return route('patient.login');
-            }
             return route('login');
         }
     }

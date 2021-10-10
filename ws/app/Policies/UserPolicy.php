@@ -19,11 +19,11 @@ class UserPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
-        return $user->admin;
+        return $user->is_admin;
     }
 
     /**
@@ -32,11 +32,11 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $model
      *
-     * @return mixed
+     * @return bool
      */
-    public function view(User $user, User $model)
+    public function view(User $user, User $model): bool
     {
-        return $user->admin || $user->id === $model->id;
+        return $user->is_admin || $user->id === $model->id;
     }
 
     /**
@@ -44,11 +44,11 @@ class UserPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
-        return $user->admin;
+        return $user->is_admin;
     }
 
     /**
@@ -57,11 +57,11 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $model
      *
-     * @return mixed
+     * @return bool
      */
-    public function update(User $user, User $model)
+    public function update(User $user, User $model): bool
     {
-        return $user->admin || $user->id === $model->id;
+        return $user->is_admin || $user->id === $model->id;
     }
 
     /**
@@ -70,37 +70,11 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $model
      *
-     * @return mixed
+     * @return bool
      */
-    public function delete(User $user, User $model)
+    public function delete(User $user, User $model): bool
     {
-        return $user->admin || $user->id === $model->id;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
-     *
-     * @return mixed
-     */
-    public function restore(User $user, User $model)
-    {
-        return $user->admin || $user->id === $model->id;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
-     *
-     * @return mixed
-     */
-    public function forceDelete(User $user, User $model)
-    {
-        return $user->admin || $user->id === $model->id;
+        return $user->is_admin || $user->id === $model->id;
     }
 
     /**
@@ -109,10 +83,10 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $model
      *
-     * @return mixed
+     * @return bool
      */
-    public function generateToken(User $user, User $model)
+    public function generateToken(User $user, User $model): bool
     {
-        return $user->admin || $user->id === $model->id;
+        return $user->is_admin || $user->id === $model->id;
     }
 }

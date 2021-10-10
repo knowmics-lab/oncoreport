@@ -1,17 +1,8 @@
 <?php
 
-use App\Http\Livewire\Admin\User\Index as UserIndex;
-use App\Http\Livewire\Admin\User\Create as UserCreate;
-use App\Http\Livewire\Admin\User\Show as UserShow;
-use App\Http\Resources\LocationResource as LocationResurce;
-use App\Http\Resources\PatientResource as PatientResource;
-use App\Http\Resources\UserResource;
-use App\Models\Location;
-use App\Models\Patient;
-use App\Utils;
-//use App\Http\Resources\Patient as PatientResource;
-//use App\Http\Resources\PatientCollection;
-//use App\Models\Patient;
+use App\Http\Livewire\Admin\User\Create as AdminUserCreate;
+use App\Http\Livewire\Admin\User\Index as AdminUserIndex;
+use App\Http\Livewire\Admin\User\Show as AdminUserShow;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,50 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get( '/',
-    function (Request $request) {
-        return redirect()->route('dashboard');
-    }
-);
+Route::get('/', fn() => redirect()->route('dashboard'));
 
-Route::get('test', function (Request $request) {
-    //$p = Patient::first();
-    //return $p->stage();
-    return Patient::first();
-    return new PatientResource(Patient::first());
+Route::group([
+    'auth:sanctum',
+    'verified',
+], static function () {
+    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+    Route::get('/admin/users', AdminUserIndex::class)
+         ->name('users-list')
+         ->middleware('can:view-any,App\Models\User');
+    Route::get('/admin/users/create', AdminUserCreate::class)
+         ->name('users-create')
+         ->middleware('can:create,App\Models\User');
+    Route::get('/admin/users/{user}', AdminUserShow::class)
+         ->name('users-show')
+         ->middleware('can:view,user');
 });
-
-
-Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/dashboard',
-    function () {
-        return view('dashboard');
-    }
-)->name('dashboard');
-
-Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/admin/users',
-    UserIndex::class
-)->name('users-list')->middleware('can:view-any,App\\Models\\User');
-Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/admin/users/create',
-    UserCreate::class
-)->name('users-create')->middleware('can:create,App\\Models\\User');
-Route::middleware(['auth:sanctum', 'verified'])->get(
-    '/admin/users/{user}',
-    UserShow::class
-)->name('users-show');
-
-
-Route::prefix('patient')
-    ->as('patient.')
-    ->group(function() {
-        Route::get('home', '\App\Http\Controllers\PatientController@index')->name('home');
-        Route::namespace('\App\Http\Controllers\Auth\Patient')
-            ->group(function() {
-                Route::get('login', 'PatientAuthController@showLoginForm')->name('login');
-                Route::post('login', 'PatientAuthController@login')->name('login');
-                Route::post('logout', 'PatientAuthController@logout')->name('logout');
-            });
-    });
 

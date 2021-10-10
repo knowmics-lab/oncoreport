@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
                     try {
                         DB::connection()->getPdo();
                         $check = true;
-                    } catch (Exception $ignore) {
+                    } catch (Exception) {
                         sleep(5);
                     }
                 }

@@ -1,12 +1,22 @@
 <?php
+/**
+ * Oncoreport Web Service
+ *
+ * @author S. Alaimo, Ph.D. <alaimos at gmail dot com>
+ */
 
 namespace App\Policies;
 
-use App\Models\Tumor;
+use App\Models\Resource;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TumorPolicy
+/**
+ * Policy for Resource models: all users can view any resource but no changes can be made since
+ * they are strictly tied with the underlying application
+ * @package App\Policies
+ */
+class ResourcePolicy
 {
     use HandlesAuthorization;
 
@@ -15,9 +25,9 @@ class TumorPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return true;
     }
@@ -26,11 +36,11 @@ class TumorPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Tumor  $tumor
+     * @param  \App\Models\Resource  $resource
      *
-     * @return mixed
+     * @return bool
      */
-    public function view(User $user, Tumor $tumor)
+    public function view(User $user, Resource $resource): bool
     {
         return true;
     }
@@ -40,9 +50,9 @@ class TumorPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return false;
     }
@@ -51,11 +61,11 @@ class TumorPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Tumor  $tumor
+     * @param  \App\Models\Resource  $resource
      *
-     * @return mixed
+     * @return bool
      */
-    public function update(User $user, Tumor $tumor)
+    public function update(User $user, Resource $resource): bool
     {
         return false;
     }
@@ -64,11 +74,11 @@ class TumorPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Tumor  $tumor
+     * @param  \App\Models\Resource  $resource
      *
-     * @return mixed
+     * @return bool
      */
-    public function delete(User $user, Tumor $tumor)
+    public function delete(User $user, Resource $resource): bool
     {
         return false;
     }
@@ -77,11 +87,11 @@ class TumorPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Tumor  $tumor
+     * @param  \App\Models\Resource  $resource
      *
-     * @return mixed
+     * @return bool
      */
-    public function restore(User $user, Tumor $tumor)
+    public function restore(User $user, Resource $resource): bool
     {
         return false;
     }
@@ -90,11 +100,11 @@ class TumorPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Tumor  $tumor
+     * @param  \App\Models\Resource  $resource
      *
-     * @return mixed
+     * @return bool
      */
-    public function forceDelete(User $user, Tumor $tumor)
+    public function forceDelete(User $user, Resource $resource): bool
     {
         return false;
     }

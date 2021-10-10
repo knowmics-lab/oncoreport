@@ -7,6 +7,7 @@
 
 namespace App\Console\Commands;
 
+use App\Constants;
 use App\Models\Job;
 use Illuminate\Console\Command;
 use Queue;
@@ -31,20 +32,20 @@ class ClearQueue extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         while (($j = Queue::pop()) !== null) {
             $j->delete();
         }
         $this->call('queue:flush');
-        foreach (Job::whereStatus(Job::QUEUED)->get() as $job) {
-            $job->status = Job::READY;
+        foreach (Job::whereStatus(Constants::QUEUED)->get() as $job) {
+            $job->status = Constants::READY;
             $job->save();
         }
-        foreach (Job::whereStatus(Job::PROCESSING)->get() as $job) {
-            $job->status = Job::FAILED;
+        foreach (Job::whereStatus(Constants::PROCESSING)->get() as $job) {
+            $job->status = Constants::FAILED;
             $job->appendLog('Job failed since queue was cleared!', true, false);
             $job->save();
         }

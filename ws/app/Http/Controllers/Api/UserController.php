@@ -7,16 +7,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Api\User\CreateUser;
+use App\Actions\Api\User\CreateUserToken;
+use App\Actions\Api\User\UpdateUser;
+use App\Actions\Jetstream\DeleteUser;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource as UserResource;
-use App\Http\Resources\UserCollection;
+use App\Http\Requests\Api\User\StoreUserRequest;
+use App\Http\Requests\Api\User\UpdateUserRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Services\BuilderRequestService;
 use App\Models\User;
-use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller
 {
@@ -25,55 +28,35 @@ class UserController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Services\BuilderRequestService  $requestService
      *
-     * @return \App\Http\Resources\UserCollection
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index(Request $request): UserCollection
+    public function index(Request $request, BuilderRequestService $requestService): AnonymousResourceCollection
     {
-        $this->authorize('viewAny', User::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read', 'viewAny', User::class);
 
-        return new UserCollection($this->handleBuilderRequest($request, User::query()));
+        return UserResource::collection($requestService->handle($request, User::query()));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Api\User\StoreUserRequest  $request
+     * @param  \App\Actions\Api\User\CreateUser  $createAction
      *
-     * @return \App\Http\Resources\UserResource
-     * @throws \Illuminate\Validation\ValidationException
+     * @return object
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(Request $request): UserResource
+    public function store(StoreUserRequest $request, CreateUser $createAction): object
     {
-        $this->authorize('create', User::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
-        $values = $this->validate(
-            $request,
-            [
-                'name'     => ['required', 'string', 'max:255'],
-                'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
-                'password' => ['required', 'string', new Password()],
-                'admin'    => ['filled', 'boolean'],
-                'role'     => ['required', Rule::in(config('constants.roles'))],
-            ]
-        );
-        $model = User::create(
-            [
-                'name'              => $values['name'],
-                'email'             => $values['email'],
-                'email_verified_at' => now(),
-                'password'          => Hash::make($values['password']),
-                'remember_token'    => Str::random(10),
-                'admin'             => $values['admin'] ?? false,
-                'role'              => $values['role'],
-            ]
-        )->save();
+        $this->tokenAuthorize($request, ['read', 'create'], 'create', User::class);
 
-        return new UserResource($model);
+        return
+            (new UserResource($createAction->create($request->validated())))
+                ->toResponse($request)
+                ->setStatusCode(201);
     }
 
     /**
@@ -87,8 +70,7 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user): UserResource
     {
-        $this->authorize('view', $user);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read', 'create', User::class);
 
         return new UserResource($user);
     }
@@ -96,49 +78,18 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Api\User\UpdateUserRequest  $request
      * @param  \App\Models\User  $user
+     * @param  \App\Actions\Api\User\UpdateUser  $updateAction
      *
      * @return \App\Http\Resources\UserResource
-     * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, User $user): UserResource
+    public function update(UpdateUserRequest $request, User $user, UpdateUser $updateAction): UserResource
     {
-        $this->authorize('update', $user);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
-        $rules = [
-            'name'         => ['filled', 'string', 'max:255'],
-            'email'        => ['filled', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
-            'password'     => ['required_with_all:new_password', 'password'],
-            'new_password' => ['filled', 'string', new Password()],
-            'admin'        => ['filled', 'boolean'],
-            'role'         => ['filled', Rule::in(config('constants.roles'))],
-        ];
-        if ($request->user()->admin) {
-            unset($rules['password']);
-        }
-        $values = $this->validate($request, $rules);
-        if (isset($values['name'])) {
-            $user->name = $values['name'];
-        }
-        if (isset($values['email'])) {
-            $user->email = $values['email'];
-            $user->email_verified_at = now();
-        }
-        if (isset($values['admin']) && $request->user()->admin && $request->user()->id !== $user->id) {
-            $user->admin = (bool)$values['admin'];
-        }
-        if (isset($values['new_password'])) {
-            $user->password = Hash::make($values['new_password']);
-        }
-        if (isset($values['role'])) {
-            $user->role = $values['role'];
-        }
-        $user->save();
+        $this->tokenAuthorize($request, ['read', 'update'], 'update', $user);
 
-        return new UserResource($user);
+        return new UserResource($updateAction->update($user, $request->validated()));
     }
 
     /**
@@ -146,61 +97,39 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
-     *
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
-    public function destroy(Request $request, User $user): JsonResponse
-    {
-        $this->authorize('delete', $user);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
-        $user->deleteProfilePhoto();
-        /** @noinspection PhpUndefinedMethodInspection */
-        $user->tokens->each->delete();
-        $user->delete();
-
-        return response()->json(
-            [
-                'message' => 'User deleted.',
-                'errors'  => false,
-            ]
-        );
-    }
-
-    /**
-     * Make a new token for the provided user
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Actions\Jetstream\DeleteUser  $deleteUserAction
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function token(Request $request, User $user): JsonResponse
+    public function destroy(Request $request, User $user, DeleteUser $deleteUserAction): JsonResponse
     {
-        $this->authorize('generateToken', $user);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
-        $key = Str::random(5);
-        $token = $user->createToken(
-            'api-call-token-' . $key,
-            [
-                'create',
-                'read',
-                'update',
-                'delete',
-            ]
-        );
+        $this->tokenAuthorize($request, ['read', 'delete'], 'delete', $user);
+        $deleteUserAction->delete($user);
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Make a new token for the user
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @param  \App\Actions\Api\User\CreateUserToken  $createTokenAction
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function token(Request $request, User $user, CreateUserToken $createTokenAction): JsonResponse
+    {
+        $this->tokenAuthorize($request, ['read', 'update'], 'generateToken', $user);
+        $token = $createTokenAction->create($user);
 
         return response()->json(
             [
-                'data'  => [
-                    'id'        => $user->id,
+                'data' => [
+                    'id' => $user->id,
                     'api_token' => $token->plainTextToken,
-                ],
-                'links' => [
-                    'self' => route('users.show', $user),
                 ],
             ]
         );

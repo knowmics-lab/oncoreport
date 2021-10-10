@@ -2,12 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-class Drug extends Model
+class Drug extends Resource
 {
-    use SoftDeletes;
 
     protected $fillable = [
         'drugbank_id',

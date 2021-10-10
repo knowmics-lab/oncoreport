@@ -2,35 +2,50 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/DrugResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/JobResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Resources/LocationResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/blade.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/blade.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Actions/Api/User/CreateUser.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Actions/Api/User/CreateUserToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Actions/Api/User/UpdateUser.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DrugController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/SuspensionReasonController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Resource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/laravel-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/CreateNewUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/CreateNewUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/PasswordValidationRules.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Fortify/PasswordValidationRules.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/ClearQueue.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/ClearQueue.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Disease.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Drug.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DrugCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Job.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/JobCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Location.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/LocationCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Medicine.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/MedicineCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Pathology.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PathologyCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/Tumor.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/TumorCollection.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/UserResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/UserCollection.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DiseaseMedicinePatientController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DiseasePatientController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DrugController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LocationController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/MedicineController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientDiseaseController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientDiseaseMedicineController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TumorController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Create.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Create.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Index.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Show.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/Admin/User/Show.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Disease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Drug.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Drug.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/SuspensionReason.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/SuspensionReason.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/DiseasePolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/ResourcePolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/JobPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/JobPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/PatientPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/TumorPolicy.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Policies/UserPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Policies/UserPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/JetstreamServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/JetstreamServiceProvider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,10 +238,10 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Api" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.PHP" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="ReaderModeSettings">
@@ -234,11 +249,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
+      <recent name="$PROJECT_DIR$/app/Actions/Api/User" />
       <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/database/migrations" />
       <recent name="$PROJECT_DIR$/app/Console/Commands" />
-      <recent name="$PROJECT_DIR$/app/Jobs/Types" />
-      <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/databases" />
@@ -317,7 +332,9 @@
       <workItem from="1633589469877" duration="684000" />
       <workItem from="1633592764980" duration="194000" />
       <workItem from="1633592967438" duration="1286000" />
-      <workItem from="1633627897297" duration="4121000" />
+      <workItem from="1633627897297" duration="4717000" />
+      <workItem from="1633715756683" duration="2458000" />
+      <workItem from="1633845835685" duration="11382000" />
     </task>
     <servers />
   </component>

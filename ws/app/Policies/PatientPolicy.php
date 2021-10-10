@@ -7,6 +7,7 @@
 
 namespace App\Policies;
 
+use App\Constants;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -20,11 +21,12 @@ class PatientPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
-        return true;
+        // Patients can view only their own data
+        return $user->role !== Constants::PATIENT;
     }
 
     /**
@@ -33,11 +35,19 @@ class PatientPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Patient  $patient
      *
-     * @return mixed
+     * @return bool
      */
-    public function view(User $user, Patient $patient)
+    public function view(User $user, Patient $patient): bool
     {
-        return $user->admin || $patient->user_id === null || $patient->user_id === $user->id;
+        $role = $user->role;
+
+        return
+            // Admins or technical staff can view all patients
+            in_array($role, [Constants::ADMIN, Constants::TECHNICAL], true) ||
+            // Doctors can view their own patients
+            ($role === Constants::DOCTOR && ($patient->owner_id === null || $patient->owner_id === $user->id)) ||
+            // Patients can view their own data
+            ($role === Constants::PATIENT && $patient->user_id === $user->id);
     }
 
     /**
@@ -45,11 +55,12 @@ class PatientPolicy
      *
      * @param  \App\Models\User  $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
-        return true;
+        // Only Admins and Doctors can create new patients
+        return in_array($user->role, [Constants::ADMIN, Constants::DOCTOR], true);
     }
 
     /**
@@ -58,11 +69,16 @@ class PatientPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Patient  $patient
      *
-     * @return mixed
+     * @return bool
      */
-    public function update(User $user, Patient $patient)
+    public function update(User $user, Patient $patient): bool
     {
-        return $user->admin || $patient->user_id === null || $patient->user_id === $user->id;
+        return
+            // Admins can update all patients
+            $user->is_admin ||
+            // Doctors can update their own patients
+            ($user->role === Constants::DOCTOR && ($patient->owner_id === null || $patient->owner_id === $user->id));
+        // Technical staff or patients are not allowed to update
     }
 
     /**
@@ -71,36 +87,20 @@ class PatientPolicy
      * @param  \App\Models\User  $user
      * @param  \App\Models\Patient  $patient
      *
-     * @return mixed
+     * @return bool
      */
-    public function delete(User $user, Patient $patient)
+    public function delete(User $user, Patient $patient): bool
     {
-        return $user->admin || $patient->user_id === null || $patient->user_id === $user->id;
+        $role = $user->role;
+
+        return
+            // Admins can delete all patients
+            $user->is_admin ||
+            // Doctors can delete their own patients
+            ($role === Constants::DOCTOR && ($patient->owner_id === null || $patient->owner_id === $user->id)) ||
+            // Patients can delete their own data
+            ($role === Constants::PATIENT && $patient->user_id === $user->id);
+        // The technical staff is not allowed to delete patients
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Patient  $patient
-     *
-     * @return mixed
-     */
-    public function restore(User $user, Patient $patient)
-    {
-        return $user->admin || $patient->user_id === null || $patient->user_id === $user->id;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Patient  $patient
-     *
-     * @return mixed
-     */
-    public function forceDelete(User $user, Patient $patient)
-    {
-        return $user->admin || $patient->user_id === null || $patient->user_id === $user->id;
-    }
 }
