@@ -8,12 +8,12 @@
 namespace App\Models;
 
 use App\Constants;
-use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Model;
+use Illuminate\Support\Facades\Auth;
 
 class Patient extends Model
 {
@@ -62,7 +62,7 @@ class Patient extends Model
         if ($user->role === Constants::DOCTOR) {
             return $query->where(
                 static function (Builder $q) use ($user) {
-                    $q->whereNull('user_id')->orWhere('user_id', $user->id);
+                    $q->whereNull('owner_id')->orWhere('owner_id', $user->id);
                 }
             );
         }

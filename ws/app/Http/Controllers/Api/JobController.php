@@ -8,17 +8,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\JobResource as JobResource;
-use App\Http\Resources\JobCollection;
-use App\Http\Services\BuilderRequestService;
+use App\Http\Resources\JobResource;
+use App\Http\Services\JobsCollectionService;
 use App\Jobs\Request as JobRequest;
 use App\Jobs\Types\AbstractJob;
 use App\Jobs\Types\Factory;
 use App\Models\Job;
 use App\Models\Patient;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -30,73 +29,19 @@ class JobController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Services\JobsCollectionService  $collectionService
      *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index(Request $request, BuilderRequestService $requestService)
+    public function index(Request $request, JobsCollectionService $collectionService): AnonymousResourceCollection
     {
         $this->tokenAuthorize($request, 'read', 'viewAny', Job::class);
-        $query = Job::query();
-
-
-        return $this->buildJobCollection($request, $query);
-    }
-
-    /**
-     * Starting from a query, this method creates a job collection
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     *
-     * @return \App\Http\Resources\JobCollection
-     */
-    private function buildJobCollection(Request $request, Builder $query): JobCollection
-    {
-        return new JobCollection(
-            $this->handleBuilderRequest(
-                $request,
-                $query,
-                static function (Builder $builder) use ($request) {
-                    if ($request->has('completed')) {
-                        $builder->where('status', '=', Job::COMPLETED);
-                    }
-                    /** @var \App\Models\User $user */
-                    $user = optional($request->user());
-                    if (!$user->admin) {
-                        $builder->where('user_id', $user->id);
-                    }
-
-                    return $builder;
-                }
-            )
-        );
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Patient  $patient
-     *
-     * @return \App\Http\Resources\JobCollection
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function byPatient(Request $request, Patient $patient): JobCollection
-    {
-        $this->authorize('view', $patient);
-        $this->authorize('viewAny', Job::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        $query = Job::byPatient($patient);
-        if ($request->has('deep_type')) {
-            $type = $request->get('deep_type');
-            if ($type) {
-                /** @noinspection StaticInvocationViaThisInspection */
-                $query = $query->deepTypeFilter($type);
-            }
+        if ($request->has('patient') && ($id = (int)$request->input('patient'))) {
+            $this->authorize('view', Patient::findOrFail($id));
         }
 
-        /** @noinspection PhpParamsInspection */
-        return $this->buildJobCollection($request, $query);
+        return $collectionService->build($request, Job::byUser($request->user()));
     }
 
     /**

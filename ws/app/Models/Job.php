@@ -12,6 +12,7 @@ use App\Jobs\Types\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Storage;
 
@@ -41,11 +42,11 @@ class Job extends Model
      * @var array
      */
     protected $attributes = [
-        'job_type'       => Constants::READY,
+        'job_type' => Constants::READY,
         'job_parameters' => "{}",
-        'job_output'     => "{}",
-        'log'            => '',
-        'patient_id'     => null,
+        'job_output' => "{}",
+        'log' => '',
+        'patient_id' => null,
     ];
 
     /**
@@ -57,6 +58,41 @@ class Job extends Model
         'job_parameters' => 'array',
         'job_output'     => 'array',
     ];
+
+    /**
+     * Scope a query to show only visible jobs.
+     * If $user is an admin or a technician, no limitation are applied.
+     * If $user is a patient, shows only his own data.
+     * If $user is a doctor, it shows jobs where the owner_id matches with $user->id
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Models\User|null  $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByUser(Builder $query, ?User $user = null): Builder
+    {
+        if ($user === null && !Auth::check()) {
+            return $query->whereRaw('1 <> 1');
+        }
+        if ($user === null) {
+            $user = Auth::user();
+        }
+        if ($user->role === Constants::DOCTOR) {
+            return $query->where(
+                static function (Builder $q) use ($user) {
+                    $q->whereNull('owner_id')->orWhere('owner_id', $user->id);
+                }
+            );
+        }
+        if ($user->role === Constants::PATIENT) {
+            $patientId = Patient::where('user_id', $user->id)->firstOrFail(['id'])->id;
+
+            return $query->whereNotNull('patient_id')->where('patient_id', $patientId);
+        }
+
+        return $query;
+    }
 
     /**
      * Scope a query to filter for job_type.
