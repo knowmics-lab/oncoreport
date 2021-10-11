@@ -102,12 +102,20 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+
+x$Type <- NULL
+#Che numero sarà la colonna dei code?
+
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
 
   x$id<- 1:nrow(x)
+#Devo fare inserire il numero qui, cioè tipo se c'è il numero pt_tumor devi selezionare solo la sua riga e poi posso cancellare la colonna
+x <- x[x$Evidence_direction=="Supports" & x$ICD-11_Code==pt_tumor,,drop=F]
+x$ICD-11_Code <- NULL
 
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+
+  #x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
 
   empty <- T
   if(nrow(x)!=0)
@@ -629,7 +637,7 @@ drugs<- read.csv("project/Databases/drug_drug_interactions_light.txt", sep = "\t
 
 #drug_com<-tryCatch(read.table(paste0("txt/BL19-37_S2_drug.txt"), sep = "\n"), error=function(e) NULL)
 drug_ind<-drug_recommended
-#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere 
+#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere
 #salvate in un file individuato nel path come commento seguente.
 #drug_com<-tryCatch(read.table(paste0("project/txt/",pt_name,"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
 drug_com<-tryCatch(read.table(paste0(pt_path_file_comorbid), sep = "\n"), error=function(e) NULL)
@@ -679,7 +687,7 @@ if(nrow(b)>0)
   colnames(b)[1] <- "Drug"
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
-  html_drug<- datatable(b,width = "100%") 
+  html_drug<- datatable(b,width = "100%")
   htmlwidgets::saveWidget(html_drug, paste0(path_project,"/",pt_fastq,"/exs_drug.html"))
   drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/exs_drug.html")))
   xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
@@ -699,7 +707,7 @@ if(nrow(b)>0)
   colnames(b)[1] <- "Drug"
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
-  html_drug<- datatable(b,width = "100%") 
+  html_drug<- datatable(b,width = "100%")
   htmlwidgets::saveWidget(html_drug,paste0(path_project,"/",pt_fastq,"/all_drug.html"))
   drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/all_drug.html")))
   #substitute 1 div and 1 script to connect table drug interaction
