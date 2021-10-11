@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\JobResource as JobResource;
 use App\Http\Resources\JobCollection;
+use App\Http\Services\BuilderRequestService;
 use App\Jobs\Request as JobRequest;
 use App\Jobs\Types\AbstractJob;
 use App\Jobs\Types\Factory;
@@ -30,20 +31,13 @@ class JobController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \App\Http\Resources\JobCollection
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index(Request $request): JobCollection
+    public function index(Request $request, BuilderRequestService $requestService)
     {
-        $this->authorize('viewAny', Job::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read', 'viewAny', Job::class);
         $query = Job::query();
-        if ($request->has('deep_type')) {
-            $type = $request->get('deep_type');
-            if ($type) {
-                $query = Job::deepTypeFilter($type);
-            }
-        }
+
 
         return $this->buildJobCollection($request, $query);
     }

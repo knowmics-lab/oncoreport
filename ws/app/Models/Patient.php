@@ -59,18 +59,18 @@ class Patient extends Model
         if ($user === null) {
             $user = Auth::user();
         }
-        if (in_array($user->role, [Constants::ADMIN, Constants::TECHNICAL], true)) {
-            return $query;
+        if ($user->role === Constants::DOCTOR) {
+            return $query->where(
+                static function (Builder $q) use ($user) {
+                    $q->whereNull('user_id')->orWhere('user_id', $user->id);
+                }
+            );
         }
         if ($user->role === Constants::PATIENT) {
             return $query->whereNotNull('user_id')->where('user_id', $user->id);
         }
 
-        return $query->where(
-            static function (Builder $q) use ($user) {
-                $q->whereNull('user_id')->orWhere('user_id', $user->id);
-            }
-        );
+        return $query;
     }
 
     /**

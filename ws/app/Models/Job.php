@@ -15,9 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Storage;
 
-/**
- * @mixin IdeHelperJob
- */
 class Job extends Model
 {
 
@@ -84,7 +81,7 @@ class Job extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeDeepTypeFilter(Builder $query, string $type): Builder
+    public function scopeByType(Builder $query, string $type): Builder
     {
         return $query->where('job_type', $type);
     }
