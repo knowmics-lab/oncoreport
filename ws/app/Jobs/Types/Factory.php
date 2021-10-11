@@ -13,6 +13,7 @@ use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
 
@@ -46,7 +47,7 @@ class Factory
             throw new ProcessingJobException('Unable to find a class suitable for this job.');
         }
         try {
-            $r = new \ReflectionClass($jobClass);
+            $r = new ReflectionClass($jobClass);
             if ($r->isSubclassOf(AbstractJob::class) && !$r->isAbstract()) {
                 $constructor = $r->getConstructor();
                 if ($constructor !== null && $constructor->getNumberOfRequiredParameters() === 1) {
@@ -73,11 +74,7 @@ class Factory
     {
         $jobClass = '\App\Jobs\Types\\' . Str::studly($type);
         if (class_exists($jobClass)) {
-            try {
-                $r = new \ReflectionClass($jobClass);
-            } catch (ReflectionException $ignore) {
-                return false;
-            }
+            $r = new ReflectionClass($jobClass);
             if ($r->isSubclassOf(AbstractJob::class) && !$r->isAbstract()) {
                 return true;
             }
@@ -94,7 +91,6 @@ class Factory
      *
      * @return mixed
      * @throws \App\Exceptions\ProcessingJobException
-     * @throws \ReflectionException
      */
     public static function __callStatic(string $name, array $arguments)
     {
@@ -118,7 +114,7 @@ class Factory
                 } elseif ($where instanceof AbstractJob) {
                     $jobClass = get_class($where);
                 } elseif (is_string($where) && class_exists($where)) {
-                    $r = new \ReflectionClass($where);
+                    $r = new ReflectionClass($where);
                     if ($r->isSubclassOf(AbstractJob::class) && !$r->isAbstract()) {
                         $jobClass = $where;
                     }
@@ -156,7 +152,7 @@ class Factory
                 }
                 $class = $ns . '\\' . $file->getBasename('.php');
                 try {
-                    $r = new \ReflectionClass($class);
+                    $r = new ReflectionClass($class);
                     if ($r->isSubclassOf(AbstractJob::class) && !$r->isAbstract()) {
                         $constructor = $r->getConstructor();
                         if ($constructor !== null && $constructor->getNumberOfRequiredParameters() === 1) {

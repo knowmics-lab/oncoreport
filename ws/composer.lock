@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33b46ce081bda2be8e1d988d7f082a8c",
+    "content-hash": "5a9dfd8404daeffc4ecd5b1aff2fa853",
     "packages": [
         {
             "name": "ankitpokhrel/tus-php",
@@ -668,6 +668,60 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
+        },
+        {
+            "name": "f9webltd/laravel-api-response-helpers",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/f9webltd/laravel-api-response-helpers.git",
+                "reference": "6794fbe48ef7d8219033424ad033b8ea921209e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/f9webltd/laravel-api-response-helpers/zipball/6794fbe48ef7d8219033424ad033b8ea921209e0",
+                "reference": "6794fbe48ef7d8219033424ad033b8ea921209e0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "php": "^7.4 | ^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "F9Web\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Allport",
+                    "email": "rob@f9web.co.uk",
+                    "homepage": "https://www.f9web.co.uk",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A super simple package allowing for consistent API responses throughout your Laravel application ",
+            "homepage": "https://github.com/f9webltd/laravel-api-response-helpers",
+            "keywords": [
+                "laravel",
+                "laravel api response",
+                "laravel api response helpers"
+            ],
+            "support": {
+                "issues": "https://github.com/f9webltd/laravel-api-response-helpers/issues",
+                "source": "https://github.com/f9webltd/laravel-api-response-helpers/tree/1.50"
+            },
+            "time": "2021-10-06T19:45:37+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -10654,9 +10708,9 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4|^8.0",
-        "ext-zip": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

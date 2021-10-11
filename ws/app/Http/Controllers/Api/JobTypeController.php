@@ -9,25 +9,29 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\Types\Factory;
+use F9Web\ApiResponseHelpers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class JobTypeController extends Controller
 {
+    use ApiResponseHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Request $request): JsonResponse
     {
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read');
 
-        return response()->json(
+        return $this->respondWithSuccess(
             [
-                'data' => Factory::listTypes()->keyBy('id'),
+                'data' => Factory::listTypes(),
             ]
         );
     }
@@ -39,25 +43,20 @@ class JobTypeController extends Controller
      * @param  string  $type
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Request $request, string $type): JsonResponse
     {
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read');
         $types = Factory::listTypes();
-        $res = $types->where('id', '=', $type)->first();
-        if (!$res) {
-            abort(404, 'No query results for type ' . $type);
-        }
+        $res = $types->where('id', $type)->firstOrFail();
         $id = $res['id'];
         $res['parameters'] = Factory::parametersSpec($id);
         $res['output'] = Factory::outputSpec($id);
 
-        return response()->json(
+        return $this->respondWithSuccess(
             [
                 'data' => $res,
-                'links' => [
-                    'self' => route('job-types.show', $id, false),
-                ],
             ]
         );
     }

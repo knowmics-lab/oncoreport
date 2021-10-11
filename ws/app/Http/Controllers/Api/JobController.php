@@ -7,23 +7,26 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Constants;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Job\StoreJobRequest;
+use App\Http\Requests\Api\Job\UpdateJobRequest;
 use App\Http\Resources\JobResource;
+use App\Http\Services\JobHelperService;
 use App\Http\Services\JobsCollectionService;
 use App\Jobs\Request as JobRequest;
-use App\Jobs\Types\AbstractJob;
-use App\Jobs\Types\Factory;
 use App\Models\Job;
 use App\Models\Patient;
+use Error;
+use F9Web\ApiResponseHelpers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
+use Throwable;
 
 class JobController extends Controller
 {
+    use ApiResponseHelpers;
 
     /**
      * Display a listing of the resource.
@@ -47,78 +50,25 @@ class JobController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Api\Job\StoreJobRequest  $request
+     * @param  \App\Http\Services\JobHelperService  $helperService
      *
-     * @return \App\Http\Resources\JobResource
-     * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(Request $request): JobResource
+    public function store(StoreJobRequest $request, JobHelperService $helperService): JsonResponse
     {
-        $this->authorize('create', Job::class);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
-        $jobTypes = Factory::listTypes();
-        $validValues = $this->validate(
-            $request,
-            [
-                'sample_code' => ['required', 'string', 'alpha_dash'],
-                'name'        => ['required', 'string'],
-                'type'        => ['required', 'string', Rule::in($jobTypes->pluck('id'))],
-                'parameters'  => ['filled', 'array'],
-            ]
-        );
-        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($validValues['type'], $request));
-        $patientInputState = Factory::patientInputState($validValues['type']);
-        $patientInputValidation = ['integer', Rule::exists('patients', 'id')];
-        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
-        if ($patientInputState === AbstractJob::PATIENT_REQUIRED) {
-            $parametersValidation['patient_id'] = ['required', ...$patientInputValidation];
-        } elseif ($patientInputState === AbstractJob::PATIENT_OPTIONAL) {
-            $parametersValidation['patient_id'] = ['filled', ...$patientInputValidation];
-        }
+        $this->tokenAuthorize($request, ['read', 'create'], 'create', Job::class);
+        $validValues = $request->validated();
+        [$noPatientInput, $parametersValidation] = $helperService->prepareSecondValidation($request);
         $validParameters = $this->validate($request, $parametersValidation);
-        $type = $validValues['type'];
-        $patientId = $noPatientInput ? null : ($validParameters['patient_id'] ?? null);
-        $validParameters = $validParameters['parameters'] ?? [];
-        $job = Job::create(
-            [
-                'sample_code' => $validValues['sample_code'],
-                'name' => $validValues['name'],
-                'job_type' => $type,
-                'status' => Job::READY,
-                'job_parameters' => [],
-                'job_output' => [],
-                'log' => '',
-                'patient_id' => $patientId,
-                'user_id' => $request->user()->id,
-            ]
-        );
-        $job->setParameters(Arr::dot($validParameters));
-        $job->save();
-        $job->getJobDirectory();
-
-        return new JobResource($job);
-    }
-
-    /**
-     * Prepare array for nested validation
-     *
-     * @param  array  $specs
-     *
-     * @return array
-     */
-    private function prepareNestedValidation(array $specs): array
-    {
-        $nestedSpecs = [];
-        foreach ($specs as $field => $rules) {
-            if (!Str::startsWith($field, 'parameters.')) {
-                $field = 'parameters.' . $field;
-            }
-            $nestedSpecs[$field] = $rules;
+        $patient = $noPatientInput ? null : Patient::findOrFail($validParameters['patient_id']);
+        if ($patient) {
+            $this->authorize('view', $patient);
         }
+        $job = $helperService->storeJob($validValues, $validParameters, $patient, optional($request->user())->id);
 
-        return $nestedSpecs;
+        return $this->respondCreated(new JobResource($job));
     }
 
     /**
@@ -132,8 +82,7 @@ class JobController extends Controller
      */
     public function show(Request $request, Job $job): JobResource
     {
-        $this->authorize('view', $job);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
+        $this->tokenAuthorize($request, 'read', 'view', $job);
 
         return new JobResource($job);
     }
@@ -141,49 +90,31 @@ class JobController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Api\Job\UpdateJobRequest  $request
      * @param  \App\Models\Job  $job
+     * @param  \App\Http\Services\JobHelperService  $helperService
      *
      * @return \App\Http\Resources\JobResource
-     * @throws \Illuminate\Validation\ValidationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Job $job): JobResource
+    public function update(UpdateJobRequest $request, Job $job, JobHelperService $helperService): JobResource
     {
-        $this->authorize('update', $job);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
+        $this->tokenAuthorize($request, ['read', 'update'], 'update', $job);
         abort_unless($job->canBeModified(), 400, 'Unable to modify a queued or running job.');
-        $validValues = $this->validate(
-            $request,
-            [
-                'sample_code' => ['filled', 'string', 'alpha_dash'],
-                'name'        => ['filled', 'string'],
-                'parameters'  => ['filled', 'array'],
-                'patient_id'  => ['nullable', 'integer', Rule::exists('patients', 'id')],
-            ]
-        );
-        $patientInputState = Factory::patientInputState($job->job_type);
-        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
+        $validValues = $request->validated();
+        [$noPatientInput, $parametersValidation] = $helperService->prepareSecondValidation($request);
         if ($noPatientInput) {
-            $patientId = null;
+            $patient = null;
         } elseif (array_key_exists('patient_id', $validValues)) {
-            $patientId = $validValues['patient_id'];
+            $patient = Patient::findOrFail($validValues['patient_id']);
         } else {
-            $patientId = $job->patient_id;
+            $patient = $job->patient;
         }
-        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($job, $request));
+        if ($patient) {
+            $this->authorize('view', $patient);
+        }
         $validParameters = $this->validate($request, $parametersValidation);
-        $validParameters = $validParameters['parameters'] ?? [];
-        $job->fill(
-            [
-                'sample_code' => $validValues['sample_code'] ?? $job->sample_code,
-                'name'        => $validValues['name'] ?? $job->name,
-                'patient_id'  => $patientId,
-            ]
-        );
-        $job->addParameters(Arr::dot($validParameters));
-        $job->save();
+        $helperService->updateJob($job, $validValues, $validParameters, $patient, optional($request->user())->id);
 
         return new JobResource($job);
     }
@@ -199,29 +130,17 @@ class JobController extends Controller
      */
     public function destroy(Request $request, Job $job): JsonResponse
     {
-        $this->authorize('delete', $job);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('delete'), 403, 'User token is not allowed to delete objects');
+        $this->tokenAuthorize($request, ['read', 'delete'], 'delete', $job);
         abort_unless($job->canBeDeleted(), 400, 'Unable to delete a queued or running job.');
 
         try {
             $job->deleteJobDirectory();
             $job->delete();
-        } catch (\Throwable $e) {
-            return response()->json(
-                [
-                    'message' => $e->getMessage(),
-                    'errors'  => true,
-                ]
-            );
+        } catch (Throwable | Error $e) {
+            return $this->respondError($e->getMessage());
         }
 
-        return response()->json(
-            [
-                'message' => 'Patient deleted.',
-                'errors'  => false,
-            ]
-        );
+        return $this->respondNoContent();
     }
 
     /**
@@ -235,11 +154,9 @@ class JobController extends Controller
      */
     public function submit(Request $request, Job $job): JobResource
     {
-        $this->authorize('submitJob', $job);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('update'), 403, 'User token is not allowed to update objects');
+        $this->tokenAuthorize($request, ['read', 'update'], 'submitJob', $job);
         abort_unless($job->canBeModified(), 400, 'Unable to submit a job that is already submitted.');
-        $job->setStatus(Job::QUEUED);
+        $job->setStatus(Constants::QUEUED);
         JobRequest::dispatch($job);
 
         return new JobResource($job);
@@ -254,11 +171,9 @@ class JobController extends Controller
      * @return mixed
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function upload(Request $request, Job $job)
+    public function upload(Request $request, Job $job): mixed
     {
-        $this->authorize('uploadJob', $job);
-        abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
-        abort_unless($request->user()->tokenCan('create'), 403, 'User token is not allowed to create objects');
+        $this->tokenAuthorize($request, ['read', 'update'], 'uploadJob', $job);
         abort_unless($job->canBeModified(), 400, 'Unable to upload a file for a job that is already submitted.');
         set_time_limit(0);
         /** @var \TusPhp\Tus\Server $server */
