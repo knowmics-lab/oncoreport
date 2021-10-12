@@ -11,6 +11,7 @@ use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -66,7 +67,7 @@ final class Utils
      * @param  \Symfony\Component\Process\Exception\ProcessFailedException  $e
      * @param  array  $errorCodeMap
      *
-     * @return \App\Exceptions\ProcessingJobException|\App\Exceptions\IgnoredException
+     * @return \Exception
      */
     public static function mapCommandException(
         ProcessFailedException $e,
@@ -163,6 +164,28 @@ final class Utils
         }
 
         return $resArray;
+    }
+
+    public static function nullableId(mixed $value): ?int
+    {
+        $value = (int)$value;
+
+        return ($value <= 0) ? null : $value;
+    }
+
+    public static function nullableValue(mixed $value): mixed
+    {
+        return (empty($value)) ? null : $value;
+    }
+
+    public static function nullableDate(mixed $value): ?Carbon
+    {
+        return (empty($value)) ? null : Carbon::make($value);
+    }
+
+    public static function dateOrNowIfEmpty(mixed $value): Carbon
+    {
+        return self::nullableDate($value) ?? now();
     }
 
 }

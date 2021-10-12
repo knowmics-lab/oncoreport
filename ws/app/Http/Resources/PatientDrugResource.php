@@ -20,18 +20,18 @@ class PatientDrugResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id'                => $this->id,
-            'patient'           => new PatientResource($this->whenLoaded('patient')),
-            'disease'           => new PatientDiseaseResource($this->whenLoaded('disease')),
-            'location'          => new LocationResource($this->whenLoaded('location')),
-            'suspensionReasons' => SuspensionReasonResource::collection($this->whenLoaded('suspensionReasons')),
-            'start_date'        => $this->start_date->toDateString(),
-            'end_date'          => is_null($this->end_date) ?: $this->end_date->toDateString(),
-            'comment'           => $this->comment,
-            'created_at'        => $this->created_at,
-            'created_at_diff'   => $this->created_at->diffForHumans(),
-            'updated_at'        => $this->updated_at,
-            'updated_at_diff'   => $this->updated_at->diffForHumans(),
+            'id'                 => $this->id,
+            'patient'            => new PatientResource($this->whenLoaded('patient')),
+            'disease'            => new PatientDiseaseResource($this->whenLoaded('disease')),
+            'drug'               => new DrugResource($this->whenLoaded('drug')),
+            'suspension_reasons' => SuspensionReasonResource::collection($this->whenLoaded('suspensionReasons')),
+            'start_date'         => $this->start_date->toDateString(),
+            'end_date'           => is_null($this->end_date) ?: $this->end_date->toDateString(),
+            'comment'            => $this->comment,
+            'created_at'         => $this->created_at,
+            'created_at_diff'    => $this->created_at->diffForHumans(),
+            'updated_at'         => $this->updated_at,
+            'updated_at_diff'    => $this->updated_at->diffForHumans(),
         ];
     }
 }

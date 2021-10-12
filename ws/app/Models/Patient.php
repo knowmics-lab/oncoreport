@@ -30,6 +30,7 @@ class Patient extends Model
         'city',
         'user_id',
         'owner_id',
+        'primary_disease_id',
     ];
 
     protected $appends = [
