@@ -5,7 +5,6 @@ suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(kableExtra))
 suppressPackageStartupMessages(library(stringr))
 
-
 cargs <- commandArgs(trailingOnly = TRUE)
 
 pt_name<-cargs[1]
@@ -101,21 +100,14 @@ try({
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses = c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
-  x$Disease <- NULL
-
-x$Type <- NULL
-#Che numero sarà la colonna dei code?
-
-  colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-
-  x$id<- 1:nrow(x)
-#Devo fare inserire il numero qui, cioè tipo se c'è il numero pt_tumor devi selezionare solo la sua riga e poi posso cancellare la colonna
-x <- x[x$Evidence_direction=="Supports" & x$ICD-11_Code==pt_tumor,,drop=F]
-x$ICD-11_Code <- NULL
-
-
-  #x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+x$Disease <- NULL
+x$Category <- NULL
+colnames(x)[1] <- "Disease"
+x[is.na(x)] <- " "
+x$id<- 1:nrow(x)
+x <- separate_rows(x, ICD.11_Code, sep = ",")
+x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+x$ICD.11_Code <- NULL
 
   empty <- T
   if(nrow(x)!=0)
@@ -450,11 +442,14 @@ try({
   x$Score <- NULL
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
-  x$Disease <- NULL
-  colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-  x$id<- 1:nrow(x)
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+x$Disease <- NULL
+x$Category <- NULL
+colnames(x)[1] <- "Disease"
+x[is.na(x)] <- " "
+x$id<- 1:nrow(x)
+x <- separate_rows(x, ICD.11_Code, sep = ",")
+x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+x$ICD.11_Code <- NULL
   empty <- T
   if(nrow(x)!=0)
   {
@@ -562,10 +557,13 @@ try({
   #cat("1\n")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
   #cat("2\n")
   x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   if(nrow(x)>0)
   {
     x$Var_base <- as.character(x$Var_base)
@@ -1013,8 +1011,11 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1319,9 +1320,12 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+    x[is.na(x)] <- " "
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1416,10 +1420,13 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   cat("OFFLABEL-VD-1\n")
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   x$Var_base <- as.character(x$Var_base)
   x$Ref_base<-as.character(x$Ref_base)
   if(nrow(x)>0)
@@ -1736,6 +1743,8 @@ try({
   x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x_url<- merge(dis, x_url, by= "Disease")
+  x$Category <- NULL
+  x$ICD.11_Code <- NULL
   x_url$Disease <- NULL
   colnames(x_url)[1] <- "Disease"
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
