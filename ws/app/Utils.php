@@ -165,27 +165,4 @@ final class Utils
 
         return $resArray;
     }
-
-    public static function nullableId(mixed $value): ?int
-    {
-        $value = (int)$value;
-
-        return ($value <= 0) ? null : $value;
-    }
-
-    public static function nullableValue(mixed $value): mixed
-    {
-        return (empty($value)) ? null : $value;
-    }
-
-    public static function nullableDate(mixed $value): ?Carbon
-    {
-        return (empty($value)) ? null : Carbon::make($value);
-    }
-
-    public static function dateOrNowIfEmpty(mixed $value): Carbon
-    {
-        return self::nullableDate($value) ?? now();
-    }
-
 }

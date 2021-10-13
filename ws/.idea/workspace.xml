@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_05_215824_create_patients_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -307,6 +304,7 @@
       <workItem from="1633970554440" duration="4169000" />
       <workItem from="1634022647667" duration="1868000" />
       <workItem from="1634026161227" duration="8049000" />
+      <workItem from="1634108478407" duration="4893000" />
     </task>
     <servers />
   </component>
