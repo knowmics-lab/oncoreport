@@ -35,12 +35,12 @@ RUN /usr/bin/apt update --fix-missing && \
     apt-get clean
 
 # Install common packages
-RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools \
+RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools unixodbc \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
                             libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
                             python3-setuptools git apache2 php-xdebug composer php-cli jq \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
-                            php-xml php-mbstring zip php-zip php-curl php-intl pigz && \
+                            php-xml php-mbstring zip php-zip php-curl php-intl pigz unixodbc-dev && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     update-java-alternatives -s "java-1.8.0-openjdk-amd64"
