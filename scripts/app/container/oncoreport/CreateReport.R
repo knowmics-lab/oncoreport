@@ -5,7 +5,6 @@ suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(kableExtra))
 suppressPackageStartupMessages(library(stringr))
 
-
 cargs <- commandArgs(trailingOnly = TRUE)
 
 pt_name<-cargs[1]
@@ -101,13 +100,14 @@ try({
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses = c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
-  x$Disease <- NULL
-  colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-
-  x$id<- 1:nrow(x)
-
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+x$Disease <- NULL
+x$Category <- NULL
+colnames(x)[1] <- "Disease"
+x[is.na(x)] <- " "
+x$id<- 1:nrow(x)
+x <- separate_rows(x, ICD.11_Code, sep = ",")
+x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+x$ICD.11_Code <- NULL
 
   empty <- T
   if(nrow(x)!=0)
@@ -442,11 +442,14 @@ try({
   x$Score <- NULL
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
-  x$Disease <- NULL
-  colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-  x$id<- 1:nrow(x)
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+x$Disease <- NULL
+x$Category <- NULL
+colnames(x)[1] <- "Disease"
+x[is.na(x)] <- " "
+x$id<- 1:nrow(x)
+x <- separate_rows(x, ICD.11_Code, sep = ",")
+x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+x$ICD.11_Code <- NULL
   empty <- T
   if(nrow(x)!=0)
   {
@@ -554,10 +557,13 @@ try({
   #cat("1\n")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
   #cat("2\n")
   x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease==pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code==pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   if(nrow(x)>0)
   {
     x$Var_base <- as.character(x$Var_base)
@@ -629,7 +635,7 @@ drugs<- read.csv("project/Databases/drug_drug_interactions_light.txt", sep = "\t
 
 #drug_com<-tryCatch(read.table(paste0("txt/BL19-37_S2_drug.txt"), sep = "\n"), error=function(e) NULL)
 drug_ind<-drug_recommended
-#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere 
+#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere
 #salvate in un file individuato nel path come commento seguente.
 #drug_com<-tryCatch(read.table(paste0("project/txt/",pt_name,"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
 drug_com<-tryCatch(read.table(paste0(pt_path_file_comorbid), sep = "\n"), error=function(e) NULL)
@@ -679,7 +685,7 @@ if(nrow(b)>0)
   colnames(b)[1] <- "Drug"
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
-  html_drug<- datatable(b,width = "100%") 
+  html_drug<- datatable(b,width = "100%")
   htmlwidgets::saveWidget(html_drug, paste0(path_project,"/",pt_fastq,"/exs_drug.html"))
   drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/exs_drug.html")))
   xml_table_drugdrug<-xml_child(xml_child(drug_table, 2), 1)
@@ -699,7 +705,7 @@ if(nrow(b)>0)
   colnames(b)[1] <- "Drug"
   colnames(b)[2] <- "interact with drug"
   rownames(b) <- 1:nrow(b)
-  html_drug<- datatable(b,width = "100%") 
+  html_drug<- datatable(b,width = "100%")
   htmlwidgets::saveWidget(html_drug,paste0(path_project,"/",pt_fastq,"/all_drug.html"))
   drug_table <- (read_html(paste0(path_project,"/",pt_fastq,"/all_drug.html")))
   #substitute 1 div and 1 script to connect table drug interaction
@@ -1005,8 +1011,11 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1311,9 +1320,12 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
-  x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+    x[is.na(x)] <- " "
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1408,10 +1420,13 @@ try({
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
+  x$Category <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   cat("OFFLABEL-VD-1\n")
-  x <- x[x$Evidence_direction=="Supports" & x$Disease!=pt_tumor,,drop=F]
+  x <- separate_rows(x, ICD.11_Code, sep = ",")
+  x <- x[x$Evidence_direction=="Supports" & x$ICD.11_Code!=pt_tumor,,drop=F]
+  x$ICD.11_Code <- NULL
   x$Var_base <- as.character(x$Var_base)
   x$Ref_base<-as.character(x$Ref_base)
   if(nrow(x)>0)
@@ -1728,6 +1743,8 @@ try({
   x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
   x_url<- merge(dis, x_url, by= "Disease")
+  x$Category <- NULL
+  x$ICD.11_Code <- NULL
   x_url$Disease <- NULL
   colnames(x_url)[1] <- "Disease"
   x_url <- x_url[!duplicated(x_url[,c("PMID")]),]
