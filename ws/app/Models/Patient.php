@@ -84,6 +84,11 @@ class Patient extends Model
         return "$this->first_name $this->last_name";
     }
 
+    public function loadRelationships(): self
+    {
+        return $this->load(['primaryDisease', 'diseases', 'drugs']);
+    }
+
     public function diseases(): HasMany
     {
         return $this->hasMany(PatientDisease::class);

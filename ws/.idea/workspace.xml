@@ -2,12 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/StorePatientDiseaseRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/UpdatePatientDiseaseRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug/StorePatientDrugRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug/UpdatePatientDrugRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PatientTumorController.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,7 +206,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Api/Patient" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Api" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="Errors" />
@@ -211,11 +217,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient" />
       <recent name="$PROJECT_DIR$/app/Actions/Api/User" />
-      <recent name="$PROJECT_DIR$/app/Models" />
-      <recent name="$PROJECT_DIR$/database/migrations" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/databases" />
@@ -305,6 +311,8 @@
       <workItem from="1634022647667" duration="1868000" />
       <workItem from="1634026161227" duration="8049000" />
       <workItem from="1634108478407" duration="4893000" />
+      <workItem from="1634194658256" duration="2353000" />
+      <workItem from="1634203170040" duration="2634000" />
     </task>
     <servers />
   </component>

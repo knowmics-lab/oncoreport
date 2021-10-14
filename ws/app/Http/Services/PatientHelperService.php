@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Actions\Fortify\CreateNewUser as CreateUserAction;
 use App\Models\Patient;
 use App\Models\PatientDisease;
+use App\Models\PatientDrug;
 use App\Traits\UseNullableValues;
 use App\Utils;
 use Illuminate\Database\Eloquent\Model;
@@ -39,7 +40,7 @@ class PatientHelperService
         return $patientDisease;
     }
 
-    public function createOrUpdateDrug(Patient $patient, array $drug): void
+    public function createOrUpdateDrug(Patient $patient, array $drug): PatientDrug
     {
         $id = $this->nullableId($drug['id'] ?? null);
         $update = (int)$id > 0;
@@ -60,6 +61,8 @@ class PatientHelperService
         if (isset($drug['suspension_reasons']) && is_array($drug['suspension_reasons'])) {
             $patientDrug->suspensionReasons()->sync($drug['suspension_reasons']);
         }
+
+        return $patientDrug;
     }
 
     public function createAccount(Patient $patient, array $values): ?int
@@ -139,7 +142,6 @@ class PatientHelperService
                 'user_id'            => $userId,
             ]
         );
-        $patient->load(['primaryDisease', 'diseases', 'drugs']);
 
         return $patient;
     }
@@ -181,7 +183,6 @@ class PatientHelperService
                 'primary_disease_id' => $primaryDiseaseId,
             ]
         );
-        $patient->load(['primaryDisease', 'diseases', 'drugs']);
 
         return $patient;
     }

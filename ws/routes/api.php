@@ -6,26 +6,22 @@
  */
 
 use App\Http\Controllers\Api\DiseaseController;
+use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\JobTypeController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PingController;
+use App\Http\Controllers\Api\SuspensionReasonController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\DrugController;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\MedicineController;
-use App\Http\Controllers\PatientTumorController;
-use App\Http\Controllers\TumorController;
-use App\Http\Resources\MedicineCollection;
-use App\Models\Reason;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', [PingController::class, 'ping']);
-Route::apiResource('tumors', TumorController::class)->except(['create', 'store', 'update', 'destroy']);
-Route::apiResource('drugs', DrugController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
-Route::apiResource('medicines', MedicineController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
-Route::apiResource('locations', LocationController::class)->except(['show', 'create', 'store', 'update', 'destroy']);
-Route::get('reasons', fn() => new MedicineCollection(Reason::all()));
+//todo: move to auth group after testing
+Route::apiResource('diseases', DiseaseController::class)->only(['index', 'show']);
+Route::apiResource('drugs', DrugController::class)->only(['index', 'show']);
+Route::apiResource('locations', LocationController::class)->only(['index', 'show']);
+Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
 Route::group(
     [
@@ -33,9 +29,9 @@ Route::group(
     ],
     static function () {
         Route::get('/auth-ping', [PingController::class, 'ping']);
+        Route::get('/user', [PingController::class, 'user']);
         Route::apiResource('users', UserController::class)->names(['show' => 'users.show']);
         Route::middleware('can:generate-token,user')->get('/users/{user}/token', [UserController::class, 'token']);
-        Route::get('/user', [PingController::class, 'user']);
         Route::apiResource('diseases', DiseaseController::class)
              ->names(['show' => 'diseases.show'])
              ->except(['create', 'store', 'update', 'destroy']);

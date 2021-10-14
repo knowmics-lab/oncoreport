@@ -56,6 +56,7 @@ class PatientController extends Controller
 
         return new PatientResource(
             $helperService->createPatient($request->validated(), optional($request->user())->id)
+                          ->loadRelationships()
         );
     }
 
@@ -71,9 +72,8 @@ class PatientController extends Controller
     public function show(Request $request, Patient $patient): PatientResource
     {
         $this->tokenAuthorize($request, 'read', 'view', $patient);
-        $patient->load(['primaryDisease', 'diseases', 'drugs']);
 
-        return new PatientResource($patient);
+        return new PatientResource($patient->loadRelationships());
     }
 
     /**
@@ -95,6 +95,7 @@ class PatientController extends Controller
 
         return new PatientResource(
             $helperService->updatePatient($patient, $request->validated())
+                          ->loadRelationships()
         );
     }
 
