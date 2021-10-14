@@ -4,5 +4,8 @@ install.packages("BiocManager")
 BiocManager::install(c(
     "shiny", "rmarkdown", "kableExtra", "dplyr",
     "filesstrings", "data.table", "RCurl", "stringr",
-    "xml2", "knitr", "tidyr", "DT"
+    "xml2", "knitr", "tidyr", "DT", "devtools"
 ),ask = FALSE)
+
+library(devtools)
+devtools::install_github("ropensci/dbparser")

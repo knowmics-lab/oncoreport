@@ -1,5 +1,5 @@
 #Drug Information
-if (!require("dbparser")) install.packages("dbparser")
+library(dbparser)
 
 cargs <- commandArgs(trailingOnly = TRUE)
 db_path<-cargs[1]
