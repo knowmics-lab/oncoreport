@@ -14,14 +14,18 @@ class DiseasesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = realpath(env('DATABASES_PATH') . '/disease_list.txt');
+        $path = realpath(config('oncoreport.databases_path') . '/Disease.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
-            fgets($fp);
-            while (!feof($fp) && ($line = @fgets($fp)) !== false) {
+            fgetcsv($fp, separator: "\t");
+            while (!feof($fp) && ($line = fgetcsv($fp, separator: "\t")) !== false) {
                 Disease::firstOrCreate(
                     [
-                        'name' => trim($line),
+                        'icd10_code' => trim($line[2]),
+                    ],
+                    [
+                        'name' => trim($line[1]),
+                        'tumor' => (int)($line[3]) === 1,
                     ]
                 );
             }

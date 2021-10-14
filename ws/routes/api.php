@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\JobTypeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\PatientDiseaseController;
+use App\Http\Controllers\Api\PatientDrugController;
 use App\Http\Controllers\Api\PingController;
 use App\Http\Controllers\Api\SuspensionReasonController;
 use App\Http\Controllers\Api\UserController;
@@ -29,33 +31,24 @@ Route::group(
     ],
     static function () {
         Route::get('/auth-ping', [PingController::class, 'ping']);
-        Route::get('/user', [PingController::class, 'user']);
-        Route::apiResource('users', UserController::class)->names(['show' => 'users.show']);
-        Route::middleware('can:generate-token,user')->get('/users/{user}/token', [UserController::class, 'token']);
-        Route::apiResource('diseases', DiseaseController::class)
-             ->names(['show' => 'diseases.show'])
-             ->except(['create', 'store', 'update', 'destroy']);
-        Route::apiResource('patients', PatientController::class)
-             ->names(['show' => 'patients.show']);
-        Route::post('detach/{patient_id}/{tumor_id}/{drug_id}', [PatientTumorController::class, 'detach']);
-        Route::post('detach/{patient_id}/{drug_id}', [PatientTumorController::class, 'detachAll']);
-        Route::apiResource('jobs', JobController::class)->names(['show' => 'jobs.show']);
+
         Route::get('/jobs/{job}/submit', [JobController::class, 'submit'])
              ->middleware('can:submit-job,job')
              ->name('jobs.submit');
-        Route::get('/jobs/by_patient/{patient}', [JobController::class, 'byPatient'])
-             ->middleware(
-                 [
-                     'can:view,patient',
-                     'can:viewAny,\\App\\Models\\Job',
-                 ]
-             )
-             ->name('jobs.by.patient');
         Route::any('/jobs/{job}/upload/{any?}', [JobController::class, 'upload'])
              ->middleware('can:upload-job,job')
-             ->where('any', '.*')
-             ->name('jobs.upload');
+             ->where('any', '.*');
+        Route::apiResource('jobs', JobController::class);
         Route::get('/job-types', [JobTypeController::class, 'index'])->name('job-types.index');
         Route::get('/job-types/{type}', [JobTypeController::class, 'show'])->name('job-types.show');
+
+        Route::apiResource('patients', PatientController::class);
+        Route::apiResource('patients.diseases', PatientDiseaseController::class);
+        Route::apiResource('patients.drugs', PatientDrugController::class);
+
+        Route::get('/user', [PingController::class, 'user']);
+        Route::get('/users/{user}/token', [UserController::class, 'token'])
+             ->middleware('can:generate-token,user');
+        Route::apiResource('users', UserController::class);
     }
 );

@@ -123,24 +123,26 @@ cd /oncoreport/tmp/ || exit 99
 #mv /cgi_original_hg38.txt /oncoreport/databases/ || exit 124
 
 # Copy scripts
-mv /PrepareCOSMIC.R /oncoreport/scripts || exit 125
-mv /MergeInfo.R /oncoreport/scripts || exit 126
-mv /imports.R /oncoreport/scripts || exit 127
-mv /Functions.R /oncoreport/scripts || exit 128
-mv /CreateReport.R /oncoreport/scripts || exit 129
-mv /pipeline_tumVSnormal.bash /oncoreport/scripts || exit 130
-mv /pipeline_liquid_biopsy.bash /oncoreport/scripts || exit 131
-mv /prepare_cosmic.bash /oncoreport/scripts || exit 132
-mv /ProcessVariantTable.R /oncoreport/scripts || exit 133
-mv /CreateCivicBed.R /oncoreport/scripts || exit 134
-mv /PrepareDatabases_build.R /oncoreport/scripts || exit 135
-mv /path.bash /oncoreport/scripts || exit 136
-mv /prepare_indexes.bash /oncoreport/scripts || exit 137
-mv /setup.bash /oncoreport/scripts || exit 140
+mv /CreateCivicBed.R /oncoreport/scripts || exit 118
+mv /CreateReport.R /oncoreport/scripts || exit 119
+mv /Functions.R /oncoreport/scripts || exit 120
+mv /get_drug.R /oncoreport/scripts || exit 121
+mv /imports.R /oncoreport/scripts || exit 122
+mv /MergeInfo.R /oncoreport/scripts || exit 123
+mv /path.bash /oncoreport/scripts || exit 124
+mv /pipeline_liquid_biopsy.bash /oncoreport/scripts || exit 125
+mv /pipeline_tumVSnormal.bash /oncoreport/scripts || exit 126
+mv /prepare_cosmic.bash /oncoreport/scripts || exit 127
+mv /prepare_indexes.bash /oncoreport/scripts || exit 128
+mv /PrepareCOSMIC.R /oncoreport/scripts || exit 129
+mv /PrepareDatabases_build.R /oncoreport/scripts || exit 130
+mv /ProcessVariantTable.R /oncoreport/scripts || exit 131
+mv /setup.bash /oncoreport/scripts || exit 132
 
 # Build database files
 (
   cd /oncoreport/databases &&
+    Rscript /oncoreport/scripts/get_drug.R /oncoreport/databases &&
     Rscript /oncoreport/scripts/CreateCivicBed.R /oncoreport/databases &&
     CrossMap.py bed /oncoreport/databases/hg19ToHg38.over.chain.gz /oncoreport/databases/civic_bed.bed /oncoreport/databases/civic_bed_hg38.bed &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg19 &&

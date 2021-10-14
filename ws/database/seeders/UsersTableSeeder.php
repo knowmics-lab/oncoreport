@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Constants;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UsersTableSeeder extends Seeder
 {
@@ -24,21 +24,32 @@ class UsersTableSeeder extends Seeder
                 'name'              => 'admin',
                 'email_verified_at' => now(),
                 'password'          => Hash::make('password'),
-                'remember_token'    => Str::random(10),
-                'admin'             => true,
+                'role'              => Constants::ADMIN,
             ]
         );
-        User::firstOrCreate(
-            [
-                'email' => 'user@user',
-            ],
-            [
-                'name'              => 'user',
-                'email_verified_at' => now(),
-                'password'          => Hash::make('password'),
-                'remember_token'    => Str::random(10),
-                'admin'             => false,
-            ]
-        );
+        if (config('app.debug')) {
+            User::firstOrCreate(
+                [
+                    'email' => 'doctor@doctor',
+                ],
+                [
+                    'name'              => 'doctor',
+                    'email_verified_at' => now(),
+                    'password'          => Hash::make('password'),
+                    'role'              => Constants::DOCTOR,
+                ]
+            );
+            User::firstOrCreate(
+                [
+                    'email' => 'technical@technical',
+                ],
+                [
+                    'name'              => 'technical staff',
+                    'email_verified_at' => now(),
+                    'password'          => Hash::make('password'),
+                    'role'              => Constants::TECHNICAL,
+                ]
+            );
+        }
     }
 }
