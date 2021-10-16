@@ -14,6 +14,9 @@ class DiseasesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        $allDiseases = Disease::select(['id', 'icd10_code'])->pluck('id', 'icd10_code');
+        $toInsert = [];
+        $now = now()->toDateTimeString();
         $path = realpath(config('oncoreport.databases_path') . '/Disease.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
@@ -25,19 +28,29 @@ class DiseasesTableSeeder extends Seeder
                         ->map('trim')
                         ->filter()
                         ->unique();
+                $name = trim($line[1]);
+                $tumor = (int)($line[3]) === 1;
                 foreach ($icdCodes as $code) {
-                    Disease::firstOrCreate(
-                        [
+                    if (!isset($allDiseases[$code])) {
+                        $toInsert[] = [
                             'icd10_code' => $code,
-                        ],
-                        [
-                            'name' => trim($line[1]),
-                            'tumor' => (int)($line[3]) === 1,
-                        ]
-                    );
+                            'name'       => $name,
+                            'tumor'      => $tumor,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
+                        $allDiseases[$code] = 1;
+                    }
+                    if (count($toInsert) === 5000) {
+                        Disease::insert($toInsert);
+                        $toInsert = [];
+                    }
                 }
             }
             @fclose($fp);
+            if (count($toInsert) > 0) {
+                Disease::insert($toInsert);
+            }
         }
     }
 }

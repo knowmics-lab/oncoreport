@@ -35,8 +35,9 @@ class SuspensionReasonController extends Controller
                 $request,
                 SuspensionReason::query(),
                 ['name'],
-                defaultOrderField: 'name',
-                defaultOrdering: 'asc'
+                defaultOrderField: 'id',
+                defaultOrdering: 'asc',
+                paginate: false
             )
         );
     }

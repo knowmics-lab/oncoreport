@@ -49,53 +49,53 @@
                                 <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead>
-                                        <tr>
-                                            <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                Name
-                                            </th>
-                                            <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                E-mail
-                                            </th>
-                                            <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                Role
-                                            </th>
-                                            <th class="px-6 py-3 bg-gray-50"></th>
-                                        </tr>
+                                            <tr>
+                                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                    Name
+                                                </th>
+                                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                    E-mail
+                                                </th>
+                                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                    Role
+                                                </th>
+                                                <th class="px-6 py-3 bg-gray-50"></th>
+                                            </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                        @forelse($users as $user)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                                    {{ $user->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap">
-                                                    {{ $user->email }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                                    {{ ucfirst($user->admin ? 'Admin' : $user->role) }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                                    <a href="{{ route('users-show', $user) }}"
-                                                       class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                        <i class="fas fa-user-edit"></i>
-                                                        Edit
-                                                    </a>
-                                                    <a href="Javascript:"
-                                                       wire:click="delete({{ $user->id }})"
-                                                       class="text-red-600 hover:text-red-900">
-                                                        <i class="fas fa-user-minus"></i>
-                                                        Delete
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500"
-                                                    colspan="3">
-                                                    No users found.
-                                                </td>
-                                            </tr>
-                                        @endforelse
+                                            @forelse($users as $user)
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                                                        {{ $user->name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-no-wrap">
+                                                        {{ $user->email }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                                                        {{ ucfirst($user->role) }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
+                                                        <a href="{{ route('users-show', $user) }}"
+                                                           class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                                            <i class="fas fa-user-edit"></i>
+                                                            Edit
+                                                        </a>
+                                                        <a href="Javascript:"
+                                                           wire:click="delete({{ $user->id }})"
+                                                           class="text-red-600 hover:text-red-900">
+                                                            <i class="fas fa-user-minus"></i>
+                                                            Delete
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500"
+                                                        colspan="3">
+                                                        No users found.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

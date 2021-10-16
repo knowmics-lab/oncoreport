@@ -19,11 +19,6 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', [PingController::class, 'ping']);
-//todo: move to auth group after testing
-Route::apiResource('diseases', DiseaseController::class)->only(['index', 'show']);
-Route::apiResource('drugs', DrugController::class)->only(['index', 'show']);
-Route::apiResource('locations', LocationController::class)->only(['index', 'show']);
-Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
 Route::group(
     [
@@ -31,6 +26,11 @@ Route::group(
     ],
     static function () {
         Route::get('/auth-ping', [PingController::class, 'ping']);
+
+        Route::apiResource('diseases', DiseaseController::class)->only(['index', 'show']);
+        Route::apiResource('drugs', DrugController::class)->only(['index', 'show']);
+        Route::apiResource('locations', LocationController::class)->only(['index', 'show']);
+        Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
         Route::get('/jobs/{job}/submit', [JobController::class, 'submit'])
              ->middleware('can:submit-job,job')

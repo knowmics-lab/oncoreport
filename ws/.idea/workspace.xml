@@ -2,18 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/get_drug.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/get_drug.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.phpstorm.meta.php" beforeDir="false" afterPath="$PROJECT_DIR$/.phpstorm.meta.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/SuspensionReasonController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/SuspensionReasonController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/LocationSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/LocationSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/PatientSeeder.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/ReasonSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/ReasonSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/show.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/show.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +54,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/config/telescope.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -189,6 +201,7 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/vendor/laravel/serializable-closure" />
       <path value="$PROJECT_DIR$/vendor/f9webltd/laravel-api-response-helpers" />
+      <path value="$PROJECT_DIR$/vendor/laravel/telescope" />
     </include_path>
   </component>
   <component name="ProjectId" id="1jskRk1M2jq36EWcN2niQbwU8st" />
@@ -316,7 +329,7 @@
       <workItem from="1634221289078" duration="2986000" />
       <workItem from="1634238178247" duration="4907000" />
       <workItem from="1634367058234" duration="356000" />
-      <workItem from="1634367426400" duration="3772000" />
+      <workItem from="1634367426400" duration="9887000" />
     </task>
     <servers />
   </component>

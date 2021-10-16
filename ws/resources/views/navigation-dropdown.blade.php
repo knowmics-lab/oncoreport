@@ -15,8 +15,9 @@
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
-                    @if (Auth::user()->admin)
-                        <x-jet-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
+                    @if (optional(Auth::user())->is_admin)
+                        <x-jet-nav-link href="{{ route('users-list') }}"
+                                        :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
                             {{ __('Manage users') }}
                         </x-jet-nav-link>
                         <x-jet-nav-link href="{{ route('users-create') }}" :active="request()->routeIs('users-create')">
@@ -32,13 +33,13 @@
                     <x-slot name="trigger">
                         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                             <button
-                                class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
+                                    class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
                                 <img class="h-8 w-8 rounded-full object-cover"
                                      src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}"/>
                             </button>
                         @else
                             <button
-                                class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                    class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
                                 <div>{{ Auth::user()->name }}</div>
 
                                 <div class="ml-1">
@@ -72,10 +73,10 @@
                         <div class="border-t border-gray-100"></div>
 
                         <!-- Authentication -->
-                        <form method="POST" action="{{ route(( \Illuminate\Support\Facades\Auth::guard('patient')->check() ? 'patient.logout' : 'logout')) }}">
+                        <form method="POST" action="{{ route(('logout')) }}">
                             @csrf
 
-                            <x-jet-dropdown-link href="{{ route( ( \Illuminate\Support\Facades\Auth::guard('patient')->check() ? 'patient.logout' : 'logout')  ) }}"
+                            <x-jet-dropdown-link href="{{ route(('logout')) }}"
                                                  onclick="event.preventDefault();
                                                             this.closest('form').submit();">
                                 {{ __('Logout') }}
@@ -108,10 +109,12 @@
                 {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
             @if (Auth::user()->admin)
-                <x-jet-responsive-nav-link href="{{ route('users-list') }}" :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
+                <x-jet-responsive-nav-link href="{{ route('users-list') }}"
+                                           :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
                     {{ __('Manage users') }}
                 </x-jet-responsive-nav-link>
-                <x-jet-responsive-nav-link href="{{ route('users-create') }}" :active="request()->routeIs('users-create')">
+                <x-jet-responsive-nav-link href="{{ route('users-create') }}"
+                                           :active="request()->routeIs('users-create')">
                     {{ __('Create users') }}
                 </x-jet-responsive-nav-link>
 

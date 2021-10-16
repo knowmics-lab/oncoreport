@@ -25,23 +25,18 @@
                                                  wire:model.defer="state.email" autocomplete="name"/>
                                     <x-jet-input-error for="state.email" class="mt-2"/>
                                 </div>
-                                <!-- role
-                                <div class="col-span-6">
 
-                                    <x-jet-input id="role" type="text" class="mt-1 block w-full"
-                                                 wire:model.defer="state.role" autocomplete="role"/>
-                                    <x-jet-input-error for="state.role" class="mt-2"/>
-                                </div>-->
                                 <div class="col-span-6">
                                     <x-jet-label for="role" value="{{ __('Role') }}"/>
-                                <select id="role"  class="form-select px-4 py-3 rounded block mt-1 w-full" wire:model.defer="state.role" name="role">
-                                    <option value="{{config('constants.roles')[0]}}" {{ $this->user->role== config('constants.roles')[0] ? 'selected' : '' }} >
-                                        {{ucfirst(config('constants.roles')[0])}}
-                                    </option>
-                                    <option value="{{config('constants.roles')[1]}}" {{ $this->user->role== config('constants.roles')[1] ? 'selected' : '' }}>
-                                        {{ucfirst(config('constants.roles')[1])}}
-                                    </option>
-                                </select>
+                                    <select id="role" class="form-select px-4 py-3 rounded block mt-1 w-full"
+                                            wire:model.defer="state.role" name="role">
+                                        @foreach(\App\Constants::ROLES as $role)
+                                            <option value="{{$role}}"
+                                                    {{ $this->user->role === $role ? 'selected' : '' }}>
+                                                {{ucfirst($role)}}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-span-6">
                                     <x-jet-label for="password" value="{{ __('Password') }}"/>
@@ -51,20 +46,6 @@
                                         If empty password will not be changed
                                     </p>
                                     <x-jet-input-error for="state.password" class="mt-2"/>
-                                </div>
-                                <div class="col-span-6">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <x-jet-input id="admin" type="checkbox"
-                                                         class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                                                         wire:model.defer="state.admin"/>
-                                        </div>
-                                        <div class="ml-3 text-sm leading-5">
-                                            <x-jet-label for="admin" value="{{ __('Is admin?') }}"/>
-                                            <p class="text-gray-500">Makes the user a system administrator.</p>
-                                            <x-jet-input-error for="state.admin" class="mt-2"/>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

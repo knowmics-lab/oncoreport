@@ -37,29 +37,14 @@
 
                                 <div class="col-span-6">
                                     <x-jet-label for="role" value="{{ __('Role') }}"/>
-                                <select id="role"  class="form-select px-4 py-3 rounded block mt-1 w-full" wire:model.defer="state.role" name="role">
-                                    <option value="{{config('constants.roles')[0]}}" selected>
-                                        {{ucfirst(config('constants.roles')[0])}}
-                                    </option>
-                                    <option value="{{config('constants.roles')[1]}}">
-                                        {{ucfirst(config('constants.roles')[1])}}
-                                    </option>
-                                </select>
-                                </div>
-
-                                <div class="col-span-6">
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <x-jet-input id="admin" type="checkbox"
-                                                         class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                                                         wire:model.defer="state.admin"/>
-                                        </div>
-                                        <div class="ml-3 text-sm leading-5">
-                                            <x-jet-label for="admin" value="{{ __('Is admin?') }}"/>
-                                            <p class="text-gray-500">Makes the user a system administrator.</p>
-                                            <x-jet-input-error for="state.admin" class="mt-2"/>
-                                        </div>
-                                    </div>
+                                    <select id="role" class="form-select px-4 py-3 rounded block mt-1 w-full"
+                                            wire:model.defer="state.role" name="role">
+                                        @foreach(\App\Constants::ROLES as $role)
+                                            <option value="{{$role}}">
+                                                {{ucfirst($role)}}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>

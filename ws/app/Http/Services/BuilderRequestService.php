@@ -102,7 +102,9 @@ class BuilderRequestService
         ?callable $callback = null,
         string $defaultOrderField = 'created_at',
         string $defaultOrdering = 'desc',
-    ): Collection|array {
+        bool $paginate = true,
+        int $defaultPerPage = 15
+    ): Collection|LengthAwarePaginator|array {
         if ($request->has('search') && count($searchableFields) > 0) {
             $searchValue = $request->input('search');
             if ($searchValue) {
@@ -112,6 +114,7 @@ class BuilderRequestService
                         $q->orWhere($field, 'LIKE', $filterValue);
                     }
                 });
+                $paginate = false;
             }
         }
         $this->handleOrdering($request, $builder, $defaultOrderField, $defaultOrdering);
@@ -119,7 +122,7 @@ class BuilderRequestService
             $callback($builder, $request);
         }
 
-        return $builder->get();
+        return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
     }
 
 }

@@ -36,7 +36,8 @@ class LocationController extends Controller
                 Location::query(),
                 ['name'],
                 defaultOrderField: 'name',
-                defaultOrdering: 'asc'
+                defaultOrdering: 'asc',
+                paginate: false
             )
         );
     }

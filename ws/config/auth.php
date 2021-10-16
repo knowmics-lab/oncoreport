@@ -41,12 +41,6 @@ return [
             'provider' => 'users',
         ],
 
-        'patient' => [
-            'redirectTo' => 'patient.home',
-            'driver' => 'session',
-            'provider' => 'patient',
-        ],
-
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -76,12 +70,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        'patient' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Patient::class,
-        ]
-
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
