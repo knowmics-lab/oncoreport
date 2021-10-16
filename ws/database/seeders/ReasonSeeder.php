@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Reason;
+use App\Models\SuspensionReason;
 use Illuminate\Database\Seeder;
 
 class ReasonSeeder extends Seeder
@@ -12,13 +12,13 @@ class ReasonSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $path = realpath(env('DATABASES_PATH') . '/reasons.txt');
+        $path = realpath(config('oncoreport.databases_path') . '/reasons.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             while (!feof($fp) && ($line = @fgets($fp)) !== false) {
-                Reason::firstOrCreate(
+                SuspensionReason::firstOrCreate(
                     [
                         'name' => trim($line),
                     ]
@@ -26,7 +26,7 @@ class ReasonSeeder extends Seeder
             }
             @fclose($fp);
         }
-        Reason::firstOrCreate(
+        SuspensionReason::firstOrCreate(
             [
                 'name' => 'other',
             ]

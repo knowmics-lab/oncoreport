@@ -5,6 +5,7 @@ cargs <- commandArgs(trailingOnly = TRUE)
 db_path<-cargs[1]
 setwd(db_path)
 
+read_drugbank_xml_db(file.path(db_path, "drugbank.xml"))
 drug_general_information(
   save_table = FALSE,
   save_csv = TRUE,

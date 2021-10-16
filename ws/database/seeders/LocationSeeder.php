@@ -12,9 +12,9 @@ class LocationSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $path = realpath(env('DATABASES_PATH') . '/cancer_locations.txt');
+        $path = realpath(config('oncoreport.databases_path') . '/cancer_locations.txt');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             while (!feof($fp) && ($line = @fgets($fp)) !== false) {

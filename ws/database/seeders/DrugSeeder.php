@@ -12,15 +12,19 @@ class DrugSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $path = realpath(env('DATABASES_PATH') . '/cancer_drugs.txt');
+        $path = realpath(config('oncoreport.databases_path') . '/drug_info.csv');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
-            while (!feof($fp) && ($line = @fgets($fp)) !== false) {
+            fgetcsv($fp);
+            while (($line = fgetcsv($fp)) !== false) {
                 Drug::firstOrCreate(
                     [
-                        'name' => trim($line),
+                        'drugbank_id' => trim($line[0]),
+                    ],
+                    [
+                        'name' => trim($line[1]),
                     ]
                 );
             }
