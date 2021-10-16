@@ -35,7 +35,8 @@ RUN /usr/bin/apt update --fix-missing && \
     apt-get clean
 
 # Install common packages
-RUN /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools unixodbc \
+RUN /usr/bin/apt update --fix-missing && \
+    /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools unixodbc \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
                             libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
                             python3-setuptools git apache2 php-xdebug composer php-cli jq \

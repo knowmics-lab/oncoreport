@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -199,7 +200,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Api" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="ReaderModeSettings">
@@ -305,6 +306,7 @@
       <workItem from="1634203170040" duration="2634000" />
       <workItem from="1634221289078" duration="2986000" />
       <workItem from="1634238178247" duration="4907000" />
+      <workItem from="1634367058234" duration="356000" />
     </task>
     <servers />
   </component>
