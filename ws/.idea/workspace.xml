@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseDrugController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/Drug/StorePatientDiseaseDrugRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/Drug/UpdatePatientDiseaseDrugRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-    </list>
+    <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -323,7 +308,7 @@
       <workItem from="1634238178247" duration="4907000" />
       <workItem from="1634367058234" duration="356000" />
       <workItem from="1634367426400" duration="9887000" />
-      <workItem from="1634457888928" duration="7257000" />
+      <workItem from="1634457888928" duration="7872000" />
     </task>
     <servers />
   </component>
