@@ -42,7 +42,7 @@ class PatientDrugController extends Controller
         $this->tokenAuthorize($request, ['read', 'update'], 'view', $patient);
 
         return PatientDrugResource::collection(
-            $requestService->handle($request, $patient->drugs())
+            $requestService->handle($request, $patient->drugs()->getQuery())
         );
     }
 
@@ -81,6 +81,7 @@ class PatientDrugController extends Controller
     public function show(Request $request, Patient $patient, PatientDrug $drug): PatientDrugResource
     {
         $this->tokenAuthorize($request, 'read', 'view', $patient);
+        abort_if($patient->id !== $drug->patient_id, 404);
 
         return new PatientDrugResource($drug);
     }
@@ -103,6 +104,7 @@ class PatientDrugController extends Controller
         PatientHelperService $helperService
     ): PatientDrugResource {
         $this->tokenAuthorize($request, ['read', 'update'], 'update', $patient);
+        abort_if($patient->id !== $drug->patient_id, 404);
 
         return new PatientDrugResource(
             $helperService->createOrUpdateDrug(
@@ -125,6 +127,7 @@ class PatientDrugController extends Controller
     public function destroy(Request $request, Patient $patient, PatientDrug $drug): JsonResponse
     {
         $this->tokenAuthorize($request, ['read', 'update', 'delete'], 'view', $patient);
+        abort_if($patient->id !== $drug->patient_id, 404);
         $drug->delete();
 
         return $this->respondNoContent();

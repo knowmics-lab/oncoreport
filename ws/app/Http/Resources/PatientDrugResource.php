@@ -21,7 +21,9 @@ class PatientDrugResource extends JsonResource
     {
         return [
             'id'                 => $this->id,
+            'patient_id'         => $this->patient_id,
             'patient'            => new PatientResource($this->whenLoaded('patient')),
+            'disease_id'         => $this->patient_disease_id,
             'disease'            => new PatientDiseaseResource($this->whenLoaded('disease')),
             'drug'               => new DrugResource($this->whenLoaded('drug')),
             'suspension_reasons' => SuspensionReasonResource::collection($this->whenLoaded('suspensionReasons')),

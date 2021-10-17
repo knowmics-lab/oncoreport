@@ -57,7 +57,7 @@ class StorePatientRequest extends FormRequest
             'diseases.*.end_date'          => ['nullable', 'date'],
             'drugs'                        => ['nullable', 'array'],
             'drugs.*.drug'                 => ['required', Rule::exists('drugs', 'id')],
-            'drugs.*.disease'              => ['nullable', Rule::exists('diseases', 'id')],
+            'drugs.*.disease'              => ['nullable', 'integer'],
             'drugs.*.suspension_reasons'   => ['nullable', 'array'],
             'drugs.*.suspension_reasons.*' => ['integer', Rule::exists('suspension_reasons', 'id')],
             'drugs.*.comment'              => ['nullable', 'string'],

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\JobTypeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientDiseaseController;
+use App\Http\Controllers\Api\PatientDiseaseDrugController;
 use App\Http\Controllers\Api\PatientDrugController;
 use App\Http\Controllers\Api\PingController;
 use App\Http\Controllers\Api\SuspensionReasonController;
@@ -44,6 +45,7 @@ Route::group(
 
         Route::apiResource('patients', PatientController::class);
         Route::apiResource('patients.diseases', PatientDiseaseController::class);
+        Route::apiResource('patients.diseases.drugs', PatientDiseaseDrugController::class);
         Route::apiResource('patients.drugs', PatientDrugController::class);
 
         Route::get('/user', [PingController::class, 'user']);

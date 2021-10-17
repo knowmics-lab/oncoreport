@@ -7,8 +7,9 @@ use App\Models\Patient;
 use App\Models\PatientDisease;
 use App\Models\PatientDrug;
 use App\Traits\UseNullableValues;
-use App\Utils;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use JetBrains\PhpStorm\Pure;
 
 class PatientHelperService
 {
@@ -22,8 +23,8 @@ class PatientHelperService
         $patientDisease = ($update) ? $patient->diseases()->findOrFail($id) : null;
         $oldData = optional($patientDisease)->toArray() ?? [];
         $data = [
-            'disease_id'  => (int)$this->old('disease', $disease, $oldData, $update),
-            'location_id' => $this->nullableId($this->old('location', $disease, $oldData, $update)),
+            'disease_id'  => (int)$this->old('disease', $disease, $oldData, $update, 'disease_id'),
+            'location_id' => $this->nullableId($this->old('location', $disease, $oldData, $update, 'location_id')),
             'type'        => $this->nullableValue($this->old('type', $disease, $oldData, $update)),
             'T'           => $this->nullableValue($this->old('T', $disease, $oldData, $update)),
             'N'           => $this->nullableValue($this->old('N', $disease, $oldData, $update)),
@@ -40,6 +41,68 @@ class PatientHelperService
         return $patientDisease;
     }
 
+    #[Pure] protected function processDiseaseId(
+        int $patientId,
+        array $oldData,
+        array $drug,
+        bool $isUpdatingDisease,
+        array $diseasesIdList,
+        bool $isUpdatingPatient
+    ): ?int {
+        $diseaseId = $this->old('disease', $drug, $oldData, $isUpdatingDisease, 'patient_disease_id');
+        if (is_null($diseaseId)) {
+            return null;
+        }
+        if ($isUpdatingPatient && $diseaseId > 0) {
+            if (!PatientDisease::where('patient_id', $patientId)->where('id', $diseaseId)->exists()) {
+                throw ValidationException::withMessages([
+                    'patient_disease_id' => 'Invalid patient disease id',
+                ]);
+            }
+
+            return $diseaseId;
+        }
+        $diseaseId = abs($diseaseId);
+
+        return $diseasesIdList[$diseaseId] ?? null;
+    }
+
+    private function internalCreateOrUpdateDrug(
+        Patient $patient,
+        array $drug,
+        array $diseasesIdList,
+        bool $isUpdatingPatient = false
+    ): PatientDrug {
+        $id = $this->nullableId($drug['id'] ?? null);
+        $update = (int)$id > 0;
+        $patientDrug = ($update) ? $patient->drugs()->findOrFail($id) : null;
+        $oldData = optional($patientDrug)->toArray() ?? [];
+        $data = [
+            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id'),
+            'patient_disease_id' => $this->processDiseaseId(
+                $patient->id,
+                $oldData,
+                $drug,
+                $update,
+                $diseasesIdList,
+                $isUpdatingPatient
+            ),
+            'comment'            => $this->nullableValue($this->old('comment', $drug, $oldData, $update)),
+            'start_date'         => $this->dateOrNowIfEmpty($this->old('start_date', $drug, $oldData, $update)),
+            'end_date'           => $this->nullableDate($this->old('end_date', $drug, $oldData, $update)),
+        ];
+        if ($update) {
+            $patientDrug->update($data);
+        } else {
+            $patientDrug = $patient->drugs()->create($data);
+        }
+        if (isset($drug['suspension_reasons']) && is_array($drug['suspension_reasons'])) {
+            $patientDrug->suspensionReasons()->sync($drug['suspension_reasons']);
+        }
+
+        return $patientDrug;
+    }
+
     public function createOrUpdateDrug(Patient $patient, array $drug): PatientDrug
     {
         $id = $this->nullableId($drug['id'] ?? null);
@@ -47,11 +110,13 @@ class PatientHelperService
         $patientDrug = ($update) ? $patient->drugs()->findOrFail($id) : null;
         $oldData = optional($patientDrug)->toArray() ?? [];
         $data = [
-            'drug_id'    => (int)$this->old('drug', $drug, $oldData, $update),
-            'disease_id' => $this->nullableId($this->old('disease', $drug, $oldData, $update)),
-            'comment'    => $this->nullableValue($this->old('comment', $drug, $oldData, $update)),
-            'start_date' => $this->dateOrNowIfEmpty($this->old('start_date', $drug, $oldData, $update)),
-            'end_date'   => $this->nullableDate($this->old('end_date', $drug, $oldData, $update)),
+            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id'),
+            'patient_disease_id' => $this->nullableId(
+                $this->old('disease', $drug, $oldData, $update, 'patient_disease_id')
+            ),
+            'comment'            => $this->nullableValue($this->old('comment', $drug, $oldData, $update)),
+            'start_date'         => $this->dateOrNowIfEmpty($this->old('start_date', $drug, $oldData, $update)),
+            'end_date'           => $this->nullableDate($this->old('end_date', $drug, $oldData, $update)),
         ];
         if ($update) {
             $patientDrug->update($data);
@@ -106,8 +171,12 @@ class PatientHelperService
         }
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function createPatient(array $values, ?int $ownerId): Patient
     {
+        DB::beginTransaction();
         $patient = Patient::create(
             [
                 'code'               => $values['code'],
@@ -125,14 +194,15 @@ class PatientHelperService
             ]
         );
         $primaryDisease = $this->createOrUpdateDisease($patient, $values['primary_disease']);
+        $diseasesIdList = [$primaryDisease->id];
         if (isset($values['diseases']) && is_array($values['diseases'])) {
             foreach ($values['diseases'] as $disease) {
-                $this->createOrUpdateDisease($patient, $disease);
+                $diseasesIdList[] = $this->createOrUpdateDisease($patient, $disease)->id;
             }
         }
         if (isset($values['drugs']) && is_array($values['drugs'])) {
             foreach ($values['drugs'] as $drug) {
-                $this->createOrUpdateDrug($patient, $drug);
+                $this->internalCreateOrUpdateDrug($patient, $drug, $diseasesIdList);
             }
         }
         $userId = $this->createAccount($patient, $values);
@@ -142,12 +212,17 @@ class PatientHelperService
                 'user_id'            => $userId,
             ]
         );
+        DB::commit();
 
         return $patient;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function updatePatient(Patient $patient, array $values): Patient
     {
+        DB::beginTransaction();
         $this->updateAccount($patient, $values);
         $oldData = $patient->toArray();
         $primaryDiseaseId = $patient->primary_disease_id;
@@ -157,14 +232,18 @@ class PatientHelperService
                 $primaryDiseaseId = $primaryDisease->id;
             }
         }
+        $diseasesIdList = [$primaryDiseaseId];
         if (isset($values['diseases']) && is_array($values['diseases'])) {
             foreach ($values['diseases'] as $disease) {
-                $this->createOrUpdateDisease($patient, $disease);
+                $disease = $this->createOrUpdateDisease($patient, $disease);
+                if ($disease->wasRecentlyCreated) {
+                    $diseasesIdList[] = $disease->id;
+                }
             }
         }
         if (isset($values['drugs']) && is_array($values['drugs'])) {
             foreach ($values['drugs'] as $drug) {
-                $this->createOrUpdateDrug($patient, $drug);
+                $this->internalCreateOrUpdateDrug($patient, $drug, $diseasesIdList, true);
             }
         }
         $this->deleteDiseases($patient, $values);
@@ -183,6 +262,7 @@ class PatientHelperService
                 'primary_disease_id' => $primaryDiseaseId,
             ]
         );
+        DB::commit();
 
         return $patient;
     }

@@ -2,28 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseDrugController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/Drug/StorePatientDiseaseDrugRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/Drug/UpdatePatientDiseaseDrugRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.phpstorm.meta.php" beforeDir="false" afterPath="$PROJECT_DIR$/.phpstorm.meta.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/SuspensionReasonController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/SuspensionReasonController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/show.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/show.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDiseaseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Patient.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Patient.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +211,8 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Api" />
+    <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
@@ -230,9 +223,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient" />
       <recent name="$PROJECT_DIR$/app/Actions/Api/User" />
     </key>
@@ -330,6 +323,7 @@
       <workItem from="1634238178247" duration="4907000" />
       <workItem from="1634367058234" duration="356000" />
       <workItem from="1634367426400" duration="9887000" />
+      <workItem from="1634457888928" duration="7257000" />
     </task>
     <servers />
   </component>

@@ -5,7 +5,6 @@ namespace App\Http\Requests\Api\Patient;
 use App\Constants;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
 
 class UpdatePatientRequest extends FormRequest
 {
@@ -38,6 +37,7 @@ class UpdatePatientRequest extends FormRequest
             'city'                         => ['sometimes', 'nullable', 'string', 'max:255'],
             'primary_disease'              => ['sometimes', 'required', 'array'],
             'primary_disease.id'           => [
+                'sometimes',
                 'required',
                 Rule::exists('patient_diseases', 'id')->where('patient_id', $this->patient->id),
             ],
@@ -73,7 +73,7 @@ class UpdatePatientRequest extends FormRequest
                 Rule::exists('patient_drugs', 'id')->where('patient_id', $this->patient->id),
             ],
             'drugs.*.drug'                 => ['sometimes', 'required', Rule::exists('drugs', 'id')],
-            'drugs.*.disease'              => ['sometimes', 'nullable', Rule::exists('diseases', 'id')],
+            'drugs.*.disease'              => ['sometimes', 'nullable', 'integer'],
             'drugs.*.suspension_reasons'   => ['sometimes', 'nullable', 'array'],
             'drugs.*.suspension_reasons.*' => ['sometimes', 'integer', Rule::exists('suspension_reasons', 'id')],
             'drugs.*.comment'              => ['sometimes', 'nullable', 'string'],

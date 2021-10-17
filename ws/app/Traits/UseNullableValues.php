@@ -13,6 +13,11 @@ trait UseNullableValues
         return ($value <= 0) ? null : $value;
     }
 
+    protected function nullableInteger(mixed $value): ?int
+    {
+        return is_numeric($value) ? (int)$value : null;
+    }
+
     protected function nullableValue(mixed $value): mixed
     {
         return (empty($value)) ? null : $value;
@@ -28,10 +33,18 @@ trait UseNullableValues
         return $this->nullableDate($value) ?? now();
     }
 
-    protected function old(string $field, array $newData, array $oldData, bool $update = true): mixed
-    {
+    protected function old(
+        string $field,
+        array $newData,
+        array $oldData,
+        bool $update = true,
+        ?string $oldDataField = null
+    ): mixed {
+        if ($oldDataField === null) {
+            $oldDataField = $field;
+        }
         if ($update && !isset($newData[$field])) {
-            return $oldData[$field] ?? null;
+            return $oldData[$oldDataField] ?? null;
         }
 
         return $newData[$field] ?? null;
