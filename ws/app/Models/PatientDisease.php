@@ -52,4 +52,20 @@ class PatientDisease extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+    public function getStageStringAttribute(): string
+    {
+        $stage = "";
+        if ($this->T) {
+            $stage .= 't' . $this->T;
+        }
+        if ($this->N) {
+            $stage .= 'n' . $this->N;
+        }
+        if ($this->M) {
+            $stage .= 'm' . $this->M;
+        }
+
+        return $stage;
+    }
 }

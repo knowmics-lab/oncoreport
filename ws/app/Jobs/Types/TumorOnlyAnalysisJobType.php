@@ -9,6 +9,7 @@ namespace App\Jobs\Types;
 
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
+use App\Models\PatientDrug;
 use App\Utils;
 use Exception;
 use Illuminate\Http\Request;
@@ -132,6 +133,19 @@ class TumorOnlyAnalysisJobType extends AbstractJob
         return self::PATIENT_REQUIRED;
     }
 
+    private function getDrugsFile(): string
+    {
+        $file = $this->model->getJobTempFileAbsolute('patient_drugs_', '.txt');
+        $drugIds = $this->model->patient->drugs()
+                                        ->whereNull('end_date')
+                                        ->get()
+                                        ->map(fn(PatientDrug $pd) => $pd->drug->drugbank_id)
+                                        ->join("\n");
+        file_put_contents($file, $drugIds);
+
+        return $file;
+    }
+
     /**
      * Handles all the computation for this job.
      * This function should throw a ProcessingJobException if something went wrong during the computation.
@@ -175,6 +189,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             );
             $depthFilter = sprintf("DP%s%.2f", $depthFilterOperator, $depthFilterValue);
             $alleleFractionFilter = sprintf("AF%s%.2f", $alleleFractionFilterOperator, $alleleFractionFilterValue);
+            $drugsListFile = $this->getDrugsFile();
             $command = [
                 'bash',
                 self::scriptPath('pipeline_liquid_biopsy.bash'),
@@ -189,7 +204,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 '-g',
                 $patient->gender,
                 '-t',
-                $patient->disease->name,
+                $patient->primaryDisease->icd10_code,
                 '-pp',
                 $outputAbsolute,
                 '-th',
@@ -200,22 +215,23 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 $depthFilter,
                 '-af',
                 $alleleFractionFilter,
-                '-st',
-                $patient->site->name,
-                '-sg',
-                $patient->stage(),
                 '-d_path',
-                realpath(env('DATABASES_PATH') . env('DRUGS_FILE')),
+                $drugsListFile,
             ];
 
-            if ($patient->city != null){
+            if (!is_null($patient->primaryDisease->location_id)) {
+                $command = [...$command, '-st', $patient->primaryDisease->location->name];
+            }
+            $stageString = $patient->primaryDisease->stage_string;
+            if ($stageString) {
+                $command = [...$command, '-sg', $stageString];
+            }
+            if (!is_null($patient->city)) {
                 $command = [...$command, '-c', $patient->city];
             }
-            if ($patient->telephone != null){
+            if (!is_null($patient->telephone)) {
                 $command = [...$command, '-ph', $patient->telephone];
             }
-
-
             if ($this->fileExists($vcf)) {
                 $command = [...$command, '-v', $vcf];
             } elseif ($this->fileExists($bam)) {

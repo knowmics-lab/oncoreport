@@ -17,7 +17,10 @@ use Throwable;
 
 class DeleteJobDirectory implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Delete the job if its models no longer exist.
@@ -29,18 +32,12 @@ class DeleteJobDirectory implements ShouldQueue
     public $timeout = 0;
 
     /**
-     * @var \App\Models\Job
-     */
-    protected $model;
-
-    /**
      * Create a new job instance.
      *
      * @param  \App\Models\Job  $model
      */
-    public function __construct(JobModel $model)
+    public function __construct(protected JobModel $model)
     {
-        $this->model = $model;
     }
 
     /**
