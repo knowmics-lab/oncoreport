@@ -9,6 +9,8 @@ namespace App\Jobs\Types;
 
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
+use App\Jobs\Traits\UsesCommandLine;
+use App\Jobs\Traits\UsesDrugsFile;
 use App\Utils;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,8 +19,11 @@ use Illuminate\Validation\Rule;
 class TumorVsNormalAnalysisJobType extends AbstractJob
 {
 
+    use UsesCommandLine;
+    use UsesDrugsFile;
+
     /**
-     * Returns an array containing for each input parameter an help detailing its content and use.
+     * Returns an array containing for each input parameter a help to detail its content and use.
      *
      * @return array
      */
@@ -100,7 +105,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     static function () use ($parameters) {
                         $fastq = data_get($parameters, 'tumor.fastq1');
 
-                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
+                        return ($parameters['paired'] ?? false) && !empty($fastq);
                     }
                 ),
             ],
@@ -125,7 +130,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     static function () use ($parameters) {
                         $fastq = data_get($parameters, 'normal.fastq1');
 
-                        return ((bool)($parameters['paired'] ?? false)) && !empty($fastq);
+                        return ($parameters['paired'] ?? false) && !empty($fastq);
                     }
                 ),
             ],
@@ -191,7 +196,8 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 ProcessingJobException::class,
                 sprintf('Directory "%s" was not created', $outputAbsolute)
             );
-            $command = [
+            $drugsListFile = $this->createDrugsFile();
+            $this->initCommand(
                 'bash',
                 self::scriptPath('pipeline_tumVSnormal.bash'),
                 '-i',
@@ -205,64 +211,52 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 '-g',
                 $patient->gender,
                 '-t',
-                $patient->disease->name,
+                $patient->primaryDisease->icd10_code,
                 '-pp',
                 $outputAbsolute,
                 '-th',
                 $threads,
                 '-gn',
                 $genome,
-                '-st',
-                $patient->site->name,
-                '-sg',
-                $patient->stage(),
                 '-d_path',
-                realpath(env('DATABASES_PATH') . env('DRUGS_FILE')),
-            ];
-
-            if ($patient->city != null){
-                $command = [...$command, '-c', $patient->city];
+                $drugsListFile
+            );
+            if (!is_null($patient->primaryDisease->location_id)) {
+                $this->parameters('-st', $patient->primaryDisease->location->name);
             }
-            if ($patient->telephone != null){
-                $command = [...$command, '-ph', $patient->telephone];
-            }
-
+            $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
+                 ->optionalParameter('-c', $patient->city)
+                 ->optionalParameter('-ph', $patient->telephone);
             if ($this->fileExists($vcf)) {
-                $command = [...$command, '-v', $vcf];
+                $this->parameters('-v', $vcf);
             } elseif ($this->fileExists($tumorBam) && $this->fileExists($normalBam)) {
-                $command = [
-                    ...$command,
+                $this->parameters(
                     '-bt',
                     $tumorBam,
                     '-bn',
-                    $normalBam,
-                ];
+                    $normalBam
+                );
             } elseif ($this->fileExists($tumorUbam) && $this->fileExists($normalUbam)) {
-                $command = [
-                    ...$command,
+                $this->parameters(
                     '-ubt',
                     $tumorUbam,
                     '-ubn',
                     $normalUbam,
-                    '-pr',
-                    $paired ? 'yes' : 'no',
-                ];
+                )->booleanParameter('-pr', $paired);
             } elseif ($this->fileExists($tumorFastq1) && $this->fileExists($normalFastq1)) {
-                $command = [
-                    ...$command,
+                $this->parameters(
                     '-fq1',
                     $tumorFastq1,
                     '-nm1',
                     $normalFastq1,
-                ];
+                );
                 if ($paired && $this->fileExists($tumorFastq2) && $this->fileExists($normalFastq2)) {
-                    $command = [
-                        ...$command,
+                    $this->parameters(
                         '-fq2',
                         $tumorFastq2,
                         '-nm2',
                         $normalFastq2,
-                    ];
+                    );
                 } else {
                     throw new ProcessingJobException(
                         'Unable to validate second fastq files with a paired-end analysis.'
@@ -274,7 +268,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             $model = $this->model;
             try {
                 self::runCommand(
-                    $command,
+                    $this->command(),
                     $this->getAbsoluteJobDirectory(),
                     null,
                     static function ($type, $buffer) use ($model) {

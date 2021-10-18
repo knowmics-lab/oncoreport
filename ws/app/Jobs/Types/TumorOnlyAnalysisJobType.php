@@ -9,7 +9,8 @@ namespace App\Jobs\Types;
 
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
-use App\Models\PatientDrug;
+use App\Jobs\Traits\UsesCommandLine;
+use App\Jobs\Traits\UsesDrugsFile;
 use App\Utils;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,6 +18,9 @@ use Illuminate\Validation\Rule;
 
 class TumorOnlyAnalysisJobType extends AbstractJob
 {
+
+    use UsesDrugsFile;
+    use UsesCommandLine;
 
     /**
      * Returns an array containing for each input parameter an help detailing its content and use.
@@ -133,19 +137,6 @@ class TumorOnlyAnalysisJobType extends AbstractJob
         return self::PATIENT_REQUIRED;
     }
 
-    private function getDrugsFile(): string
-    {
-        $file = $this->model->getJobTempFileAbsolute('patient_drugs_', '.txt');
-        $drugIds = $this->model->patient->drugs()
-                                        ->whereNull('end_date')
-                                        ->get()
-                                        ->map(fn(PatientDrug $pd) => $pd->drug->drugbank_id)
-                                        ->join("\n");
-        file_put_contents($file, $drugIds);
-
-        return $file;
-    }
-
     /**
      * Handles all the computation for this job.
      * This function should throw a ProcessingJobException if something went wrong during the computation.
@@ -189,8 +180,8 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             );
             $depthFilter = sprintf("DP%s%.2f", $depthFilterOperator, $depthFilterValue);
             $alleleFractionFilter = sprintf("AF%s%.2f", $alleleFractionFilterOperator, $alleleFractionFilterValue);
-            $drugsListFile = $this->getDrugsFile();
-            $command = [
+            $drugsListFile = $this->createDrugsFile();
+            $this->initCommand(
                 'bash',
                 self::scriptPath('pipeline_liquid_biopsy.bash'),
                 '-i',
@@ -216,50 +207,25 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 '-af',
                 $alleleFractionFilter,
                 '-d_path',
-                $drugsListFile,
-            ];
-
+                $drugsListFile
+            );
             if (!is_null($patient->primaryDisease->location_id)) {
-                $command = [...$command, '-st', $patient->primaryDisease->location->name];
+                $this->parameters('-st', $patient->primaryDisease->location->name);
             }
-            $stageString = $patient->primaryDisease->stage_string;
-            if ($stageString) {
-                $command = [...$command, '-sg', $stageString];
-            }
-            if (!is_null($patient->city)) {
-                $command = [...$command, '-c', $patient->city];
-            }
-            if (!is_null($patient->telephone)) {
-                $command = [...$command, '-ph', $patient->telephone];
-            }
+            $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
+                 ->optionalParameter('-c', $patient->city)
+                 ->optionalParameter('-ph', $patient->telephone);
             if ($this->fileExists($vcf)) {
-                $command = [...$command, '-v', $vcf];
+                $this->parameters('-v', $vcf);
             } elseif ($this->fileExists($bam)) {
-                $command = [
-                    ...$command,
-                    '-b',
-                    $bam,
-                ];
+                $this->parameters('-b', $bam);
             } elseif ($this->fileExists($ubam)) {
-                $command = [
-                    ...$command,
-                    '-ub',
-                    $ubam,
-                    '-pr',
-                    $paired ? 'yes' : 'no',
-                ];
+                $this->parameters('-ub', $ubam)
+                     ->booleanParameter('-pr', $paired);
             } elseif ($this->fileExists($fastq1)) {
-                $command = [
-                    ...$command,
-                    '-fq1',
-                    $fastq1,
-                ];
+                $this->parameters('-fq1', $fastq1);
                 if ($paired && $this->fileExists($fastq2)) {
-                    $command = [
-                        ...$command,
-                        '-fq2',
-                        $fastq2,
-                    ];
+                    $this->parameters('-fq2', $fastq2);
                 } else {
                     throw new ProcessingJobException(
                         'Unable to validate second fastq files with a paired-end analysis.'
@@ -270,7 +236,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             }
             $model = $this->model;
             self::runCommand(
-                $command,
+                $this->command(),
                 $this->getAbsoluteJobDirectory(),
                 null,
                 static function ($type, $buffer) use ($model) {

@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Traits/UsesCommandLine.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Traits/UsesDrugsFile.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/DeleteJobDirectory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/DeleteJobDirectory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/PatientDisease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/PatientDisease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,8 +36,8 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
@@ -201,7 +202,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Jobs/Traits" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
@@ -209,11 +210,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Jobs/Traits" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient" />
-      <recent name="$PROJECT_DIR$/app/Actions/Api/User" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/databases" />
@@ -312,6 +313,7 @@
       <workItem from="1634457888928" duration="7872000" />
       <workItem from="1634540249398" duration="401000" />
       <workItem from="1634540658868" duration="1648000" />
+      <workItem from="1634575322272" duration="3310000" />
     </task>
     <servers />
   </component>
