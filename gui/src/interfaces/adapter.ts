@@ -1,4 +1,4 @@
-import { SortingSpec } from './common';
+import { FilteringSpec, SimpleMapType, SortingSpec } from './common';
 import Collection from './collection';
 import IdentifiableEntity from './common/identifiableEntity';
 import Connector from '../api/adapters/connector';
@@ -12,11 +12,16 @@ export interface Adapter<T> {
 
   delete(entity: T): Promise<void>;
 
-  fetchOne(id: number | IdentifiableEntity): Promise<T>;
+  fetchOne(
+    id: number | IdentifiableEntity,
+    parameters?: SimpleMapType<string>
+  ): Promise<T>;
 
-  fetchPage(
-    per_page: number,
-    sorting: SortingSpec,
-    page: number
+  fetch(
+    sorting?: SortingSpec,
+    filtering?: FilteringSpec,
+    page?: number,
+    per_page?: number,
+    parameters?: SimpleMapType<string>
   ): Promise<Collection<T>>;
 }
