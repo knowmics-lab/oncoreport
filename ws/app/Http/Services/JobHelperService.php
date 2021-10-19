@@ -17,6 +17,24 @@ use JetBrains\PhpStorm\Pure;
 class JobHelperService
 {
 
+    public function prepareSecondValidation(StoreJobRequest|UpdateJobRequest $request): array
+    {
+        $validValues = $request->validated();
+        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($validValues['type'], $request));
+        $patientInputState = Factory::patientInputState($validValues['type']);
+        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
+        if ($request instanceof StoreJobRequest) {
+            $patientInputValidation = ['integer', Rule::exists('patients', 'id')];
+            if ($patientInputState === AbstractJob::PATIENT_REQUIRED) {
+                $parametersValidation['patient_id'] = ['required', ...$patientInputValidation];
+            } elseif ($patientInputState === AbstractJob::PATIENT_OPTIONAL) {
+                $parametersValidation['patient_id'] = ['filled', ...$patientInputValidation];
+            }
+        }
+
+        return [$noPatientInput, $parametersValidation];
+    }
+
     /**
      * Prepare array for nested validation
      *
@@ -35,24 +53,6 @@ class JobHelperService
         }
 
         return $nestedSpecs;
-    }
-
-    public function prepareSecondValidation(StoreJobRequest|UpdateJobRequest $request): array
-    {
-        $validValues = $request->validated();
-        $parametersValidation = $this->prepareNestedValidation(Factory::validationSpec($validValues['type'], $request));
-        $patientInputState = Factory::patientInputState($validValues['type']);
-        $noPatientInput = $patientInputState === AbstractJob::NO_PATIENT;
-        if ($request instanceof StoreJobRequest) {
-            $patientInputValidation = ['integer', Rule::exists('patients', 'id')];
-            if ($patientInputState === AbstractJob::PATIENT_REQUIRED) {
-                $parametersValidation['patient_id'] = ['required', ...$patientInputValidation];
-            } elseif ($patientInputState === AbstractJob::PATIENT_OPTIONAL) {
-                $parametersValidation['patient_id'] = ['filled', ...$patientInputValidation];
-            }
-        }
-
-        return [$noPatientInput, $parametersValidation];
     }
 
     public function storeJob(array $validValues, array $validParameters, ?Patient $patient, ?int $userId): Job

@@ -1,4 +1,4 @@
-export default interface TimedEntity {
+export default interface EntityWithDates {
   created_at: string;
   created_at_diff: string;
   updated_at: string;

@@ -35,7 +35,7 @@ class DiseaseController extends Controller
             $requestService->handleWithGlobalSearch(
                 $request,
                 Disease::query(),
-                ['icd10_code', 'name'],
+                ['icd_code', 'name'],
                 static function (Builder $builder, Request $request) {
                     if ($request->has('tumor')) {
                         $builder->where('tumor', $request->boolean('tumor'));

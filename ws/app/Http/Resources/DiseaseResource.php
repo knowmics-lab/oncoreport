@@ -25,7 +25,7 @@ class DiseaseResource extends JsonResource
      */
     #[ArrayShape([
         'id'              => "int",
-        'icd10_code'      => "string",
+        'icd_code'        => "string",
         'name'            => "string",
         'tumor'           => "bool",
         'created_at'      => "\Illuminate\Support\Carbon|null",
@@ -36,7 +36,7 @@ class DiseaseResource extends JsonResource
     {
         return [
             'id'              => $this->id,
-            'icd10_code'      => $this->icd10_code,
+            'icd_code'        => $this->icd_code,
             'name'            => $this->name,
             'tumor'           => $this->tumor,
             'created_at'      => $this->created_at,

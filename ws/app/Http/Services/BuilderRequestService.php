@@ -10,6 +10,37 @@ use Illuminate\Http\Request;
 class BuilderRequestService
 {
 
+    /**
+     * Handle a complex request with filtering, ordering, and pagination
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  callable|null  $callback
+     * @param  string  $defaultOrderField
+     * @param  string  $defaultOrdering
+     * @param  bool  $paginate
+     * @param  int  $defaultPerPage
+     *
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function handle(
+        Request $request,
+        Builder $builder,
+        ?callable $callback = null,
+        string $defaultOrderField = 'created_at',
+        string $defaultOrdering = 'desc',
+        bool $paginate = true,
+        int $defaultPerPage = 15
+    ): Collection|LengthAwarePaginator|array {
+        $this->handleFilter($request, $builder);
+        $this->handleOrdering($request, $builder, $defaultOrderField, $defaultOrdering);
+        if ($callback !== null && is_callable($callback)) {
+            $callback($builder, $request);
+        }
+
+        return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
+    }
+
     protected function handleFilter(Request $request, Builder $builder): void
     {
         if ($request->has('filter_by')) {
@@ -62,37 +93,6 @@ class BuilderRequestService
         }
 
         return $builder->get();
-    }
-
-    /**
-     * Handle a complex request with filtering, ordering, and pagination
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @param  callable|null  $callback
-     * @param  string  $defaultOrderField
-     * @param  string  $defaultOrdering
-     * @param  bool  $paginate
-     * @param  int  $defaultPerPage
-     *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    public function handle(
-        Request $request,
-        Builder $builder,
-        ?callable $callback = null,
-        string $defaultOrderField = 'created_at',
-        string $defaultOrdering = 'desc',
-        bool $paginate = true,
-        int $defaultPerPage = 15
-    ): Collection|LengthAwarePaginator|array {
-        $this->handleFilter($request, $builder);
-        $this->handleOrdering($request, $builder, $defaultOrderField, $defaultOrdering);
-        if ($callback !== null && is_callable($callback)) {
-            $callback($builder, $request);
-        }
-
-        return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
     }
 
     public function handleWithGlobalSearch(

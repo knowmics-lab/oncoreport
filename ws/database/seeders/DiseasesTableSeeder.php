@@ -14,7 +14,7 @@ class DiseasesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $allDiseases = Disease::select(['id', 'icd10_code'])->pluck('id', 'icd10_code');
+        $allDiseases = Disease::select(['id', 'icd_code'])->pluck('id', 'icd_code');
         $toInsert = [];
         $now = now()->toDateTimeString();
         $path = realpath(config('oncoreport.databases_path') . '/Disease.txt');
@@ -33,7 +33,7 @@ class DiseasesTableSeeder extends Seeder
                 foreach ($icdCodes as $code) {
                     if (!isset($allDiseases[$code])) {
                         $toInsert[] = [
-                            'icd10_code' => $code,
+                            'icd_code'   => $code,
                             'name'       => $name,
                             'tumor'      => $tumor,
                             'created_at' => $now,

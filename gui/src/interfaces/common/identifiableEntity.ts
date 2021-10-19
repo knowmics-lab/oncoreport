@@ -1,3 +1,3 @@
 export default interface IdentifiableEntity {
-  id?: number;
+  id: number;
 }

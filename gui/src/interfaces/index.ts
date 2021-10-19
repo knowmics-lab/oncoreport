@@ -1,6 +1,6 @@
 export type {
   IdentifiableEntity,
-  TimedEntity,
+  EntityWithDates,
   SimpleMapArray,
   SimpleMapType,
   RecursiveMapType,

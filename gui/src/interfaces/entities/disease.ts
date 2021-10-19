@@ -1,6 +1,7 @@
 import IdentifiableEntity from '../common/identifiableEntity';
-import TimedEntity from '../common/timedEntity';
+import EntityWithDates from '../common/entityWithDates';
 
-export interface Disease extends IdentifiableEntity, TimedEntity {
+export interface Disease extends IdentifiableEntity, EntityWithDates {
+  icd_code: string;
   name: string;
 }

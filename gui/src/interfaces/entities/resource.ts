@@ -1,7 +1,7 @@
 import IdentifiableEntity from '../common/identifiableEntity';
-import TimedEntity from '../common/timedEntity';
+import EntityWithDates from '../common/entityWithDates';
 
-export interface Resource extends IdentifiableEntity, TimedEntity {
+export interface Resource extends IdentifiableEntity, EntityWithDates {
   id: number;
   name?: string;
 }

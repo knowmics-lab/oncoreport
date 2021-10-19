@@ -5,7 +5,6 @@ namespace App\Http\Requests\Api\Patient\Disease;
 use App\Constants;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
 
 class UpdatePatientDiseaseRequest extends FormRequest
 {

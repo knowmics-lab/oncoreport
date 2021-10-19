@@ -2,11 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Jobs/Traits/UsesCommandLine.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Jobs/Traits/UsesDrugsFile.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/timedEntity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/timedEntity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/identifiableEntity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/identifiableEntity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/timedEntity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/entityWithDates.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/disease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/disease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/job.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/entities/resource.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/entities/resource.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Disease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,8 +48,8 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
@@ -314,6 +326,8 @@
       <workItem from="1634540249398" duration="401000" />
       <workItem from="1634540658868" duration="1648000" />
       <workItem from="1634575322272" duration="3310000" />
+      <workItem from="1634626098474" duration="25000" />
+      <workItem from="1634626141395" duration="973000" />
     </task>
     <servers />
   </component>

@@ -8,6 +8,8 @@
 namespace App\Exceptions;
 
 
-class CommandException extends \RuntimeException
+use RuntimeException;
+
+class CommandException extends RuntimeException
 {
 }

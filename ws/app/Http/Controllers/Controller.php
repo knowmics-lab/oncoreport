@@ -16,26 +16,6 @@ class Controller extends BaseController
     use ValidatesRequests;
 
     /**
-     * Checks if the current user token has the requested abilities.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|array  $abilities
-     * @param  string  $message
-     */
-    protected function tokenCan(
-        Request $request,
-        string|array $abilities,
-        string $message = 'You are not allowed to perform this action with the current credentials.'
-    ): void {
-        if (is_string($abilities)) {
-            $abilities = [$abilities];
-        }
-        foreach ($abilities as $ability) {
-            abort_unless($request->user()->tokenCan($ability), 403, $message);
-        }
-    }
-
-    /**
      * Checks if the current user can perform an action.
      * The check is performed on both policies and tokens.
      *
@@ -59,6 +39,26 @@ class Controller extends BaseController
         }
         if ($tokenAbilities !== null) {
             $this->tokenCan($request, $tokenAbilities, $tokenMessage);
+        }
+    }
+
+    /**
+     * Checks if the current user token has the requested abilities.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|array  $abilities
+     * @param  string  $message
+     */
+    protected function tokenCan(
+        Request $request,
+        string|array $abilities,
+        string $message = 'You are not allowed to perform this action with the current credentials.'
+    ): void {
+        if (is_string($abilities)) {
+            $abilities = [$abilities];
+        }
+        foreach ($abilities as $ability) {
+            abort_unless($request->user()->tokenCan($ability), 403, $message);
         }
     }
 

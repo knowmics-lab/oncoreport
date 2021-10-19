@@ -17,18 +17,18 @@ trait UsesCommandLine
         return $this;
     }
 
-    protected function parameters(mixed ...$parameters): self
-    {
-        $this->command = [...$this->command, ...$parameters];
-
-        return $this;
-    }
-
     protected function optionalParameter(string $name, mixed $value): self
     {
         if ($value) {
             $this->parameters($name, $value);
         }
+
+        return $this;
+    }
+
+    protected function parameters(mixed ...$parameters): self
+    {
+        $this->command = [...$this->command, ...$parameters];
 
         return $this;
     }

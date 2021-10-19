@@ -1,14 +1,14 @@
 import {
   IdentifiableEntity,
-  TimedEntity as ITimedEntity,
+  EntityWithDates as ITimedEntity,
 } from '../../interfaces';
 import Entity, { field } from './entity';
 
 export default abstract class TimedEntity<
-    T extends IdentifiableEntity & ITimedEntity
+    T extends IdentifiableEntity & EntityWithDates
   >
   extends Entity<T>
-  implements ITimedEntity
+  implements EntityWithDates
 {
   @field({
     fillable: false,

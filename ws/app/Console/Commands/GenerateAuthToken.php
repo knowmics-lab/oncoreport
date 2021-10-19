@@ -8,6 +8,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -80,7 +81,7 @@ class GenerateAuthToken extends Command
             } else {
                 $this->info('Token generated. The new token is: ' . $token->plainTextToken);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($json) {
                 $this->line(
                     json_encode(

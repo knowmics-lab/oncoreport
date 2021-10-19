@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests\Api\Patient\Drug;
 
-use App\Constants;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
 
 class StorePatientDrugRequest extends FormRequest
 {

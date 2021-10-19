@@ -1,10 +1,10 @@
 import IdentifiableEntity from '../common/identifiableEntity';
-import TimedEntity from '../common/timedEntity';
+import EntityWithDates from '../common/entityWithDates';
 import { Disease } from './disease';
 import { Gender } from '../enums';
 import { Nullable } from '../common';
 
-export interface Patient extends IdentifiableEntity, TimedEntity {
+export interface Patient extends IdentifiableEntity, EntityWithDates {
   code: string;
   first_name: string;
   last_name: string;

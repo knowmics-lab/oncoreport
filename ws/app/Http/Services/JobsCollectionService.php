@@ -4,8 +4,6 @@ namespace App\Http\Services;
 
 use App\Constants;
 use App\Http\Resources\JobResource;
-use App\Models\Job;
-use App\Models\Patient;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

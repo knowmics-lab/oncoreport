@@ -23,14 +23,14 @@ trait UseNullableValues
         return (empty($value)) ? null : $value;
     }
 
-    protected function nullableDate(mixed $value): ?Carbon
-    {
-        return (empty($value)) ? null : Carbon::make($value);
-    }
-
     protected function dateOrNowIfEmpty(mixed $value): Carbon
     {
         return $this->nullableDate($value) ?? now();
+    }
+
+    protected function nullableDate(mixed $value): ?Carbon
+    {
+        return (empty($value)) ? null : Carbon::make($value);
     }
 
     protected function old(
