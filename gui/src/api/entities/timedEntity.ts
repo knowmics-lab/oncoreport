@@ -1,20 +1,21 @@
+import moment from 'moment';
 import {
   IdentifiableEntity,
-  EntityWithDates as ITimedEntity,
+  EntityWithDates as IEntityWithDates,
 } from '../../interfaces';
 import Entity, { field } from './entity';
 
 export default abstract class TimedEntity<
-    T extends IdentifiableEntity & EntityWithDates
+    T extends IdentifiableEntity & IEntityWithDates
   >
   extends Entity<T>
-  implements EntityWithDates
+  implements IEntityWithDates
 {
   @field({
     fillable: false,
     readonly: true,
   })
-  public created_at = '';
+  public created_at = moment();
 
   @field({
     fillable: false,
@@ -26,7 +27,7 @@ export default abstract class TimedEntity<
     fillable: false,
     readonly: true,
   })
-  public updated_at = '';
+  public updated_at = moment();
 
   @field({
     fillable: false,

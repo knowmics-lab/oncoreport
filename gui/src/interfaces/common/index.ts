@@ -69,6 +69,10 @@ export type LoadedCollectionMeta = {
 };
 
 export type SortingSpec = SimpleMapType<SortingDirection>;
+export type FilteringSpec = Nullable<{
+  by: string | string[];
+  value: string;
+}>;
 
 export interface ResponseType<T> {
   validationErrors?: RecursiveMapType<string>;

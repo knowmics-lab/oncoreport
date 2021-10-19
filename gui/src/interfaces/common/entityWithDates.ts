@@ -1,6 +1,8 @@
+import { Moment } from 'moment';
+
 export default interface EntityWithDates {
-  created_at: string;
+  created_at: Moment;
   created_at_diff: string;
-  updated_at: string;
+  updated_at: Moment;
   updated_at_diff: string;
 }

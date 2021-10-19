@@ -1,8 +1,7 @@
-import { Resource } from '../resource';
+import IdentifiableEntity from '../common/identifiableEntity';
+import EntityWithDates from '../common/entityWithDates';
 
-export interface Drug extends Resource {
-  start_date?: string;
-  end_date?: string;
-  reasons?: Resource[];
-  comment?: string;
+export interface Drug extends IdentifiableEntity, EntityWithDates {
+  drugbank_id: string;
+  name: string;
 }
