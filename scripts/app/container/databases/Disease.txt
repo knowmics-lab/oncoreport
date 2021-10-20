@@ -1,4 +1,4 @@
-Disease_database_name	Disease	ICD-11_Code	Category	General_category
+Disease_database_name	Disease_name	ICD-11_Code	Category	General_category
 Infection, unspecified	Infection, unspecified	1H0Z	0	0
 Cholera	Cholera	1A00	0	0
 Cholera / Vibrio cholera O1, biovar cholerae	Cholera / Vibrio cholera O1, biovar cholerae	1A00&XN8P1	0	0

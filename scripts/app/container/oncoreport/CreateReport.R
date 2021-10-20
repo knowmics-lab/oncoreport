@@ -99,6 +99,8 @@ try({
 
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses = c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x<- merge(dis, x, by= "Disease")
 x$Disease <- NULL
 x$Category <- NULL
@@ -441,6 +443,8 @@ try({
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses=c("character"))
   x$Score <- NULL
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x<- merge(dis, x, by= "Disease")
 x$Disease <- NULL
 x$Category <- NULL
@@ -554,6 +558,8 @@ try({
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq, "_definitive.txt"), sep= "\t", colClasses=c("character"))
   cat(paste0(path_db,"/Disease.txt"),"\n")
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   #cat("1\n")
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
@@ -1009,6 +1015,8 @@ try({
 
   x<-read.csv(paste0(path_project,"/txt/",pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   x$Category <- NULL
@@ -1318,6 +1326,8 @@ try({
 
   x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   x$Category <- NULL
@@ -1418,6 +1428,8 @@ options(knitr.table.format = "html")
 try({
   x<-read.csv(paste0(path_project,"/txt/", pt_fastq,"_definitive.txt"), sep= "\t", colClasses=c("character"))
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x<- merge(dis, x, by= "Disease")
   x$Disease <- NULL
   x$Category <- NULL
@@ -1742,6 +1754,8 @@ options(knitr.table.format = "html")
 try({
   x_url<-read.csv(paste0(path_project,"/txt/reference/",pt_fastq,"_off.txt"), sep= "\t")
   dis<-read.csv(paste0(path_db,"/Disease.txt"), sep= "\t")
+  colnames(dis)[1] <- "Disease"
+  dis$General_category <- NULL
   x_url<- merge(dis, x_url, by= "Disease")
   x$Category <- NULL
   x$ICD.11_Code <- NULL
