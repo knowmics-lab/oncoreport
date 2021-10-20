@@ -59,7 +59,7 @@ Tuberculosis of the digestive system	Tuberculosis of the digestive system	1B12.7
 Cutaneous tuberculosis	Cutaneous tuberculosis	1B12.8	0	0
 Tuberculosis of eye	Tuberculosis of eye	1B12.1	0	0
 Tuberculosis of ear	Tuberculosis of ear	1B12.2	0	0
-Tuberculosis of endocrine glands / Adrenal gland	Tuberculosis of endocrine glands / Adrenal gland	1B12.3&XA0NE9	0	0
+Tuberculosis of endocrine glands / Adrenalï¿½gland	Tuberculosis of endocrine glands / Adrenalï¿½gland	1B12.3&XA0NE9	0	0
 Miliary tuberculosis, unspecified	Miliary tuberculosis, unspecified	1B13.Z	0	0
 Acute miliary tuberculosis of a single specified site	Acute miliary tuberculosis of a single specified site	1B13.0	0	0
 Acute miliary tuberculosis of multiple sites	Acute miliary tuberculosis of multiple sites	1B13.1	0	0
@@ -532,7 +532,7 @@ Primary cutaneous follicle centre lymphoma	Primary cutaneous follicle centre lym
 Mantle cell lymphoma	Mantle cell lymphoma	2A85.5	0	0
 Diffuse large B-cell lymphoma, not otherwise specified	Diffuse large B-cell lymphoma, not otherwise specified	2A81.Z	0	0
 Mycosis fungoides	Mycosis fungoides	2B01	0	0
-Sézary syndrome	Sézary syndrome	2B02	0	0
+Sï¿½zary syndrome	Sï¿½zary syndrome	2B02	0	0
 Peripheral T-cell lymphoma, not otherwise specified	Peripheral T-cell lymphoma, not otherwise specified	2A90.C	0	0
 Anaplastic large cell lymphoma, ALK-positive	Anaplastic large cell lymphoma, ALK-positive	2A90.A	0	0
 Anaplastic large cell lymphoma, ALK-negative	Anaplastic large cell lymphoma, ALK-negative	2A90.B	0	0
@@ -773,7 +773,7 @@ Carcinoid syndrome	Carcinoid syndrome	5B10	0	0
 Short stature, not elsewhere classified	Short stature, not elsewhere classified	5B11	0	0
 Constitutional tall stature	Constitutional tall stature	5B12	0	0
 46,XY disorder of sex development due to androgen resistance	46,XY disorder of sex development due to androgen resistance	LD2A.4	0	0
-Tuberculosis of endocrine glands / Thyroid gland	Tuberculosis of endocrine glands / Thyroid gland	1B12.3&XA8RK3	0	0
+Tuberculosis of endocrine glands / Thyroidï¿½gland	Tuberculosis of endocrine glands / Thyroidï¿½gland	1B12.3&XA8RK3	0	0
 Tuberculosis of endocrine glands / Tuberculosis	Tuberculosis of endocrine glands / Tuberculosis	1B12.3/	0	0
 Unspecified undernutrition	Unspecified undernutrition	5B7Z	0	0
 Acute malnutrition in infants, children or adolescents	Acute malnutrition in infants, children or adolescents	5B52	0	0
@@ -2529,7 +2529,7 @@ Systemic sclerosis, unspecified	Systemic sclerosis, unspecified	4A42.Z	0	0
 Diffuse systemic sclerosis	Diffuse systemic sclerosis	4A42.1	0	0
 Limited systemic sclerosis	Limited systemic sclerosis	4A42.2	0	0
 Undifferentiated non-organ specific systemic autoimmune disease	Undifferentiated non-organ specific systemic autoimmune disease	4A43.Z	0	0
-Behçet disease	Behçet disease	4A62	0	0
+Behï¿½et disease	Behï¿½et disease	4A62	0	0
 Polymyalgia rheumatica	Polymyalgia rheumatica	FA22	0	0
 Diffuse eosinophilic fasciitis	Diffuse eosinophilic fasciitis	4A43.4	0	0
 Fibroblastic disorders, unspecified	Fibroblastic disorders, unspecified	FB51.Z	0	0
@@ -6378,7 +6378,7 @@ Neuroblastoma	Neuroblastoma	2D11.2	1	0
 Adrenocortical Carcinoma	Adrenocortical Carcinoma	2D11.Z	1	0
 Neuroendocrine	Neuroendocrine Tumor	2D4Y	1	0
 Neuroendocrine Tumor	Neuroendocrine Tumor	2D4Y	1	0
-Cancer	Any cancer type	2	1	1
+Cancer	Any cancer type  02	1	1
 Pseudomyxoma Peritonei	Pseudomyxoma Peritonei	2D91	1	0
 Salivary Gland Carcinoma	Salivary Cancer	2E60.0	1	0
 Scrotum Paget's Disease	Scrotum Paget's Disease	2E64.1	1	0
@@ -6405,4 +6405,4 @@ Lymphangioleiomyomatosis	Lymphangioleiomyomatosis	CB07.Z	1	0
 Endometrial Hyperplasia	Endometrial Cancer	GA16.0	1	0
 Peutz-Jeghers Syndrome	Peutz-Jeghers Syndrome	LD2D.0	1	0
 Tuberous Sclerosis	Tuberous Sclerosis	LD2D.2	1	0
-Any cancer type	Any cancer type	2	1	1
+Any cancer type	Any cancer type 02	1	1
