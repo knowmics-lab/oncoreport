@@ -1,6 +1,5 @@
-import IdentifiableEntity from '../common/identifiableEntity';
-import EntityWithDates from '../common/entityWithDates';
+import { Entity } from '../common';
 
-export interface Location extends IdentifiableEntity, EntityWithDates {
+export interface Location extends Entity {
   name: string;
 }

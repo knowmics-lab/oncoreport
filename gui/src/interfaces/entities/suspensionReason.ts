@@ -1,6 +1,5 @@
-import IdentifiableEntity from '../common/identifiableEntity';
-import EntityWithDates from '../common/entityWithDates';
+import { Entity } from '../common';
 
-export interface SuspensionReason extends IdentifiableEntity, EntityWithDates {
+export interface SuspensionReason extends Entity {
   name: string;
 }

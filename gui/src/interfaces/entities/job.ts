@@ -1,6 +1,4 @@
-import { MapType, Nullable } from '../common';
-import IdentifiableEntity from '../common/identifiableEntity';
-import EntityWithDates from '../common/entityWithDates';
+import { MapType, Nullable, Entity } from '../common';
 import { Patient } from './patient';
 import { JobStatus, JobTypes, OutputTypes } from '../enums';
 
@@ -15,7 +13,7 @@ export interface JobOutput {
   type: OutputTypes;
 }
 
-export interface Job extends IdentifiableEntity, EntityWithDates {
+export interface Job extends Entity {
   sample_code?: string;
   name: string;
   type: JobTypes;

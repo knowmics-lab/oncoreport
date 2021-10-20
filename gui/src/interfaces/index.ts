@@ -1,6 +1,5 @@
 export type {
-  IdentifiableEntity,
-  EntityWithDates,
+  Entity,
   SimpleMapArray,
   SimpleMapType,
   RecursiveMapType,
@@ -35,13 +34,14 @@ export {
 } from './enums';
 export type {
   DiseaseObject,
+  DrugObject,
+  LocationObject,
   PatientObject,
-  PathologyObject,
+  SuspensionReasonObject,
   JobPath,
   JobConfig,
   JobOutput,
   JobObject,
-  ResourceObject,
 } from './entities';
 export type { default as Collection } from './collection';
 export type { ConfigObjectType } from './settings';

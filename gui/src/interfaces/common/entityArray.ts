@@ -1,7 +1,10 @@
-import { IdentifiableEntity, Arrayable } from './index';
+import { Entity, Arrayable } from './index';
 
-export default interface EntityArray<T extends IdentifiableEntity>
-  extends Array<T> {
+/**
+ * An array of entities with custom methods used to represent
+ * one-to-many relationships.
+ */
+export default interface EntityArray<T extends Entity> extends Array<T> {
   /**
    * Create a new entity linked to the parent object
    * @param data

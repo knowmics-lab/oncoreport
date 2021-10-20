@@ -1,7 +1,6 @@
-import IdentifiableEntity from '../common/identifiableEntity';
-import EntityWithDates from '../common/entityWithDates';
+import { Entity } from '../common';
 
-export interface Drug extends IdentifiableEntity, EntityWithDates {
+export interface Drug extends Entity {
   drugbank_id: string;
   name: string;
 }

@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { SortingDirection } from '../enums';
 
-export type { default as IdentifiableEntity } from './identifiableEntity';
-export type { default as EntityWithDates } from './entityWithDates';
+export type { default as Entity } from './entity';
 
 // @Todo: move from here
 
