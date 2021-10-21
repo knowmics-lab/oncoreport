@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment,no-restricted-syntax */
 import { container, InjectionToken } from 'tsyringe';
-import dayjs  from 'dayjs';
+import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
 import produce, { Draft } from 'immer';
 import * as Immutable from 'immutable';
@@ -118,10 +118,6 @@ export default abstract class Entity<T extends EntityInterface>
 {
   protected data: SimpleMapType<any> = {};
 
-  protected parameters?: SimpleMapType<string>;
-
-  protected adapter: Adapter<T>;
-
   protected initialized = false;
 
   protected dirty = false;
@@ -168,10 +164,10 @@ export default abstract class Entity<T extends EntityInterface>
     [EntityEvent.DELETE, []],
   ]);
 
-  public constructor(adapter: Adapter<T>, parameters?: SimpleMapType<string>) {
-    this.adapter = adapter;
-    this.parameters = parameters;
-  }
+  protected constructor(
+    protected adapter: Adapter<T>,
+    protected parameters?: SimpleMapType<string>
+  ) {}
 
   public initializeNew(): this {
     if (this.initialized)

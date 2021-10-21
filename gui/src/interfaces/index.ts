@@ -1,5 +1,6 @@
 export type {
   Entity,
+  EntityArray,
   SimpleMapArray,
   SimpleMapType,
   RecursiveMapType,

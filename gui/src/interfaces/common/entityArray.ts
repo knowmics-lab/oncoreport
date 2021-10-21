@@ -5,17 +5,19 @@ import { Entity, Arrayable } from './index';
  * one-to-many relationships.
  */
 export default interface EntityArray<T extends Entity> extends Array<T> {
+  readonly isLoaded: boolean;
+
   /**
    * Create a new entity linked to the parent object
    * @param data
    */
-  create(data: Partial<T>): T;
+  create(data: Partial<T>): Promise<T>;
 
   /**
    * Delete an entity linked to the parent object
    * @param id
    */
-  delete(id: number): void;
+  delete(id: number): Promise<void>;
 
   /**
    * Find an entity with the specified id or create a new object with the provided values
@@ -45,5 +47,15 @@ export default interface EntityArray<T extends Entity> extends Array<T> {
    * Connect one or more entities to the parent object
    * @param entities
    */
-  save(entities: Arrayable<T>): void;
+  attach(entities: Arrayable<T>): void;
+
+  /**
+   * Fetch all entities of this collection
+   */
+  fetchAll(): Promise<void>;
+
+  /**
+   * Save all connected entities
+   */
+  saveAll(): Promise<void>;
 }

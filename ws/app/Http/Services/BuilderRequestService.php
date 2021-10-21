@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 class BuilderRequestService
 {
 
+    private const VALID_OPERANDS = ['<', '<=', '>', '>=', '<>', 'like'];
+
     /**
      * Handle a complex request with filtering, ordering, and pagination
      *
@@ -18,6 +20,7 @@ class BuilderRequestService
      * @param  callable|null  $callback
      * @param  string  $defaultOrderField
      * @param  string  $defaultOrdering
+     * @param  array  $searchableFields
      * @param  bool  $paginate
      * @param  int  $defaultPerPage
      *
@@ -29,10 +32,16 @@ class BuilderRequestService
         ?callable $callback = null,
         string $defaultOrderField = 'created_at',
         string $defaultOrdering = 'desc',
+        array $searchableFields = [],
         bool $paginate = true,
         int $defaultPerPage = 15
     ): Collection|LengthAwarePaginator|array {
-        $this->handleFilter($request, $builder);
+        if (
+            $this->handleGlobalSearch($request, $builder, $searchableFields, $paginate) &&
+            $this->handleSimpleFilter($request, $builder)
+        ) {
+            $this->handleAdvancedFilter($request, $builder);
+        }
         $this->handleOrdering($request, $builder, $defaultOrderField, $defaultOrdering);
         if ($callback !== null && is_callable($callback)) {
             $callback($builder, $request);
@@ -41,7 +50,31 @@ class BuilderRequestService
         return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
     }
 
-    protected function handleFilter(Request $request, Builder $builder): void
+    protected function handleGlobalSearch(
+        Request $request,
+        Builder $builder,
+        array $searchableFields,
+        bool &$paginate
+    ): bool {
+        if ($request->has('search') && count($searchableFields) > 0) {
+            $searchValue = $request->input('search');
+            if ($searchValue) {
+                $filterValue = '%' . $searchValue . '%';
+                $builder->where(function ($q) use ($searchableFields, $filterValue) {
+                    foreach ($searchableFields as $field) {
+                        $q->orWhere($field, 'LIKE', $filterValue);
+                    }
+                });
+                $paginate = false;
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function handleSimpleFilter(Request $request, Builder $builder): bool
     {
         if ($request->has('filter_by')) {
             $filterBy = $request->input('filter_by');
@@ -56,9 +89,30 @@ class BuilderRequestService
                                 $q->orWhere($field, 'LIKE', $filterValue);
                             }
                         });
+
+                        return false;
                     }
                 } else {
                     $builder->where($filterBy, 'LIKE', $filterValue);
+
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected function handleAdvancedFilter(Request $request, Builder $builder): void
+    {
+        if ($request->has('filter')) {
+            $filter = (array)$request->input('filter', []);
+            foreach ($filter as $specs) {
+                $field = $specs['by'] ?? null;
+                $operator = strtolower($specs['op'] ?? '=');
+                $value = $specs['value'] ?? null;
+                if ($field && in_array($operator, self::VALID_OPERANDS, true)) {
+                    $builder->where($field, $operator, $value);
                 }
             }
         }
@@ -105,24 +159,16 @@ class BuilderRequestService
         bool $paginate = true,
         int $defaultPerPage = 15
     ): Collection|LengthAwarePaginator|array {
-        if ($request->has('search') && count($searchableFields) > 0) {
-            $searchValue = $request->input('search');
-            if ($searchValue) {
-                $filterValue = '%' . $searchValue . '%';
-                $builder->where(function ($q) use ($searchableFields, $filterValue) {
-                    foreach ($searchableFields as $field) {
-                        $q->orWhere($field, 'LIKE', $filterValue);
-                    }
-                });
-                $paginate = false;
-            }
-        }
-        $this->handleOrdering($request, $builder, $defaultOrderField, $defaultOrdering);
-        if ($callback !== null && is_callable($callback)) {
-            $callback($builder, $request);
-        }
-
-        return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
+        return $this->handle(
+            $request,
+            $builder,
+            $callback,
+            $defaultOrderField,
+            $defaultOrdering,
+            $searchableFields,
+            $paginate,
+            $defaultPerPage
+        );
     }
 
 }

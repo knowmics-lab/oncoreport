@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { SortingDirection } from '../enums';
 
 export type { default as Entity } from './entity';
+export type { default as EntityArray } from './entityArray';
 
 // @Todo: move from here
 
