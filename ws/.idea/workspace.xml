@@ -2,13 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/api/entityArrays/entityArray.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/entity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/entityArray.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/entityArray.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/common/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/interfaces/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/adapter.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/enums/filteringOperands.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/enums/sortingDirection.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/httpClient/client.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/httpClient/interfaces/httpResponse.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/adapter.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/apiResponses.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/common.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/paginationMetadata.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/queryRequest.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/queryResponse.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/.eslintrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,6 +330,7 @@
       <workItem from="1634667802172" duration="4066000" />
       <workItem from="1634712526949" duration="599000" />
       <workItem from="1634847842191" duration="960000" />
+      <workItem from="1634916078402" duration="1871000" />
     </task>
     <servers />
   </component>
