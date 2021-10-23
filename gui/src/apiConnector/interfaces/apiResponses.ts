@@ -1,10 +1,10 @@
 import { PaginationMetadata } from './paginationMetadata';
 
-export interface ApiResponseSingle<T> {
+export interface Single<T> {
   data: T;
 }
 
-export interface ApiResponseCollection<T> {
+export interface Collection<T> {
   data: T[];
   meta: PaginationMetadata;
 }

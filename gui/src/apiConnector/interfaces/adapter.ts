@@ -9,20 +9,14 @@ export interface Adapter<T> {
 
   create(entity: PartialObject<T>): Promise<PartialObject<T>>;
 
-  update(
-    id: number | ((T | PartialObject<T>) & { id: number }),
-    entity: PartialObject<T>
-  ): Promise<PartialObject<T>>;
+  update(entity: PartialObject<T> & { id: number }): Promise<PartialObject<T>>;
 
   delete(
     id: number | ((T | PartialObject<T>) & { id: number }),
     parameters?: SimpleMapType<any>
   ): Promise<void>;
 
-  find(
-    id: number | ((T | PartialObject<T>) & { id: number }),
-    parameters?: SimpleMapType<any>
-  ): Promise<PartialObject<T>>;
+  find(id: number, parameters?: SimpleMapType<any>): Promise<PartialObject<T>>;
 
   query(
     queryRequest?: QueryRequest,
