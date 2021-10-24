@@ -1,14 +1,18 @@
+/* eslint-disable class-methods-use-this */
 import { sprintf } from 'sprintf-js';
 import { get, has } from 'lodash';
-import Client from './httpClient/client';
-import { MapType, PartialObject, SimpleMapType } from './interfaces/common';
-import { QueryRequest } from './interfaces/queryRequest';
-import { Adapter as IAdapter } from './interfaces/adapter';
-import QueryResponse from './interfaces/queryResponse';
-import ApiError from '../errors/ApiError';
-import { Single, Collection } from './interfaces/apiResponses';
-import SortingDirection from './enums/sortingDirection';
-import { SortingSpec } from '../interfaces';
+import Client from './client';
+import { MapType, PartialObject, SimpleMapType } from '../interfaces/common';
+import { QueryRequest } from '../interfaces/queryRequest';
+import { Adapter as IAdapter } from '../interfaces/adapter';
+import QueryResponse from '../interfaces/queryResponse';
+import ApiError from '../../errors/ApiError';
+import { Single, Collection } from '../interfaces/apiResponses';
+import SortingDirection from '../enums/sortingDirection';
+import { SortingSpec } from '../../interfaces';
+
+type Serializable<T> = T & { serialize?: () => MapType };
+type WithParameters<T> = T & { getParameters?: () => SimpleMapType };
 
 export default abstract class Adapter<T> implements IAdapter<T> {
   protected constructor(public readonly client: Client) {}
@@ -29,21 +33,44 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     return `${this.endpoint}/${id}`;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  protected prepareEntityForCreate(entity: PartialObject<T>): MapType {
+  protected prepareEntityForCreate(
+    entity: Serializable<PartialObject<T>>
+  ): MapType {
+    if (typeof entity.serialize === 'function') {
+      return entity.serialize();
+    }
     return entity as unknown as MapType;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  protected prepareEntityForUpdate(entity: PartialObject<T>): MapType {
+  protected prepareEntityForUpdate(
+    entity: Serializable<PartialObject<T>>
+  ): MapType {
+    if (typeof entity.serialize === 'function') {
+      return entity.serialize();
+    }
     return entity as unknown as MapType;
+  }
+
+  protected getParameters(
+    parameters?: SimpleMapType,
+    entity?: WithParameters<PartialObject<T>>
+  ): SimpleMapType {
+    return {
+      ...(parameters ?? {}),
+      ...(typeof entity?.getParameters === 'function'
+        ? entity.getParameters()
+        : entity ?? {}),
+    };
   }
 
   async create(entity: PartialObject<T>): Promise<PartialObject<T>> {
     if (this.isReadOnly) {
       throw new ApiError('This operation is not supported');
     }
-    const endpoint = sprintf(this.endpoint, entity);
+    const endpoint = sprintf(
+      this.endpoint,
+      this.getParameters(undefined, entity)
+    );
     const { data } = await this.client.post<Single<PartialObject<T>>>(
       endpoint,
       this.prepareEntityForCreate(entity)
@@ -58,7 +85,10 @@ export default abstract class Adapter<T> implements IAdapter<T> {
       throw new ApiError('This operation is not supported');
     }
     const { id } = entity;
-    const endpoint = sprintf(this.getEndpointForResource(id), entity);
+    const endpoint = sprintf(
+      this.getEndpointForResource(id),
+      this.getParameters(undefined, entity)
+    );
     const { data } = await this.client.post<Single<PartialObject<T>>>(
       endpoint,
       this.prepareEntityForUpdate(entity)
@@ -76,7 +106,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     const entityId = typeof id === 'number' ? id : id.id;
     const endpoint = sprintf(
       this.getEndpointForResource(entityId),
-      parameters ?? {}
+      this.getParameters(parameters, typeof id === 'object' ? id : undefined)
     );
     await this.client.delete(endpoint);
   }
@@ -85,7 +115,10 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     id: number,
     parameters?: SimpleMapType
   ): Promise<PartialObject<T>> {
-    const endpoint = sprintf(this.getEndpointForResource(id), parameters ?? {});
+    const endpoint = sprintf(
+      this.getEndpointForResource(id),
+      this.getParameters(parameters)
+    );
     const { data } = await this.client.get<Single<PartialObject<T>>>(endpoint);
     return data;
   }
@@ -117,7 +150,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     queryRequest?: QueryRequest,
     parameters?: SimpleMapType
   ): Promise<QueryResponse<T>> {
-    const endpoint = sprintf(this.endpoint, parameters ?? {});
+    const endpoint = sprintf(this.endpoint, this.getParameters(parameters));
     const params = this.prepareQueryRequest(queryRequest ?? {});
     const { data, meta } = await this.client.get<Collection<T>>(
       endpoint,
@@ -128,6 +161,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
       meta: {
         ...meta,
         query: queryRequest,
+        parameters,
       },
     };
   }

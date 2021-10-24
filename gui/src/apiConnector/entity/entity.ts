@@ -2,13 +2,13 @@
 import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
 import { container } from 'tsyringe';
-import EntityError from '../errors/EntityError';
+import EntityError from '../../errors/EntityError';
 import {
   MapType,
   MapValueType,
   PartialObject,
   SimpleMapType,
-} from './interfaces/common';
+} from '../interfaces/common';
 import {
   DATES,
   field,
@@ -17,13 +17,13 @@ import {
   RELATIONS,
   SERIALIZE,
 } from './decorators';
-import Adapter from './adapter';
-import { Relation, SerializationConfig } from './interfaces/fieldOptions';
-import RelationsType from './enums/relationsType';
+import Adapter from '../httpClient/adapter';
+import { Relation, SerializationConfig } from '../interfaces/fieldOptions';
+import RelationsType from '../enums/relationsType';
 import { getMetadataArray, getMetadataMap } from './classMetadataUtils';
-import { ignorePromise } from './utils';
-import { Utils } from '../api';
-import HasMany from './relations/hasMany';
+import { ignorePromise } from '../utils';
+import { Utils } from '../../api';
+import HasMany from '../relations/hasMany';
 
 type EntityOrType<T> = T extends Entity ? number : T;
 type EntityArrayOrType<T> = T extends Array<Entity> ? number[] : T;
@@ -40,12 +40,16 @@ export type ExtendedPartialObject<T> = {
 };
 
 export interface EntityObserver<T extends Entity> {
-  created(entity: T): void;
+  created?(entity: T): void;
 
-  updated(entity: T): void;
+  updated?(entity: T): void;
 
-  deleted(entity: T): void;
+  deleted?(entity: T): void;
+
+  refreshed?(entity: T): void;
 }
+
+type WeakEntityObserver<T extends Entity> = WeakRef<EntityObserver<T>>;
 
 export default abstract class Entity {
   protected data: SimpleMapType = {};
@@ -60,7 +64,7 @@ export default abstract class Entity {
 
   protected adapter: Adapter<this>;
 
-  protected observers = new Set<EntityObserver<this>>();
+  protected observers = new Array<WeakEntityObserver<this>>();
 
   @field<number>({
     readonly: true,
@@ -110,7 +114,7 @@ export default abstract class Entity {
   /**
    * Undocumented - Do not use
    */
-  public initializeNew(): this {
+  public initializeNew(parameters?: SimpleMapType): this {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
     this.initialized = true;
@@ -120,16 +124,21 @@ export default abstract class Entity {
       created_at: dayjs(),
       updated_at: dayjs(),
     };
+    this.parameters = parameters ?? {};
     return this;
   }
 
   /**
    * Undocumented - Do not use
    */
-  public syncInitialize(d: PartialObject<this>): this {
+  public syncInitialize(
+    d: PartialObject<this>,
+    parameters?: SimpleMapType
+  ): this {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
     this.fillDataArray(d);
+    this.parameters = parameters ?? {};
     this.initialized = true;
     this.dirty = false;
     return this;
@@ -138,10 +147,15 @@ export default abstract class Entity {
   /**
    * Undocumented - Do not use
    */
-  public async initialize(id: number, d?: PartialObject<this>): Promise<this> {
+  public async initialize(
+    id: number,
+    d?: PartialObject<this>,
+    parameters?: SimpleMapType
+  ): Promise<this> {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
     set(this.data, 'id', id);
+    this.parameters = parameters ?? {};
     if (d) {
       this.fillDataArray(d);
     } else if (id > 0) {
@@ -158,6 +172,13 @@ export default abstract class Entity {
    */
   public get isNew(): boolean {
     return !has(this.data, 'id') || get(this.data, 'id') > 0;
+  }
+
+  /**
+   * A boolean indicating whether this entity has been initialized
+   */
+  public get isInitialized(): boolean {
+    return this.initialized;
   }
 
   /**
@@ -240,6 +261,7 @@ export default abstract class Entity {
         await this.adapter.find(this.id, this.getParameters())
       );
       this.dirty = false;
+      this.refreshed();
     }
     return this;
   }
@@ -249,7 +271,16 @@ export default abstract class Entity {
    * @param o
    */
   public observe(o: EntityObserver<this>): this {
-    this.observers.add(o);
+    this.observers.push(new WeakRef<typeof o>(o));
+    return this;
+  }
+
+  /**
+   * Remove an observer from this object
+   * @param o
+   */
+  public removeObserver(o: EntityObserver<this>): this {
+    this.observers = this.observers.filter((o1) => o1.deref() !== o);
     return this;
   }
 
@@ -291,6 +322,16 @@ export default abstract class Entity {
       }
     }
     return result;
+  }
+
+  /**
+   * Undocumented - do not use
+   */
+  public getParameters(): SimpleMapType {
+    return {
+      ...(this.parameters ?? {}),
+      ...this,
+    };
   }
 
   protected async create(): Promise<this> {
@@ -335,13 +376,6 @@ export default abstract class Entity {
     }
     if (value instanceof HasMany) return value.serialize(config.dumpFullObject);
     return value;
-  }
-
-  protected getParameters(): SimpleMapType {
-    return {
-      ...(this.parameters ?? {}),
-      ...this,
-    };
   }
 
   protected resolveRelationship<E extends Entity>(
@@ -424,14 +458,30 @@ export default abstract class Entity {
   }
 
   protected created() {
-    this.observers.forEach((o) => o.created(this));
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.created) o.created(this);
+    });
   }
 
   protected updated() {
-    this.observers.forEach((o) => o.updated(this));
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.updated) o.updated(this);
+    });
   }
 
   protected deleted() {
-    this.observers.forEach((o) => o.deleted(this));
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.deleted) o.deleted(this);
+    });
+  }
+
+  protected refreshed() {
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.refreshed) o.refreshed(this);
+    });
   }
 }

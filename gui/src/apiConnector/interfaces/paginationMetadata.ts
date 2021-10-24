@@ -1,4 +1,5 @@
 import { QueryRequest } from './queryRequest';
+import { SimpleMapType } from './common';
 
 export interface PaginationMetadata {
   current_page: number;
@@ -8,4 +9,5 @@ export interface PaginationMetadata {
   to: number;
   total: number;
   query?: QueryRequest;
+  parameters?: SimpleMapType;
 }

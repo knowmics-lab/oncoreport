@@ -4,6 +4,7 @@ enum FilteringOperands {
   '>' = '>',
   '>=' = '>=',
   '<>' = '<>',
+  '=' = '=',
   'like' = 'like',
 }
 

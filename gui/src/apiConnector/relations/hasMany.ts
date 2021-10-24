@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,import/no-cycle */
 import { InjectionToken, container } from 'tsyringe';
-import Entity, { EntityObserver, ExtendedPartialObject } from '../entity';
+import Entity, {
+  EntityObserver,
+  ExtendedPartialObject,
+} from '../entity/entity';
 import { ignorePromise } from '../utils';
 import { Arrayable, MapValueType, PartialObject } from '../interfaces/common';
 
@@ -30,8 +33,6 @@ export default class HasMany<
         this.splice(idx, 1);
       }
     },
-    updated() {},
-    created() {},
   };
 
   constructor(
@@ -52,13 +53,13 @@ export default class HasMany<
       ...data.map((o) => {
         const obj = container.resolve(this.relatedToken);
         if (typeof o === 'number') {
-          ignorePromise(obj.initialize(o));
+          ignorePromise(obj.initialize(o, this.getParameters()));
         } else if (o instanceof Entity) {
           return o as R;
         } else {
-          obj.syncInitialize(o);
+          obj.syncInitialize(o, this.getParameters());
         }
-        return obj.setParameters(this.getParameters());
+        return obj;
       })
     );
     return this;
@@ -205,20 +206,6 @@ export default class HasMany<
       ignorePromise(e.save());
     });
     this.willSaveOnCreate = [];
-  }
-
-  /**
-   * Undocumented - Do not use
-   */
-  public updated(): void {
-    // throw new Error('Method not implemented.');
-  }
-
-  /**
-   * Undocumented - Do not use
-   */
-  public deleted(): void {
-    // throw new Error('Method not implemented.');
   }
 
   protected getParameters() {

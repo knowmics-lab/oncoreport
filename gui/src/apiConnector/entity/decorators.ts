@@ -2,10 +2,10 @@
 import { get, set } from 'lodash';
 import produce, { Draft } from 'immer';
 import dayjs from 'dayjs';
-import { FieldOptions } from './interfaces/fieldOptions';
+import { FieldOptions } from '../interfaces/fieldOptions';
 import { pushToMetadataArray, pushToMetadataMap } from './classMetadataUtils';
-import HasMany from './relations/hasMany';
-import RelationsType from './enums/relationsType';
+import HasMany from '../relations/hasMany';
+import RelationsType from '../enums/relationsType';
 
 export const FILLABLE = Symbol.for('fillable');
 export const READONLY = Symbol.for('readonly');
