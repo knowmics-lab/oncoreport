@@ -6,6 +6,7 @@ import Entity, {
 } from '../entity/entity';
 import { ignorePromise } from '../utils';
 import { Arrayable, MapValueType, PartialObject } from '../interfaces/common';
+import Repository from '../repository';
 
 type Fillable<R> = number | R | PartialObject<R>;
 
@@ -23,6 +24,12 @@ export default class HasMany<
   protected willSaveOnCreate: R[] = [];
 
   /**
+   * A repository object used for caching and entity building
+   * @protected
+   */
+  protected repository: Repository<R>;
+
+  /**
    * An observer object used to listen to changes in the related objects
    * @protected
    */
@@ -36,30 +43,32 @@ export default class HasMany<
   };
 
   constructor(
-    private relatedToken: InjectionToken<R>,
+    relatedRepositoryToken: InjectionToken<Repository<R>>,
     private referringObject: T,
     private foreignKey: keyof R | { [localKey: string]: keyof R },
     data: Fillable<R>[] = []
   ) {
     super();
+    this.repository = container.resolve(relatedRepositoryToken);
     this.syncFill(data);
   }
 
+  /**
+   * Undocumented - Do not use
+   */
   public syncFill(data: Fillable<R>[]): this {
     if (this.length > 0) {
       this.slice(0, this.length);
     }
     this.push(
       ...data.map((o) => {
-        const obj = container.resolve(this.relatedToken);
         if (typeof o === 'number') {
-          ignorePromise(obj.initialize(o, this.getParameters()));
-        } else if (o instanceof Entity) {
-          return o as R;
-        } else {
-          obj.syncInitialize(o, this.getParameters());
+          return this.repository.createStubEntity(o, this.getParameters());
         }
-        return obj;
+        if (o instanceof Entity) {
+          return o as R;
+        }
+        return this.repository.createEntitySync(o, this.getParameters());
       })
     );
     return this;
@@ -70,7 +79,11 @@ export default class HasMany<
    * @param data
    */
   public async create(data: ExtendedPartialObject<R>): Promise<R> {
-    const entity = container.resolve(this.relatedToken);
+    if (this.repository.adapter.readonly)
+      throw new Error(
+        'Attempting to create a new object for a readonly entity'
+      );
+    const entity = this.repository.resolve().initializeNew();
     entity.fill(data).observe(this.entityObserver);
     if (!this.referringObject.isNew) {
       this.fillForeignKey(entity);

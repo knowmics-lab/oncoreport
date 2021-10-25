@@ -1,16 +1,14 @@
 import { singleton } from 'tsyringe';
 import { Adapter, HttpClient } from '../../apiConnector';
-import { DrugEntity } from '../entities';
+import { PatientDrugEntity } from '../entities';
 
 @singleton()
-export default class Drug extends Adapter<DrugEntity> {
-  protected isReadOnly = true;
-
+export default class PatientDrug extends Adapter<PatientDrugEntity> {
   public constructor(client: HttpClient) {
     super(client);
   }
 
   get endpoint(): string {
-    return 'drugs';
+    return 'patients/%(patient_id)/drugs';
   }
 }

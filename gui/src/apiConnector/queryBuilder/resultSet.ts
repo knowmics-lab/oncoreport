@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this,import/no-cycle */
 import Entity, { EntityObserver } from '../entity/entity';
 import QueryResponse from '../interfaces/queryResponse';
 import { PartialObject } from '../interfaces/common';
@@ -15,7 +15,7 @@ export interface ResultSetObserver<E extends Entity> {
 
 type WeakObserver<E extends Entity> = WeakRef<ResultSetObserver<E>>;
 
-export default class ResultSet<E extends Entity> extends Array<E> {
+export default class ResultSet<E extends Entity = Entity> extends Array<E> {
   protected metadata?: PaginationMetadata;
 
   protected observers = new Array<WeakObserver<E>>();
@@ -43,7 +43,7 @@ export default class ResultSet<E extends Entity> extends Array<E> {
     for (const entityData of queryResponse.data) {
       super.push(
         this.repository
-          .createEntitySync(entityData)
+          .createEntitySync(entityData, this.parameters)
           .observe(this.entityObserver)
       );
     }

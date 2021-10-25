@@ -5,10 +5,11 @@ import Entity, { EntityObserver, ExtendedPartialObject } from './entity/entity';
 import Adapter from './httpClient/adapter';
 import { PartialObject, SimpleMapType } from './interfaces/common';
 import QueryBuilder from './queryBuilder/queryBuilder';
+import { ignorePromise } from './utils';
 
 type CacheArray<T> = { [id: number]: T };
 
-export default abstract class Repository<E extends Entity> {
+export default abstract class Repository<E extends Entity = Entity> {
   protected cache: CacheArray<WeakRef<E>> = {};
 
   protected entityObserver: EntityObserver<E> = {
@@ -25,7 +26,6 @@ export default abstract class Repository<E extends Entity> {
   };
 
   protected constructor(
-    public parameters: SimpleMapType,
     protected _adapter: Adapter<E>,
     protected token: InjectionToken<E>
   ) {}
@@ -34,7 +34,10 @@ export default abstract class Repository<E extends Entity> {
     return this._adapter;
   }
 
-  protected resolveMaybeCached(id?: number): E {
+  /**
+   * Undocumented - Do not use
+   */
+  public resolve(id?: number): E {
     if (id && has(this.cache, id)) {
       const entity = get(this.cache, id).deref();
       if (entity) return entity;
@@ -46,27 +49,54 @@ export default abstract class Repository<E extends Entity> {
     return newEntity;
   }
 
-  public createEntitySync(data?: PartialObject<E>): E {
+  /**
+   * Undocumented - Do not use
+   */
+  public createEntitySync(
+    data?: PartialObject<E>,
+    parameters?: SimpleMapType
+  ): E {
     const id = data?.id;
-    const entity = this.resolveMaybeCached(id);
+    const entity = this.resolve(id);
     if (id && !entity.isInitialized) {
-      entity.syncInitialize(data, this.parameters);
+      entity.syncInitialize(data, parameters);
     } else {
       entity
-        .initializeNew(this.parameters)
+        .initializeNew(parameters)
         .fill((data ?? {}) as ExtendedPartialObject<E>);
     }
     return entity;
   }
 
-  public async createEntityAsync(id?: number): Promise<E> {
-    const entity = this.resolveMaybeCached(id);
+  /**
+   * Undocumented - Do not use
+   */
+  public createStubEntity(id?: number, parameters?: SimpleMapType): E {
+    const entity = this.resolve(id);
     if (id && !entity.isInitialized) {
-      await entity.initialize(id, undefined, this.parameters);
+      ignorePromise(entity.initialize(id, undefined, parameters));
+    } else if (id) {
+      ignorePromise(entity.refresh());
+    } else {
+      entity.initializeNew(parameters);
+    }
+    return entity;
+  }
+
+  /**
+   * Undocumented - Do not use
+   */
+  public async createEntityAsync(
+    id?: number,
+    parameters?: SimpleMapType
+  ): Promise<E> {
+    const entity = this.resolve(id);
+    if (id && !entity.isInitialized) {
+      await entity.initialize(id, undefined, parameters);
     } else if (id) {
       await entity.refresh();
     } else {
-      entity.initializeNew(this.parameters);
+      entity.initializeNew(parameters);
     }
     return entity;
   }
@@ -76,15 +106,22 @@ export default abstract class Repository<E extends Entity> {
     return this;
   }
 
-  public async create(data?: Partial<E>): Promise<E> {
-    return this.createEntitySync(data).save();
+  public async create(
+    data?: Partial<E>,
+    parameters?: SimpleMapType
+  ): Promise<E> {
+    if (this._adapter.readonly)
+      throw new Error(
+        'Attempting to create a new object for a readonly entity'
+      );
+    return this.createEntitySync(data, parameters).save();
   }
 
-  public async fetch(id: number): Promise<E> {
-    return this.createEntityAsync(id);
+  public async fetch(id: number, parameters?: SimpleMapType): Promise<E> {
+    return this.createEntityAsync(id, parameters);
   }
 
-  public query(): QueryBuilder<E> {
-    return new QueryBuilder<E>(this);
+  public query(parameters?: SimpleMapType): QueryBuilder<E> {
+    return new QueryBuilder<E>(this, parameters);
   }
 }

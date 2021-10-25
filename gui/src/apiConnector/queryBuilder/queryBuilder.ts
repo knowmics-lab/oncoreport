@@ -8,16 +8,16 @@ import SortingDirection from '../enums/sortingDirection';
 import ResultSet from './resultSet';
 import Repository from '../repository';
 
-export default class QueryBuilder<E extends Entity> {
+export default class QueryBuilder<E extends Entity = Entity> {
   protected queryRequest: QueryRequest = {};
 
   protected adapter: Adapter<E>;
 
-  protected parameters?: SimpleMapType;
-
-  public constructor(protected repository: Repository<E>) {
+  public constructor(
+    protected repository: Repository<E>,
+    protected parameters?: SimpleMapType
+  ) {
     this.adapter = repository.adapter;
-    this.parameters = repository.parameters;
   }
 
   /**

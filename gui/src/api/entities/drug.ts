@@ -1,25 +1,20 @@
 import { injectable } from 'tsyringe';
 import { Entity, field } from '../../apiConnector';
-import { DiseaseAdapter } from '../adapters';
+import { DrugAdapter } from '../adapters';
 
 @injectable()
-export default class Disease extends Entity {
+export default class Drug extends Entity {
   @field({
     readonly: true,
   })
-  public icd_code = '';
+  public drugbank_id = '';
 
   @field({
     readonly: true,
   })
   public name = '';
 
-  @field({
-    readonly: true,
-  })
-  public tumor = false;
-
-  public constructor(adapter: DiseaseAdapter) {
+  public constructor(adapter: DrugAdapter) {
     super(adapter);
   }
 }

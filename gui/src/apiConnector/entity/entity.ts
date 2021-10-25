@@ -21,7 +21,6 @@ import Adapter from '../httpClient/adapter';
 import { Relation, SerializationConfig } from '../interfaces/fieldOptions';
 import RelationsType from '../enums/relationsType';
 import { getMetadataArray, getMetadataMap } from './classMetadataUtils';
-import { ignorePromise } from '../utils';
 import { Utils } from '../../api';
 import HasMany from '../relations/hasMany';
 
@@ -199,6 +198,8 @@ export default abstract class Entity {
    * Delete this entity
    */
   public async delete(): Promise<void> {
+    if (this.adapter.readonly)
+      throw new Error('Attempting to delete a readonly entity');
     if (!this.isDeleted && !this.isNew) {
       await this.adapter.delete(this);
       this.deleted();
@@ -212,6 +213,8 @@ export default abstract class Entity {
    * a different behaviour.
    */
   public async save(): Promise<this> {
+    if (this.adapter.readonly)
+      throw new Error('Attempting to save a readonly entity');
     if (this.isDeleted) throw new Error('Attempting to save deleted entity');
     if (this.dirty) {
       return this.isNew ? this.create() : this.update();
@@ -384,14 +387,16 @@ export default abstract class Entity {
     oldValue: any
   ) {
     if (relation.type === RelationsType.ONE) {
-      return container.resolve(relation.entityToken).syncInitialize(value);
+      return container
+        .resolve(relation.repositoryToken)
+        .createEntitySync(value);
     }
     if (relation.type === RelationsType.MANY) {
       if (oldValue instanceof HasMany) {
         return oldValue.syncFill(value);
       }
       return new HasMany(
-        relation.entityToken,
+        relation.repositoryToken,
         this,
         relation.foreignKey,
         value
@@ -431,24 +436,23 @@ export default abstract class Entity {
     oldValue: any
   ) {
     if (relation.type === RelationsType.ONE) {
-      let obj = container.resolve(relation.entityToken);
+      const repository = container.resolve(relation.repositoryToken);
       if (typeof value === 'number') {
-        ignorePromise(obj.initialize(value));
-      } else if (typeof value === 'object') {
-        if (value.constructor === obj.constructor) {
-          obj = value;
-        } else {
-          obj = obj.syncInitialize(value);
-        }
+        return repository.createStubEntity(value);
       }
-      return obj;
+      if (typeof value === 'object') {
+        if (value instanceof Entity) {
+          return value;
+        }
+        return repository.createEntitySync(value);
+      }
     }
     if (relation.type === RelationsType.MANY) {
       if (oldValue instanceof HasMany) {
         return oldValue.syncFill(value);
       }
       return new HasMany(
-        relation.entityToken,
+        relation.repositoryToken,
         this,
         relation.foreignKey,
         value

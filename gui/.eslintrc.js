@@ -7,6 +7,7 @@ module.exports = {
     'react/display-name': 'off',
     'no-underscore-dangle': 'off',
     'no-restricted-syntax': 'off',
+    'class-methods-use-this': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

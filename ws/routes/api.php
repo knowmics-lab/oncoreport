@@ -33,7 +33,7 @@ Route::group(
         Route::apiResource('locations', LocationController::class)->only(['index', 'show']);
         Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
-        Route::get('/jobs/{job}/submit', [JobController::class, 'submit'])
+        Route::patch('/jobs/{job}/submit', [JobController::class, 'submit'])
              ->middleware('can:submit-job,job')
              ->name('jobs.submit');
         Route::any('/jobs/{job}/upload/{any?}', [JobController::class, 'upload'])

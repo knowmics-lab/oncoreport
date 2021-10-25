@@ -34,7 +34,7 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
           typeof value === 'undefined'
         ) {
           value = new HasMany(
-            options.relation.entityToken as any,
+            options.relation.repositoryToken,
             this,
             options.relation.foreignKey as any
           );
