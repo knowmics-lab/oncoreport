@@ -18,7 +18,15 @@ export type HasManyRelation<E extends Entity> = {
   foreignKey: keyof E | { [localKey: string]: keyof E };
 };
 
-export type Relation<E extends Entity> = HasOneRelation<E> | HasManyRelation<E>;
+export type HasManyReadonlyRelation<E extends Entity> = {
+  type: RelationsType.MANY_READONLY;
+  repositoryToken: InjectionToken<Repository<E>>;
+};
+
+export type Relation<E extends Entity> =
+  | HasOneRelation<E>
+  | HasManyRelation<E>
+  | HasManyReadonlyRelation<E>;
 
 export type SerializationConfig<T> = {
   serializable?: boolean;

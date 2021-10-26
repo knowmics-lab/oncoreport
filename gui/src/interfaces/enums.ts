@@ -51,3 +51,8 @@ export enum ApiProtocol {
   http = 'http',
   https = 'https',
 }
+
+export enum TumorTypes {
+  primary = 'primary',
+  secondary = 'secondary',
+}

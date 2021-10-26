@@ -60,7 +60,7 @@ export default abstract class Repository<E extends Entity = Entity> {
     const entity = this.resolve(id);
     if (id && !entity.isInitialized) {
       entity.syncInitialize(data, parameters);
-    } else {
+    } else if (!id) {
       entity
         .initializeNew(parameters)
         .fill((data ?? {}) as ExtendedPartialObject<E>);

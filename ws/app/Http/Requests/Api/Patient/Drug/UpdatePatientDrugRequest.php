@@ -27,6 +27,7 @@ class UpdatePatientDrugRequest extends FormRequest
         return [
             'drug'                 => ['sometimes', 'required', Rule::exists('drugs', 'id')],
             'disease'              => ['sometimes', 'nullable', Rule::exists('diseases', 'id')],
+            'disease_id'           => ['sometimes', 'nullable', Rule::exists('diseases', 'id')],
             'suspension_reasons'   => ['sometimes', 'nullable', 'array'],
             'suspension_reasons.*' => ['sometimes', 'integer', Rule::exists('suspension_reasons', 'id')],
             'comment'              => ['sometimes', 'nullable', 'string'],

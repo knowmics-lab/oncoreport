@@ -7,19 +7,17 @@ export type {
   PartialObject,
 } from './interfaces/common';
 export type { PaginationMetadata } from './interfaces/paginationMetadata';
-export type {
+
+export {
   HasOneRelation,
   HasManyRelation,
   Relation,
   SerializationConfig,
   FieldOptions,
-} from './interfaces/fieldOptions';
-
-export { field } from './entity/decorators';
-export {
   PartialWithoutRelations,
   ExtendedPartialObject,
   EntityObserver,
+  field,
   default as Entity,
 } from './entity/entity';
 export { default as FilteringOperands } from './enums/filteringOperands';
@@ -33,5 +31,6 @@ export {
   default as ResultSet,
 } from './queryBuilder/resultSet';
 export { default as HasMany } from './relations/hasMany';
+export { default as HasManyReadonly } from './relations/hasManyReadonly';
 export { default as Repository } from './repository';
 export { ignorePromise } from './utils';

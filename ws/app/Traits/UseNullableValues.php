@@ -38,13 +38,20 @@ trait UseNullableValues
         array $newData,
         array $oldData,
         bool $update = true,
-        ?string $oldDataField = null
+        ?string $oldDataField = null,
+        bool $mayHaveId = false
     ): mixed {
         if ($oldDataField === null) {
             $oldDataField = $field;
         }
-        if ($update && !isset($newData[$field])) {
+        $fieldWithId = $field . '_id';
+        if ($update && !isset($newData[$field]) && (
+                !$mayHaveId || !isset($newData[$fieldWithId])
+            )) {
             return $oldData[$oldDataField] ?? null;
+        }
+        if ($mayHaveId && !isset($newData[$field]) && isset($newData[$fieldWithId])) {
+            return $newData[$fieldWithId] ?? null;
         }
 
         return $newData[$field] ?? null;

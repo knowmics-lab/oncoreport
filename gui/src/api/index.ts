@@ -2,30 +2,32 @@
 export {
   DiseaseAdapter,
   PatientAdapter,
+  PatientDiseaseAdapter,
+  PatientDrugAdapter,
   JobAdapter,
-  TumorAdapter,
-  PathologyAdapter,
-  MedicineAdapter,
-  ReasonAdapter,
   DrugAdapter,
   LocationAdapter,
+  SuspensionReasonAdapter,
 } from './adapters';
 export {
   DiseaseEntity,
   PatientEntity,
+  PatientDiseaseEntity,
+  PatientDrugEntity,
   JobEntity,
-  ResourceEntity,
+  DrugEntity,
+  LocationEntity,
+  SuspensionReasonEntity,
 } from './entities';
 export {
   DiseaseRepository,
   PatientRepository,
+  PatientDiseaseRepository,
+  PatientDrugRepository,
   JobRepository,
-  TumorRepository,
   DrugRepository,
-  MedicineRepository,
-  PathologyRepository,
-  ReasonRepository,
   LocationRepository,
+  SuspensionReasonRepository,
 } from './repositories';
 export { DockerManager, DockerPullStatus } from './docker';
 export { default as Settings } from './settings';

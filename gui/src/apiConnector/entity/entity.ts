@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,import/no-cycle */
+/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this */
 import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
-import { container } from 'tsyringe';
+import { container, InjectionToken } from 'tsyringe';
+import produce, { Draft } from 'immer';
 import EntityError from '../../errors/EntityError';
 import {
   MapType,
@@ -9,20 +10,18 @@ import {
   PartialObject,
   SimpleMapType,
 } from '../interfaces/common';
-import {
-  DATES,
-  field,
-  FIELDS,
-  FILLABLE,
-  RELATIONS,
-  SERIALIZE,
-} from './decorators';
 import Adapter from '../httpClient/adapter';
-import { Relation, SerializationConfig } from '../interfaces/fieldOptions';
 import RelationsType from '../enums/relationsType';
-import { getMetadataArray, getMetadataMap } from './classMetadataUtils';
+import {
+  getMetadataArray,
+  getMetadataMap,
+  pushToMetadataArray,
+  pushToMetadataMap,
+} from './classMetadataUtils';
 import { Utils } from '../../api';
 import HasMany from '../relations/hasMany';
+import { HasManyReadonly } from '../index';
+import Repository from '../repository';
 
 type EntityOrType<T> = T extends Entity ? number : T;
 type EntityArrayOrType<T> = T extends Array<Entity> ? number[] : T;
@@ -49,6 +48,105 @@ export interface EntityObserver<T extends Entity> {
 }
 
 type WeakEntityObserver<T extends Entity> = WeakRef<EntityObserver<T>>;
+
+export type HasOneRelation<E extends Entity> = {
+  type: RelationsType.ONE;
+  repositoryToken: InjectionToken<Repository<E>>;
+  noRecursionSave?: boolean;
+};
+
+export type HasManyRelation<E extends Entity> = {
+  type: RelationsType.MANY;
+  repositoryToken: InjectionToken<Repository<E>>;
+  noRecursionSave?: boolean;
+  foreignKey: keyof E | { [localKey: string]: keyof E };
+};
+
+export type HasManyReadonlyRelation<E extends Entity> = {
+  type: RelationsType.MANY_READONLY;
+  repositoryToken: InjectionToken<Repository<E>>;
+};
+
+export type Relation<E extends Entity> =
+  | HasOneRelation<E>
+  | HasManyRelation<E>
+  | HasManyReadonlyRelation<E>;
+
+export type SerializationConfig<T> = {
+  serializable?: boolean;
+  serialize?: (value: T, config: SerializationConfig<T>) => MapValueType;
+  serializedKey?: string;
+  dumpFullObject?: boolean;
+};
+
+export type FieldOptions<T = any> = {
+  fillable?: boolean;
+  readonly?: boolean;
+  date?: boolean;
+  relation?: T extends Entity ? Relation<T> : undefined;
+  serialize?: SerializationConfig<T>;
+};
+
+export const FILLABLE = Symbol.for('fillable');
+export const READONLY = Symbol.for('readonly');
+export const FIELDS = Symbol.for('fields');
+export const DATES = Symbol.for('dates');
+export const RELATIONS = Symbol.for('relations');
+export const SERIALIZE = Symbol.for('serialize');
+
+export function field<T = any>(options: FieldOptions<T> = {}) {
+  return (target: any, key: string | symbol) => {
+    pushToMetadataArray(FIELDS, target, key);
+    if (options.fillable) pushToMetadataArray(FILLABLE, target, key);
+    if (options.readonly) pushToMetadataArray(READONLY, target, key);
+    if (options.date) pushToMetadataArray(DATES, target, key);
+    if (options.relation)
+      pushToMetadataMap(RELATIONS, target, key, options.relation);
+    if (options.serialize)
+      pushToMetadataMap(SERIALIZE, target, key, options.serialize);
+
+    return Object.defineProperty(target, key, {
+      get() {
+        let value = get(this.data, key);
+        if (
+          options.relation &&
+          options.relation.type === RelationsType.MANY &&
+          typeof value === 'undefined'
+        ) {
+          value = new HasMany(
+            options.relation.repositoryToken,
+            this,
+            options.relation.foreignKey as any
+          );
+          set(this.data, key, value);
+        }
+        if (
+          options.relation &&
+          options.relation.type === RelationsType.MANY_READONLY &&
+          typeof value === 'undefined'
+        ) {
+          value = new HasManyReadonly(options.relation.repositoryToken, this);
+          set(this.data, key, value);
+        }
+        return value;
+      },
+      set(value: T) {
+        if (!options.readonly && !options.relation) {
+          const nextState = produce(this.data, (draft: Draft<any>) => {
+            draft[key] = value;
+            if (options.date && !dayjs.isDayjs(draft[key])) {
+              draft[key] = dayjs(draft[key]);
+            }
+          });
+          if (this.data !== nextState) this.dirty = true;
+          this.data = nextState;
+        }
+      },
+      enumerable: true,
+      configurable: true,
+    });
+  };
+}
 
 export default abstract class Entity {
   protected data: SimpleMapType = {};
@@ -170,7 +268,7 @@ export default abstract class Entity {
    * A new entity does not have a valid identifier.
    */
   public get isNew(): boolean {
-    return !has(this.data, 'id') || get(this.data, 'id') > 0;
+    return !has(this.data, 'id') || get(this.data, 'id') <= 0;
   }
 
   /**
@@ -350,7 +448,10 @@ export default abstract class Entity {
     const relations = getMetadataMap<Relation<any>>(RELATIONS, this);
     await Promise.all(
       relations.map(async (specs, f) => {
-        if (!specs.noRecursionSave) {
+        if (
+          specs.type !== RelationsType.MANY_READONLY &&
+          !specs.noRecursionSave
+        ) {
           const related: Entity | HasMany | undefined = this.data[
             f.toString()
           ] as unknown as any;
@@ -378,6 +479,7 @@ export default abstract class Entity {
       return value.format('YYYY-MM-DD HH:mm:ss');
     }
     if (value instanceof HasMany) return value.serialize(config.dumpFullObject);
+    if (value instanceof HasManyReadonly) return value.serialize();
     return value;
   }
 
@@ -401,6 +503,12 @@ export default abstract class Entity {
         relation.foreignKey,
         value
       );
+    }
+    if (relation.type === RelationsType.MANY_READONLY) {
+      if (oldValue instanceof HasMany) {
+        return oldValue.syncFill(value);
+      }
+      return new HasManyReadonly(relation.repositoryToken, value);
     }
     return undefined;
   }
@@ -457,6 +565,12 @@ export default abstract class Entity {
         relation.foreignKey,
         value
       );
+    }
+    if (relation.type === RelationsType.MANY_READONLY) {
+      if (oldValue instanceof HasMany) {
+        return oldValue.syncFill(value);
+      }
+      return new HasManyReadonly(relation.repositoryToken, value);
     }
     return undefined;
   }

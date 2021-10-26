@@ -1,12 +1,11 @@
 import { singleton } from 'tsyringe';
-import Repository from './repository';
-import type { ResourceObject } from '../../interfaces';
-import { ResourceEntity } from '../entities';
+import { DrugEntity } from '../entities';
 import { DrugAdapter } from '../adapters';
+import { Repository } from '../../apiConnector';
 
 @singleton()
-export default class Drug extends Repository<ResourceObject, ResourceEntity> {
+export default class Drug extends Repository<DrugEntity> {
   public constructor(adapter: DrugAdapter) {
-    super(adapter, ResourceEntity);
+    super(adapter, DrugEntity);
   }
 }

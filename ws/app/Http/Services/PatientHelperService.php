@@ -9,7 +9,6 @@ use App\Models\PatientDrug;
 use App\Traits\UseNullableValues;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JetBrains\PhpStorm\Pure;
 
 class PatientHelperService
 {
@@ -23,9 +22,9 @@ class PatientHelperService
         $patientDrug = ($update) ? $patient->drugs()->findOrFail($id) : null;
         $oldData = optional($patientDrug)->toArray() ?? [];
         $data = [
-            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id'),
+            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id', true),
             'patient_disease_id' => $this->nullableId(
-                $this->old('disease', $drug, $oldData, $update, 'patient_disease_id')
+                $this->old('disease', $drug, $oldData, $update, 'patient_disease_id', true)
             ),
             'comment'            => $this->nullableValue($this->old('comment', $drug, $oldData, $update)),
             'start_date'         => $this->dateOrNowIfEmpty($this->old('start_date', $drug, $oldData, $update)),
@@ -96,8 +95,10 @@ class PatientHelperService
         $patientDisease = ($update) ? $patient->diseases()->findOrFail($id) : null;
         $oldData = optional($patientDisease)->toArray() ?? [];
         $data = [
-            'disease_id'  => (int)$this->old('disease', $disease, $oldData, $update, 'disease_id'),
-            'location_id' => $this->nullableId($this->old('location', $disease, $oldData, $update, 'location_id')),
+            'disease_id'  => (int)$this->old('disease', $disease, $oldData, $update, 'disease_id', true),
+            'location_id' => $this->nullableId(
+                $this->old('location', $disease, $oldData, $update, 'location_id', true)
+            ),
             'type'        => $this->nullableValue($this->old('type', $disease, $oldData, $update)),
             'T'           => $this->nullableValue($this->old('T', $disease, $oldData, $update)),
             'N'           => $this->nullableValue($this->old('N', $disease, $oldData, $update)),
@@ -125,14 +126,14 @@ class PatientHelperService
         $patientDrug = ($update) ? $patient->drugs()->findOrFail($id) : null;
         $oldData = optional($patientDrug)->toArray() ?? [];
         $data = [
-            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id'),
+            'drug_id'            => (int)$this->old('drug', $drug, $oldData, $update, 'drug_id', true),
             'patient_disease_id' => $this->processDiseaseId(
                 $patient->id,
                 $oldData,
                 $drug,
                 $update,
                 $diseasesIdList,
-                $isUpdatingPatient
+                $isUpdatingPatient,
             ),
             'comment'            => $this->nullableValue($this->old('comment', $drug, $oldData, $update)),
             'start_date'         => $this->dateOrNowIfEmpty($this->old('start_date', $drug, $oldData, $update)),
@@ -150,7 +151,7 @@ class PatientHelperService
         return $patientDrug;
     }
 
-    #[Pure] protected function processDiseaseId(
+    protected function processDiseaseId(
         int $patientId,
         array $oldData,
         array $drug,
@@ -158,7 +159,7 @@ class PatientHelperService
         array $diseasesIdList,
         bool $isUpdatingPatient
     ): ?int {
-        $diseaseId = $this->old('disease', $drug, $oldData, $isUpdatingDisease, 'patient_disease_id');
+        $diseaseId = $this->old('disease', $drug, $oldData, $isUpdatingDisease, 'patient_disease_id', true);
         if (is_null($diseaseId)) {
             return null;
         }

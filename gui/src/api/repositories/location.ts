@@ -1,15 +1,11 @@
 import { singleton } from 'tsyringe';
-import Repository from './repository';
-import type { ResourceObject } from '../../interfaces';
-import { ResourceEntity } from '../entities';
+import { LocationEntity } from '../entities';
 import { LocationAdapter } from '../adapters';
+import { Repository } from '../../apiConnector';
 
 @singleton()
-export default class Location extends Repository<
-  ResourceObject,
-  ResourceEntity
-> {
+export default class Location extends Repository<LocationEntity> {
   public constructor(adapter: LocationAdapter) {
-    super(adapter, ResourceEntity);
+    super(adapter, LocationEntity);
   }
 }

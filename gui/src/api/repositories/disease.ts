@@ -1,11 +1,10 @@
 import { singleton } from 'tsyringe';
-import Repository from './repository';
-import type { DiseaseObject } from '../../interfaces';
 import { DiseaseEntity } from '../entities';
 import { DiseaseAdapter } from '../adapters';
+import { Repository } from '../../apiConnector';
 
 @singleton()
-export default class Disease extends Repository<DiseaseObject, DiseaseEntity> {
+export default class Disease extends Repository<DiseaseEntity> {
   public constructor(adapter: DiseaseAdapter) {
     super(adapter, DiseaseEntity);
   }

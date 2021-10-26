@@ -1,108 +1,107 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
-import { Gender, PatientObject } from '../../interfaces';
-import PatientAdapter from '../adapters/patient';
-import Entity from './timedEntity';
-import { field } from './entity';
-import Disease from './disease';
+import { Gender } from '../../interfaces';
+import { PatientAdapter } from '../adapters';
+import {
+  Entity,
+  field,
+  HasMany,
+  Nullable,
+  RelationsType,
+} from '../../apiConnector';
+import PatientDiseaseEntity from './patientDisease';
+import PatientDrugEntity from './patientDrug';
+import {
+  PatientDiseaseRepository,
+  PatientDrugRepository,
+} from '../repositories';
 
 @injectable()
-export default class Patient
-  extends Entity<PatientObject>
-  implements PatientObject
-{
-  @field({
-    fillable: true,
-  })
-  age = -1;
-
-  @field({
+export default class Patient extends Entity {
+  @field<string>({
     fillable: true,
   })
   code = '';
 
-  @field({
-    fillable: true,
-    withEntity: Disease,
-  })
-  disease!: Disease;
-
-  @field({
-    fillable: true,
-  })
-  disease_stage = { T: 0, N: 0, M: 0 };
-
-  @field({
-    fillable: true,
-  })
-  disease_site_id = -1;
-
-  @field({
+  @field<string>({
     fillable: true,
   })
   first_name = '';
 
-  @field({
-    fillable: true,
-  })
-  gender: Gender = Gender.m;
-
-  @field({
+  @field<string>({
     fillable: true,
   })
   last_name = '';
 
-  @field({
+  @field<number>({
     fillable: true,
   })
-  telephone = null;
+  age = -1;
 
-  @field({
+  @field<Gender>({
     fillable: true,
   })
-  city = null;
+  gender: Gender = Gender.m;
 
-  @field({
-    fillable: true,
-  })
-  tumors = [];
-
-  @field({
-    fillable: true,
-  })
-  fiscalNumber = '';
-
-  @field({
+  @field<string>({
     fillable: true,
   })
   email = '';
 
-  @field({
+  @field<string>({
     fillable: true,
   })
-  diseases = [];
+  fiscalNumber = '';
 
-  @field({
+  @field<Nullable<string>>({
     fillable: true,
   })
-  tumor = 0;
+  telephone: Nullable<string> = null;
 
-  @field({
+  @field<Nullable<string>>({
     fillable: true,
   })
-  type = '';
+  city: Nullable<string> = null;
 
-  @field({
-    fillable: false,
-    readonly: true,
+  @field<PatientDiseaseEntity>({
+    fillable: true,
+    relation: {
+      type: RelationsType.MANY,
+      repositoryToken: PatientDiseaseRepository,
+      foreignKey: 'patient_id',
+    },
+    serialize: {
+      serializable: false,
+    },
   })
-  owner: unknown = {};
+  diseases?: HasMany<PatientDiseaseEntity, Patient>;
 
-  @field({
-    fillable: false,
-    readonly: true,
+  @field<PatientDiseaseEntity>({
+    fillable: true,
+    relation: {
+      type: RelationsType.ONE,
+      repositoryToken: PatientDiseaseRepository,
+      noRecursionSave: true,
+    },
+    serialize: {
+      serializable: true,
+      dumpFullObject: true,
+    },
   })
-  drugs: { id: number; name: string }[] = [];
+  primary_disease!: PatientDiseaseEntity;
+
+  @field<PatientDrugEntity>({
+    fillable: true,
+    relation: {
+      type: RelationsType.MANY,
+      repositoryToken: PatientDrugRepository,
+      foreignKey: 'patient_id',
+    },
+    serialize: {
+      serializable: false,
+    },
+  })
+  drugs?: HasMany<PatientDrugEntity, Patient>;
 
   public constructor(adapter: PatientAdapter) {
     super(adapter);

@@ -15,6 +15,9 @@ import Layout from './app/layout';
 import * as Pages from './app/components/pages';
 import UNICT_LOGO from './resources/unict.png';
 import ThemeContext from './app/themeContext';
+import { useContainer, useService } from './reactInjector';
+import { DiseaseRepository, PatientRepository } from './api';
+import { runAsync } from './app/components/utils';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -69,48 +72,60 @@ const Home = () => {
   );
 };
 
+function Test() {
+  const container = useContainer();
+  runAsync(async () => {
+    const repository = container.resolve(PatientRepository);
+    const query = repository.query();
+    console.log(await repository.query().get());
+    console.log(await (await repository.fetch(3)).refresh());
+  });
+  return <h1>Test!!</h1>;
+}
+
 export default function App() {
   return (
     <InjectorContext.Provider value={injector}>
-      <Router>
-        <Layout>
-          <Switch>
-            <Route path={Routes.JOBS} component={Pages.JobsPage} />
-            <Route
-              path={Routes.NEW_ANALYSIS}
-              component={Pages.Forms.NewAnalysisForm}
-            />
-            <Route
-              path={Routes.JOBS_BY_PATIENT}
-              component={Pages.JobsByPatientPage}
-            />
-            <Route
-              path={Routes.PATIENTS_CREATE}
-              component={Pages.Forms.PatientForm}
-            />
-            <Route
-              path={Routes.PATIENTS_EDIT}
-              component={Pages.Forms.PatientForm}
-            />
-            {/* <Route */}
-            {/*  path={Routes.PATIENTS_TUMORS} */}
-            {/*  component={Pages.Forms.TumorForm} */}
-            {/* /> */}
-            <Route path={Routes.PATIENT} component={Pages.PatientPage} />
-            <Route
-              path={Routes.PATIENTS}
-              exact
-              component={Pages.PatientsPage}
-            />
-            <Route
-              path={Routes.SETTINGS}
-              exact
-              component={Pages.SettingsPage}
-            />
-            <Route path={Routes.HOME} exact component={Home} />
-          </Switch>
-        </Layout>
-      </Router>
+      <Test />
+      {/* <Router> */}
+      {/*  <Layout> */}
+      {/*    <Switch> */}
+      {/*      <Route path={Routes.JOBS} component={Pages.JobsPage} /> */}
+      {/*      <Route */}
+      {/*        path={Routes.NEW_ANALYSIS} */}
+      {/*        component={Pages.Forms.NewAnalysisForm} */}
+      {/*      /> */}
+      {/*      <Route */}
+      {/*        path={Routes.JOBS_BY_PATIENT} */}
+      {/*        component={Pages.JobsByPatientPage} */}
+      {/*      /> */}
+      {/*      <Route */}
+      {/*        path={Routes.PATIENTS_CREATE} */}
+      {/*        component={Pages.Forms.PatientForm} */}
+      {/*      /> */}
+      {/*      <Route */}
+      {/*        path={Routes.PATIENTS_EDIT} */}
+      {/*        component={Pages.Forms.PatientForm} */}
+      {/*      /> */}
+      {/*      /!* <Route *!/ */}
+      {/*      /!*  path={Routes.PATIENTS_TUMORS} *!/ */}
+      {/*      /!*  component={Pages.Forms.TumorForm} *!/ */}
+      {/*      /!* /> *!/ */}
+      {/*      <Route path={Routes.PATIENT} component={Pages.PatientPage} /> */}
+      {/*      <Route */}
+      {/*        path={Routes.PATIENTS} */}
+      {/*        exact */}
+      {/*        component={Pages.PatientsPage} */}
+      {/*      /> */}
+      {/*      <Route */}
+      {/*        path={Routes.SETTINGS} */}
+      {/*        exact */}
+      {/*        component={Pages.SettingsPage} */}
+      {/*      /> */}
+      {/*      <Route path={Routes.HOME} exact component={Home} /> */}
+      {/*    </Switch> */}
+      {/*  </Layout> */}
+      {/* </Router> */}
     </InjectorContext.Provider>
   );
 }

@@ -3,13 +3,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { api as electron } from 'electron-util';
 import { injectable } from 'tsyringe';
-import type {
-  JobObject,
-  JobConfig,
-  JobOutput,
-  Nullable,
-} from '../../interfaces';
-import Entity from './timedEntity';
+import type { JobConfig, JobOutput, Nullable } from '../../interfaces';
 import Patient from './patient';
 import Settings from '../settings';
 import { Utils } from '../index';
@@ -17,65 +11,55 @@ import EntityError from '../../errors/EntityError';
 import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
 import { JobStatus, JobTypes } from '../../interfaces';
-import { field } from './entity';
+import { Entity, field } from '../../apiConnector';
 
 @injectable()
-export default class Job extends Entity<JobObject> implements JobObject {
-  @field({
-    fillable: false,
+export default class Job extends Entity {
+  @field<string>({
+    fillable: true,
+  })
+  public sample_code = '';
+
+  @field<string>({
+    fillable: true,
+  })
+  public name = '';
+
+  @field<JobTypes>({
+    fillable: true,
+  })
+  public type: JobTypes = JobTypes.empty;
+
+  @field<string>({
+    readonly: true,
+  })
+  public readable_type = '';
+
+  @field<JobStatus>({
+    readonly: true,
+  })
+  public status: JobStatus = JobStatus.ready;
+
+  @field<JobConfig>({
+    fillable: true,
+  })
+  public parameters?: JobConfig;
+
+  @field<JobOutput>({
+    readonly: true,
+  })
+  public output?: JobOutput;
+
+  @field<string>({
     readonly: true,
   })
   public log?: string;
 
   @field({
     fillable: true,
-  })
-  public name = '';
-
-  @field({
-    fillable: false,
-    readonly: true,
-  })
-  public output?: JobOutput;
-
-  @field({
-    fillable: false,
-    readonly: true,
-  })
-  public owner: unknown = {};
-
-  @field({
-    fillable: true,
-  })
-  public parameters?: JobConfig;
-
-  @field({
-    fillable: true,
-    withEntity: Patient,
+    // todo
   })
   public patient!: Nullable<Patient>;
-
-  @field({
-    fillable: false,
-    readonly: true,
-  })
-  public readable_type = '';
-
-  @field({
-    fillable: true,
-  })
-  public sample_code = '';
-
-  @field({
-    fillable: false,
-    readonly: true,
-  })
-  public status: JobStatus = JobStatus.ready;
-
-  @field({
-    fillable: true,
-  })
-  public type: JobTypes = JobTypes.empty;
 
   public constructor(
     adapter: JobAdapter,
@@ -86,7 +70,9 @@ export default class Job extends Entity<JobObject> implements JobObject {
   }
 
   public getUploadUrl(): string {
-    return this.adapter.connector.getEndpointUrl(`jobs/${this.id}/upload`);
+    if (this.isNew)
+      throw new Error('No upload can be performed until the object is saved');
+    return this.adapter.client.getEndpointUrl(`jobs/${this.id}/upload`);
   }
 
   public getLocalDirectory(): string {
@@ -112,8 +98,6 @@ export default class Job extends Entity<JobObject> implements JobObject {
       throw new EntityError('Unable to find output path');
     }
   }
-
-  // @todo upload
 
   public async openLocalFolder(): Promise<void> {
     if (!this.settings.isLocal())
@@ -154,8 +138,7 @@ export default class Job extends Entity<JobObject> implements JobObject {
     if (this.isNew || this.isDirty) {
       await this.save();
     }
-    this.fillDataArray(await (this.adapter as JobAdapter).submit(this));
-    this.dirty = false;
-    return this;
+    await (this.adapter as unknown as JobAdapter).submit(this.id);
+    return this.refresh();
   }
 }

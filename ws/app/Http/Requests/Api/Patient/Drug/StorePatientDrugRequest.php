@@ -27,6 +27,7 @@ class StorePatientDrugRequest extends FormRequest
         return [
             'drug'                 => ['required', Rule::exists('drugs', 'id')],
             'disease'              => ['nullable', Rule::exists('diseases', 'id')],
+            'disease_id'           => ['nullable', Rule::exists('diseases', 'id')],
             'suspension_reasons'   => ['nullable', 'array'],
             'suspension_reasons.*' => ['integer', Rule::exists('suspension_reasons', 'id')],
             'comment'              => ['nullable', 'string'],

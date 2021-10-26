@@ -38,7 +38,7 @@ export default class ResultSet<E extends Entity = Entity> extends Array<E> {
 
   protected init(queryResponse: QueryResponse<PartialObject<E>>) {
     this.forEach((e) => e.removeObserver(this.entityObserver));
-    super.slice(0, this.length);
+    if (this.length > 0) this.length = 0;
     this.metadata = queryResponse.meta;
     for (const entityData of queryResponse.data) {
       super.push(
