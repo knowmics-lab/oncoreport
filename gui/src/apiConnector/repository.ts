@@ -1,15 +1,22 @@
-/* eslint-disable import/no-cycle */
 import { container, InjectionToken } from 'tsyringe';
 import { get, has, set, unset } from 'lodash';
-import Entity, { EntityObserver, ExtendedPartialObject } from './entity/entity';
 import Adapter from './httpClient/adapter';
-import { PartialObject, SimpleMapType } from './interfaces/common';
+import {
+  ExtendedPartialObject,
+  PartialObject,
+  SimpleMapType,
+} from './interfaces/common';
 import QueryBuilder from './queryBuilder/queryBuilder';
 import { ignorePromise } from './utils';
+import {
+  EntityObject,
+  EntityObserver,
+  QueryBuilderInterface,
+} from './interfaces/entity';
 
 type CacheArray<T> = { [id: number]: T };
 
-export default abstract class Repository<E extends Entity = Entity> {
+export default abstract class Repository<E extends EntityObject> {
   protected cache: CacheArray<WeakRef<E>> = {};
 
   protected entityObserver: EntityObserver<E> = {
@@ -63,7 +70,7 @@ export default abstract class Repository<E extends Entity = Entity> {
     } else if (!id) {
       entity
         .initializeNew(parameters)
-        .fill((data ?? {}) as ExtendedPartialObject<E>);
+        .fill((data ?? {}) as ExtendedPartialObject<E, EntityObject>);
     }
     return entity;
   }
@@ -121,7 +128,7 @@ export default abstract class Repository<E extends Entity = Entity> {
     return this.createEntityAsync(id, parameters);
   }
 
-  public query(parameters?: SimpleMapType): QueryBuilder<E> {
+  public query(parameters?: SimpleMapType): QueryBuilderInterface<E> {
     return new QueryBuilder<E>(this, parameters);
   }
 }

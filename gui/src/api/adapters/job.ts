@@ -1,7 +1,8 @@
 import { singleton } from 'tsyringe';
 import { sprintf } from 'sprintf-js';
-import { Adapter, HttpClient, PartialObject } from '../../apiConnector';
+import { Adapter, HttpClient } from '../../apiConnector';
 import { JobEntity } from '../entities';
+import type { PartialObject } from '../../apiConnector/interfaces/common';
 
 @singleton()
 export default class Job extends Adapter<JobEntity> {

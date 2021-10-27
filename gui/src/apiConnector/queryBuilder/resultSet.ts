@@ -1,21 +1,21 @@
-/* eslint-disable class-methods-use-this,import/no-cycle */
-import Entity, { EntityObserver } from '../entity/entity';
+/* eslint-disable class-methods-use-this */
 import QueryResponse from '../interfaces/queryResponse';
 import { PartialObject } from '../interfaces/common';
 import { PaginationMetadata } from '../interfaces/paginationMetadata';
-import Adapter from '../httpClient/adapter';
 import { ignorePromise } from '../utils';
-import Repository from '../repository';
+import {
+  EntityObject,
+  EntityObserver,
+  RepositoryObject,
+  ResultSetObserver,
+} from '../interfaces/entity';
+import { Adapter } from '../interfaces/adapter';
 
-export interface ResultSetObserver<E extends Entity> {
-  refreshed?(o: ResultSet<E>): void;
+type WeakObserver<E extends EntityObject> = WeakRef<
+  ResultSetObserver<ResultSet<E>>
+>;
 
-  changedPage?(o: ResultSet<E>): void;
-}
-
-type WeakObserver<E extends Entity> = WeakRef<ResultSetObserver<E>>;
-
-export default class ResultSet<E extends Entity = Entity> extends Array<E> {
+export default class ResultSet<E extends EntityObject> extends Array<E> {
   protected metadata?: PaginationMetadata;
 
   protected observers = new Array<WeakObserver<E>>();
@@ -29,7 +29,7 @@ export default class ResultSet<E extends Entity = Entity> extends Array<E> {
 
   public constructor(
     queryResponse: QueryResponse<PartialObject<E>>,
-    protected repository: Repository<E>
+    protected repository: RepositoryObject<E>
   ) {
     super();
     this.adapter = repository.adapter;
@@ -89,7 +89,7 @@ export default class ResultSet<E extends Entity = Entity> extends Array<E> {
    * Informs this object that another class wants to listen to the events
    * @param o
    */
-  public observe(o: ResultSetObserver<E>): this {
+  public observe(o: ResultSetObserver<this>): this {
     this.observers.push(new WeakRef<typeof o>(o));
     return this;
   }
@@ -98,7 +98,7 @@ export default class ResultSet<E extends Entity = Entity> extends Array<E> {
    * Remove an observer from this object
    * @param o
    */
-  public removeObserver(o: ResultSetObserver<E>): this {
+  public removeObserver(o: ResultSetObserver<this>): this {
     this.observers = this.observers.filter((o1) => o1.deref() !== o);
     return this;
   }

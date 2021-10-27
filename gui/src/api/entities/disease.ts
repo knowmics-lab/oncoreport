@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
-import { Entity, field } from '../../apiConnector';
 import { DiseaseAdapter } from '../adapters';
+import Entity, { field } from '../../apiConnector/entity/entity';
 
 @injectable()
 export default class Disease extends Entity {

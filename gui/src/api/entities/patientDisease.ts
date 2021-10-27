@@ -1,7 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
 import dayjs, { Dayjs } from 'dayjs';
-import { Entity, field, RelationsType } from '../../apiConnector';
+import Entity, { field } from '../../apiConnector/entity/entity';
+import { RelationsType } from '../../apiConnector';
 import { PatientDiseaseAdapter } from '../adapters';
 import { DiseaseEntity, LocationEntity } from './index';
 import { TumorTypes } from '../../interfaces/enums';

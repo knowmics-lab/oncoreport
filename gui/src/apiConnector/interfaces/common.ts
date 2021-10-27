@@ -16,3 +16,10 @@ export type SimpleMapType<T = any> = { [name: string]: T };
 export type PartialObject<T> = {
   -readonly [name in keyof T]?: T[name];
 };
+
+type EntityAndType<T, U> = T extends U ? number | T : T;
+type EntityArrayAndType<T, U> = T extends Array<U> ? number[] | T : T;
+
+export type ExtendedPartialObject<T, U> = {
+  -readonly [p in keyof T]?: EntityArrayAndType<EntityAndType<T[p], U>, U>;
+};

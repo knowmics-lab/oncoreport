@@ -1,27 +1,25 @@
-/* eslint-disable import/no-cycle */
 import { InjectionToken, container } from 'tsyringe';
-import Entity from '../entity/entity';
 import { Arrayable, MapValueType, PartialObject } from '../interfaces/common';
-import Repository from '../repository';
+import { EntityObject, RepositoryObject } from '../interfaces/entity';
 
 type Fillable<R> = number | R | PartialObject<R>;
 
-export default class HasManyReadonly<
-  R extends Entity = Entity
-> extends Array<R> {
+export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
   /**
    * A repository object used for caching and entity building
    * @protected
    */
-  protected repository: Repository<R>;
+  protected repository!: RepositoryObject<R>;
 
   constructor(
-    relatedRepositoryToken: InjectionToken<Repository<R>>,
+    relatedRepositoryToken: InjectionToken<RepositoryObject<R>> | number,
     data: Fillable<R>[] = []
   ) {
     super();
-    this.repository = container.resolve(relatedRepositoryToken);
-    this.syncFill(data);
+    if (typeof relatedRepositoryToken !== 'number') {
+      this.repository = container.resolve(relatedRepositoryToken);
+      this.syncFill(data);
+    }
   }
 
   /**
@@ -36,7 +34,7 @@ export default class HasManyReadonly<
         if (typeof o === 'number') {
           return this.repository.createStubEntity(o);
         }
-        if (o instanceof Entity) {
+        if (typeof o === 'object' && o.isEntity && o.isEntity()) {
           return o as R;
         }
         return this.repository.createEntitySync(o);

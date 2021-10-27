@@ -11,7 +11,7 @@ import EntityError from '../../errors/EntityError';
 import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
 import { JobStatus, JobTypes } from '../../interfaces';
-import { Entity, field } from '../../apiConnector';
+import Entity, { field } from '../../apiConnector/entity/entity';
 
 @injectable()
 export default class Job extends Entity {

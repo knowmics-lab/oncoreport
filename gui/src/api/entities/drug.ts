@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { Entity, field } from '../../apiConnector';
+import Entity, { field } from '../../apiConnector/entity/entity';
 import { DrugAdapter } from '../adapters';
 
 @injectable()

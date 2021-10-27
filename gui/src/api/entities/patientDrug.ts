@@ -1,12 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import { injectable } from 'tsyringe';
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  Entity,
-  field,
-  HasManyReadonly,
-  RelationsType,
-} from '../../apiConnector';
+import Entity, { field } from '../../apiConnector/entity/entity';
+import { HasManyReadonly, RelationsType } from '../../apiConnector';
 import { PatientDrugAdapter } from '../adapters';
 import {
   DrugEntity,

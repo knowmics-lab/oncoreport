@@ -1,20 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,no-param-reassign,import/no-cycle */
-import Entity from '../entity/entity';
-import Adapter from '../httpClient/adapter';
+/* eslint-disable @typescript-eslint/no-explicit-any,no-param-reassign */
 import { SimpleMapType } from '../interfaces/common';
 import { QueryRequest } from '../interfaces/queryRequest';
 import FilteringOperands from '../enums/filteringOperands';
 import SortingDirection from '../enums/sortingDirection';
 import ResultSet from './resultSet';
-import Repository from '../repository';
+import {
+  EntityObject,
+  RepositoryObject,
+  ResultSetInterface,
+} from '../interfaces/entity';
+import { Adapter } from '../interfaces/adapter';
 
-export default class QueryBuilder<E extends Entity = Entity> {
+export default class QueryBuilder<E extends EntityObject> {
   protected queryRequest: QueryRequest = {};
 
   protected adapter: Adapter<E>;
 
   public constructor(
-    protected repository: Repository<E>,
+    protected repository: RepositoryObject<E>,
     protected parameters?: SimpleMapType
   ) {
     this.adapter = repository.adapter;
@@ -91,7 +94,7 @@ export default class QueryBuilder<E extends Entity = Entity> {
    * Paginate this query.
    * @param perPage The number of records per page
    */
-  public paginate(perPage = 15): QueryBuilder<E> {
+  public paginate(perPage = 15): this {
     this.queryRequest = {
       ...this.queryRequest,
       paginate: true,
@@ -130,7 +133,7 @@ export default class QueryBuilder<E extends Entity = Entity> {
     return this;
   }
 
-  public async get(page = 1): Promise<ResultSet<E>> {
+  public async get(page = 1): Promise<ResultSetInterface<E>> {
     const clone = this.clone();
     clone.queryRequest.page = page;
     const response = await this.adapter.query(

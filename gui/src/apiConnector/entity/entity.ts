@@ -5,6 +5,7 @@ import { container, InjectionToken } from 'tsyringe';
 import produce, { Draft } from 'immer';
 import EntityError from '../../errors/EntityError';
 import {
+  ExtendedPartialObject,
   MapType,
   MapValueType,
   PartialObject,
@@ -21,20 +22,13 @@ import {
 import { Utils } from '../../api';
 import HasMany from '../relations/hasMany';
 import { HasManyReadonly } from '../index';
-import Repository from '../repository';
+import { EntityObject, RepositoryObject } from '../interfaces/entity';
 
 type EntityOrType<T> = T extends Entity ? number : T;
 type EntityArrayOrType<T> = T extends Array<Entity> ? number[] : T;
 
 export type PartialWithoutRelations<T> = {
   -readonly [p in keyof T]?: EntityOrType<EntityArrayOrType<T[p]>>;
-};
-
-type EntityAndType<T> = T extends Entity ? number | T : T;
-type EntityArrayAndType<T> = T extends Array<Entity> ? number[] | T : T;
-
-export type ExtendedPartialObject<T> = {
-  -readonly [p in keyof T]?: EntityArrayAndType<EntityAndType<T[p]>>;
 };
 
 export interface EntityObserver<T extends Entity> {
@@ -51,20 +45,20 @@ type WeakEntityObserver<T extends Entity> = WeakRef<EntityObserver<T>>;
 
 export type HasOneRelation<E extends Entity> = {
   type: RelationsType.ONE;
-  repositoryToken: InjectionToken<Repository<E>>;
+  repositoryToken: InjectionToken<RepositoryObject<E>>;
   noRecursionSave?: boolean;
 };
 
 export type HasManyRelation<E extends Entity> = {
   type: RelationsType.MANY;
-  repositoryToken: InjectionToken<Repository<E>>;
+  repositoryToken: InjectionToken<RepositoryObject<E>>;
   noRecursionSave?: boolean;
   foreignKey: keyof E | { [localKey: string]: keyof E };
 };
 
 export type HasManyReadonlyRelation<E extends Entity> = {
   type: RelationsType.MANY_READONLY;
-  repositoryToken: InjectionToken<Repository<E>>;
+  repositoryToken: InjectionToken<RepositoryObject<E>>;
 };
 
 export type Relation<E extends Entity> =
@@ -293,6 +287,13 @@ export default abstract class Entity {
   }
 
   /**
+   * Checks if this object is an entity
+   */
+  public isEntity(): this is EntityObject {
+    return this instanceof Entity;
+  }
+
+  /**
    * Delete this entity
    */
   public async delete(): Promise<void> {
@@ -324,7 +325,7 @@ export default abstract class Entity {
    * Fill this entity with new data
    * @param d a data object
    */
-  public fill(d: ExtendedPartialObject<this>): this {
+  public fill(d: ExtendedPartialObject<this, EntityObject>): this {
     if (this.isDeleted) throw new Error('Attempting to fill deleted entity');
     const o: PartialObject<this> = {};
     const fillables = getMetadataArray<string>(FILLABLE, this);
@@ -452,7 +453,7 @@ export default abstract class Entity {
           specs.type !== RelationsType.MANY_READONLY &&
           !specs.noRecursionSave
         ) {
-          const related: Entity | HasMany | undefined = this.data[
+          const related: Entity | HasMany<EntityObject> | undefined = this.data[
             f.toString()
           ] as unknown as any;
           if (related) {

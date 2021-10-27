@@ -1,21 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,import/no-cycle */
+/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this */
 import { InjectionToken, container } from 'tsyringe';
-import Entity, {
-  EntityObserver,
-  ExtendedPartialObject,
-} from '../entity/entity';
 import { ignorePromise } from '../utils';
-import { Arrayable, MapValueType, PartialObject } from '../interfaces/common';
-import Repository from '../repository';
+import {
+  Arrayable,
+  ExtendedPartialObject,
+  MapValueType,
+  PartialObject,
+} from '../interfaces/common';
+import {
+  EntityObject,
+  EntityObserver,
+  RepositoryObject,
+} from '../interfaces/entity';
 
 type Fillable<R> = number | R | PartialObject<R>;
 
-export default class HasMany<
-    R extends Entity = Entity,
-    T extends Entity = Entity
-  >
+export default class HasMany<R extends EntityObject>
   extends Array<R>
-  implements EntityObserver<T>
+  implements EntityObserver<EntityObject>
 {
   /**
    * An internal array of entities that will be saved after the referring object is created
@@ -27,7 +29,7 @@ export default class HasMany<
    * A repository object used for caching and entity building
    * @protected
    */
-  protected repository: Repository<R>;
+  protected repository!: RepositoryObject<R>;
 
   /**
    * An observer object used to listen to changes in the related objects
@@ -43,14 +45,16 @@ export default class HasMany<
   };
 
   constructor(
-    relatedRepositoryToken: InjectionToken<Repository<R>>,
-    private referringObject: T,
+    relatedRepositoryToken: InjectionToken<RepositoryObject<R>> | number,
+    private referringObject: EntityObject,
     private foreignKey: keyof R | { [localKey: string]: keyof R },
     data: Fillable<R>[] = []
   ) {
     super();
-    this.repository = container.resolve(relatedRepositoryToken);
-    this.syncFill(data);
+    if (typeof relatedRepositoryToken !== 'number') {
+      this.repository = container.resolve(relatedRepositoryToken);
+      this.syncFill(data);
+    }
   }
 
   /**
@@ -65,7 +69,7 @@ export default class HasMany<
         if (typeof o === 'number') {
           return this.repository.createStubEntity(o, this.getParameters());
         }
-        if (o instanceof Entity) {
+        if (typeof o === 'object' && o.isEntity && o.isEntity()) {
           return o as R;
         }
         return this.repository.createEntitySync(o, this.getParameters());
@@ -78,7 +82,9 @@ export default class HasMany<
    * Create a new entity related to the parent object
    * @param data
    */
-  public async create(data: ExtendedPartialObject<R>): Promise<R> {
+  public async create(
+    data: ExtendedPartialObject<R, EntityObject>
+  ): Promise<R> {
     if (this.repository.adapter.readonly)
       throw new Error(
         'Attempting to create a new object for a readonly entity'
@@ -102,7 +108,7 @@ export default class HasMany<
    */
   public async findOrCreate(
     id: number,
-    values: ExtendedPartialObject<R>
+    values: ExtendedPartialObject<R, EntityObject>
   ): Promise<R> {
     const idx = this.findIndex((o) => o.id === id);
     if (idx <= 0) return this.create(values);
@@ -115,14 +121,18 @@ export default class HasMany<
    * @param values the values
    */
   public async firstOrCreate(
-    attributes: ExtendedPartialObject<R>,
-    values: ExtendedPartialObject<R>
+    attributes: ExtendedPartialObject<R, EntityObject>,
+    values: ExtendedPartialObject<R, EntityObject>
   ): Promise<R> {
     const idx = this.findIndex((o) => {
       for (const [k, v] of Object.entries(attributes)) {
-        const vFinal = v instanceof Entity ? v.id : v;
-        const cmpWith = o[k as unknown as keyof R];
-        const cmpWithFinal = cmpWith instanceof Entity ? cmpWith.id : cmpWith;
+        const vFinal =
+          typeof v === 'object' && v.isEntity && v.isEntity() ? v.id : v;
+        const cmpWith: any = o[k as unknown as keyof R];
+        const cmpWithFinal =
+          typeof cmpWith === 'object' && cmpWith.isEntity && cmpWith.isEntity()
+            ? cmpWith.id
+            : cmpWith;
         if (vFinal !== cmpWithFinal) return false;
       }
       return true;
@@ -142,8 +152,8 @@ export default class HasMany<
    * @param values
    */
   public async updateOrCreate(
-    attributes: ExtendedPartialObject<R>,
-    values: ExtendedPartialObject<R>
+    attributes: ExtendedPartialObject<R, EntityObject>,
+    values: ExtendedPartialObject<R, EntityObject>
   ): Promise<R> {
     const o = await this.firstOrCreate(attributes, values);
     if (!o.wasRecentlyCreated) {
@@ -171,6 +181,30 @@ export default class HasMany<
    */
   public async save(): Promise<void> {
     await Promise.all(this.map((o) => o.save()));
+  }
+
+  /**
+   * Performs a query on this relationship
+   */
+  public query() {
+    return this.repository.query(this.getParameters());
+  }
+
+  /**
+   * Refresh this entity reloading all linked entities
+   */
+  public async refresh() {
+    this.syncFill(
+      (
+        await this.repository.adapter.query(
+          {
+            perPage: 0,
+          },
+          this.getParameters()
+        )
+      ).data
+    );
+    return this;
   }
 
   /**
@@ -234,7 +268,7 @@ export default class HasMany<
           [foreignKey]:
             localKey === 'id'
               ? this.referringObject
-              : this.referringObject[localKey as keyof T],
+              : this.referringObject[localKey as keyof EntityObject],
         };
       }
     }

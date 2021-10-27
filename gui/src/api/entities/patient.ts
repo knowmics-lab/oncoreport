@@ -2,19 +2,15 @@
 import { injectable } from 'tsyringe';
 import { Gender } from '../../interfaces';
 import { PatientAdapter } from '../adapters';
-import {
-  Entity,
-  field,
-  HasMany,
-  Nullable,
-  RelationsType,
-} from '../../apiConnector';
+import Entity, { field } from '../../apiConnector/entity/entity';
+import { HasMany, RelationsType } from '../../apiConnector';
 import PatientDiseaseEntity from './patientDisease';
 import PatientDrugEntity from './patientDrug';
 import {
   PatientDiseaseRepository,
   PatientDrugRepository,
 } from '../repositories';
+import type { Nullable } from '../../apiConnector/interfaces/common';
 
 @injectable()
 export default class Patient extends Entity {
@@ -74,7 +70,7 @@ export default class Patient extends Entity {
       serializable: false,
     },
   })
-  diseases?: HasMany<PatientDiseaseEntity, Patient>;
+  diseases?: HasMany<PatientDiseaseEntity>;
 
   @field<PatientDiseaseEntity>({
     fillable: true,
@@ -101,7 +97,7 @@ export default class Patient extends Entity {
       serializable: false,
     },
   })
-  drugs?: HasMany<PatientDrugEntity, Patient>;
+  drugs?: HasMany<PatientDrugEntity>;
 
   public constructor(adapter: PatientAdapter) {
     super(adapter);

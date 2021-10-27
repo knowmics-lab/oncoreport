@@ -6,6 +6,7 @@ import { QueryRequest } from './queryRequest';
 
 export interface Adapter<T> {
   readonly client: Client;
+  readonly readonly: boolean;
 
   create(entity: PartialObject<T>): Promise<PartialObject<T>>;
 
