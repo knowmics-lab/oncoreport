@@ -104,12 +104,14 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
   }
 
   public async refresh() {
+    this.refreshing();
     this.init(await this.adapter.query(this.query, this.parameters));
     this.refreshed();
   }
 
   public async first() {
     if (this.paginated && this.currentPage > 1) {
+      this.changingPage();
       this.init(
         await this.adapter.query(
           {
@@ -125,6 +127,7 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
 
   public async previous() {
     if (this.paginated && this.currentPage > 1) {
+      this.changingPage();
       this.init(
         await this.adapter.query(
           {
@@ -139,7 +142,8 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
   }
 
   public async next() {
-    if (this.paginated && this.currentPage <= this.lastPage) {
+    if (this.paginated && this.currentPage < this.lastPage) {
+      this.changingPage();
       this.init(
         await this.adapter.query(
           {
@@ -154,7 +158,8 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
   }
 
   public async last() {
-    if (this.paginated && this.currentPage <= this.lastPage) {
+    if (this.paginated && this.currentPage < this.lastPage) {
+      this.changingPage();
       this.init(
         await this.adapter.query(
           {
@@ -214,10 +219,38 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
     throw new Error('This object is read only');
   }
 
+  /**
+   * Clone this object
+   */
+  public clone(): ResultSet<E> {
+    const clone = Object.create(this) as ResultSet<E>;
+    clone.length = 0;
+    clone.internalPush(...this);
+    clone.metadata = this.metadata;
+    clone.observers = this.observers;
+    clone.adapter = this.adapter;
+    clone.repository = this.repository;
+    return clone;
+  }
+
+  protected refreshing(): void {
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.refreshing) o.refreshing(this);
+    });
+  }
+
   protected refreshed(): void {
     this.observers.forEach((ref) => {
       const o = ref.deref();
       if (o && o.refreshed) o.refreshed(this);
+    });
+  }
+
+  protected changingPage(): void {
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.changingPage) o.changingPage(this);
     });
   }
 
@@ -226,5 +259,9 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       const o = ref.deref();
       if (o && o.changedPage) o.changedPage(this);
     });
+  }
+
+  protected internalPush(...items: E[]): number {
+    return super.push(...items);
   }
 }

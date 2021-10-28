@@ -49,6 +49,7 @@ export interface ResultSetInterface<E extends EntityObject> extends Array<E> {
   previous(): Promise<void>;
   next(): Promise<void>;
   last(): Promise<void>;
+  clone(): ResultSetInterface<E>;
 }
 
 export interface QueryBuilderInterface<E extends EntityObject> {
@@ -56,9 +57,9 @@ export interface QueryBuilderInterface<E extends EntityObject> {
   filter(filter_by: keyof E | (keyof E)[], filter_value: string): this;
   where(by: keyof E, value: any, op?: FilteringOperands): this;
   doNotPaginate(): this;
-  paginate(perPage: number): this;
+  paginate(perPage?: number): this;
   orderBy(attribute: keyof E, direction?: SortingDirection | string): this;
-  get(page: number): Promise<ResultSetInterface<E>>;
+  get(page?: number): Promise<ResultSetInterface<E>>;
   first(): Promise<E | undefined>;
 }
 
@@ -81,7 +82,11 @@ export interface EntityObserver<T extends EntityObject> {
 }
 
 export interface ResultSetObserver<R> {
+  refreshing?(o: R): void;
+
   refreshed?(o: R): void;
+
+  changingPage?(o: R): void;
 
   changedPage?(o: R): void;
 }

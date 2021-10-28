@@ -18,6 +18,8 @@ import ThemeContext from './app/themeContext';
 import { useContainer, useService } from './reactInjector';
 import { DiseaseRepository, PatientRepository } from './api';
 import { runAsync } from './app/components/utils';
+import useRepositoryQuery from './app/hooks/useRepositoryQuery';
+import useDebugInformation from './app/hooks/useDebug';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -73,14 +75,30 @@ const Home = () => {
 };
 
 function Test() {
-  const container = useContainer();
-  runAsync(async () => {
-    const repository = container.resolve(PatientRepository);
-    const query = repository.query();
-    console.log(await repository.query().get());
-    console.log(await (await repository.fetch(3)).refresh());
-  });
-  return <h1>Test!!</h1>;
+  const [loading, resultSet] = useRepositoryQuery(PatientRepository);
+  useDebugInformation('Test', { loading, resultSet });
+  return (
+    <>
+      <h1>Test!!</h1>
+      <div>
+        <b>Loading: </b>
+        <code>{loading ? 'Yes' : 'No'}</code>
+      </div>
+      {resultSet && (
+        <>
+          <div>
+            <b>Size: </b>
+            <code>{resultSet.length}</code>
+          </div>
+          <div>
+            <button onClick={() => resultSet?.refresh()} type="button">
+              Refresh
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  );
 }
 
 export default function App() {

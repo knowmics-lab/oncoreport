@@ -53,7 +53,10 @@ export default class ValidateConfig {
       });
       data = response.data.data;
     } catch (e) {
-      throw new Error(`Invalid authentication token - ${e.message}`);
+      if (e instanceof Error) {
+        throw new Error(`Invalid authentication token - ${e.message}`);
+      }
+      throw new Error(`Unknown error: ${e}`);
     }
     if (data !== 'pong') throw new Error('Invalid authentication token');
   }
