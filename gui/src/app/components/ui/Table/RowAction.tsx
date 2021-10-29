@@ -2,11 +2,10 @@ import React from 'react';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '../IconButton';
 import type { RowActionType } from './types';
-import { IdentifiableEntity } from '../../../../interfaces';
-import Entity from '../../../../api/entities/entity';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 
-export type Props<D extends IdentifiableEntity, E extends Entity<D>> = {
-  action: RowActionType<D, E>;
+export type Props<E extends EntityObject> = {
+  action: RowActionType<E>;
   data: E;
   size: 'small' | 'medium';
 };
@@ -16,10 +15,11 @@ function isF(x: unknown): x is Function {
   return typeof x === 'function';
 }
 
-export default function RowAction<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
->({ action, data, size }: Props<D, E>) {
+export default function RowAction<E extends EntityObject>({
+  action,
+  data,
+  size,
+}: Props<E>) {
   if (typeof action === 'function') {
     return <>{action(data, size)}</>;
   }

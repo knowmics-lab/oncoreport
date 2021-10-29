@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this,@typescript-eslint/no-explicit-any */
 import QueryResponse from '../interfaces/queryResponse';
 import { PartialObject } from '../interfaces/common';
 import { PaginationMetadata } from '../interfaces/paginationMetadata';
@@ -66,15 +66,15 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
   }
 
   get from() {
-    return this.metadata?.current_page ?? (this.length === 0 ? 0 : 1);
+    return this.metadata?.from ?? (this.length === 0 ? 0 : 1);
   }
 
   get to() {
-    return this.metadata?.current_page ?? this.length;
+    return this.metadata?.to ?? this.length;
   }
 
   get total() {
-    return this.metadata?.current_page ?? this.length;
+    return this.metadata?.total ?? this.length;
   }
 
   get query() {
@@ -110,45 +110,30 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
   }
 
   public async first() {
-    if (this.paginated && this.currentPage > 1) {
-      this.changingPage();
-      this.init(
-        await this.adapter.query(
-          {
-            ...this.query,
-            page: 1,
-          },
-          this.parameters
-        )
-      );
-      this.changedPage();
-    }
+    return this.goToPage(1);
   }
 
   public async previous() {
-    if (this.paginated && this.currentPage > 1) {
-      this.changingPage();
-      this.init(
-        await this.adapter.query(
-          {
-            ...this.query,
-            page: this.currentPage - 1,
-          },
-          this.parameters
-        )
-      );
-      this.changedPage();
-    }
+    return this.goToPage(this.currentPage - 1);
   }
 
   public async next() {
-    if (this.paginated && this.currentPage < this.lastPage) {
-      this.changingPage();
+    return this.goToPage(this.currentPage + 1);
+  }
+
+  public async last() {
+    return this.goToPage(this.lastPage);
+  }
+
+  async goToPage(newPage = 1): Promise<void> {
+    const page = Math.min(Math.max(1, newPage), this.lastPage);
+    if (this.paginated && page !== this.currentPage) {
+      this.changingPage(page);
       this.init(
         await this.adapter.query(
           {
             ...this.query,
-            page: this.currentPage + 1,
+            page,
           },
           this.parameters
         )
@@ -157,20 +142,52 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
     }
   }
 
-  public async last() {
-    if (this.paginated && this.currentPage < this.lastPage) {
-      this.changingPage();
-      this.init(
-        await this.adapter.query(
-          {
-            ...this.query,
-            page: this.lastPage,
-          },
-          this.parameters
-        )
-      );
-      this.changedPage();
-    }
+  map<U>(
+    callbackfn: (value: E, index: number, array: E[]) => U,
+    thisArg?: any
+  ): U[] {
+    return [...this].map(callbackfn, thisArg);
+  }
+
+  filter<S extends E>(
+    predicate: (value: E, index: number, array: E[]) => value is S,
+    thisArg?: any
+  ): S[] {
+    return [...this].filter(predicate, thisArg);
+  }
+
+  reduce(
+    callbackfn: (
+      previousValue: E,
+      currentValue: E,
+      currentIndex: number,
+      array: E[]
+    ) => E
+  ): E {
+    return [...this].reduce(callbackfn);
+  }
+
+  reduceRight(
+    callbackfn: (
+      previousValue: E,
+      currentValue: E,
+      currentIndex: number,
+      array: E[]
+    ) => E
+  ): E {
+    return [...this].reduceRight(callbackfn);
+  }
+
+  flatMap<U, This = undefined>(
+    callback: (
+      this: This,
+      value: E,
+      index: number,
+      array: E[]
+    ) => ReadonlyArray<U> | U,
+    thisArg?: This
+  ): U[] {
+    return [...this].flatMap(callback, thisArg);
   }
 
   public pop(): E | undefined {
@@ -247,10 +264,10 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
     });
   }
 
-  protected changingPage(): void {
+  protected changingPage(newPage: number): void {
     this.observers.forEach((ref) => {
       const o = ref.deref();
-      if (o && o.changingPage) o.changingPage(this);
+      if (o && o.changingPage) o.changingPage(this, newPage);
     });
   }
 

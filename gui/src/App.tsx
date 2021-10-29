@@ -1,25 +1,20 @@
-import React from 'react';
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import {
   createStyles,
   ImageList,
   ImageListItem,
-  Typography,
   makeStyles,
+  Typography,
 } from '@material-ui/core';
 import injector from './injector';
 import InjectorContext from './reactInjector/context';
-import Routes from './constants/routes.json';
 import Constants from './constants/system.json';
-import Layout from './app/layout';
-import * as Pages from './app/components/pages';
 import UNICT_LOGO from './resources/unict.png';
 import ThemeContext from './app/themeContext';
-import { useContainer, useService } from './reactInjector';
-import { DiseaseRepository, PatientRepository } from './api';
-import { runAsync } from './app/components/utils';
-import useRepositoryQuery from './app/hooks/useRepositoryQuery';
+import { DiseaseRepository } from './api';
 import useDebugInformation from './app/hooks/useDebug';
+import useRepositorySearch from './app/hooks/useRepositorySearch';
+import useDebounce from './app/hooks/useDebounce';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -75,11 +70,42 @@ const Home = () => {
 };
 
 function Test() {
-  const [loading, resultSet] = useRepositoryQuery(PatientRepository);
-  useDebugInformation('Test', { loading, resultSet });
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>();
+  useDebounce(
+    () => {
+      if (query.length > 3) {
+        setDebouncedQuery(query);
+      } else {
+        setDebouncedQuery(undefined);
+      }
+    },
+    500,
+    [query]
+  );
+  const [loading, resultSet] = useRepositorySearch(
+    DiseaseRepository,
+    debouncedQuery,
+    { tumor: true }
+  );
+
+  useEffect(() => {
+    if (resultSet) {
+      console.log(resultSet?.map((e) => e.toDataObject()));
+    }
+  }, [resultSet]);
+  useDebugInformation('Test', { loading, resultSet, debouncedQuery, query });
   return (
     <>
       <h1>Test!!</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter test query"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <div>
         <b>Loading: </b>
         <code>{loading ? 'Yes' : 'No'}</code>

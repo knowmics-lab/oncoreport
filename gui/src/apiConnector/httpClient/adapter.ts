@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this,@typescript-eslint/no-unused-vars */
 import { sprintf } from 'sprintf-js';
 import { get, has } from 'lodash';
 import Client from './client';
@@ -14,6 +14,7 @@ import { SortingSpec } from '../../interfaces';
 type Serializable<T> = T & { serialize?: () => MapType };
 type WithParameters<T> = T & { getParameters?: () => SimpleMapType };
 
+// noinspection JSUnusedLocalSymbols
 export default abstract class Adapter<T> implements IAdapter<T> {
   protected constructor(public readonly client: Client) {}
 
@@ -98,7 +99,11 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     parameters?: SimpleMapType
   ): Promise<QueryResponse<T>> {
     const endpoint = sprintf(this.endpoint, this.getParameters(parameters));
-    const params = this.prepareQueryRequest(queryRequest ?? {});
+    const params = this.postProcessQueryParams(
+      this.prepareQueryRequest(queryRequest ?? {}),
+      queryRequest,
+      parameters
+    );
     const { data, meta } = await this.client.get<Collection<T>>(
       endpoint,
       params
@@ -111,6 +116,14 @@ export default abstract class Adapter<T> implements IAdapter<T> {
         parameters,
       },
     };
+  }
+
+  protected postProcessQueryParams(
+    queryParams: MapType,
+    _queryRequest?: QueryRequest,
+    _parameters?: SimpleMapType
+  ): MapType {
+    return queryParams;
   }
 
   protected prepareQueryRequest(queryRequest: QueryRequest): MapType {

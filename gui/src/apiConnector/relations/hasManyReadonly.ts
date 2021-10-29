@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InjectionToken, container } from 'tsyringe';
 import { Arrayable, MapValueType, PartialObject } from '../interfaces/common';
 import { EntityObject, RepositoryObject } from '../interfaces/entity';
@@ -63,5 +64,57 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
    */
   public serialize(): MapValueType {
     return this.map((o) => o.id);
+  }
+
+  public reverse(): R[] {
+    return [...this].reverse();
+  }
+
+  public map<U>(
+    callbackfn: (value: R, index: number, array: R[]) => U,
+    thisArg?: any
+  ): U[] {
+    return [...this].map(callbackfn, thisArg);
+  }
+
+  public filter<S extends R>(
+    predicate: (value: R, index: number, array: R[]) => value is S,
+    thisArg?: any
+  ): S[] {
+    return [...this].filter(predicate, thisArg);
+  }
+
+  public reduce(
+    callbackfn: (
+      previousValue: R,
+      currentValue: R,
+      currentIndex: number,
+      array: R[]
+    ) => R
+  ): R {
+    return [...this].reduce(callbackfn);
+  }
+
+  public reduceRight(
+    callbackfn: (
+      previousValue: R,
+      currentValue: R,
+      currentIndex: number,
+      array: R[]
+    ) => R
+  ): R {
+    return [...this].reduceRight(callbackfn);
+  }
+
+  public flatMap<U, This = undefined>(
+    callback: (
+      this: This,
+      value: R,
+      index: number,
+      array: R[]
+    ) => ReadonlyArray<U> | U,
+    thisArg?: This
+  ): U[] {
+    return [...this].flatMap(callback, thisArg);
   }
 }

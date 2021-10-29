@@ -49,6 +49,7 @@ class PatientController extends Controller
      *
      * @return \App\Http\Resources\PatientResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Throwable
      */
     public function store(StorePatientRequest $request, PatientHelperService $helperService): PatientResource
     {
@@ -85,6 +86,7 @@ class PatientController extends Controller
      *
      * @return \App\Http\Resources\PatientResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Throwable
      */
     public function update(
         UpdatePatientRequest $request,

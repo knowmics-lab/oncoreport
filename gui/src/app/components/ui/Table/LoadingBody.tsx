@@ -3,18 +3,17 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import type { TableColumn } from './types';
-import { IdentifiableEntity } from '../../../../interfaces';
-import Entity from '../../../../api/entities/entity';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 
-type Props<D extends IdentifiableEntity, E extends Entity<D>> = {
-  columns: TableColumn<D, E>[];
+type Props<E extends EntityObject> = {
+  columns: TableColumn<E>[];
   hasCheckbox?: boolean;
 };
 
-export default function Body<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
->({ columns, hasCheckbox }: Props<D, E>) {
+export default function Body<E extends EntityObject>({
+  columns,
+  hasCheckbox,
+}: Props<E>) {
   const numOfColumns = columns.length + (hasCheckbox ? 1 : 0);
   return (
     <TableBody>

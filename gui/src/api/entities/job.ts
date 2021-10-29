@@ -4,14 +4,16 @@ import fs from 'fs-extra';
 import { api as electron } from 'electron-util';
 import { injectable } from 'tsyringe';
 import type { JobConfig, JobOutput, Nullable } from '../../interfaces';
+import { JobStatus, JobTypes } from '../../interfaces';
 import Patient from './patient';
 import Settings from '../settings';
+import { PatientRepository } from '../repositories';
 import { Utils } from '../index';
 import EntityError from '../../errors/EntityError';
 import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
-import { JobStatus, JobTypes } from '../../interfaces';
 import Entity, { field } from '../../apiConnector/entity/entity';
+import { RelationsType } from '../../apiConnector';
 
 @injectable()
 export default class Job extends Entity {
@@ -55,9 +57,13 @@ export default class Job extends Entity {
   })
   public log?: string;
 
-  @field({
+  @field<Patient>({
     fillable: true,
-    // todo
+    relation: {
+      type: RelationsType.ONE,
+      repositoryToken: PatientRepository,
+      noRecursionSave: true,
+    },
   })
   public patient!: Nullable<Patient>;
 

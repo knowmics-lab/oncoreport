@@ -16,7 +16,7 @@ export default function Patients() {
   return (
     <RepositoryTable<PatientObject, PatientEntity, PatientRepository>
       title="Patients"
-      onPageChange={(page) => setCurrentPage(page)}
+      onPageChanged={(page) => setCurrentPage(page)}
       columns={[
         {
           dataField: 'first_name',

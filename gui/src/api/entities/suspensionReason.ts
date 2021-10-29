@@ -5,6 +5,7 @@ import { SuspensionReasonAdapter } from '../adapters';
 @injectable()
 export default class SuspensionReason extends Entity {
   @field({
+    fillable: true,
     readonly: true,
   })
   public name = '';

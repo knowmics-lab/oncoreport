@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { InjectionToken } from 'tsyringe';
 import type {
   RowActionType,
   TableColumn,
   ToolbarActionType,
 } from './Table/types';
-import { Collection, IdentifiableEntity } from '../../../interfaces';
-import Repository from '../../../api/repositories/repository';
-import Entity from '../../../api/entities/entity';
-import { useService } from '../../../reactInjector';
 import { runAsync } from '../utils';
 import RemoteTable from './RemoteTable';
+import {
+  EntityObject,
+  QueryBuilderInterface,
+} from '../../../apiConnector/interfaces/entity';
+import { Repository, SortingDirection } from '../../../apiConnector';
+import useRepositoryQuery, {
+  QueryBuilderCallback,
+} from '../../hooks/useRepositoryQuery';
+import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 
-export type TableProps<
-  D extends IdentifiableEntity,
-  E extends Entity<D>,
-  R extends Repository<D, E>
-> = {
+export type TableProps<E extends EntityObject> = {
   title?: string | React.ReactNode | React.ReactNodeArray;
   size?: 'small' | 'medium';
-  columns: TableColumn<D, E>[];
+  columns: TableColumn<E>[];
   toolbar?: ToolbarActionType[];
-  actions?: RowActionType<D, E>[];
+  actions?: RowActionType<E>[];
   sortable?: boolean;
-  repositoryToken: InjectionToken<R>;
-  onPageChange?: (page: number) => void;
+  repositoryToken: InjectionToken<Repository<E>>;
+  queryBuilderCallback?: QueryBuilderCallback<E>;
+  parameters?: SimpleMapType;
+  onPageChanged?: (page: number) => void;
 };
 
-export default function RepositoryTable<
-  D extends IdentifiableEntity,
-  E extends Entity<D>,
-  R extends Repository<D, E>
->({
+type SortingSpec = SimpleMapType<SortingDirection>;
+
+export default function RepositoryTable<E extends EntityObject>({
   title,
   size,
   columns,
@@ -39,39 +40,27 @@ export default function RepositoryTable<
   actions,
   sortable,
   repositoryToken,
-  onPageChange,
-}: TableProps<D, E, R>) {
-  const [data, setData] = useState<Collection<E> | undefined>(undefined);
-  const [fetching, setFetching] = useState(false);
-  const repository = useService(repositoryToken);
+  queryBuilderCallback,
+  parameters,
+  onPageChanged,
+}: TableProps<E>) {
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [sorting, setSorting] = useState<SortingSpec>({});
 
-  useEffect(() => {
-    const id = repository.subscribeRefresh((page) => {
-      if (page && data && data.meta.current_page === page) {
-        runAsync(async () => {
-          setFetching(true);
-          setData(await repository.fetchPage(page));
-          setFetching(false);
-        });
-      } else {
-        setData(undefined);
-      }
-    });
-    return () => {
-      repository.unsubscribeRefresh(id);
-    };
-  }, [repository, data]);
+  const callbackMemoized = useCallback(
+    (builder: QueryBuilderInterface<E>) => {
+      let finalBuilder = builder;
+      if (queryBuilderCallback) finalBuilder = queryBuilderCallback(builder);
+      return finalBuilder.orderByAll(sorting).paginate(rowsPerPage);
+    },
+    [queryBuilderCallback, rowsPerPage, sorting]
+  );
 
-  const fetchPage = (page = 1) => {
-    runAsync(
-      async () => {
-        setFetching(true);
-        setData(await repository.fetchPage(page));
-        setFetching(false);
-      },
-      () => setFetching(false)
-    );
-  };
+  const [loading, data] = useRepositoryQuery(
+    repositoryToken,
+    callbackMemoized,
+    parameters
+  );
 
   return (
     <RemoteTable
@@ -81,18 +70,16 @@ export default function RepositoryTable<
       toolbar={toolbar}
       actions={actions}
       sortable={sortable}
-      onPageChange={onPageChange}
-      fetching={fetching}
+      onPageChanged={onPageChanged}
+      fetching={loading}
+      currentPage={data?.currentPage}
+      rowsPerPage={data?.perPage}
+      sorting={data?.query?.sort}
+      totalRows={data?.total}
       data={data}
-      requestPage={(page) => fetchPage(page)}
-      changeRowsPerPage={(nRows) => {
-        repository.itemsPerPage = nRows;
-        fetchPage();
-      }}
-      changeSorting={(sorting) => {
-        repository.sorting = sorting;
-        fetchPage(data?.meta.current_page || 1);
-      }}
+      onPageRequest={(page) => runAsync(async () => data?.goToPage(page))}
+      onChangeRowsPerPage={setRowsPerPage}
+      onChangeSorting={setSorting}
     />
   );
 }

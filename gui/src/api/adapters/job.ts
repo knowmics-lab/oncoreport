@@ -1,8 +1,11 @@
 import { singleton } from 'tsyringe';
 import { sprintf } from 'sprintf-js';
+import { get, has } from 'lodash';
 import { Adapter, HttpClient } from '../../apiConnector';
 import { JobEntity } from '../entities';
 import type { PartialObject } from '../../apiConnector/interfaces/common';
+import { MapType, SimpleMapType } from '../../apiConnector/interfaces/common';
+import { QueryRequest } from '../../apiConnector/interfaces/queryRequest';
 
 @singleton()
 export default class Job extends Adapter<JobEntity> {
@@ -26,6 +29,23 @@ export default class Job extends Adapter<JobEntity> {
       this.getParameters(undefined, typeof id === 'object' ? id : undefined)
     );
     await this.client.patch(endpoint);
+  }
+
+  protected postProcessQueryParams(
+    queryParams: MapType,
+    _queryRequest?: QueryRequest,
+    parameters?: SimpleMapType
+  ): MapType {
+    if (has(parameters, 'completed') && get(parameters, 'completed')) {
+      queryParams.completed = true;
+    }
+    if (has(parameters, 'type')) {
+      queryParams.type = get(parameters, 'type');
+    }
+    if (has(parameters, 'patient')) {
+      queryParams.patient = +get(parameters, 'patient');
+    }
+    return queryParams;
   }
 
   // public async processDeletedList(deleted: number[]): Promise<number[]> {

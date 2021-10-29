@@ -133,6 +133,20 @@ export default class QueryBuilder<E extends EntityObject> {
     return this;
   }
 
+  /**
+   * Order the results by some fields. The previous sorting options are deleted
+   * @param attributes
+   */
+  public orderByAll(
+    attributes: SimpleMapType<SortingDirection | string | undefined>
+  ): this {
+    this.queryRequest = { ...this.queryRequest, sort: {} };
+    for (const [attribute, direction] of Object.entries(attributes)) {
+      this.orderBy(attribute as unknown as keyof E, direction);
+    }
+    return this;
+  }
+
   public async get(page = 1): Promise<ResultSetInterface<E>> {
     const clone = this.clone();
     clone.queryRequest.page = page;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -14,25 +14,28 @@ import TableHeader from './Table/Header';
 import TableBody from './Table/Body';
 import TableBodyLoading from './Table/LoadingBody';
 import TableToolbar from './Table/Toolbar';
-import {
-  Collection,
-  IdentifiableEntity,
-  SortingSpec,
-} from '../../../interfaces';
-import Entity from '../../../api/entities/entity';
+import { EntityObject } from '../../../apiConnector/interfaces/entity';
+import { SimpleMapType } from '../../../apiConnector/interfaces/common';
+import { SortingDirection } from '../../../apiConnector';
 
-export type TableProps<D extends IdentifiableEntity, E extends Entity<D>> = {
+type SortingSpec = SimpleMapType<SortingDirection>;
+
+export type TableProps<E extends EntityObject> = {
   title?: string | React.ReactNode | React.ReactNodeArray;
   size?: 'small' | 'medium';
-  columns: TableColumn<D, E>[];
+  columns: TableColumn<E>[];
   toolbar?: ToolbarActionType[];
-  actions?: RowActionType<D, E>[];
+  actions?: RowActionType<E>[];
   sortable?: boolean;
-  onPageChange?: (page: number) => void;
-  requestPage: (page: number) => void;
-  changeRowsPerPage: (nRows: number) => void;
-  changeSorting: (sorting: SortingSpec) => void;
-  data?: Collection<E>;
+  onPageChanged?: (page: number) => void;
+  onPageRequest: (page: number) => void;
+  onChangeRowsPerPage: (nRows: number) => void;
+  onChangeSorting: (sorting: SortingSpec) => void;
+  currentPage?: number;
+  rowsPerPage?: number;
+  totalRows?: number;
+  sorting?: SortingSpec;
+  data?: E[];
   fetching?: boolean;
 };
 
@@ -56,50 +59,50 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function RemoteTable<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
->({
+export default function RemoteTable<E extends EntityObject>({
   title,
   size,
   columns,
   toolbar,
   actions,
   sortable,
-  onPageChange,
-  requestPage,
-  changeRowsPerPage,
-  changeSorting,
+  onPageChanged,
+  onPageRequest,
+  onChangeRowsPerPage,
+  onChangeSorting,
+  currentPage,
+  rowsPerPage,
+  totalRows,
+  sorting,
   data,
   fetching,
-}: TableProps<D, E>) {
+}: TableProps<E>) {
   const classes = useStyles();
-  const currentPage = data?.meta.current_page;
 
   useEffect(() => {
-    if (!data && !fetching) requestPage(1);
-  }, [data, fetching, requestPage]);
+    if (!data && !fetching) onPageRequest(1);
+  }, [data, fetching, onPageRequest]);
 
   useEffect(() => {
-    if (currentPage && onPageChange) onPageChange(currentPage);
-  }, [currentPage, onPageChange]);
+    if (currentPage && onPageChanged) onPageChanged(currentPage);
+  }, [currentPage, onPageChanged]);
 
-  const handleChangePage = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => requestPage(newPage + 1);
+  const handleChangePage = useCallback(
+    (_event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) =>
+      onPageRequest(newPage + 1),
+    [onPageRequest]
+  );
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => changeRowsPerPage(+event.target.value);
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      onChangeRowsPerPage(+event.target.value),
+    [onChangeRowsPerPage]
+  );
 
   const finalSize = size || 'small';
   const finalActions = actions || [];
   const finalToolbar = toolbar || [];
   const finalSortable = sortable || true;
-  const rowsPerPage = data?.meta.per_page;
-  const totalRows = data?.meta.total;
-  const sorting = data?.meta.sorting || {};
   const isLoading = fetching || !data;
 
   return (
@@ -125,9 +128,9 @@ export default function RemoteTable<
         <Table stickyHeader size={size}>
           <TableHeader
             columns={columns}
-            sorting={sorting}
+            sorting={sorting ?? {}}
             sortable={finalSortable}
-            changeSorting={changeSorting}
+            changeSorting={onChangeSorting}
           />
           {(isLoading || !data) && <TableBodyLoading columns={columns} />}
           {!isLoading && !!data && (
@@ -143,9 +146,9 @@ export default function RemoteTable<
       <TablePagination
         rowsPerPageOptions={[1, 15, 30, 50, 100]}
         component="div"
-        count={totalRows || 0}
-        rowsPerPage={rowsPerPage || 15}
-        page={(currentPage || 1) - 1}
+        count={totalRows ?? 0}
+        rowsPerPage={rowsPerPage ?? 15}
+        page={(currentPage ?? 1) - 1}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />

@@ -10,28 +10,37 @@ import {
   ResultSetObserver,
 } from '../../apiConnector/interfaces/entity';
 import { SimpleMapType } from '../../apiConnector/interfaces/common';
+import usePrevious from './usePrevious';
 
-export type QueryBuilderCallback<E extends EntityObject> = (
+type QueryBuilderCallback<E extends EntityObject> = (
   builder: QueryBuilderInterface<E>
 ) => QueryBuilderInterface<E>;
 
-export default function useRepositoryQuery<E extends EntityObject>(
+export default function useRepositorySearch<E extends EntityObject>(
   repositoryToken: InjectionToken<Repository<E>>,
-  queryBuilderCallback?: QueryBuilderCallback<E>,
-  parameters?: SimpleMapType
+  searchTerm?: string,
+  parameters?: SimpleMapType,
+  queryBuilderCallback?: QueryBuilderCallback<E>
 ): [boolean, ResultSetInterface<E> | undefined] {
+  const previousSearchTerm = usePrevious(searchTerm);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ResultSetInterface<E>>();
   const repository = useService(repositoryToken);
   const memoizedCallback = useCallback(async () => {
-    if (!data && !loading) {
+    if (!loading && !data && searchTerm && searchTerm.length > 0) {
       setLoading(true);
       let query = repository.query(parameters);
       if (queryBuilderCallback) query = queryBuilderCallback(query);
-      setData(await query.get());
+      setData(await query.search(searchTerm).get());
       setLoading(false);
     }
-  }, [data, loading, parameters, queryBuilderCallback, repository]);
+  }, [data, loading, parameters, queryBuilderCallback, repository, searchTerm]);
+
+  useEffect(() => {
+    if (searchTerm !== undefined && previousSearchTerm !== searchTerm) {
+      setData(undefined);
+    }
+  }, [previousSearchTerm, searchTerm]);
 
   useAsyncEffect(async () => {
     await memoizedCallback();

@@ -5,6 +5,7 @@ import { LocationAdapter } from '../adapters';
 @injectable()
 export default class Location extends Entity {
   @field({
+    fillable: true,
     readonly: true,
   })
   public name = '';

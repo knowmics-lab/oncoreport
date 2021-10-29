@@ -49,6 +49,7 @@ export interface ResultSetInterface<E extends EntityObject> extends Array<E> {
   previous(): Promise<void>;
   next(): Promise<void>;
   last(): Promise<void>;
+  goToPage(page?: number): Promise<void>;
   clone(): ResultSetInterface<E>;
 }
 
@@ -59,6 +60,7 @@ export interface QueryBuilderInterface<E extends EntityObject> {
   doNotPaginate(): this;
   paginate(perPage?: number): this;
   orderBy(attribute: keyof E, direction?: SortingDirection | string): this;
+  orderByAll(attributes: SimpleMapType<SortingDirection>): this;
   get(page?: number): Promise<ResultSetInterface<E>>;
   first(): Promise<E | undefined>;
 }
@@ -86,7 +88,7 @@ export interface ResultSetObserver<R> {
 
   refreshed?(o: R): void;
 
-  changingPage?(o: R): void;
+  changingPage?(o: R, newPage: number): void;
 
   changedPage?(o: R): void;
 }

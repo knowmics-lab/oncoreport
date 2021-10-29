@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MouseEvent, ReactNode, ReactNodeArray } from 'react';
 import { PropTypes } from '@material-ui/core';
-import type { IdentifiableEntity, Nullable } from '../../../../interfaces';
-import Entity from '../../../../api/entities/entity';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { Nullable } from '../../../../apiConnector/interfaces/common';
 
 export type ActionColumn = 'actions';
 
-export type NormalColumn<D extends IdentifiableEntity, E extends Entity<D>> = {
+export type NormalColumn<E extends EntityObject> = {
   dataField: keyof E;
   sortingField?: keyof E;
   disableSorting?: boolean;
@@ -16,9 +16,9 @@ export type NormalColumn<D extends IdentifiableEntity, E extends Entity<D>> = {
   format?: (value: any, data: E) => ReactNode;
 };
 
-export type TableColumn<D extends IdentifiableEntity, E extends Entity<D>> =
+export type TableColumn<E extends EntityObject> =
   | ActionColumn
-  | NormalColumn<D, E>;
+  | NormalColumn<E>;
 
 export type TableState = {
   currentPage: Nullable<number>;
@@ -27,15 +27,12 @@ export type TableState = {
   isLoading: boolean;
 };
 
-export type RowActionFunction<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
-> = (data: E, size: 'small' | 'medium') => ReactNodeArray | ReactNode;
+export type RowActionFunction<E extends EntityObject> = (
+  data: E,
+  size: 'small' | 'medium'
+) => ReactNodeArray | ReactNode;
 
-export type RowActionObject<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
-> = {
+export type RowActionObject<E extends EntityObject> = {
   shown: boolean | ((data: E) => boolean);
   icon: string | (() => ReactNode);
   size?: 'small' | 'medium';
@@ -45,9 +42,9 @@ export type RowActionObject<
   tooltip?: string;
 };
 
-export type RowActionType<D extends IdentifiableEntity, E extends Entity<D>> =
-  | RowActionObject<D, E>
-  | RowActionFunction<D, E>;
+export type RowActionType<E extends EntityObject> =
+  | RowActionObject<E>
+  | RowActionFunction<E>;
 
 export enum Alignment {
   left = 'left',

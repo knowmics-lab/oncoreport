@@ -111,7 +111,7 @@ export default function Patients() {
       <RepositoryTable<JobObject, JobEntity, JobRepository>
         repositoryToken={JobRepository}
         title="Jobs"
-        onPageChange={(page) => setCurrentPage(page)}
+        onPageChanged={(page) => setCurrentPage(page)}
         toolbar={[
           {
             align: Alignment.right,

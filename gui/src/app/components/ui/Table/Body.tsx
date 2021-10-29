@@ -5,14 +5,13 @@ import TableCell from '@material-ui/core/TableCell';
 import Checkbox from '@material-ui/core/Checkbox';
 import type { RowActionType, TableColumn } from './types';
 import RowActions from './RowActions';
-import { Collection, IdentifiableEntity } from '../../../../interfaces';
-import Entity from '../../../../api/entities/entity';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 
-function Cell<D extends IdentifiableEntity, E extends Entity<D>>(
-  column: TableColumn<D, E>,
+function Cell<E extends EntityObject>(
+  column: TableColumn<E>,
   row: E,
   keyBase: string,
-  actions: RowActionType<D, E>[],
+  actions: RowActionType<E>[],
   size: 'small' | 'medium'
 ) {
   if (column !== 'actions') {
@@ -30,20 +29,17 @@ function Cell<D extends IdentifiableEntity, E extends Entity<D>>(
   );
 }
 
-type Props<D extends IdentifiableEntity, E extends Entity<D>> = {
-  data: Collection<E>;
-  columns: TableColumn<D, E>[];
-  actions: RowActionType<D, E>[];
+type Props<E extends EntityObject> = {
+  data: E[];
+  columns: TableColumn<E>[];
+  actions: RowActionType<E>[];
   size: 'small' | 'medium';
   hasCheckbox?: boolean;
-  selectedItems?: D['id'][];
-  handleSelect?: (id: D['id']) => void;
+  selectedItems?: E['id'][];
+  handleSelect?: (id: E['id']) => void;
 };
 
-export default function Body<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
->({
+export default function Body<E extends EntityObject>({
   data,
   columns,
   actions,
@@ -51,14 +47,13 @@ export default function Body<
   hasCheckbox,
   selectedItems,
   handleSelect,
-}: Props<D, E>) {
-  const isSelected = (id: D['id']) =>
+}: Props<E>) {
+  const isSelected = (id: E['id']) =>
     hasCheckbox && selectedItems ? selectedItems.includes(id) : false;
-  const { data: dataArray } = data;
   return (
     <TableBody>
-      {dataArray.length > 0 &&
-        dataArray.map((row) => {
+      {data.length > 0 &&
+        data.map((row) => {
           const { id } = row;
           return (
             <TableRow

@@ -2,17 +2,39 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/adapter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/adapter.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/common.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/usePrevious.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositorySearch.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/disease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/disease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/job.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/disease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/disease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/drug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/drug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/job.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/location.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/location.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/suspensionReason.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/suspensionReason.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/httpClient/adapter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/httpClient/adapter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/queryBuilder.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/queryBuilder.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/repository.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FormikSelect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FormikSelect.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/LoadingBody.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/LoadingBody.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowAction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowActions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useRawRepositoryFetch.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryFetch.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -332,6 +354,7 @@
       <workItem from="1635191071554" duration="1224000" />
       <workItem from="1635269074927" duration="1209000" />
       <workItem from="1635318127707" duration="22000" />
+      <workItem from="1635520751739" duration="1436000" />
     </task>
     <servers />
   </component>

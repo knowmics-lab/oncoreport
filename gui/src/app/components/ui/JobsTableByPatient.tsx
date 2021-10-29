@@ -73,15 +73,15 @@ export default function JobsTableByPatient({
       toolbar={toolbar}
       actions={actions}
       sortable={sortable}
-      onPageChange={onPageChange}
+      onPageChanged={onPageChange}
       fetching={fetching}
       data={data}
-      requestPage={(page) => fetchPage(page)}
-      changeRowsPerPage={(nRows) => {
+      onPageRequest={(page) => fetchPage(page)}
+      onChangeRowsPerPage={(nRows) => {
         repository.itemsPerPage = nRows;
         fetchPage();
       }}
-      changeSorting={(sorting) => {
+      onChangeSorting={(sorting) => {
         repository.sorting = sorting;
         fetchPage(data?.meta.current_page || 1);
       }}

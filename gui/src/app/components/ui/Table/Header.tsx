@@ -8,9 +8,10 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TableCell from '@material-ui/core/TableCell';
 import Checkbox from '@material-ui/core/Checkbox';
 import type { NormalColumn, TableColumn } from './types';
-import { IdentifiableEntity, SortingSpec } from '../../../../interfaces';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
+import { SortingDirection } from '../../../../apiConnector';
 import { Utils } from '../../../../api';
-import Entity from '../../../../api/entities/entity';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -20,8 +21,10 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type Props<D extends IdentifiableEntity, E extends Entity<D>> = {
-  columns: TableColumn<D, E>[];
+type SortingSpec = SimpleMapType<SortingDirection>;
+
+type Props<E extends EntityObject> = {
+  columns: TableColumn<E>[];
   sorting: SortingSpec;
   sortable: boolean;
   changeSorting: (s: SortingSpec) => void;
@@ -32,10 +35,7 @@ type Props<D extends IdentifiableEntity, E extends Entity<D>> = {
   handleSelect?: () => void;
 };
 
-export default function Header<
-  D extends IdentifiableEntity,
-  E extends Entity<D>
->({
+export default function Header<E extends EntityObject>({
   columns,
   sorting,
   sortable,
@@ -45,9 +45,9 @@ export default function Header<
   selectedAny,
   selectedAll,
   handleSelect,
-}: Props<D, E>) {
+}: Props<E>) {
   const classes = useStyles();
-  const sf = (column: NormalColumn<D, E>): keyof E =>
+  const sf = (column: NormalColumn<E>): keyof E =>
     column.sortingField || column.dataField;
   const makeChangeHandler =
     (column: keyof E) =>

@@ -26,7 +26,7 @@ export const FormikSelect = ({
     return false;
   },
   onChangeCallback,
-}) => {
+}: FormikSelectProps) => {
   const onChange = (_e: unknown, option: Option | Option[] | null) => {
     // (e, value) => {form.setFieldValue(field.name, value.value)}
     form.setFieldValue(
