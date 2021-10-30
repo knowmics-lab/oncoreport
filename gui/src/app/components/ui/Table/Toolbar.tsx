@@ -1,9 +1,11 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import MaterialToolbar from '@material-ui/core/Toolbar';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import type { TableState, ToolbarActionType } from './types';
 import { Alignment } from './types';
 import ToolbarAction from './ToolbarAction';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -41,20 +43,29 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type Props = {
-  actions: ToolbarActionType[];
+type Props<E extends EntityObject> = {
+  actions: ToolbarActionType<E>[];
   state: TableState;
+  data: E[] | undefined;
 };
 
-export default function Toolbar({ actions, state }: Props) {
+export default function Toolbar<E extends EntityObject>({
+  actions,
+  state,
+  data,
+}: Props<E>) {
   const classes = useStyles();
   if (!actions || actions.length === 0) return null;
   const renderActions = (d: Alignment) =>
     actions
       .filter((a) => a.align === d)
       .map((a, i) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <ToolbarAction action={a} state={state} key={`toolbar-${d}-${i}`} />
+        <ToolbarAction
+          action={a}
+          state={state}
+          data={data}
+          key={`toolbar-${d}-${i}`}
+        />
       ));
   return (
     <MaterialToolbar className={classes.root}>

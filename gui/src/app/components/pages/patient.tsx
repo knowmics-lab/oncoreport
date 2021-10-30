@@ -1,121 +1,21 @@
-/* eslint-disable */
-import React, { useCallback, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
-import {
-  Box,
-  Grid,
-  Icon,
-  Paper,
-  Typography,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  useTheme,
-} from '@material-ui/core';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Paper, Typography, useTheme } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
-import { generatePath } from 'react-router';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Field, Form, Formik } from 'formik';
-import {
-  PatientEntity,
-  PatientRepository,
-  ReasonRepository,
-  ResourceEntity,
-} from '../../../api';
-import { useService } from '../../../reactInjector';
-import Routes from '../../../constants/routes.json';
-import TumorList from './tumorList';
-import Button, { SubmitButton } from '../ui/Button';
+import { PatientRepository } from '../../../api';
 import { JobsByPatientPage } from '.';
-import { FormikSelect } from '../ui/Form/FormikSelect';
-import TextField from '../ui/Form/TextField';
-import Connector from '../../../api/adapters/connector';
 import LoadingSection from '../ui/LoadingSection';
-import useRepositoryFetch from '../../hooks/useRepositoryFetch';
 import useRepositoryFetchOne from '../../hooks/useRepositoryFetchOne';
+import useStyles from './patientPage/useStyles';
+import PatientDataPanel from './patientPage/PatientDataPanel';
+import DiseasesPanel from './patientPage/DiseasesPanel';
+import DrugsPanel from './patientPage/DrugsPanel';
+import TabPanel from './patientPage/TabPanel';
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    paper: {
-      padding: 0,
-      borderRadius: 10,
-    },
-    appbar: {
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    buttonWrapper: {
-      margin: theme.spacing(1),
-      position: 'relative',
-    },
-    buttonProgress: {
-      color: green[500],
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -12,
-      marginLeft: -12,
-    },
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: '#fff',
-    },
-    topSeparation: {
-      marginTop: theme.spacing(2),
-    },
-    bottomSeparation: {
-      marginBottom: theme.spacing(2),
-    },
-    stickyStyle: {
-      backgroundColor: theme.palette.background.default,
-    },
-  })
-);
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel({ children, value, index, ...other }: TabPanelProps) {
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  );
-}
-
-TabPanel.defaultProps = {
-  children: undefined,
-};
-
+/*
 type DrugData = undefined | { drug: any; index: number };
 interface ReasonDialogProps {
   onSubmit: (
@@ -130,7 +30,6 @@ interface ReasonDialogProps {
   setDrugData: (data: DrugData) => void;
   availableReasons: ResourceEntity[];
 }
-
 function ReasonDialog({
   onSubmit,
   patient,
@@ -200,100 +99,6 @@ function ReasonDialog({
     </Dialog>
   );
 }
-
-// eslint-disable-next-line react/no-unused-prop-types
-const GoBackRow = (props: { id: number }) => {
-  const classes = useStyles();
-  const history = useHistory();
-  const backUrl = useMemo(() => generatePath(Routes.PATIENTS), []);
-  return (
-    <Grid
-      container
-      justifyContent="space-between"
-      className={classes.topSeparation}
-    >
-      <Grid item xs="auto">
-        <Button variant="contained" color="default" href={backUrl}>
-          <Icon className="fas fa-arrow-left" /> Go Back
-        </Button>
-      </Grid>
-      <Grid item xs="auto">
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            history.push(generatePath(Routes.PATIENTS_EDIT, props));
-          }}
-        >
-          Edit
-        </Button>
-      </Grid>
-    </Grid>
-  );
-};
-
-interface PatientPanelsProps {
-  currentTab: number;
-  patient: PatientEntity;
-}
-
-const PatientDataPanel = ({ currentTab, patient }: PatientPanelsProps) => {
-  return (
-    <TabPanel value={currentTab} index={0}>
-      <Grid container spacing={2}>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Code: {patient.code}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Name: {patient.first_name}
-          </Typography>
-        </Grid>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Surname: {patient.last_name}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Age: {patient.age}
-          </Typography>
-        </Grid>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Gender: {patient.gender}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Email: {patient.email}
-          </Typography>
-        </Grid>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Fiscal Number: {patient.fiscalNumber}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item sm>
-          <Typography variant="overline" display="block" gutterBottom>
-            Current disease: {patient.disease.name}
-          </Typography>
-        </Grid>
-      </Grid>
-      <GoBackRow id={patient.id ?? 0} />
-    </TabPanel>
-  );
-};
 
 const PreviousDiseasesPanel = ({ currentTab, patient }: PatientPanelsProps) => {
   const [expanded, setExpanded] = React.useState<number>(-1);
@@ -451,19 +256,19 @@ const DrugsPanel = ({
     </TabPanel>
   );
 };
+*/
 
 export default function Patient() {
   const classes = useStyles();
   const theme = useTheme();
   const { id } = useParams<{ id: string }>();
   const [currentTab, setCurrentTab] = useState<number>(0);
-
-  const [loadingPatient, patient, refresh] = useRepositoryFetchOne(
+  const [loadingPatient, patient] = useRepositoryFetchOne(
     PatientRepository,
     +id
   );
-  const [loadingReasons, reasons] = useRepositoryFetch(ReasonRepository);
-  const loading = loadingPatient || loadingReasons;
+  // noinspection UnnecessaryLocalVariableJS
+  const loading = loadingPatient; // TODO
 
   function a11yProps(index: number) {
     return {
@@ -498,8 +303,7 @@ export default function Patient() {
                 indicatorColor="primary"
               >
                 <Tab label="Personal data" {...a11yProps(0)} />
-                <Tab label="Previous diseases" {...a11yProps(1)} />
-                <Tab label="Previous tumors" {...a11yProps(2)} />
+                <Tab label="Diseases" {...a11yProps(1)} />
                 <Tab label="Drugs" {...a11yProps(3)} />
                 <Tab label="Analysis" {...a11yProps(4)} />
               </Tabs>
@@ -510,24 +314,18 @@ export default function Patient() {
               onChangeIndex={(idx: number) => setCurrentTab(idx)}
               style={{ padding: 10 }}
             >
-              <PatientDataPanel currentTab={currentTab} patient={patient} />
-              <PreviousDiseasesPanel
+              <PatientDataPanel
                 currentTab={currentTab}
                 patient={patient}
+                index={0}
               />
-              <PreviousTumorPanel
-                availableReasons={reasons}
-                refreshPatient={refresh}
+              <DiseasesPanel
                 currentTab={currentTab}
                 patient={patient}
+                index={1}
               />
-              <DrugsPanel
-                currentTab={currentTab}
-                patient={patient}
-                availableReasons={reasons}
-                refreshPatient={refresh}
-              />
-              <TabPanel value={currentTab} index={4}>
+              <DrugsPanel currentTab={currentTab} patient={patient} index={2} />
+              <TabPanel value={currentTab} index={3}>
                 <JobsByPatientPage />
               </TabPanel>
             </SwipeableViews>

@@ -30,7 +30,7 @@ class PatientDiseaseResource extends JsonResource
             'N'               => $this->N,
             'M'               => $this->M,
             'start_date'      => $this->start_date->toDateString(),
-            'end_date'        => is_null($this->end_date) ?: $this->end_date->toDateString(),
+            'end_date'        => is_null($this->end_date) ? null : $this->end_date->toDateString(),
             'created_at'      => $this->created_at,
             'created_at_diff' => $this->created_at->diffForHumans(),
             'updated_at'      => $this->updated_at,

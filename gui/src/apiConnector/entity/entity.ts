@@ -128,7 +128,7 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
         if (!options.readonly && !options.relation) {
           const nextState = produce(this.data, (draft: Draft<any>) => {
             draft[key] = value;
-            if (options.date && !dayjs.isDayjs(draft[key])) {
+            if (options.date && draft[key] && !dayjs.isDayjs(draft[key])) {
               draft[key] = dayjs(draft[key]);
             }
           });
@@ -527,7 +527,7 @@ export default abstract class Entity {
             val = this.resolveRelationship(r, val, this.data[f] ?? undefined);
           }
         } else if (dates.includes(f)) {
-          val = dayjs(val);
+          val = val ? dayjs(val) : undefined;
         }
         this.data = {
           ...this.data,

@@ -20,7 +20,7 @@ import SwitchField from '../ui/Form/SwitchField';
 import { useContainer, useService } from '../../../reactInjector';
 import { Settings as SettingsManager, ValidateConfig } from '../../../api';
 import { ConfigObjectType, TypeOfNotification } from '../../../interfaces';
-import { useNotifications } from '../ui/hooks';
+import useNotifications from '../../hooks/useNotifications';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

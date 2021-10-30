@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+// noinspection SuspiciousTypeOfGuard
+
+import React from 'react';
 import { generatePath } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import RepositoryTable from '../ui/RepositoryTable';
-import { DiseaseEntity, PatientEntity, PatientRepository } from '../../../api';
-import { Gender, PatientObject, TypeOfNotification } from '../../../interfaces';
+import { PatientDiseaseEntity, PatientRepository } from '../../../api';
+import { Gender, TypeOfNotification } from '../../../interfaces';
 import { Alignment } from '../ui/Table/types';
 import { runAsync } from '../utils';
-import { useService } from '../../../reactInjector';
 import Routes from '../../../constants/routes.json';
+import { ResultSet } from '../../../apiConnector';
 
 export default function Patients() {
-  const repository = useService(PatientRepository);
-  const [currentPage, setCurrentPage] = useState(1);
   const history = useHistory();
   return (
-    <RepositoryTable<PatientObject, PatientEntity, PatientRepository>
+    <RepositoryTable
+      repositoryToken={PatientRepository}
       title="Patients"
-      onPageChanged={(page) => setCurrentPage(page)}
       columns={[
         {
           dataField: 'first_name',
@@ -32,10 +32,10 @@ export default function Patients() {
           format: (v: Gender) => (v === Gender.m ? 'Male' : 'Female'),
         },
         {
-          dataField: 'disease',
+          dataField: 'primary_disease',
           label: 'Disease',
           disableSorting: true,
-          format: (v: DiseaseEntity) => v.name,
+          format: (v: PatientDiseaseEntity) => v.disease?.name,
         },
         'actions',
       ]}
@@ -91,7 +91,6 @@ export default function Patients() {
                 'Patient deleted!',
                 TypeOfNotification.success
               );
-              await repository.refreshPage(currentPage);
             });
           },
         },
@@ -112,17 +111,15 @@ export default function Patients() {
           icon: 'fas fa-redo',
           disabled: (s) => s.isLoading,
           tooltip: 'Refresh',
-          onClick: (_e, s) => {
-            if (s.currentPage) {
-              const page = s.currentPage;
-              runAsync(async () => {
-                await repository.refreshPage(page);
-              });
-            }
+          onClick: (_e, _s, data) => {
+            runAsync(async () => {
+              if (data && data instanceof ResultSet) {
+                await data.refresh();
+              }
+            });
           },
         },
       ]}
-      repositoryToken={PatientRepository}
     />
   );
 }

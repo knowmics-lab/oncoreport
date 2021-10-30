@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { InjectionToken } from 'tsyringe';
 import type {
   RowActionType,
@@ -17,18 +17,24 @@ import useRepositoryQuery, {
 } from '../../hooks/useRepositoryQuery';
 import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 
-export type TableProps<E extends EntityObject> = {
+export interface TableProps<E extends EntityObject> {
   title?: string | React.ReactNode | React.ReactNodeArray;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
-  toolbar?: ToolbarActionType[];
+  toolbar?: ToolbarActionType<E>[];
   actions?: RowActionType<E>[];
   sortable?: boolean;
   repositoryToken: InjectionToken<Repository<E>>;
   queryBuilderCallback?: QueryBuilderCallback<E>;
   parameters?: SimpleMapType;
   onPageChanged?: (page: number) => void;
-};
+  hasCheckbox?: boolean;
+  selectedItems?: E['id'][];
+  handleSelect?: (id: E['id']) => void;
+  handleSelectAll?: () => void;
+  collapsible?: boolean;
+  collapsibleContent?: (row: E) => React.ReactNode;
+}
 
 type SortingSpec = SimpleMapType<SortingDirection>;
 
@@ -43,20 +49,25 @@ export default function RepositoryTable<E extends EntityObject>({
   queryBuilderCallback,
   parameters,
   onPageChanged,
+  hasCheckbox,
+  selectedItems,
+  handleSelect,
+  handleSelectAll,
+  collapsible,
+  collapsibleContent,
 }: TableProps<E>) {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [sorting, setSorting] = useState<SortingSpec>({});
 
-  const callbackMemoized = useCallback(
-    (builder: QueryBuilderInterface<E>) => {
+  const callbackMemoized = useMemo(() => {
+    return (builder: QueryBuilderInterface<E>) => {
       let finalBuilder = builder;
       if (queryBuilderCallback) finalBuilder = queryBuilderCallback(builder);
       return finalBuilder.orderByAll(sorting).paginate(rowsPerPage);
-    },
-    [queryBuilderCallback, rowsPerPage, sorting]
-  );
+    };
+  }, [queryBuilderCallback, rowsPerPage, sorting]);
 
-  const [loading, data] = useRepositoryQuery(
+  const [loading, data, refresh] = useRepositoryQuery(
     repositoryToken,
     callbackMemoized,
     parameters
@@ -78,8 +89,17 @@ export default function RepositoryTable<E extends EntityObject>({
       totalRows={data?.total}
       data={data}
       onPageRequest={(page) => runAsync(async () => data?.goToPage(page))}
-      onChangeRowsPerPage={setRowsPerPage}
+      onChangeRowsPerPage={(nRows) => {
+        setRowsPerPage(nRows);
+        refresh();
+      }}
       onChangeSorting={setSorting}
+      hasCheckbox={hasCheckbox}
+      selectedItems={selectedItems}
+      handleSelect={handleSelect}
+      handleSelectAll={handleSelectAll}
+      collapsible={collapsible}
+      collapsibleContent={collapsibleContent}
     />
   );
 }

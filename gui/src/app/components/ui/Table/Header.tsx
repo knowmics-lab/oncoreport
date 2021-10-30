@@ -33,6 +33,7 @@ type Props<E extends EntityObject> = {
   selectedAny?: boolean;
   selectedAll?: boolean;
   handleSelect?: () => void;
+  collapsible?: boolean;
 };
 
 export default function Header<E extends EntityObject>({
@@ -45,6 +46,7 @@ export default function Header<E extends EntityObject>({
   selectedAny,
   selectedAll,
   handleSelect,
+  collapsible,
 }: Props<E>) {
   const classes = useStyles();
   const sf = (column: NormalColumn<E>): keyof E =>
@@ -65,6 +67,7 @@ export default function Header<E extends EntityObject>({
   return (
     <TableHead>
       <TableRow>
+        {collapsible && <TableCell />}
         {hasCheckbox && (
           <TableCell padding="checkbox">
             {!single && (
@@ -79,7 +82,7 @@ export default function Header<E extends EntityObject>({
         {columns.map((column) =>
           column !== 'actions' ? (
             <TableCell
-              key={column.dataField as string}
+              key={column.key ?? column.dataField.toString()}
               align={column.align}
               style={{ minWidth: column.minWidth }}
               className={classes.stickyStyle}
@@ -117,4 +120,5 @@ Header.defaultProps = {
   selectedAll: false,
   handleSelect: undefined,
   single: true,
+  collapsible: false,
 };

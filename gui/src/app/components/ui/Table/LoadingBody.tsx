@@ -8,13 +8,16 @@ import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 type Props<E extends EntityObject> = {
   columns: TableColumn<E>[];
   hasCheckbox?: boolean;
+  collapsible?: boolean;
 };
 
 export default function Body<E extends EntityObject>({
   columns,
   hasCheckbox,
+  collapsible,
 }: Props<E>) {
-  const numOfColumns = columns.length + (hasCheckbox ? 1 : 0);
+  const numOfColumns =
+    columns.length + (hasCheckbox ? 1 : 0) + (collapsible ? 1 : 0);
   return (
     <TableBody>
       <TableRow>
@@ -28,4 +31,5 @@ export default function Body<E extends EntityObject>({
 
 Body.defaultProps = {
   hasCheckbox: false,
+  collapsible: false,
 };

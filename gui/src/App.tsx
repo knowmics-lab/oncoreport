@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   createStyles,
   ImageList,
@@ -6,15 +6,15 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
+import { Route, HashRouter as Router, Switch } from 'react-router-dom';
 import injector from './injector';
 import InjectorContext from './reactInjector/context';
 import Constants from './constants/system.json';
+import Routes from './constants/routes.json';
 import UNICT_LOGO from './resources/unict.png';
 import ThemeContext from './app/themeContext';
-import { DiseaseRepository } from './api';
-import useDebugInformation from './app/hooks/useDebug';
-import useRepositorySearch from './app/hooks/useRepositorySearch';
-import useDebounce from './app/hooks/useDebounce';
+import * as Pages from './app/components/pages';
+import Layout from './app/layout';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -69,107 +69,48 @@ const Home = () => {
   );
 };
 
-function Test() {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState<string>();
-  useDebounce(
-    () => {
-      if (query.length > 3) {
-        setDebouncedQuery(query);
-      } else {
-        setDebouncedQuery(undefined);
-      }
-    },
-    500,
-    [query]
-  );
-  const [loading, resultSet] = useRepositorySearch(
-    DiseaseRepository,
-    debouncedQuery,
-    { tumor: true }
-  );
-
-  useEffect(() => {
-    if (resultSet) {
-      console.log(resultSet?.map((e) => e.toDataObject()));
-    }
-  }, [resultSet]);
-  useDebugInformation('Test', { loading, resultSet, debouncedQuery, query });
-  return (
-    <>
-      <h1>Test!!</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter test query"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-      <div>
-        <b>Loading: </b>
-        <code>{loading ? 'Yes' : 'No'}</code>
-      </div>
-      {resultSet && (
-        <>
-          <div>
-            <b>Size: </b>
-            <code>{resultSet.length}</code>
-          </div>
-          <div>
-            <button onClick={() => resultSet?.refresh()} type="button">
-              Refresh
-            </button>
-          </div>
-        </>
-      )}
-    </>
-  );
-}
-
 export default function App() {
   return (
     <InjectorContext.Provider value={injector}>
-      <Test />
-      {/* <Router> */}
-      {/*  <Layout> */}
-      {/*    <Switch> */}
-      {/*      <Route path={Routes.JOBS} component={Pages.JobsPage} /> */}
-      {/*      <Route */}
-      {/*        path={Routes.NEW_ANALYSIS} */}
-      {/*        component={Pages.Forms.NewAnalysisForm} */}
-      {/*      /> */}
-      {/*      <Route */}
-      {/*        path={Routes.JOBS_BY_PATIENT} */}
-      {/*        component={Pages.JobsByPatientPage} */}
-      {/*      /> */}
-      {/*      <Route */}
-      {/*        path={Routes.PATIENTS_CREATE} */}
-      {/*        component={Pages.Forms.PatientForm} */}
-      {/*      /> */}
-      {/*      <Route */}
-      {/*        path={Routes.PATIENTS_EDIT} */}
-      {/*        component={Pages.Forms.PatientForm} */}
-      {/*      /> */}
-      {/*      /!* <Route *!/ */}
-      {/*      /!*  path={Routes.PATIENTS_TUMORS} *!/ */}
-      {/*      /!*  component={Pages.Forms.TumorForm} *!/ */}
-      {/*      /!* /> *!/ */}
-      {/*      <Route path={Routes.PATIENT} component={Pages.PatientPage} /> */}
-      {/*      <Route */}
-      {/*        path={Routes.PATIENTS} */}
-      {/*        exact */}
-      {/*        component={Pages.PatientsPage} */}
-      {/*      /> */}
-      {/*      <Route */}
-      {/*        path={Routes.SETTINGS} */}
-      {/*        exact */}
-      {/*        component={Pages.SettingsPage} */}
-      {/*      /> */}
-      {/*      <Route path={Routes.HOME} exact component={Home} /> */}
-      {/*    </Switch> */}
-      {/*  </Layout> */}
-      {/* </Router> */}
+      <Router>
+        <Layout>
+          <Switch>
+            <Route path={Routes.JOBS} component={Pages.JobsPage} />
+            {/* <Route */}
+            {/*  path={Routes.NEW_ANALYSIS} */}
+            {/*  component={Pages.Forms.NewAnalysisForm} */}
+            {/* /> */}
+            <Route
+              path={Routes.JOBS_BY_PATIENT}
+              component={Pages.JobsByPatientPage}
+            />
+            {/* <Route */}
+            {/*  path={Routes.PATIENTS_CREATE} */}
+            {/*  component={Pages.Forms.PatientForm} */}
+            {/* /> */}
+            {/* <Route */}
+            {/*  path={Routes.PATIENTS_EDIT} */}
+            {/*  component={Pages.Forms.PatientForm} */}
+            {/* /> */}
+            {/* <Route */}
+            {/*  path={Routes.PATIENTS_TUMORS} */}
+            {/*  component={Pages.Forms.TumorForm} */}
+            {/* /> */}
+            <Route path={Routes.PATIENT} component={Pages.PatientPage} />
+            <Route
+              path={Routes.PATIENTS}
+              exact
+              component={Pages.PatientsPage}
+            />
+            <Route
+              path={Routes.SETTINGS}
+              exact
+              component={Pages.SettingsPage}
+            />
+            <Route path={Routes.HOME} exact component={Home} />
+          </Switch>
+        </Layout>
+      </Router>
     </InjectorContext.Provider>
   );
 }

@@ -28,7 +28,7 @@ class PatientDrugResource extends JsonResource
             'drug'               => new DrugResource($this->whenLoaded('drug')),
             'suspension_reasons' => SuspensionReasonResource::collection($this->whenLoaded('suspensionReasons')),
             'start_date'         => $this->start_date->toDateString(),
-            'end_date'           => is_null($this->end_date) ?: $this->end_date->toDateString(),
+            'end_date'           => is_null($this->end_date) ? null : $this->end_date->toDateString(),
             'comment'            => $this->comment,
             'created_at'         => $this->created_at,
             'created_at_diff'    => $this->created_at->diffForHumans(),

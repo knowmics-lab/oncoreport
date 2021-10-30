@@ -1,10 +1,11 @@
+// noinspection SuspiciousTypeOfGuard
+
 import React, { useMemo, useState } from 'react';
 import { JobEntity, JobRepository, Settings, Utils } from '../../../api';
 import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
 import {
-  JobObject,
   JobStatus,
   OutputTypes,
   TypeOfNotification,
@@ -12,44 +13,48 @@ import {
 import SaveResultsMenu from '../ui/saveResultsMenu';
 import LogsDialog from '../ui/LogsDialog';
 import RepositoryTable from '../ui/RepositoryTable';
+import useArray from '../../hooks/useArray';
+import { ResultSet } from '../../../apiConnector';
 
-export default function Patients() {
-  const jobsRepository = useService(JobRepository);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [submittingJobs, setSubmittingJobs] = useState<number[]>([]);
+export default function Jobs() {
+  const {
+    array: submittingJobs,
+    push: pushJob,
+    remove: removeJob,
+  } = useArray<number>();
   const [selectedJob, setSelectedJob] = useState<JobEntity | undefined>();
   const [logsOpen, setLogsOpen] = useState(false);
   const settings = useService(Settings);
 
-  const actions: RowActionType<JobObject, JobEntity>[] = useMemo(() => {
-    const js = (r: JobEntity) => !!r.id && submittingJobs.includes(r.id);
-    const isReady = (r: JobEntity) => r.status === JobStatus.ready;
-    const isQueued = (r: JobEntity) => r.status === JobStatus.queued;
-    const isCompleted = (r: JobEntity) => r.status === JobStatus.completed;
-    const isReport = (r: JobEntity) =>
-      r.output?.type === OutputTypes.tumorNormal ||
-      r.output?.type === OutputTypes.tumorOnly;
+  const actions: RowActionType<JobEntity>[] = useMemo(() => {
+    const js = (j: JobEntity) => !j.isNew && submittingJobs.includes(j.id);
+    const isReady = (j: JobEntity) => j.status === JobStatus.ready;
+    const isQueued = (j: JobEntity) => j.status === JobStatus.queued;
+    const isCompleted = (j: JobEntity) => j.status === JobStatus.completed;
+    const isReport = (j: JobEntity) =>
+      j.output?.type === OutputTypes.tumorNormal ||
+      j.output?.type === OutputTypes.tumorOnly;
     return [
       {
-        shown: (r) => isReady(r) && !js(r),
+        shown: (j) => isReady(j) && !js(j),
         icon: 'fas fa-play',
         color: 'primary',
         tooltip: 'Submit',
         onClick(e, job) {
           e.preventDefault();
-          if (job.id) {
+          if (!job.isNew) {
             const { id } = job;
-            setSubmittingJobs((o) => [...o, id]);
+            pushJob(id);
             runAsync(async () => {
               await job.submit();
-              setSubmittingJobs((o) => [...o.filter((k) => k !== id)]);
+              removeJob(id);
             });
           }
         },
       },
       {
         disabled: true,
-        shown: (r) => isReady(r) && js(r),
+        shown: (j) => isReady(j) && js(j),
         icon: 'fas fa-circle-notch fa-spin',
         color: 'primary',
         tooltip: 'Submitting...',
@@ -58,7 +63,7 @@ export default function Patients() {
         },
       },
       {
-        shown: (r) => !isReady(r) && !isQueued(r),
+        shown: (j) => !isReady(j) && !isQueued(j),
         icon: 'fas fa-file-alt',
         tooltip: 'Logs',
         onClick(e, job) {
@@ -69,7 +74,7 @@ export default function Patients() {
       },
       (job, size) => <SaveResultsMenu job={job} size={size} />,
       {
-        shown: (r) => settings.isLocal() && isCompleted(r) && isReport(r),
+        shown: (j) => settings.isLocal() && isCompleted(j) && isReport(j),
         icon: 'fas fa-folder-open',
         tooltip: 'Open results folder',
         onClick(e, job) {
@@ -80,7 +85,7 @@ export default function Patients() {
         },
       },
       {
-        shown: (r) => isCompleted(r) && isReport(r),
+        shown: (j) => isCompleted(j) && isReport(j),
         icon: 'fas fa-eye',
         tooltip: 'Show report',
         onClick(e, job) {
@@ -99,19 +104,17 @@ export default function Patients() {
           runAsync(async (manager) => {
             await job.delete();
             manager.pushSimple('Job deleted!', TypeOfNotification.success);
-            await jobsRepository.refreshPage(currentPage);
           });
         },
       },
     ];
-  }, [currentPage, jobsRepository, settings, submittingJobs]);
+  }, [pushJob, removeJob, settings, submittingJobs]);
 
   return (
     <>
-      <RepositoryTable<JobObject, JobEntity, JobRepository>
+      <RepositoryTable
         repositoryToken={JobRepository}
         title="Jobs"
-        onPageChanged={(page) => setCurrentPage(page)}
         toolbar={[
           {
             align: Alignment.right,
@@ -119,13 +122,12 @@ export default function Patients() {
             icon: 'fas fa-redo',
             disabled: (s) => s.isLoading,
             tooltip: 'Refresh',
-            onClick: (_e, s) => {
-              if (s.currentPage) {
-                const page = s.currentPage;
-                runAsync(async () => {
-                  await jobsRepository.refreshPage(page);
-                });
-              }
+            onClick: (_e, _s, data) => {
+              runAsync(async () => {
+                if (data && data instanceof ResultSet) {
+                  await data.refresh();
+                }
+              });
             },
           },
         ]}
@@ -159,8 +161,12 @@ export default function Patients() {
         onClose={() => {
           runAsync(async () => {
             setLogsOpen(false);
-            setSelectedJob(undefined);
-            await jobsRepository.refreshPage(currentPage);
+            runAsync(async () => {
+              if (selectedJob) {
+                await selectedJob.refresh();
+                setSelectedJob(undefined);
+              }
+            });
           });
         }}
       />

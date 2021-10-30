@@ -1,23 +1,12 @@
 import { useState } from 'react';
-import { Notifications as NotificationsManager } from '../../../api';
-import { useService } from '../../../reactInjector';
 import {
   UploadCallbacks,
   UploadHook,
   UploadProgressFunction,
   UploadState,
-} from '../../../interfaces';
+} from '../../interfaces';
 
-export function useNotifications() {
-  const manager = useService(NotificationsManager);
-  return {
-    pushSimple: manager.pushSimple.bind(manager),
-    push: manager.push.bind(manager),
-    manager,
-  };
-}
-
-export function useUpload(): UploadHook {
+export default function useUpload(): UploadHook {
   const [state, setState] = useState<UploadState>({
     isUploading: false,
     uploadFile: '',

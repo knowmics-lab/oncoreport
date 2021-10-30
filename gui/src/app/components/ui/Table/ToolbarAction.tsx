@@ -2,10 +2,12 @@ import React from 'react';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '../IconButton';
 import type { TableState, ToolbarActionType } from './types';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 
-export type Props = {
-  action: ToolbarActionType;
+export type Props<E extends EntityObject> = {
+  action: ToolbarActionType<E>;
   state: TableState;
+  data: E[] | undefined;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -13,17 +15,23 @@ function isF(x: unknown): x is Function {
   return typeof x === 'function';
 }
 
-export default function ToolbarAction({ action, state }: Props) {
+export default function ToolbarAction<E extends EntityObject>({
+  action,
+  state,
+  data,
+}: Props<E>) {
   if (action.custom) {
     if (action.action && isF(action.action)) {
       return <>action.action(state)</>;
     }
     return null;
   }
-  const shown = isF(action.shown) ? action.shown(state) : action.shown;
+  const shown = isF(action.shown) ? action.shown(state, data) : action.shown;
   if (!shown) return null;
   const actionDisabled = action.disabled || false;
-  const disabled = isF(actionDisabled) ? actionDisabled(state) : actionDisabled;
+  const disabled = isF(actionDisabled)
+    ? actionDisabled(state, data)
+    : actionDisabled;
   const icon = isF(action.icon) ? (
     action.icon()
   ) : (
@@ -35,7 +43,7 @@ export default function ToolbarAction({ action, state }: Props) {
       color={color}
       disabled={disabled}
       onClick={(event) =>
-        action.onClick ? action.onClick(event, state) : undefined
+        action.onClick ? action.onClick(event, state, data) : undefined
       }
       title={action.tooltip}
     >

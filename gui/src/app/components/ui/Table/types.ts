@@ -7,6 +7,7 @@ import { Nullable } from '../../../../apiConnector/interfaces/common';
 export type ActionColumn = 'actions';
 
 export type NormalColumn<E extends EntityObject> = {
+  key?: string;
   dataField: keyof E;
   sortingField?: keyof E;
   disableSorting?: boolean;
@@ -52,25 +53,28 @@ export enum Alignment {
   right = 'right',
 }
 
-export type ToolbarActionFunction = (
-  state: TableState
+export type ToolbarActionFunction<E extends EntityObject> = (
+  state: TableState,
+  data?: E[]
 ) => ReactNodeArray | ReactNode;
 
-export type ToolbarActionCustom = {
+export type ToolbarActionCustom<E extends EntityObject> = {
   custom: true;
-  action: ToolbarActionFunction;
+  action: ToolbarActionFunction<E>;
   align: Alignment;
 };
 
-export type ToolbarActionButton = {
+export type ToolbarActionButton<E extends EntityObject> = {
   custom?: false;
   align: Alignment;
-  shown: boolean | ((state: TableState) => boolean);
+  shown: boolean | ((state: TableState, data?: E[]) => boolean);
   icon: string | (() => ReactNode);
-  disabled?: boolean | ((state: TableState) => boolean);
+  disabled?: boolean | ((state: TableState, data?: E[]) => boolean);
   color?: PropTypes.Color;
-  onClick?: (e: MouseEvent, state: TableState) => void;
+  onClick?: (e: MouseEvent, state: TableState, data?: E[]) => void;
   tooltip?: string;
 };
 
-export type ToolbarActionType = ToolbarActionCustom | ToolbarActionButton;
+export type ToolbarActionType<E extends EntityObject> =
+  | ToolbarActionCustom<E>
+  | ToolbarActionButton<E>;

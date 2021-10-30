@@ -38,7 +38,7 @@ export default class PatientDisease extends Entity {
   @field<TumorTypes>({
     fillable: true,
   })
-  age = TumorTypes.primary;
+  type = TumorTypes.primary;
 
   @field<number>({
     fillable: true,

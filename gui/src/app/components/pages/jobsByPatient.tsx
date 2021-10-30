@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+// noinspection SuspiciousTypeOfGuard
+
+import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   Backdrop,
@@ -7,27 +9,21 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import { generatePath } from 'react-router';
-import {
-  JobEntity,
-  JobRepository,
-  PatientEntity,
-  PatientRepository,
-  Settings,
-  Utils,
-} from '../../../api';
+import { JobEntity, Settings, Utils } from '../../../api';
 import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
 import { useService } from '../../../reactInjector';
 import JobsTableByPatient from '../ui/JobsTableByPatient';
 import Routes from '../../../constants/routes.json';
 import {
-  JobObject,
   JobStatus,
   OutputTypes,
   TypeOfNotification,
 } from '../../../interfaces';
 import SaveResultsMenu from '../ui/saveResultsMenu';
 import LogsDialog from '../ui/LogsDialog';
+import useArray from '../../hooks/useArray';
+import { ResultSet } from '../../../apiConnector';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -40,76 +36,64 @@ const useStyles = makeStyles((theme) =>
 
 export default function Patients() {
   const classes = useStyles();
-  const jobsRepository = useService(JobRepository);
-  const patientsRepository = useService(PatientRepository);
-  const patientId: number = +useParams<{ id: string }>().id;
-  const [patient, setPatient] = useState<PatientEntity | undefined>(undefined);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [submittingJobs, setSubmittingJobs] = useState<number[]>([]);
+  const patient: number = +useParams<{ id: string }>().id;
+  const {
+    array: submittingJobs,
+    push: pushJob,
+    remove: removeJob,
+  } = useArray<number>();
   const [selectedJob, setSelectedJob] = useState<JobEntity | undefined>();
   const [logsOpen, setLogsOpen] = useState(false);
   const settings = useService(Settings);
   const history = useHistory();
 
-  useEffect(() => {
-    if (!patient || (patient && patient.id !== patientId)) {
-      runAsync(async () => {
-        setPatient(await patientsRepository.fetch(patientId));
-      });
-    }
-  }, [patient, patientId, patientsRepository]);
-
-  const actions: RowActionType<JobObject, JobEntity>[] = useMemo(() => {
-    const js = (r: JobEntity) => !!r.id && submittingJobs.includes(r.id);
-    const isReady = (r: JobEntity) => r.status === JobStatus.ready;
-    const isQueued = (r: JobEntity) => r.status === JobStatus.queued;
-    const isCompleted = (r: JobEntity) => r.status === JobStatus.completed;
-    const isReport = (r: JobEntity) =>
-      r.output?.type === OutputTypes.tumorNormal ||
-      r.output?.type === OutputTypes.tumorOnly;
+  const actions: RowActionType<JobEntity>[] = useMemo(() => {
+    const js = (j: JobEntity) => !j.isNew && submittingJobs.includes(j.id);
+    const isReady = (j: JobEntity) => j.status === JobStatus.ready;
+    const isQueued = (j: JobEntity) => j.status === JobStatus.queued;
+    const isCompleted = (j: JobEntity) => j.status === JobStatus.completed;
+    const isReport = (j: JobEntity) =>
+      j.output?.type === OutputTypes.tumorNormal ||
+      j.output?.type === OutputTypes.tumorOnly;
     return [
       {
-        shown: (r) => isReady(r) && !js(r),
+        shown: (j) => isReady(j) && !js(j),
         icon: 'fas fa-play',
         color: 'primary',
         tooltip: 'Submit',
         onClick(e, job) {
           e.preventDefault();
-          if (job.id) {
+          if (!job.isNew) {
             const { id } = job;
-            setSubmittingJobs((o) => [...o, id]);
+            pushJob(id);
             runAsync(async () => {
               await job.submit();
-              setSubmittingJobs((o) => [...o.filter((k) => k !== id)]);
+              removeJob(id);
             });
           }
         },
       },
       {
         disabled: true,
-        shown: (r) => isReady(r) && js(r),
+        shown: (j) => isReady(j) && js(j),
         icon: 'fas fa-circle-notch fa-spin',
         color: 'primary',
         tooltip: 'Submitting...',
-        onClick(e) {
-          e.preventDefault();
-        },
+        onClick: (e) => e.preventDefault(),
       },
       {
-        shown: (r) => !isReady(r) && !isQueued(r),
+        shown: (j) => !isReady(j) && !isQueued(j),
         icon: 'fas fa-file-alt',
         tooltip: 'Logs',
         onClick(e, job) {
-          if (patient) {
-            e.preventDefault();
-            setSelectedJob(job);
-            setLogsOpen(true);
-          }
+          e.preventDefault();
+          setSelectedJob(job);
+          setLogsOpen(true);
         },
       },
       (job, size) => <SaveResultsMenu job={job} size={size} />,
       {
-        shown: (r) => settings.isLocal() && isCompleted(r) && isReport(r),
+        shown: (j) => settings.isLocal() && isCompleted(j) && isReport(j),
         icon: 'fas fa-folder-open',
         tooltip: 'Open results folder',
         onClick(e, job) {
@@ -120,7 +104,7 @@ export default function Patients() {
         },
       },
       {
-        shown: (r) => isCompleted(r) && isReport(r),
+        shown: (j) => isCompleted(j) && isReport(j),
         icon: 'fas fa-eye',
         tooltip: 'Show report',
         onClick(e, job) {
@@ -131,23 +115,19 @@ export default function Patients() {
         },
       },
       {
-        shown: (r) => r.status !== JobStatus.processing,
+        shown: (j) => j.status !== JobStatus.processing,
         color: 'secondary',
         icon: 'fas fa-trash',
         tooltip: 'Delete',
         onClick(_e, job) {
-          if (patient) {
-            runAsync(async (manager) => {
-              await job.delete();
-              manager.pushSimple('Job deleted!', TypeOfNotification.success);
-              await jobsRepository.refreshPageByPatient(patient, currentPage);
-              await jobsRepository.refreshAllPages();
-            });
-          }
+          runAsync(async (manager) => {
+            await job.delete();
+            manager.pushSimple('Job deleted!', TypeOfNotification.success);
+          });
         },
       },
     ];
-  }, [currentPage, jobsRepository, patient, settings, submittingJobs]);
+  }, [pushJob, removeJob, settings, submittingJobs]);
 
   return (
     <>
@@ -155,8 +135,7 @@ export default function Patients() {
         <>
           <JobsTableByPatient
             patient={patient}
-            title={`Analysis of ${patient.first_name} ${patient.last_name}`}
-            onPageChange={(page) => setCurrentPage(page)}
+            title="Patient Analysis"
             toolbar={[
               {
                 align: Alignment.left,
@@ -177,7 +156,7 @@ export default function Patients() {
                 onClick: () => {
                   history.push(
                     generatePath(Routes.NEW_ANALYSIS, {
-                      id: patient?.id,
+                      id: patient,
                     })
                   );
                 },
@@ -188,13 +167,12 @@ export default function Patients() {
                 icon: 'fas fa-redo',
                 disabled: (s) => s.isLoading,
                 tooltip: 'Refresh',
-                onClick: (_e, s) => {
-                  if (s.currentPage) {
-                    const page = s.currentPage;
-                    runAsync(async () => {
-                      await jobsRepository.refreshPageByPatient(patient, page);
-                    });
-                  }
+                onClick: (_e, _s, data) => {
+                  runAsync(async () => {
+                    if (data && data instanceof ResultSet) {
+                      await data.refresh();
+                    }
+                  });
                 },
               },
             ]}
@@ -226,11 +204,12 @@ export default function Patients() {
             job={selectedJob}
             open={logsOpen}
             onClose={() => {
+              setLogsOpen(false);
               runAsync(async () => {
-                setLogsOpen(false);
-                setSelectedJob(undefined);
-                await jobsRepository.refreshPageByPatient(patient, currentPage);
-                await jobsRepository.refreshAllPages();
+                if (selectedJob) {
+                  await selectedJob.refresh();
+                  setSelectedJob(undefined);
+                }
               });
             }}
           />

@@ -20,11 +20,11 @@ import { SortingDirection } from '../../../apiConnector';
 
 type SortingSpec = SimpleMapType<SortingDirection>;
 
-export type TableProps<E extends EntityObject> = {
+export interface TableProps<E extends EntityObject> {
   title?: string | React.ReactNode | React.ReactNodeArray;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
-  toolbar?: ToolbarActionType[];
+  toolbar?: ToolbarActionType<E>[];
   actions?: RowActionType<E>[];
   sortable?: boolean;
   onPageChanged?: (page: number) => void;
@@ -37,7 +37,13 @@ export type TableProps<E extends EntityObject> = {
   sorting?: SortingSpec;
   data?: E[];
   fetching?: boolean;
-};
+  hasCheckbox?: boolean;
+  selectedItems?: E['id'][];
+  handleSelect?: (id: E['id']) => void;
+  handleSelectAll?: () => void;
+  collapsible?: boolean;
+  collapsibleContent?: (row: E) => React.ReactNode;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,8 +82,17 @@ export default function RemoteTable<E extends EntityObject>({
   sorting,
   data,
   fetching,
+  hasCheckbox,
+  selectedItems,
+  handleSelect,
+  handleSelectAll,
+  collapsible,
+  collapsibleContent,
 }: TableProps<E>) {
   const classes = useStyles();
+  const single = !!hasCheckbox && !handleSelectAll;
+  const selectedAny = !single && selectedItems && selectedItems.length > 0;
+  const selectedAll = !single && selectedItems?.length === totalRows;
 
   useEffect(() => {
     if (!data && !fetching) onPageRequest(1);
@@ -119,6 +134,7 @@ export default function RemoteTable<E extends EntityObject>({
         <TableToolbar
           actions={finalToolbar}
           state={{ currentPage, rowsPerPage, totalRows, isLoading }}
+          data={data}
         />
         {isLoading && (
           <div className={classes.loading}>
@@ -131,14 +147,31 @@ export default function RemoteTable<E extends EntityObject>({
             sorting={sorting ?? {}}
             sortable={finalSortable}
             changeSorting={onChangeSorting}
+            hasCheckbox={hasCheckbox}
+            single={single}
+            handleSelect={handleSelectAll}
+            selectedAll={selectedAll}
+            selectedAny={selectedAny}
+            collapsible={!!collapsible && !!collapsibleContent}
           />
-          {(isLoading || !data) && <TableBodyLoading columns={columns} />}
+          {(isLoading || !data) && (
+            <TableBodyLoading
+              columns={columns}
+              hasCheckbox={hasCheckbox}
+              collapsible={!!collapsible && !!collapsibleContent}
+            />
+          )}
           {!isLoading && !!data && (
             <TableBody
               data={data}
               columns={columns}
               actions={finalActions}
               size={finalSize}
+              hasCheckbox={hasCheckbox}
+              handleSelect={handleSelect}
+              selectedItems={selectedItems}
+              collapsible={collapsible}
+              collapsibleContent={collapsibleContent}
             />
           )}
         </Table>
@@ -163,4 +196,10 @@ RemoteTable.defaultProps = {
   sortable: true,
   toolbar: [],
   actions: [],
+  hasCheckbox: false,
+  selectedItems: [],
+  handleSelect: undefined,
+  handleSelectAll: undefined,
+  collapsible: false,
+  collapsibleContent: undefined,
 };

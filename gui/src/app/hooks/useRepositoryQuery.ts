@@ -19,7 +19,7 @@ export default function useRepositoryQuery<E extends EntityObject>(
   repositoryToken: InjectionToken<Repository<E>>,
   queryBuilderCallback?: QueryBuilderCallback<E>,
   parameters?: SimpleMapType
-): [boolean, ResultSetInterface<E> | undefined] {
+): [boolean, ResultSetInterface<E> | undefined, () => void] {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ResultSetInterface<E>>();
   const repository = useService(repositoryToken);
@@ -60,5 +60,5 @@ export default function useRepositoryQuery<E extends EntityObject>(
     };
   }, [data]);
 
-  return [loading, loading ? undefined : data];
+  return [loading, loading ? undefined : data, () => setData(undefined)];
 }

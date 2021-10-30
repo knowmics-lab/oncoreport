@@ -14,6 +14,7 @@ import Icon from '@material-ui/core/Icon';
 import { JobEntity } from '../../../api';
 import { JobStatus } from '../../../interfaces';
 import { runAsync } from '../utils';
+import useInterval from '../../hooks/useInterval';
 
 type LogsDialogProps = {
   job?: JobEntity;
@@ -32,26 +33,33 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
   const needsRefresh = job && !loading && job.status === JobStatus.processing;
 
   useEffect(() => {
+    const observer = {
+      refreshed: (entity: JobEntity) => setLog(entity.log ?? ''),
+    };
+    if (isOpen && job) {
+      job.observe(observer);
+    }
+    return () => {
+      if (job) job.removeObserver(observer);
+    };
+  }, [isOpen, job]);
+
+  useEffect(() => {
     if (job) {
       setLoading(true);
       runAsync(async () => {
-        setLog((await job.refresh()).log || '');
+        await job.refresh();
         setLoading(false);
       });
     }
   }, [job]);
 
-  useEffect(() => {
-    let t: ReturnType<typeof setInterval> | undefined;
-    if (job && needsRefresh && isOpen) {
-      t = setInterval(async () => {
-        setLog((await job.refresh()).log || '');
-      }, timeout * 1000);
-    }
-    return () => {
-      if (t) clearInterval(t);
-    };
-  }, [isOpen, job, needsRefresh, timeout]);
+  useInterval(
+    async () => {
+      await job?.refresh();
+    },
+    job && needsRefresh && isOpen ? timeout * 1000 : undefined
+  );
 
   useEffect(() => {
     if (needsRefresh && logRef.current) {

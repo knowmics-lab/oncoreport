@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Collapse, IconButton } from '@material-ui/core';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { makeStyles } from '@material-ui/styles';
 import type { RowActionType, TableColumn } from './types';
 import RowActions from './RowActions';
 import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import useToggle from '../../../hooks/useToggle';
+
+const useRowStyles = makeStyles({
+  root: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
+});
 
 function Cell<E extends EntityObject>(
   column: TableColumn<E>,
@@ -17,7 +30,10 @@ function Cell<E extends EntityObject>(
   if (column !== 'actions') {
     const value = row[column.dataField];
     return (
-      <TableCell key={`${keyBase}-${column.dataField}`} align={column.align}>
+      <TableCell
+        key={`${keyBase}-${column.key ?? column.dataField.toString()}`}
+        align={column.align}
+      >
         {column.format ? column.format(value, row) : value}
       </TableCell>
     );
@@ -29,6 +45,90 @@ function Cell<E extends EntityObject>(
   );
 }
 
+type RowProps<E extends EntityObject> = {
+  row: E;
+  columns: TableColumn<E>[];
+  actions: RowActionType<E>[];
+  size: 'small' | 'medium';
+  hasCheckbox?: boolean;
+  isSelected: (id: E['id']) => boolean;
+  handleSelect?: (id: E['id']) => void;
+  collapsible?: boolean;
+  collapsibleContent?: (row: E) => React.ReactNode;
+};
+
+function Row<E extends EntityObject>({
+  row,
+  columns,
+  actions,
+  size,
+  hasCheckbox,
+  isSelected,
+  handleSelect,
+  collapsible,
+  collapsibleContent,
+}: RowProps<E>) {
+  const classes = useRowStyles();
+  const { id } = row;
+  const isCollapsible = collapsible && !!collapsibleContent;
+  const numColumns =
+    columns.length + (hasCheckbox ? 1 : 0) + (isCollapsible ? 1 : 0);
+  const [open, toggleOpen] = useToggle(false);
+  return (
+    <>
+      <TableRow
+        hover
+        className={classes.root}
+        role="checkbox"
+        tabIndex={-1}
+        selected={isSelected(id)}
+        onClick={() => (handleSelect ? handleSelect(id) : undefined)}
+      >
+        {isCollapsible && (
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleOpen();
+              }}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+        )}
+        {hasCheckbox && (
+          <TableCell padding="checkbox">
+            <Checkbox checked={isSelected(id)} />
+          </TableCell>
+        )}
+        {columns.map((column) => Cell(column, row, `row-${id}`, actions, size))}
+      </TableRow>
+      {isCollapsible && (
+        <TableRow>
+          <TableCell
+            style={{ paddingBottom: 0, paddingTop: 0 }}
+            colSpan={numColumns}
+          >
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              {collapsibleContent(row)}
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+}
+
+Row.defaultProps = {
+  hasCheckbox: false,
+  handleSelect: undefined,
+  collapsible: false,
+  collapsibleContent: undefined,
+};
+
 type Props<E extends EntityObject> = {
   data: E[];
   columns: TableColumn<E>[];
@@ -37,6 +137,8 @@ type Props<E extends EntityObject> = {
   hasCheckbox?: boolean;
   selectedItems?: E['id'][];
   handleSelect?: (id: E['id']) => void;
+  collapsible?: boolean;
+  collapsibleContent?: (row: E) => React.ReactNode;
 };
 
 export default function Body<E extends EntityObject>({
@@ -47,34 +149,31 @@ export default function Body<E extends EntityObject>({
   hasCheckbox,
   selectedItems,
   handleSelect,
+  collapsible,
+  collapsibleContent,
 }: Props<E>) {
-  const isSelected = (id: E['id']) =>
-    hasCheckbox && selectedItems ? selectedItems.includes(id) : false;
+  const isSelected = useCallback(
+    (id: E['id']) =>
+      hasCheckbox && selectedItems ? selectedItems.includes(id) : false,
+    [hasCheckbox, selectedItems]
+  );
   return (
     <TableBody>
       {data.length > 0 &&
-        data.map((row) => {
-          const { id } = row;
-          return (
-            <TableRow
-              hover
-              role="checkbox"
-              tabIndex={-1}
-              key={`row-${id}`}
-              selected={isSelected(id)}
-              onClick={() => (handleSelect ? handleSelect(id) : undefined)}
-            >
-              {hasCheckbox && (
-                <TableCell padding="checkbox">
-                  <Checkbox checked={isSelected(id)} />
-                </TableCell>
-              )}
-              {columns.map((column) =>
-                Cell(column, row, `row-${id}`, actions, size)
-              )}
-            </TableRow>
-          );
-        })}
+        data.map((row) => (
+          <Row
+            key={`row-${row.id}`}
+            isSelected={isSelected}
+            actions={actions}
+            row={row}
+            size={size}
+            columns={columns}
+            hasCheckbox={hasCheckbox}
+            handleSelect={handleSelect}
+            collapsible={collapsible}
+            collapsibleContent={collapsibleContent}
+          />
+        ))}
     </TableBody>
   );
 }
@@ -83,4 +182,6 @@ Body.defaultProps = {
   hasCheckbox: false,
   selectedItems: [],
   handleSelect: undefined,
+  collapsible: false,
+  collapsibleContent: undefined,
 };

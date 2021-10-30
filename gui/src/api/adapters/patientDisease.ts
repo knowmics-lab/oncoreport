@@ -9,6 +9,6 @@ export default class PatientDisease extends Adapter<PatientDiseaseEntity> {
   }
 
   get endpoint(): string {
-    return 'patients/%(patient_id)/diseases';
+    return 'patients/%(patient_id)d/diseases';
   }
 }
