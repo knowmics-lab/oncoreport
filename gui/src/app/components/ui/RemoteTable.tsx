@@ -18,10 +18,25 @@ import { EntityObject } from '../../../apiConnector/interfaces/entity';
 import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 import { SortingDirection } from '../../../apiConnector';
 
+type ContainerProps = React.PropsWithChildren<{
+  wrapped: boolean;
+}>;
+
+function WrappedTableContainer({ children, wrapped }: ContainerProps) {
+  const classes = useStyles();
+  if (!wrapped) return <>{children}</>;
+  return (
+    <Paper elevation={1} className={classes.root}>
+      {children}
+    </Paper>
+  );
+}
+
 type SortingSpec = SimpleMapType<SortingDirection>;
 
 export interface TableProps<E extends EntityObject> {
   title?: string | React.ReactNode | React.ReactNodeArray;
+  doNotWrap?: boolean;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
   toolbar?: ToolbarActionType<E>[];
@@ -67,6 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function RemoteTable<E extends EntityObject>({
   title,
+  doNotWrap,
   size,
   columns,
   toolbar,
@@ -121,7 +137,7 @@ export default function RemoteTable<E extends EntityObject>({
   const isLoading = fetching || !data;
 
   return (
-    <Paper elevation={1} className={classes.root}>
+    <WrappedTableContainer wrapped={!doNotWrap}>
       {!!title &&
         (typeof title === 'string' ? (
           <Typography variant="h5" component="h3">
@@ -185,7 +201,7 @@ export default function RemoteTable<E extends EntityObject>({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </WrappedTableContainer>
   );
 }
 

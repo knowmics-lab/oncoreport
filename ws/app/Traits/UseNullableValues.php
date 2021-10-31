@@ -45,12 +45,12 @@ trait UseNullableValues
             $oldDataField = $field;
         }
         $fieldWithId = $field . '_id';
-        if ($update && !isset($newData[$field]) && (
-                !$mayHaveId || !isset($newData[$fieldWithId])
+        if ($update && !array_key_exists($field, $newData) && (
+                !$mayHaveId || !array_key_exists($fieldWithId, $newData)
             )) {
             return $oldData[$oldDataField] ?? null;
         }
-        if ($mayHaveId && !isset($newData[$field]) && isset($newData[$fieldWithId])) {
+        if ($mayHaveId && !array_key_exists($field, $newData) && array_key_exists($fieldWithId, $newData)) {
             return $newData[$fieldWithId] ?? null;
         }
 

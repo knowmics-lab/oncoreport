@@ -42,7 +42,7 @@ class PatientDrugController extends Controller
         $this->tokenAuthorize($request, ['read', 'update'], 'view', $patient);
 
         return PatientDrugResource::collection(
-            $requestService->handle($request, $patient->drugs()->getQuery())
+            $requestService->handle($request, $patient->drugs()->with('disease')->getQuery())
         );
     }
 

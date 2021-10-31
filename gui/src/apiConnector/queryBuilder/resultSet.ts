@@ -162,9 +162,10 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       currentValue: E,
       currentIndex: number,
       array: E[]
-    ) => E
+    ) => E,
+    initialValue?: any
   ): E {
-    return [...this].reduce(callbackfn);
+    return [...this].reduce(callbackfn, initialValue);
   }
 
   reduceRight(
@@ -173,9 +174,10 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       currentValue: E,
       currentIndex: number,
       array: E[]
-    ) => E
+    ) => E,
+    initialValue?: any
   ): E {
-    return [...this].reduceRight(callbackfn);
+    return [...this].reduceRight(callbackfn, initialValue);
   }
 
   flatMap<U, This = undefined>(

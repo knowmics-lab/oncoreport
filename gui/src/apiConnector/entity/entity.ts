@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this */
+/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,no-nested-ternary */
 import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
 import { container, InjectionToken } from 'tsyringe';
@@ -9,6 +9,7 @@ import {
   MapType,
   MapValueType,
   PartialObject,
+  PartialWithoutRelations,
   SimpleMapType,
 } from '../interfaces/common';
 import Adapter from '../httpClient/adapter';
@@ -23,13 +24,6 @@ import { Utils } from '../../api';
 import HasMany from '../relations/hasMany';
 import { HasManyReadonly } from '../index';
 import { EntityObject, RepositoryObject } from '../interfaces/entity';
-
-type EntityOrType<T> = T extends Entity ? number : T;
-type EntityArrayOrType<T> = T extends Array<Entity> ? number[] : T;
-
-export type PartialWithoutRelations<T> = {
-  -readonly [p in keyof T]?: EntityOrType<EntityArrayOrType<T[p]>>;
-};
 
 export interface EntityObserver<T extends Entity> {
   created?(entity: T): void;
@@ -47,12 +41,14 @@ export type HasOneRelation<E extends Entity> = {
   type: RelationsType.ONE;
   repositoryToken: InjectionToken<RepositoryObject<E>>;
   noRecursionSave?: boolean;
+  fullyDumpInDataObject?: boolean;
 };
 
 export type HasManyRelation<E extends Entity> = {
   type: RelationsType.MANY;
   repositoryToken: InjectionToken<RepositoryObject<E>>;
   noRecursionSave?: boolean;
+  fullyDumpInDataObject?: boolean;
   foreignKey: keyof E | { [localKey: string]: keyof E };
 };
 
@@ -134,6 +130,15 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
           });
           if (this.data !== nextState) this.dirty = true;
           this.data = nextState;
+        } else if (
+          options.relation &&
+          (typeof value === 'object' || typeof value === 'undefined')
+        ) {
+          const nextState = produce(this.data, (draft: Draft<any>) => {
+            draft[key] = value;
+          });
+          if (this.data !== nextState) this.dirty = true;
+          this.data = nextState;
         }
       },
       enumerable: true,
@@ -160,6 +165,7 @@ export default abstract class Entity {
   @field<number>({
     readonly: true,
     fillable: false,
+    serialize: { serializable: false },
   })
   public id = -1;
 
@@ -167,12 +173,14 @@ export default abstract class Entity {
     fillable: false,
     date: true,
     readonly: true,
+    serialize: { serializable: false },
   })
   public created_at = dayjs();
 
   @field<string>({
     fillable: false,
     readonly: true,
+    serialize: { serializable: false },
   })
   public created_at_diff = '';
 
@@ -180,12 +188,14 @@ export default abstract class Entity {
     fillable: false,
     date: true,
     readonly: true,
+    serialize: { serializable: false },
   })
   public updated_at = dayjs();
 
   @field<string>({
     fillable: false,
     readonly: true,
+    serialize: { serializable: false },
   })
   public updated_at_diff = '';
 
@@ -238,6 +248,19 @@ export default abstract class Entity {
   /**
    * Undocumented - Do not use
    */
+  public syncReinitialize(
+    d: PartialObject<this>,
+    parameters?: SimpleMapType
+  ): this {
+    this.fillDataArray(d);
+    this.parameters = { ...this.parameters, ...(parameters ?? {}) };
+    this.dirty = false;
+    return this;
+  }
+
+  /**
+   * Undocumented - Do not use
+   */
   public async initialize(
     id: number,
     d?: PartialObject<this>,
@@ -276,7 +299,20 @@ export default abstract class Entity {
    * A boolean indicating whether this entity data have been modified
    */
   public get isDirty(): boolean {
-    return this.dirty;
+    const serializedObjectsDirty = [
+      ...getMetadataMap<SerializationConfig<any>>(SERIALIZE, this)
+        .filter((value) => value.dumpFullObject)
+        .keys(),
+    ]
+      .map((k) => this.data[k as unknown as keyof SimpleMapType])
+      .map((o) => {
+        if (o instanceof Entity) return o.isDirty;
+        if (o instanceof HasMany) return o.some((v) => v.isDirty);
+        if (o instanceof HasManyReadonly) return o.some((v) => v.isDirty);
+        return false;
+      })
+      .some((v) => v);
+    return this.dirty || serializedObjectsDirty;
   }
 
   /**
@@ -315,7 +351,7 @@ export default abstract class Entity {
     if (this.adapter.readonly)
       throw new Error('Attempting to save a readonly entity');
     if (this.isDeleted) throw new Error('Attempting to save deleted entity');
-    if (this.dirty) {
+    if (this.isDirty) {
       return this.isNew ? this.create() : this.update();
     }
     return this;
@@ -345,7 +381,15 @@ export default abstract class Entity {
           );
         }
       } else {
-        set(o, k, dates.includes(k) ? dayjs(data) : data);
+        set(
+          o,
+          k,
+          dates.includes(k)
+            ? data !== undefined
+              ? dayjs(data)
+              : undefined
+            : data
+        );
       }
     }
 
@@ -389,18 +433,32 @@ export default abstract class Entity {
   /**
    * Converts this entity to an objects where related entities are converted to identifiers
    */
-  public toDataObject(): PartialWithoutRelations<this> {
+  public toDataObject(): PartialWithoutRelations<this, EntityObject> {
     const fillables = getMetadataArray<string>(FILLABLE, this);
     const relations = getMetadataMap<Relation<any>>(RELATIONS, this);
+    const dates = getMetadataArray<string>(DATES, this);
     const data: any = Utils.filterByKey(this.data, (k) =>
       fillables.includes(`${k}`)
     );
+    for (const f of dates) {
+      const value = data[f];
+      if (value && dayjs.isDayjs(value)) {
+        data[f] = value.format('YYYY-MM-DD');
+      }
+    }
     for (const [f, r] of relations) {
+      const value = data[f];
       if (r.type === RelationsType.ONE) {
-        data[f] = get(data[f], 'id');
+        if (r.fullyDumpInDataObject) {
+          data[f] = !value ? {} : (<Entity>value).toDataObject();
+        } else {
+          data[f] = get(value, 'id');
+        }
       } else if (r.type === RelationsType.MANY) {
-        const value = data[f];
-        data[f] = value instanceof HasMany ? value.toDataObject() : [];
+        data[f] =
+          value instanceof HasMany
+            ? value.toDataObject(r.fullyDumpInDataObject)
+            : [];
       }
     }
     return data;
@@ -474,13 +532,19 @@ export default abstract class Entity {
     value: any,
     config: SerializationConfig<any>
   ): MapValueType {
-    if (value instanceof Entity)
-      return config.dumpFullObject ? value.serialize() : value.id;
-    if (value instanceof dayjs.Dayjs && dayjs.isDayjs(value)) {
-      return value.format('YYYY-MM-DD HH:mm:ss');
+    if (typeof value === 'object') {
+      if (value instanceof Entity)
+        return config.dumpFullObject ? value.serialize() : value.id;
+      if (dayjs.isDayjs(value)) {
+        return value.format('YYYY-MM-DD HH:mm:ss');
+      }
+      if (value instanceof HasMany)
+        return value.serialize(config.dumpFullObject);
+      if (value instanceof HasManyReadonly) return value.serialize();
     }
-    if (value instanceof HasMany) return value.serialize(config.dumpFullObject);
-    if (value instanceof HasManyReadonly) return value.serialize();
+    if (typeof value === 'undefined') {
+      return null;
+    }
     return value;
   }
 
@@ -495,7 +559,7 @@ export default abstract class Entity {
         .createEntitySync(value);
     }
     if (relation.type === RelationsType.MANY) {
-      if (oldValue instanceof HasMany) {
+      if (oldValue instanceof HasMany && Object.isExtensible(oldValue)) {
         return oldValue.syncFill(value);
       }
       return new HasMany(
@@ -520,7 +584,7 @@ export default abstract class Entity {
     const dates = getMetadataArray<string>(DATES, this);
     for (const f of fields) {
       if (has(data, f)) {
-        let val = get(data, f);
+        let val: any = data[f as unknown as keyof typeof data];
         if (relations.has(f)) {
           const r = relations.get(f);
           if (r) {
@@ -531,7 +595,7 @@ export default abstract class Entity {
         }
         this.data = {
           ...this.data,
-          [f]: val,
+          [f]: !val ? undefined : val,
         };
       }
     }
@@ -546,18 +610,24 @@ export default abstract class Entity {
   ) {
     if (relation.type === RelationsType.ONE) {
       const repository = container.resolve(relation.repositoryToken);
-      if (typeof value === 'number') {
-        return repository.createStubEntity(value);
+      if (typeof value === 'undefined') {
+        return undefined;
+      }
+      if (typeof value === 'number' || typeof value === 'string') {
+        return repository.createStubEntity(+value);
       }
       if (typeof value === 'object') {
         if (value instanceof Entity) {
           return value;
         }
+        if (oldValue instanceof Entity) {
+          return oldValue.fill(value);
+        }
         return repository.createEntitySync(value);
       }
     }
     if (relation.type === RelationsType.MANY) {
-      if (oldValue instanceof HasMany) {
+      if (oldValue instanceof HasMany && Object.isExtensible(oldValue)) {
         return oldValue.syncFill(value);
       }
       return new HasMany(
@@ -568,7 +638,7 @@ export default abstract class Entity {
       );
     }
     if (relation.type === RelationsType.MANY_READONLY) {
-      if (oldValue instanceof HasMany) {
+      if (oldValue instanceof HasMany && Object.isExtensible(oldValue)) {
         return oldValue.syncFill(value);
       }
       return new HasManyReadonly(relation.repositoryToken, value);

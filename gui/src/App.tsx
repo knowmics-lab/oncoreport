@@ -84,14 +84,14 @@ export default function App() {
               path={Routes.JOBS_BY_PATIENT}
               component={Pages.JobsByPatientPage}
             />
-            {/* <Route */}
-            {/*  path={Routes.PATIENTS_CREATE} */}
-            {/*  component={Pages.Forms.PatientForm} */}
-            {/* /> */}
-            {/* <Route */}
-            {/*  path={Routes.PATIENTS_EDIT} */}
-            {/*  component={Pages.Forms.PatientForm} */}
-            {/* /> */}
+            <Route
+              path={Routes.PATIENTS_CREATE}
+              component={Pages.Forms.PatientForm}
+            />
+            <Route
+              path={Routes.PATIENTS_EDIT}
+              component={Pages.Forms.PatientForm}
+            />
             {/* <Route */}
             {/*  path={Routes.PATIENTS_TUMORS} */}
             {/*  component={Pages.Forms.TumorForm} */}

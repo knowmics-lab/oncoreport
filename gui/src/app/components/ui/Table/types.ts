@@ -9,7 +9,7 @@ export type ActionColumn = 'actions';
 export type NormalColumn<E extends EntityObject> = {
   key?: string;
   dataField: keyof E;
-  sortingField?: keyof E;
+  sortingField?: string;
   disableSorting?: boolean;
   label: string;
   minWidth?: number;

@@ -2,42 +2,38 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DrugsPanel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/GoBackRow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/PatientDataPanel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/TabPanel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/useStyles.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useArray.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useInterval.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useNotifications.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useUpload.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/PatientAnalysisPanel.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDiseaseForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/tables/jobsTableByPatient.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryFetchOneOrNew.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/patientDisease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/patientDisease.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/patientDrug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/patientDrug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/common.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/repository.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/LogsDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/LogsDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DrugsPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DrugsPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/JobsTableByPatient.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/LoadingBody.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/LoadingBody.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Toolbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Toolbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/ToolbarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/ToolbarAction.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/hooks.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useToggle.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useToggle.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDrugResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PatientDrugController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/JobsCollectionService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/JobsCollectionService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Traits/UseNullableValues.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,6 +356,7 @@
       <workItem from="1635520751739" duration="1436000" />
       <workItem from="1635623900150" duration="477000" />
       <workItem from="1635625867554" duration="617000" />
+      <workItem from="1635664885526" duration="5114000" />
     </task>
     <servers />
   </component>

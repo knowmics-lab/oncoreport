@@ -8,7 +8,7 @@ import { SimpleMapType } from '../../apiConnector/interfaces/common';
 
 type OutputType<V> = [boolean, V | undefined, () => void];
 
-export default function useRepositoryFetchOneOrCreate<E extends EntityObject>(
+export default function useRepositoryFetchOneOrNew<E extends EntityObject>(
   repositoryToken: InjectionToken<Repository<E>>,
   id?: number,
   parameters?: SimpleMapType
@@ -22,7 +22,7 @@ export default function useRepositoryFetchOneOrCreate<E extends EntityObject>(
       setData(
         await (id && id > 0
           ? repository.fetch(id, parameters)
-          : repository.create(undefined, parameters))
+          : repository.new(undefined, parameters))
       );
       setLoading(false);
     }

@@ -1,4 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { InjectionToken } from 'tsyringe';
 import type {
   RowActionType,
@@ -17,8 +23,13 @@ import useRepositoryQuery, {
 } from '../../hooks/useRepositoryQuery';
 import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 
+export type RepositoryTableRef = {
+  refresh: () => void;
+};
+
 export interface TableProps<E extends EntityObject> {
   title?: string | React.ReactNode | React.ReactNodeArray;
+  doNotWrap?: boolean;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
   toolbar?: ToolbarActionType<E>[];
@@ -34,12 +45,14 @@ export interface TableProps<E extends EntityObject> {
   handleSelectAll?: () => void;
   collapsible?: boolean;
   collapsibleContent?: (row: E) => React.ReactNode;
+  tableRef?: MutableRefObject<RepositoryTableRef | undefined>;
 }
 
 type SortingSpec = SimpleMapType<SortingDirection>;
 
 export default function RepositoryTable<E extends EntityObject>({
   title,
+  doNotWrap,
   size,
   columns,
   toolbar,
@@ -55,6 +68,7 @@ export default function RepositoryTable<E extends EntityObject>({
   handleSelectAll,
   collapsible,
   collapsibleContent,
+  tableRef,
 }: TableProps<E>) {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [sorting, setSorting] = useState<SortingSpec>({});
@@ -67,15 +81,40 @@ export default function RepositoryTable<E extends EntityObject>({
     };
   }, [queryBuilderCallback, rowsPerPage, sorting]);
 
-  const [loading, data, refresh] = useRepositoryQuery(
+  const [loading, data, forceRefresh] = useRepositoryQuery(
     repositoryToken,
     callbackMemoized,
     parameters
   );
 
+  useEffect(() => {
+    if (tableRef) {
+      tableRef.current = {
+        refresh: forceRefresh,
+      };
+    }
+  }, [tableRef, forceRefresh]);
+
+  const onChangeRowsPerPage = useCallback(
+    (nRows: number) => {
+      setRowsPerPage(nRows);
+      forceRefresh();
+    },
+    [setRowsPerPage, forceRefresh]
+  );
+
+  const onChangeSorting = useCallback(
+    (newSorting: SortingSpec) => {
+      setSorting(newSorting);
+      forceRefresh();
+    },
+    [setSorting, forceRefresh]
+  );
+
   return (
     <RemoteTable
       title={title}
+      doNotWrap={doNotWrap}
       size={size}
       columns={columns}
       toolbar={toolbar}
@@ -89,11 +128,8 @@ export default function RepositoryTable<E extends EntityObject>({
       totalRows={data?.total}
       data={data}
       onPageRequest={(page) => runAsync(async () => data?.goToPage(page))}
-      onChangeRowsPerPage={(nRows) => {
-        setRowsPerPage(nRows);
-        refresh();
-      }}
-      onChangeSorting={setSorting}
+      onChangeRowsPerPage={onChangeRowsPerPage}
+      onChangeSorting={onChangeSorting}
       hasCheckbox={hasCheckbox}
       selectedItems={selectedItems}
       handleSelect={handleSelect}

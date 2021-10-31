@@ -7,6 +7,7 @@ import { PatientDiseaseAdapter } from '../adapters';
 import { DiseaseEntity, LocationEntity } from './index';
 import { TumorTypes } from '../../interfaces/enums';
 import { DiseaseRepository, LocationRepository } from '../repositories';
+import type { Nullable } from '../../apiConnector/interfaces/common';
 
 @injectable()
 export default class PatientDisease extends Entity {
@@ -25,7 +26,7 @@ export default class PatientDisease extends Entity {
   })
   disease?: DiseaseEntity;
 
-  @field<LocationEntity>({
+  @field<Nullable<LocationEntity>>({
     fillable: true,
     relation: {
       type: RelationsType.ONE,
@@ -35,25 +36,25 @@ export default class PatientDisease extends Entity {
   })
   location?: LocationEntity;
 
-  @field<TumorTypes>({
+  @field<Nullable<TumorTypes>>({
     fillable: true,
   })
-  type = TumorTypes.primary;
+  type: Nullable<TumorTypes> = undefined;
 
   @field<number>({
     fillable: true,
   })
-  T = 0;
+  T: Nullable<number> = undefined;
 
   @field<number>({
     fillable: true,
   })
-  N = 0;
+  N: Nullable<number> = undefined;
 
-  @field<number>({
+  @field<Nullable<number>>({
     fillable: true,
   })
-  M = 0;
+  M: Nullable<number> = undefined;
 
   @field<Dayjs>({
     fillable: true,
@@ -61,11 +62,11 @@ export default class PatientDisease extends Entity {
   })
   start_date: Dayjs = dayjs();
 
-  @field<Dayjs>({
+  @field<Nullable<Dayjs>>({
     fillable: true,
     date: true,
   })
-  end_date: Dayjs = dayjs();
+  end_date: Nullable<Dayjs> = undefined;
 
   public constructor(adapter: PatientDiseaseAdapter) {
     super(adapter);

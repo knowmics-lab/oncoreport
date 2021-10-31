@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dayjs } from 'dayjs';
 import {
-  DiseaseEntity,
   DrugEntity,
+  PatientDiseaseEntity,
   PatientDrugRepository,
   PatientEntity,
 } from '../../../../api';
@@ -18,20 +18,25 @@ interface PanelProps {
 
 export default function DrugsPanel({ currentTab, patient, index }: PanelProps) {
   const { id } = patient;
+
   // const classes = useStyles();
   return (
     <TabPanel value={currentTab} index={index}>
       <RepositoryTable
+        doNotWrap
         columns={[
           {
             dataField: 'drug',
+            sortingField: 'drug_id',
             label: 'Drug',
             format: (v: DrugEntity) => v.name,
           },
           {
             dataField: 'disease',
+            sortingField: 'patient_disease_id',
             label: 'Disease',
-            format: (v?: DiseaseEntity) => v?.name ?? 'Not Specified',
+            format: (v?: PatientDiseaseEntity) =>
+              v?.disease?.name ?? 'Not Specified',
           },
           {
             dataField: 'start_date',

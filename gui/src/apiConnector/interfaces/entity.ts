@@ -3,6 +3,7 @@ import {
   ExtendedPartialObject,
   MapType,
   PartialObject,
+  PartialWithoutRelations,
   SimpleMapType,
 } from './common';
 import { Adapter } from './adapter';
@@ -14,11 +15,13 @@ export interface EntityObject {
   readonly wasRecentlyCreated: boolean;
   readonly isInitialized: boolean;
   readonly isNew: boolean;
+  readonly isDirty: boolean;
   id: number;
   isEntity(): this is EntityObject;
   observe(observer: EntityObserver<this>): this;
   removeObserver(o: EntityObserver<this>): this;
   syncInitialize(d: PartialObject<this>, parameters?: SimpleMapType): this;
+  syncReinitialize(d: PartialObject<this>, parameters?: SimpleMapType): this;
   initializeNew(parameters?: SimpleMapType): this;
   fill(d: ExtendedPartialObject<this, EntityObject>): this;
   initialize(
@@ -30,6 +33,7 @@ export interface EntityObject {
   save(): Promise<this>;
   serialize(): MapType;
   setParameters(parameters: SimpleMapType): this;
+  toDataObject(): PartialWithoutRelations<this, EntityObject>;
 }
 
 export interface ResultSetInterface<E extends EntityObject> extends Array<E> {

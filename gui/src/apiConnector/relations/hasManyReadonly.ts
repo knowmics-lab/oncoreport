@@ -90,9 +90,10 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
       currentValue: R,
       currentIndex: number,
       array: R[]
-    ) => R
+    ) => R,
+    initialValue?: any
   ): R {
-    return [...this].reduce(callbackfn);
+    return [...this].reduce(callbackfn, initialValue);
   }
 
   public reduceRight(
@@ -101,9 +102,10 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
       currentValue: R,
       currentIndex: number,
       array: R[]
-    ) => R
+    ) => R,
+    initialValue?: any
   ): R {
-    return [...this].reduceRight(callbackfn);
+    return [...this].reduceRight(callbackfn, initialValue);
   }
 
   public flatMap<U, This = undefined>(

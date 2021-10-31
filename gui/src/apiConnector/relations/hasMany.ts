@@ -6,6 +6,7 @@ import {
   ExtendedPartialObject,
   MapValueType,
   PartialObject,
+  PartialWithoutRelations,
 } from '../interfaces/common';
 import {
   EntityObject,
@@ -17,8 +18,10 @@ type Fillable<R> = number | R | PartialObject<R>;
 
 export default class HasMany<R extends EntityObject>
   extends Array<R>
-  implements EntityObserver<EntityObject>
+  implements EntityObserver<EntityObject>, Array<R>
 {
+  [index: number]: R;
+
   /**
    * An internal array of entities that will be saved after the referring object is created
    * @protected
@@ -61,6 +64,7 @@ export default class HasMany<R extends EntityObject>
    * Undocumented - Do not use
    */
   public syncFill(data: Fillable<R>[]): this {
+    Object.isExtensible(this);
     if (this.length > 0) {
       this.slice(0, this.length);
     }
@@ -76,6 +80,25 @@ export default class HasMany<R extends EntityObject>
       })
     );
     return this;
+  }
+
+  /**
+   * Create a new entity related to the parent object
+   */
+  public new(): R {
+    if (this.repository.adapter.readonly)
+      throw new Error(
+        'Attempting to create a new object for a readonly entity'
+      );
+    const entity = this.repository.resolve().initializeNew();
+    entity.observe(this.entityObserver);
+    if (!this.referringObject.isNew) {
+      this.fillForeignKey(entity);
+    } else {
+      this.willSaveOnCreate.push(entity);
+    }
+    super.push(entity);
+    return entity;
   }
 
   /**
@@ -231,8 +254,10 @@ export default class HasMany<R extends EntityObject>
   /**
    * Convert this object to a list of identifiers
    */
-  public toDataObject(): number[] {
-    return this.map((o) => o.id);
+  public toDataObject(
+    fullyDump?: boolean
+  ): (PartialWithoutRelations<R, EntityObject> | number)[] {
+    return this.map((o) => (fullyDump ? o.toDataObject() : o.id));
   }
 
   /**
@@ -279,9 +304,10 @@ export default class HasMany<R extends EntityObject>
       currentValue: R,
       currentIndex: number,
       array: R[]
-    ) => R
+    ) => R,
+    initialValue?: any
   ): R {
-    return [...this].reduce(callbackfn);
+    return [...this].reduce(callbackfn, initialValue);
   }
 
   public reduceRight(
@@ -290,9 +316,10 @@ export default class HasMany<R extends EntityObject>
       currentValue: R,
       currentIndex: number,
       array: R[]
-    ) => R
+    ) => R,
+    initialValue?: any
   ): R {
-    return [...this].reduceRight(callbackfn);
+    return [...this].reduceRight(callbackfn, initialValue);
   }
 
   public flatMap<U, This = undefined>(
@@ -311,7 +338,7 @@ export default class HasMany<R extends EntityObject>
     let params = {};
     if (typeof this.foreignKey === 'string') {
       params = {
-        [this.foreignKey]: this.referringObject,
+        [this.foreignKey]: this.referringObject.id,
       };
     } else {
       for (const [localKey, foreignKey] of Object.entries(this.foreignKey)) {
@@ -319,7 +346,7 @@ export default class HasMany<R extends EntityObject>
           ...params,
           [foreignKey]:
             localKey === 'id'
-              ? this.referringObject
+              ? this.referringObject.id
               : this.referringObject[localKey as keyof EntityObject],
         };
       }

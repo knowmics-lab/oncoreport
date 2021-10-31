@@ -45,6 +45,37 @@ function Cell<E extends EntityObject>(
   );
 }
 
+type EmptyRowProps<E extends EntityObject> = {
+  columns: TableColumn<E>[];
+  hasCheckbox?: boolean;
+  collapsible?: boolean;
+  collapsibleContent?: (row: E) => React.ReactNode;
+};
+
+function EmptyRow<E extends EntityObject>({
+  columns,
+  hasCheckbox,
+  collapsible,
+  collapsibleContent,
+}: EmptyRowProps<E>) {
+  const isCollapsible = collapsible && !!collapsibleContent;
+  const numColumns =
+    columns.length + (hasCheckbox ? 1 : 0) + (isCollapsible ? 1 : 0);
+  return (
+    <TableRow>
+      <TableCell colSpan={numColumns} align="center">
+        No records have been found.
+      </TableCell>
+    </TableRow>
+  );
+}
+
+EmptyRow.defaultProps = {
+  hasCheckbox: false,
+  collapsible: false,
+  collapsibleContent: undefined,
+};
+
 type RowProps<E extends EntityObject> = {
   row: E;
   columns: TableColumn<E>[];
@@ -174,6 +205,14 @@ export default function Body<E extends EntityObject>({
             collapsibleContent={collapsibleContent}
           />
         ))}
+      {data.length === 0 && (
+        <EmptyRow
+          columns={columns}
+          hasCheckbox={hasCheckbox}
+          collapsible={collapsible}
+          collapsibleContent={collapsibleContent}
+        />
+      )}
     </TableBody>
   );
 }

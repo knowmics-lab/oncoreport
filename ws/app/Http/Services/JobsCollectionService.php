@@ -27,7 +27,7 @@ class JobsCollectionService
                         $builder->where('job_type', $type);
                     }
                     if ($request->has('patient') && ($id = (int)$request->input('patient'))) {
-                        $builder->where('patient', $id);
+                        $builder->where('patient_id', $id);
                     }
                 }
             )

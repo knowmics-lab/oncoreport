@@ -67,6 +67,8 @@ export default abstract class Repository<E extends EntityObject> {
     const entity = this.resolve(id);
     if (id && !entity.isInitialized) {
       entity.syncInitialize(data, parameters);
+    } else if (id && entity.isInitialized) {
+      entity.syncReinitialize(data, parameters);
     } else if (!id) {
       entity
         .initializeNew(parameters)
@@ -111,6 +113,14 @@ export default abstract class Repository<E extends EntityObject> {
   public clear(): this {
     this.cache = {};
     return this;
+  }
+
+  public async new(data?: Partial<E>, parameters?: SimpleMapType): Promise<E> {
+    if (this._adapter.readonly)
+      throw new Error(
+        'Attempting to create a new object for a readonly entity'
+      );
+    return this.createEntitySync(data, parameters);
   }
 
   public async create(

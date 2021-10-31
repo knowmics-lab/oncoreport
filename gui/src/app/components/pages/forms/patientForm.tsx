@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
-  Box,
   CircularProgress,
   FormGroup,
   Grid,
@@ -14,11 +14,9 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { generatePath } from 'react-router';
-import Chip from '@material-ui/core/Chip';
+import dayjs from 'dayjs';
 import {
-  DiseaseEntity,
   DiseaseRepository,
-  PatientEntity,
   PatientRepository,
   LocationRepository,
 } from '../../../../api';
@@ -27,20 +25,14 @@ import {
   SimpleMapArray,
   TypeOfNotification,
 } from '../../../../interfaces';
-import { runAsync } from '../../utils';
-import { useService } from '../../../../reactInjector';
 import SelectField from '../../ui/Form/SelectField';
 import TextField from '../../ui/Form/TextField';
 import Button, { SubmitButton } from '../../ui/Button';
 import Routes from '../../../../constants/routes.json';
-import { Tumor } from '../../../../interfaces/entities/tumor';
-import { Pathology } from '../../../../interfaces/entities/pathology';
-import useAsyncEffect from '../../../hooks/useAsyncEffect';
-import AddPreviousDiseasesDialog from '../../ui/PatientForm/AddPreviousDiseasesDialog';
-import AddPreviousTumorDialog from '../../ui/PatientForm/AddPreviousTumorDialog';
-import EditPreviousDiseasesDialog from '../../ui/PatientForm/EditPreviousDiseasesDialog';
-import EditPreviousTumorDialog from '../../ui/PatientForm/EditPreviousTumorDialog';
-import useRawRepositoryFetch from '../../../hooks/useRawRepositoryFetch';
+import { TumorTypes } from '../../../../interfaces/enums';
+import useRepositoryQuery from '../../../hooks/useRepositoryQuery';
+import useRepositoryFetchOneOrNew from '../../../hooks/useRepositoryFetchOneOrNew';
+import useNotifications from '../../../hooks/useNotifications';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -70,8 +62,6 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type MaybePatient = PatientEntity | undefined;
-
 function useValidationSchema() {
   return Yup.object().shape({
     code: Yup.string()
@@ -86,91 +76,80 @@ function useValidationSchema() {
     gender: Yup.mixed()
       .oneOf([Gender.m, Gender.f] as Gender[])
       .defined(),
-    telephone: Yup.string(),
-    city: Yup.string(),
-    disease: Yup.number().defined(),
-    disease_stage: Yup.object({
-      T: Yup.number().min(0).max(4).defined(),
-      M: Yup.number().min(0).max(4).defined(),
-      N: Yup.number().min(0).max(4).defined(),
-    }).defined(),
-    disease_site_id: Yup.number().defined(),
+    email: Yup.string().notRequired().nullable().max(255).email(),
+    fiscal_number: Yup.string().notRequired().nullable().max(255),
+    telephone: Yup.string().notRequired().nullable().max(255),
+    city: Yup.string().notRequired().nullable().max(255),
+    primary_disease: Yup.object().shape({
+      disease: Yup.number().defined(),
+      location: Yup.number().notRequired().nullable(),
+      type: Yup.mixed()
+        .oneOf([TumorTypes.primary, TumorTypes.secondary] as TumorTypes[])
+        .notRequired()
+        .nullable(),
+      T: Yup.number().min(0).max(4).notRequired().nullable(),
+      M: Yup.number().min(0).max(4).notRequired().nullable(),
+      N: Yup.number().min(0).max(4).notRequired().nullable(),
+      start_date: Yup.date().notRequired(),
+    }),
   });
 }
 
 export default function PatientForm() {
   const classes = useStyles();
-  const repository = useService(PatientRepository);
-
-  const [loading, setLoading] = useState(false);
-
-  const [patient, setPatient] = useState<MaybePatient>();
   const [submitting, setSubmitting] = useState(false);
   const history = useHistory();
-  const { id } = useParams<{ id?: string }>();
-  const [open, setOpen] = useState(false);
-  const [openTumorModal, setOpenTumorModal] = useState(false);
-
-  const [pathologyElements, setPathologyElements] = useState<Pathology[]>([]);
-  const [selectedPathology, setSelectedPathology] = useState<number>(-1);
-  const [showPathologyModal, setShowPathologyModal] = useState<boolean>(false);
-
-  const [tumorElements, setTumorElements] = useState<Tumor[]>([]);
-  const [selectedTumor, setSelectedTumor] = useState<number>(-1);
-  const [showTumorModal, setShowTumorModal] = useState<boolean>(false);
-
-  const [loadingLocations, locations] = useRawRepositoryFetch(
-    LocationRepository,
-    (data) =>
-      data.data.reduce((map: SimpleMapArray<string>, d) => {
-        if (d.id) map[d.id] = d.name;
-        return map;
-      }, {}),
-    {}
-  );
-
-  const [loadingDiseases, diseases] = useRawRepositoryFetch(
-    DiseaseRepository,
-    (data) =>
-      data.data.reduce((map: SimpleMapArray<DiseaseEntity>, d) => {
-        if (d.id) map[d.id] = d;
-        return map;
-      }, {}),
-    {}
-  );
-
-  useAsyncEffect(async () => {
-    setLoading(true);
-    if (id) {
-      const p = await (await repository.fetch(+id)).refresh();
-      setPatient(p);
-      setPathologyElements(p.diseases);
-      setTumorElements(p.tumors);
-    } else {
-      setPatient(repository.new());
-    }
-    setLoading(false);
-  }, [id, repository]);
-
-  const realLoading = loading || loadingLocations || loadingDiseases;
-
-  const diseaseOptions = useMemo(() => {
-    return Object.values(diseases || {}).reduce<SimpleMapArray<string>>(
-      (map, d) => {
-        if (d.id) map[d.id] = d.name;
-        return map;
-      },
-      {}
-    );
-  }, [diseases]);
-
   const validationSchema = useValidationSchema();
+  const { id } = useParams<{ id?: string }>();
+  const { pushSimple } = useNotifications();
 
-  const backUrl = generatePath(Routes.PATIENTS);
+  const [loadingDiseases, diseases] = useRepositoryQuery(
+    DiseaseRepository,
+    (builder) => builder.doNotPaginate(),
+    {
+      tumor: true,
+    }
+  );
+  const diseaseOptions = useMemo(() => {
+    if (loadingDiseases || !diseases) return {};
+    return diseases.reduce((prev: SimpleMapArray<string>, location) => {
+      prev[location.id] = location.name;
+      return prev;
+    }, {});
+  }, [diseases, loadingDiseases]);
+
+  const [loadingLocations, locations] = useRepositoryQuery(
+    LocationRepository,
+    (builder) => builder.doNotPaginate()
+  );
+  const locationOptions = useMemo(() => {
+    if (loadingLocations || !locations) return {};
+    return locations.reduce((prev: SimpleMapArray<string>, location) => {
+      prev[location.id] = location.name;
+      return prev;
+    }, {});
+  }, [loadingLocations, locations]);
+
+  const typeOptions = useMemo(
+    () => ({
+      [TumorTypes.primary]: 'Primary',
+      [TumorTypes.secondary]: 'Secondary',
+    }),
+    []
+  );
+
+  const [loadingPatient, patient] = useRepositoryFetchOneOrNew(
+    PatientRepository,
+    id ? +id : undefined
+  );
+
+  const loading = loadingPatient || loadingLocations || loadingDiseases;
+
+  const goBackUrl = useMemo(() => generatePath(Routes.PATIENTS), []);
 
   return (
     <Paper elevation={1} className={classes.paper}>
-      {realLoading || !patient || !diseases ? (
+      {loading || !patient ? (
         <>
           <Grid container justifyContent="center">
             <Grid item xs="auto">
@@ -185,293 +164,191 @@ export default function PatientForm() {
         </>
       ) : (
         <>
-          {patient && diseases && (
-            <Typography variant="h5" component="h3">
-              {patient.id ? 'Edit Patient' : 'New Patient'}
-            </Typography>
-          )}
-          <Typography component="p" />
-          {patient && diseases && (
-            <Formik
-              initialValues={patient.toDataObject()}
-              validationSchema={validationSchema}
-              onSubmit={async (d) => {
-                d.diseases = pathologyElements
-                  .filter((p) => p != null)
-                  .map((p) => {
-                    return {
-                      id: p.id,
-                      medicines: p.medicines.map((m) => m.id),
-                    };
-                  });
-                d.tumors = tumorElements.map((tumor) => {
-                  return {
-                    id: tumor.id,
-                    name: '',
-                    type: tumor.type,
-                    sede: tumor.sede.map((s) => s.id),
-                    stadio: tumor.stadio,
-                    drugs: tumor.drugs.map((drug) => {
-                      return {
-                        id: drug.id,
-                        name: drug.name ?? '',
-                        start_date: drug.start_date,
-                        end_date: drug.end_date,
-                        reasons: drug.reasons?.map((reason) => reason.id),
-                      };
-                    }),
-                  };
-                });
-
-                return runAsync(async (manager) => {
-                  setSubmitting(true);
-                  await patient?.fill(d).save();
-                  repository.refreshAllPages();
-                  manager.pushSimple(
-                    'Patient saved!',
-                    TypeOfNotification.success
+          <Typography variant="h5" component="h3">
+            {patient.isNew ? 'New Patient' : 'Edit Patient'}
+          </Typography>
+          <Formik
+            initialValues={patient.toDataObject()}
+            validationSchema={validationSchema}
+            onSubmit={async (d) => {
+              try {
+                setSubmitting(true);
+                const primaryDisease = d.primary_disease as unknown as Record<
+                  string,
+                  any
+                >;
+                const cleanedData = {
+                  code: d.code,
+                  first_name: d.first_name,
+                  last_name: d.last_name,
+                  age: d.age ? +d.age : undefined,
+                  gender: d.gender,
+                  email: d.email,
+                  fiscal_number: d.fiscal_number,
+                  telephone: d.telephone,
+                  city: d.city,
+                  primary_disease: {
+                    T: primaryDisease.T ? +primaryDisease.T : undefined,
+                    N: primaryDisease.N ? +primaryDisease.N : undefined,
+                    M: primaryDisease.M ? +primaryDisease.M : undefined,
+                    disease: +primaryDisease.disease,
+                    end_date: undefined,
+                    location: primaryDisease.location
+                      ? +primaryDisease.location
+                      : undefined,
+                    start_date: primaryDisease.start_date
+                      ? dayjs(primaryDisease.start_date)
+                      : dayjs(),
+                    type: primaryDisease.type,
+                  },
+                };
+                await patient?.fill(cleanedData).save();
+                pushSimple('Patient saved!', TypeOfNotification.success);
+                if (patient?.wasRecentlyCreated) {
+                  history.push(
+                    generatePath(Routes.PATIENT, { id: patient.id })
                   );
-                  history.push(backUrl);
-                });
-              }}
-            >
-              <Form>
-                <TextField label="Patient Code" name="code" required />
-                <Grid container spacing={2}>
-                  <Grid item md>
-                    <TextField label="First Name" name="first_name" required />
-                  </Grid>
-                  <Grid item md>
-                    <TextField label="Last Name" name="last_name" required />
-                  </Grid>
+                } else {
+                  history.push(goBackUrl);
+                }
+              } catch (e) {
+                pushSimple(`An error occurred: ${e}`, TypeOfNotification.error);
+                setSubmitting(false);
+              }
+              // setSubmitting(false);
+            }}
+          >
+            <Form>
+              <TextField label="Patient Code" name="code" required />
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <TextField label="First Name" name="first_name" required />
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item md>
-                    <TextField label="Age" name="age" type="number" required />
-                  </Grid>
-                  <Grid item md>
-                    <SelectField
-                      name="gender"
-                      label="Gender"
-                      emptyText="Select a Gender"
-                      addEmpty={!patient.id}
-                      options={{
-                        [Gender.m]: 'Male',
-                        [Gender.f]: 'Female',
-                      }}
-                    />
-                  </Grid>
+                <Grid item md>
+                  <TextField label="Last Name" name="last_name" required />
                 </Grid>
-
-                <TextField label="Email" name="email" type="email" required />
-                <TextField label="Fiscal Number" name="fiscalNumber" required />
-                <TextField label="Telephone" name="telephone" type="string" />
-                <TextField label="City" name="city" />
-                <SelectField
-                  name="disease"
-                  label="Disease"
-                  emptyText="Select a Disease"
-                  addEmpty={!patient.id}
-                  options={diseaseOptions}
-                  required
-                />
-
-                <Grid container spacing={3}>
-                  <Grid item md>
-                    <SelectField
-                      name="disease_stage.T"
-                      label="T"
-                      emptyText="Select T"
-                      addEmpty
-                      options={['0', '1', '2', '3']}
-                      required
-                    />
-                  </Grid>
-                  <Grid item md>
-                    <SelectField
-                      name="disease_stage.N"
-                      label="N"
-                      emptyText="Select N"
-                      addEmpty
-                      options={['0', '1', '2', '3']}
-                      required
-                    />
-                  </Grid>
-                  <Grid item md>
-                    <SelectField
-                      name="disease_stage.M"
-                      label="M"
-                      emptyText="Select M"
-                      addEmpty
-                      options={['0', '1', '2', '3']}
-                      required
-                    />
-                  </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <TextField label="Age" name="age" type="number" required />
                 </Grid>
-
                 <Grid item md>
                   <SelectField
-                    name="disease_site_id"
-                    label="Site"
-                    emptyText="Select a site"
-                    addEmpty
-                    options={locations}
+                    name="gender"
+                    label="Gender"
+                    emptyText="Select a Gender"
+                    addEmpty={!patient.id}
+                    options={{
+                      [Gender.m]: 'Male',
+                      [Gender.f]: 'Female',
+                    }}
                     required
                   />
                 </Grid>
-
-                <Grid container>
-                  <div style={{ padding: 10 }}>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Previous diseases
-                    </Typography>
-                    {pathologyElements.map((pathology, i) => (
-                      <div
-                        style={{ margin: '0.2em', display: 'inline-block' }}
-                        key={`p-${pathology.id}`}
-                      >
-                        <Chip
-                          label={pathology.name}
-                          onClick={() => {
-                            setSelectedPathology(i);
-                            setShowPathologyModal(true);
-                          }}
-                          color="primary"
-                          onDelete={() => {
-                            setPathologyElements(
-                              pathologyElements.filter((p) => {
-                                return p.id !== pathology.id;
-                              })
-                            );
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
+              </Grid>
+              <TextField label="Fiscal Number" name="fiscal_number" />
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <TextField label="Email" name="email" type="email" required />
                 </Grid>
-
-                <Grid container>
-                  <Box style={{ padding: 10 }}>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Previous tumors
-                    </Typography>
-                    {tumorElements.map((tumor, i) => (
-                      <div
-                        style={{ margin: 1, display: 'inline' }}
-                        key={`t-${tumor.id}`}
-                      >
-                        <Chip
-                          label={tumor.name}
-                          onClick={() => {
-                            setSelectedTumor(i);
-                            setShowTumorModal(true);
-                          }}
-                          color="secondary"
-                          onDelete={() => {
-                            setTumorElements(
-                              tumorElements.filter((p) => {
-                                return p.id !== tumor.id;
-                              })
-                            );
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </Box>
+                <Grid item md>
+                  <TextField label="Telephone" name="telephone" type="string" />
                 </Grid>
-
+                <Grid item md>
+                  <TextField label="City" name="city" />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.disease"
+                    label="Primary Disease"
+                    required
+                    emptyText="Select a disease"
+                    addEmpty
+                    options={diseaseOptions}
+                  />
+                </Grid>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.type"
+                    label="Disease type"
+                    emptyText="Not Available"
+                    addEmpty
+                    options={typeOptions}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.location"
+                    label="Site"
+                    emptyText="Select a location"
+                    addEmpty
+                    options={locationOptions}
+                  />
+                </Grid>
+                <Grid item md>
+                  <TextField
+                    label="Diagnosis Date"
+                    name="primary_disease.start_date"
+                    type="date"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.T"
+                    label="T"
+                    emptyText="Not Available"
+                    addEmpty
+                    options={['0', '1', '2', '3', '4']}
+                  />
+                </Grid>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.N"
+                    label="N"
+                    emptyText="Not Available"
+                    addEmpty
+                    options={['0', '1', '2', '3']}
+                  />
+                </Grid>
+                <Grid item md>
+                  <SelectField
+                    name="primary_disease.M"
+                    label="M"
+                    emptyText="Not Available"
+                    addEmpty
+                    options={['0', '1']}
+                  />
+                </Grid>
+              </Grid>
+              <FormGroup row className={classes.formControl}>
                 <Grid container justifyContent="space-between">
-                  <Grid item xs="auto" style={{ padding: 15, paddingLeft: 10 }}>
+                  <Grid item xs="auto">
                     <Button
-                      onClick={() => {
-                        setOpen(true);
-                      }}
                       variant="contained"
-                      color="primary"
+                      color="default"
+                      href={goBackUrl}
                     >
-                      Add previous disease
+                      <Icon className="fas fa-arrow-left" /> Go Back
                     </Button>
                   </Grid>
-                  <Grid item xs="auto" style={{ padding: 15 }}>
-                    <Button
-                      onClick={() => {
-                        setOpenTumorModal(true);
-                      }}
-                      variant="contained"
-                      color="secondary"
-                    >
-                      Add previous tumor
-                    </Button>
+                  <Grid item xs="auto">
+                    <SubmitButton text="Save" isSaving={submitting} />
                   </Grid>
                 </Grid>
-
-                <FormGroup row className={classes.formControl}>
-                  <Grid container justifyContent="space-between">
-                    <Grid item xs="auto">
-                      <Button
-                        variant="contained"
-                        color="default"
-                        href={backUrl}
-                      >
-                        <Icon className="fas fa-arrow-left" /> Go Back
-                      </Button>
-                    </Grid>
-                    <Grid item xs="auto">
-                      <SubmitButton text="Save" isSaving={submitting} />
-                    </Grid>
-                  </Grid>
-                </FormGroup>
-              </Form>
-            </Formik>
-          )}
+              </FormGroup>
+            </Form>
+          </Formik>
         </>
       )}
-
-      <AddPreviousDiseasesDialog
-        open={open}
-        setOpen={setOpen}
-        selectedPathologies={pathologyElements}
-        onPathologySubmit={(p) =>
-          setPathologyElements((prevState) => [...prevState, p])
-        }
-      />
-      <AddPreviousTumorDialog
-        open={openTumorModal}
-        setOpen={setOpenTumorModal}
-        selectedTumors={tumorElements}
-        onTumorAdd={(tumor) =>
-          setTumorElements((prevState) => [...prevState, tumor])
-        }
-      />
-      <EditPreviousDiseasesDialog
-        open={showPathologyModal}
-        setOpen={setShowPathologyModal}
-        pathology={
-          selectedPathology >= 0
-            ? pathologyElements[selectedPathology]
-            : undefined
-        }
-        onMedicinesChanged={(medicines) => {
-          if (selectedPathology >= 0) {
-            setPathologyElements((prevState) =>
-              prevState.map((p, i) => {
-                if (i === selectedPathology) {
-                  p.medicines = medicines;
-                }
-                return p;
-              })
-            );
-          }
-        }}
-      />
-
-      <EditPreviousTumorDialog
-        open={showTumorModal}
-        setOpen={setShowTumorModal}
-        selectedTumor={
-          selectedTumor >= 0 ? tumorElements[selectedTumor] : undefined
-        }
-      />
     </Paper>
   );
 }

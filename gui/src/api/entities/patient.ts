@@ -44,20 +44,20 @@ export default class Patient extends Entity {
   })
   email = '';
 
-  @field<string>({
+  @field<Nullable<string>>({
     fillable: true,
   })
-  fiscalNumber = '';
+  fiscal_number: Nullable<string> = undefined;
 
   @field<Nullable<string>>({
     fillable: true,
   })
-  telephone: Nullable<string> = null;
+  telephone: Nullable<string> = undefined;
 
   @field<Nullable<string>>({
     fillable: true,
   })
-  city: Nullable<string> = null;
+  city: Nullable<string> = undefined;
 
   @field<PatientDiseaseEntity>({
     fillable: true,
@@ -78,6 +78,7 @@ export default class Patient extends Entity {
       type: RelationsType.ONE,
       repositoryToken: PatientDiseaseRepository,
       noRecursionSave: true,
+      fullyDumpInDataObject: true,
     },
     serialize: {
       serializable: true,

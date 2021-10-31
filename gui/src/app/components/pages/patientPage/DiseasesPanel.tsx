@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Dayjs } from 'dayjs';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { DialogContent } from '@material-ui/core';
 import {
   DiseaseEntity,
   PatientDiseaseRepository,
@@ -7,7 +10,9 @@ import {
 } from '../../../../api';
 import TabPanel from './TabPanel';
 import GoBackRow from './GoBackRow';
-import RepositoryTable from '../../ui/RepositoryTable';
+import RepositoryTable, { RepositoryTableRef } from '../../ui/RepositoryTable';
+import PatientDiseaseForm from './forms/patientDiseaseForm';
+import { Alignment } from '../../ui/Table/types';
 
 interface PanelProps {
   index: number;
@@ -20,82 +25,84 @@ export default function DiseasesPanel({
   patient,
   index,
 }: PanelProps) {
+  const tableRef = useRef<RepositoryTableRef>();
   const { id } = patient;
-  // const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const closeModal = useCallback(() => setOpen(false), [setOpen]);
   return (
-    <TabPanel value={currentTab} index={index}>
-      <RepositoryTable
-        columns={[
-          {
-            dataField: 'disease',
-            label: 'Disease',
-            format: (v: DiseaseEntity) => v.name,
-          },
-          {
-            key: 'is-tumor',
-            dataField: 'disease',
-            disableSorting: true,
-            label: 'Tumor',
-            format: (v: DiseaseEntity) => (v.tumor ? 'Yes' : 'No'),
-          },
-          {
-            dataField: 'start_date',
-            label: 'Start',
-            format: (v: Dayjs) => v.format('YYYY-MM-DD'),
-          },
-          {
-            dataField: 'end_date',
-            label: 'End',
-            format: (v?: Dayjs) => v?.format('YYYY-MM-DD') ?? 'Current',
-          },
-        ]}
-        repositoryToken={PatientDiseaseRepository}
-        parameters={{ patient_id: id }}
-        collapsible
-        collapsibleContent={(row) => {
-          return <>TODO: {row.id}</>;
-        }}
-      />
-      {/* {patient.diseases.length === 0 && ( */}
-      {/*  <Typography variant="overline" display="block" gutterBottom> */}
-      {/*    Nothing to show here. */}
-      {/*  </Typography> */}
-      {/* )} */}
-      {/* {patient.diseases.map((disease: any) => ( */}
-      {/*  <Accordion */}
-      {/*    key={`accordion-${disease.id}`} */}
-      {/*    TransitionProps={{ unmountOnExit: true }} */}
-      {/*    expanded={expanded === disease.id} */}
-      {/*    onChange={(_e, isExpanded: boolean) => { */}
-      {/*      setExpanded(isExpanded ? disease.id : -1); */}
-      {/*    }} */}
-      {/*  > */}
-      {/*    <AccordionSummary expandIcon={<ExpandMoreIcon />}> */}
-      {/*      <Typography>{disease.name}</Typography> */}
-      {/*    </AccordionSummary> */}
-      {/*    <AccordionDetails> */}
-      {/*      <TableContainer component={Paper}> */}
-      {/*        <Table> */}
-      {/*          <TableHead> */}
-      {/*            <TableRow className={classes.stickyStyle}> */}
-      {/*              <TableCell>Drugs</TableCell> */}
-      {/*            </TableRow> */}
-      {/*          </TableHead> */}
-      {/*          <TableBody> */}
-      {/*            {disease.medicines.map((medicine: any) => ( */}
-      {/*              <TableRow */}
-      {/*                key={`accordion-${disease.id}-drug-${medicine.id}`} */}
-      {/*              > */}
-      {/*                <TableCell>{medicine.name}</TableCell> */}
-      {/*              </TableRow> */}
-      {/*            ))} */}
-      {/*          </TableBody> */}
-      {/*        </Table> */}
-      {/*      </TableContainer> */}
-      {/*    </AccordionDetails> */}
-      {/*  </Accordion> */}
-      {/* ))} */}
-      <GoBackRow id={id} />
-    </TabPanel>
+    <>
+      <TabPanel value={currentTab} index={index}>
+        <RepositoryTable
+          doNotWrap
+          toolbar={[
+            {
+              align: Alignment.right,
+              shown: true,
+              icon: 'fas fa-plus',
+              tooltip: 'Add Disease',
+              onClick: () => {
+                setOpen(true);
+              },
+            },
+          ]}
+          columns={[
+            {
+              dataField: 'disease',
+              sortingField: 'disease_id',
+              label: 'Disease',
+              format: (v: DiseaseEntity) => v.name,
+            },
+            {
+              key: 'is-tumor',
+              dataField: 'disease',
+              disableSorting: true,
+              label: 'Tumor',
+              format: (v: DiseaseEntity) => (v.tumor ? 'Yes' : 'No'),
+            },
+            {
+              dataField: 'start_date',
+              label: 'Start',
+              format: (v: Dayjs) => v.format('YYYY-MM-DD'),
+            },
+            {
+              dataField: 'end_date',
+              label: 'End',
+              format: (v?: Dayjs) => v?.format('YYYY-MM-DD') ?? 'Current',
+            },
+          ]}
+          repositoryToken={PatientDiseaseRepository}
+          parameters={{ patient_id: id }}
+          collapsible
+          collapsibleContent={(row) => {
+            return (
+              <PatientDiseaseForm
+                disease={row}
+                patient={patient}
+                onSave={() => {
+                  if (tableRef.current) tableRef.current.refresh();
+                }}
+              />
+            );
+          }}
+          tableRef={tableRef}
+        />
+        <GoBackRow id={id} />
+      </TabPanel>
+      <Dialog open={open} onClose={closeModal}>
+        <DialogTitle>Add Disease</DialogTitle>
+        <DialogContent style={{ minWidth: 600 }}>
+          {open && patient.diseases && (
+            <PatientDiseaseForm
+              disease={patient.diseases.new()}
+              patient={patient}
+              onSave={() => {
+                closeModal();
+                if (tableRef.current) tableRef.current.refresh();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

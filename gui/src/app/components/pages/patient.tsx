@@ -6,14 +6,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { PatientRepository } from '../../../api';
-import { JobsByPatientPage } from '.';
 import LoadingSection from '../ui/LoadingSection';
 import useRepositoryFetchOne from '../../hooks/useRepositoryFetchOne';
 import useStyles from './patientPage/useStyles';
 import PatientDataPanel from './patientPage/PatientDataPanel';
 import DiseasesPanel from './patientPage/DiseasesPanel';
 import DrugsPanel from './patientPage/DrugsPanel';
-import TabPanel from './patientPage/TabPanel';
+import PatientAnalysisPanel from './patientPage/PatientAnalysisPanel';
 
 /*
 type DrugData = undefined | { drug: any; index: number };
@@ -325,9 +324,11 @@ export default function Patient() {
                 index={1}
               />
               <DrugsPanel currentTab={currentTab} patient={patient} index={2} />
-              <TabPanel value={currentTab} index={3}>
-                <JobsByPatientPage />
-              </TabPanel>
+              <PatientAnalysisPanel
+                currentTab={currentTab}
+                patient={patient}
+                index={3}
+              />
             </SwipeableViews>
           </Paper>
         </>
