@@ -168,7 +168,7 @@ export default function PatientForm() {
             {patient.isNew ? 'New Patient' : 'Edit Patient'}
           </Typography>
           <Formik
-            initialValues={patient.toDataObject()}
+            initialValues={patient.toFormObject()}
             validationSchema={validationSchema}
             onSubmit={async (d) => {
               try {
@@ -237,7 +237,7 @@ export default function PatientForm() {
                     name="gender"
                     label="Gender"
                     emptyText="Select a Gender"
-                    addEmpty={!patient.id}
+                    addEmpty
                     options={{
                       [Gender.m]: 'Male',
                       [Gender.f]: 'Female',

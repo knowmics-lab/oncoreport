@@ -37,7 +37,7 @@ class BuilderRequestService
         int $defaultPerPage = 15
     ): Collection|LengthAwarePaginator|array {
         if (
-            $this->handleGlobalSearch($request, $builder, $searchableFields, $paginate) &&
+            $this->handleGlobalSearch($request, $builder, $searchableFields) &&
             $this->handleSimpleFilter($request, $builder)
         ) {
             $this->handleAdvancedFilter($request, $builder);
@@ -50,11 +50,38 @@ class BuilderRequestService
         return $this->handlePagination($request, $builder, $paginate, $defaultPerPage);
     }
 
+    protected function isInRelationship(string $field): bool
+    {
+        return str_contains($field, '.');
+    }
+
+    protected function extractRelationship(string $field): array
+    {
+        $relationships = explode('.', $field);
+        $realField = array_pop($relationships);
+
+        return [implode('.', $relationships), $realField];
+    }
+
+    protected function handleRelationshipField(
+        string $field,
+        string $operator,
+        mixed $value,
+        mixed $q,
+        $or = false
+    ): void {
+        [$relationship, $realField] = $this->extractRelationship($field);
+        $q->has(
+            $relationship,
+            boolean: $or ? 'or' : 'and',
+            callback: fn($q1) => $q1->where($realField, $operator, $value)
+        );
+    }
+
     protected function handleGlobalSearch(
         Request $request,
         Builder $builder,
         array $searchableFields,
-        bool &$paginate
     ): bool {
         if ($request->has('search') && count($searchableFields) > 0) {
             $searchValue = $request->input('search');
@@ -62,10 +89,13 @@ class BuilderRequestService
                 $filterValue = '%' . $searchValue . '%';
                 $builder->where(function ($q) use ($searchableFields, $filterValue) {
                     foreach ($searchableFields as $field) {
-                        $q->orWhere($field, 'LIKE', $filterValue);
+                        if ($this->isInRelationship($field)) {
+                            $this->handleRelationshipField($field, 'LIKE', $filterValue, $q, true);
+                        } else {
+                            $q->orWhere($field, 'LIKE', $filterValue);
+                        }
                     }
                 });
-                $paginate = false;
 
                 return false;
             }
@@ -86,7 +116,11 @@ class BuilderRequestService
                     if (count($filterBy) > 0) {
                         $builder->where(function ($q) use ($filterBy, $filterValue) {
                             foreach ($filterBy as $field) {
-                                $q->orWhere($field, 'LIKE', $filterValue);
+                                if ($this->isInRelationship($field)) {
+                                    $this->handleRelationshipField($field, 'LIKE', $filterValue, $q, true);
+                                } else {
+                                    $q->orWhere($field, 'LIKE', $filterValue);
+                                }
                             }
                         });
 
@@ -112,7 +146,11 @@ class BuilderRequestService
                 $operator = strtolower($specs['op'] ?? '=');
                 $value = $specs['value'] ?? null;
                 if ($field && in_array($operator, self::VALID_OPERANDS, true)) {
-                    $builder->where($field, $operator, $value);
+                    if ($this->isInRelationship($field)) {
+                        $this->handleRelationshipField($field, $operator, $value, $builder);
+                    } else {
+                        $builder->where($field, $operator, $value);
+                    }
                 }
             }
         }
@@ -128,8 +166,8 @@ class BuilderRequestService
         $orderDirection = (array)($request->input('order_direction') ?? [$defaultOrdering]);
         if (!empty($orderBy)) {
             for ($i = 0, $count = count($orderBy); $i < $count; $i++) {
-                if ($orderBy[$i]) {
-                    $builder->orderBy($orderBy[$i], $orderDirection[$i] ?? $defaultOrdering);
+                if ($field = $orderBy[$i]) {
+                    $builder->orderBy($field, $orderDirection[$i] ?? $defaultOrdering);
                 }
             }
         }

@@ -33,7 +33,7 @@ export interface EntityObject {
   save(): Promise<this>;
   serialize(): MapType;
   setParameters(parameters: SimpleMapType): this;
-  toDataObject(): PartialWithoutRelations<this, EntityObject>;
+  toFormObject(): PartialWithoutRelations<this, EntityObject>;
 }
 
 export interface ResultSetInterface<E extends EntityObject> extends Array<E> {

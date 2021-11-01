@@ -433,7 +433,7 @@ export default abstract class Entity {
   /**
    * Converts this entity to an objects where related entities are converted to identifiers
    */
-  public toDataObject(): PartialWithoutRelations<this, EntityObject> {
+  public toFormObject(): PartialWithoutRelations<this, EntityObject> {
     const fillables = getMetadataArray<string>(FILLABLE, this);
     const relations = getMetadataMap<Relation<any>>(RELATIONS, this);
     const dates = getMetadataArray<string>(DATES, this);
@@ -446,20 +446,27 @@ export default abstract class Entity {
         data[f] = value.format('YYYY-MM-DD');
       }
     }
+    const doNotTouch: string[] = [];
     for (const [f, r] of relations) {
       const value = data[f];
       if (r.type === RelationsType.ONE) {
         if (r.fullyDumpInDataObject) {
-          data[f] = !value ? {} : (<Entity>value).toDataObject();
+          data[f] = value ? (<Entity>value).toFormObject() : {};
+          doNotTouch.push(f.toString());
         } else {
           data[f] = get(value, 'id');
         }
       } else if (r.type === RelationsType.MANY) {
         data[f] =
           value instanceof HasMany
-            ? value.toDataObject(r.fullyDumpInDataObject)
+            ? value.toFormObject(r.fullyDumpInDataObject)
             : [];
+      } else if (r.type === RelationsType.MANY_READONLY) {
+        data[f] = value instanceof HasManyReadonly ? value.toFormObject() : [];
       }
+    }
+    for (const f of Object.keys(data).filter((d) => !doNotTouch.includes(d))) {
+      data[f] = data[f] === undefined ? '' : data[f];
     }
     return data;
   }
@@ -614,7 +621,9 @@ export default abstract class Entity {
         return undefined;
       }
       if (typeof value === 'number' || typeof value === 'string') {
-        return repository.createStubEntity(+value);
+        const numberValue = +value;
+        if (numberValue <= 0) return undefined;
+        return repository.createStubEntity(numberValue);
       }
       if (typeof value === 'object') {
         if (value instanceof Entity) {

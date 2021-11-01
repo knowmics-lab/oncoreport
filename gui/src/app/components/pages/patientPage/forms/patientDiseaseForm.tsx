@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// noinspection RequiredAttributes
+
 import React, { useMemo, useState } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
@@ -19,6 +21,7 @@ import { SubmitButton } from '../../../ui/Button';
 import { TumorTypes } from '../../../../../interfaces/enums';
 import useRepositoryQuery from '../../../../hooks/useRepositoryQuery';
 import useNotifications from '../../../../hooks/useNotifications';
+import AutocompleteField from '../../../ui/Form/AutocompleteField';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -50,7 +53,7 @@ const useStyles = makeStyles((theme) =>
 
 function useValidationSchema() {
   return Yup.object().shape({
-    disease: Yup.number().defined(),
+    disease: Yup.object().defined(),
     location: Yup.number().notRequired().nullable(),
     type: Yup.mixed()
       .oneOf([TumorTypes.primary, TumorTypes.secondary] as TumorTypes[])
@@ -60,6 +63,7 @@ function useValidationSchema() {
     M: Yup.number().min(0).max(4).notRequired().nullable(),
     N: Yup.number().min(0).max(4).notRequired().nullable(),
     start_date: Yup.date().notRequired(),
+    end_date: Yup.date().notRequired(),
   });
 }
 
@@ -79,21 +83,6 @@ export default function PatientDiseaseForm({
   const [submitting, setSubmitting] = useState(false);
   const validationSchema = useValidationSchema();
   const { pushSimple } = useNotifications();
-
-  const [loadingDiseases, diseases] = useRepositoryQuery(
-    DiseaseRepository,
-    (builder) => builder.doNotPaginate(),
-    {
-      tumor: true, // todo isPrimary
-    }
-  );
-  const diseaseOptions = useMemo(() => {
-    if (loadingDiseases || !diseases) return {};
-    return diseases.reduce((prev: SimpleMapArray<string>, location) => {
-      prev[location.id] = location.name;
-      return prev;
-    }, {});
-  }, [diseases, loadingDiseases]);
 
   const [loadingLocations, locations] = useRepositoryQuery(
     LocationRepository,
@@ -115,11 +104,9 @@ export default function PatientDiseaseForm({
     []
   );
 
-  const loading = loadingLocations || loadingDiseases;
-
   return (
     <Box margin={1}>
-      {loading ? (
+      {loadingLocations ? (
         <>
           <Grid container justifyContent="center">
             <Grid item xs="auto">
@@ -135,7 +122,10 @@ export default function PatientDiseaseForm({
       ) : (
         <>
           <Formik
-            initialValues={disease.toDataObject()}
+            initialValues={{
+              ...disease.toFormObject(),
+              disease: disease.disease,
+            }}
             validationSchema={validationSchema}
             onSubmit={async (d) => {
               try {
@@ -145,7 +135,7 @@ export default function PatientDiseaseForm({
                     T: d.T ? +d.T : undefined,
                     N: d.N ? +d.N : undefined,
                     M: d.M ? +d.M : undefined,
-                    disease: +(d.disease ?? 0),
+                    disease: +(d.disease?.id ?? 0),
                     end_date: d.end_date ? dayjs(d.end_date) : undefined,
                     location: d.location ? +d.location : undefined,
                     start_date: d.start_date ? dayjs(d.start_date) : dayjs(),
@@ -159,24 +149,30 @@ export default function PatientDiseaseForm({
                 pushSimple(`An error occurred: ${e}`, TypeOfNotification.error);
                 setSubmitting(false);
               }
-              setSubmitting(false);
             }}
           >
             {({ values }) => {
-              const isTumor = diseases?.find?.(
-                (d) => d.id === +(values.disease ?? 0)
-              )?.tumor;
+              const isTumor = !!values?.disease?.tumor;
               return (
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item md>
-                      <SelectField
+                      <AutocompleteField
                         name="disease"
                         label="Disease"
-                        required
-                        emptyText="Select a disease"
-                        addEmpty
-                        options={diseaseOptions}
+                        repositoryToken={DiseaseRepository}
+                        queryBuilderCallback={(q) => q.paginate(50)}
+                        parameters={{
+                          tumor: isPrimary,
+                        }}
+                        getOptionSelected={(option, value) => {
+                          return option.id === value.id;
+                        }}
+                        getOptionLabel={(option) =>
+                          option
+                            ? `${option.icd_code} - ${option.name}`
+                            : 'Select a disease'
+                        }
                       />
                     </Grid>
                     {isTumor && (

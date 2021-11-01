@@ -311,6 +311,7 @@
     "tsyringe": "^4.4.0",
     "tus-js-client": "^2.2.0",
     "uniqid": "^5.2.0",
+    "use-debounce": "^7.0.0",
     "yup": "^0.32.8"
   },
   "devEngines": {

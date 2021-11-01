@@ -93,6 +93,11 @@ export default function RepositoryTable<E extends EntityObject>({
         refresh: forceRefresh,
       };
     }
+    return () => {
+      if (tableRef) {
+        tableRef.current = undefined;
+      }
+    };
   }, [tableRef, forceRefresh]);
 
   const onChangeRowsPerPage = useCallback(

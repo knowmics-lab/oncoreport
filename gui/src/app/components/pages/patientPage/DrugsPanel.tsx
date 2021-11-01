@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Dayjs } from 'dayjs';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { DialogContent } from '@material-ui/core';
 import {
   DrugEntity,
   PatientDiseaseEntity,
@@ -8,7 +11,11 @@ import {
 } from '../../../../api';
 import TabPanel from './TabPanel';
 import GoBackRow from './GoBackRow';
-import RepositoryTable from '../../ui/RepositoryTable';
+import RepositoryTable, { RepositoryTableRef } from '../../ui/RepositoryTable';
+import { Alignment } from '../../ui/Table/types';
+import { runAsync } from '../../utils';
+import { TypeOfNotification } from '../../../../interfaces';
+import PatientDrugForm from './forms/patientDrugForm';
 
 interface PanelProps {
   index: number;
@@ -17,13 +24,26 @@ interface PanelProps {
 }
 
 export default function DrugsPanel({ currentTab, patient, index }: PanelProps) {
+  const tableRef = useRef<RepositoryTableRef>();
   const { id } = patient;
+  const [open, setOpen] = useState(false);
+  const closeModal = useCallback(() => setOpen(false), [setOpen]);
 
-  // const classes = useStyles();
   return (
     <TabPanel value={currentTab} index={index}>
       <RepositoryTable
         doNotWrap
+        toolbar={[
+          {
+            align: Alignment.right,
+            shown: true,
+            icon: 'fas fa-plus',
+            tooltip: 'Add Drug',
+            onClick: () => {
+              setOpen(true);
+            },
+          },
+        ]}
         columns={[
           {
             dataField: 'drug',
@@ -48,53 +68,53 @@ export default function DrugsPanel({ currentTab, patient, index }: PanelProps) {
             label: 'End',
             format: (v?: Dayjs) => v?.format('YYYY-MM-DD') ?? 'Current',
           },
+          'actions',
+        ]}
+        actions={[
+          {
+            shown: true,
+            color: 'secondary',
+            icon: 'fas fa-trash',
+            tooltip: 'Delete',
+            onClick: (_e, data) => {
+              runAsync(async (manager) => {
+                await data.delete();
+                manager.pushSimple('Drug deleted!', TypeOfNotification.success);
+              });
+            },
+          },
         ]}
         repositoryToken={PatientDrugRepository}
         parameters={{ patient_id: id }}
         collapsible
         collapsibleContent={(row) => {
-          return <>TODO: {row.id}</>;
+          return (
+            <PatientDrugForm
+              drug={row}
+              patient={patient}
+              onSave={() => {
+                if (tableRef.current) tableRef.current.refresh();
+              }}
+            />
+          );
         }}
+        tableRef={tableRef}
       />
-      {/* {patient.diseases.length === 0 && ( */}
-      {/*  <Typography variant="overline" display="block" gutterBottom> */}
-      {/*    Nothing to show here. */}
-      {/*  </Typography> */}
-      {/* )} */}
-      {/* {patient.diseases.map((disease: any) => ( */}
-      {/*  <Accordion */}
-      {/*    key={`accordion-${disease.id}`} */}
-      {/*    TransitionProps={{ unmountOnExit: true }} */}
-      {/*    expanded={expanded === disease.id} */}
-      {/*    onChange={(_e, isExpanded: boolean) => { */}
-      {/*      setExpanded(isExpanded ? disease.id : -1); */}
-      {/*    }} */}
-      {/*  > */}
-      {/*    <AccordionSummary expandIcon={<ExpandMoreIcon />}> */}
-      {/*      <Typography>{disease.name}</Typography> */}
-      {/*    </AccordionSummary> */}
-      {/*    <AccordionDetails> */}
-      {/*      <TableContainer component={Paper}> */}
-      {/*        <Table> */}
-      {/*          <TableHead> */}
-      {/*            <TableRow className={classes.stickyStyle}> */}
-      {/*              <TableCell>Drugs</TableCell> */}
-      {/*            </TableRow> */}
-      {/*          </TableHead> */}
-      {/*          <TableBody> */}
-      {/*            {disease.medicines.map((medicine: any) => ( */}
-      {/*              <TableRow */}
-      {/*                key={`accordion-${disease.id}-drug-${medicine.id}`} */}
-      {/*              > */}
-      {/*                <TableCell>{medicine.name}</TableCell> */}
-      {/*              </TableRow> */}
-      {/*            ))} */}
-      {/*          </TableBody> */}
-      {/*        </Table> */}
-      {/*      </TableContainer> */}
-      {/*    </AccordionDetails> */}
-      {/*  </Accordion> */}
-      {/* ))} */}
+      <Dialog open={open} onClose={closeModal}>
+        <DialogTitle>Add Drug</DialogTitle>
+        <DialogContent style={{ minWidth: 600 }}>
+          {open && patient.drugs && (
+            <PatientDrugForm
+              drug={patient.drugs.new()}
+              patient={patient}
+              onSave={() => {
+                closeModal();
+                if (tableRef.current) tableRef.current.refresh();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
       <GoBackRow id={id} />
     </TabPanel>
   );

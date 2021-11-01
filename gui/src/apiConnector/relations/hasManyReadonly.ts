@@ -55,15 +55,15 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
   /**
    * Convert this object to a list of identifiers
    */
-  public toDataObject(): number[] {
-    return this.map((o) => o.id);
+  public toFormObject(): number[] {
+    return [...this].map((o) => o.id);
   }
 
   /**
    * Serializes this object.
    */
   public serialize(): MapValueType {
-    return this.map((o) => o.id);
+    return [...this].map((o) => o.id);
   }
 
   public reverse(): R[] {
