@@ -238,14 +238,9 @@ write.table(pharm, paste0(database.path, "/pharm_database_", genome, ".txt"),
 
 #DrugFood
 
-if (!file.exists(paste0(database.path, "/drugfood_database.txt"))) {
+if (!file.exists(paste0(database.path, "/drugfood_database.csv"))) {
   cat(" - Drugfood database...\n")
-  drug <- read.csv(paste0(database.path, "/Drug_food.txt"),
-                   sep = "\t", colClasses = c("character"))
-  names(drug) <- c("Drugbank_ID", "Drug", "Food_interaction")
-  write.table(drug, paste0(database.path, "/drugfood_database.txt"),
-              quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-  unlink(paste0(database.path, "/Drug_food.txt"))
+  source("get_drug.R")
 } else {
   cat(" - Skipping Drugfood database. The file already exist.\n")
 }

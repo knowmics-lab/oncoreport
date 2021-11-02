@@ -281,7 +281,7 @@ write.table(def, paste0(project.path, "/txt/", sample.name ,"_definitive.txt"),
 pharm <- read.csv(paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
                   sep = "\t", colClasses = c("character"))
 list.drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
-drugfood <- read.csv(paste0(database.path, "/drugfood_database.txt"),
+drugfood <- read.csv(paste0(database.path, "/drugfood_database.csv"),
                      sep = "\t", colClasses = c("character"))
 drugfood <- drugfood[drugfood$Drug %in% list.drugs,]
 write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"),
