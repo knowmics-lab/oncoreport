@@ -37,24 +37,33 @@ export interface EntityObserver<T extends Entity> {
 
 type WeakEntityObserver<T extends Entity> = WeakRef<EntityObserver<T>>;
 
-export type HasOneRelation<E extends Entity> = {
-  type: RelationsType.ONE;
+interface AnyRelation<E extends Entity> {
+  type: RelationsType;
   repositoryToken: InjectionToken<RepositoryObject<E>>;
   noRecursionSave?: boolean;
-  fullyDumpInDataObject?: boolean;
-};
+  fullyDumpInFormObject?: boolean;
+  dumpAsFormObject?: boolean;
+}
 
-export type HasManyRelation<E extends Entity> = {
+export interface HasOneRelation<E extends Entity> extends AnyRelation<E> {
+  type: RelationsType.ONE;
+}
+
+export interface HasManyRelation<E extends Entity> extends AnyRelation<E> {
   type: RelationsType.MANY;
-  repositoryToken: InjectionToken<RepositoryObject<E>>;
-  noRecursionSave?: boolean;
-  fullyDumpInDataObject?: boolean;
   foreignKey: keyof E | { [localKey: string]: keyof E };
-};
+}
 
 export type HasManyReadonlyRelation<E extends Entity> = {
   type: RelationsType.MANY_READONLY;
   repositoryToken: InjectionToken<RepositoryObject<E>>;
+};
+
+type CustomRelationConfig = {
+  [fieldName: string | symbol]: Omit<
+    AnyRelation<any>,
+    'type' | 'repositoryToken'
+  >;
 };
 
 export type Relation<E extends Entity> =
@@ -67,6 +76,12 @@ export type SerializationConfig<T> = {
   serialize?: (value: T, config: SerializationConfig<T>) => MapValueType;
   serializedKey?: string;
   dumpFullObject?: boolean;
+  dumpIdWithFullObject?: boolean;
+  nullable?: boolean;
+  identifier?: boolean;
+  number?: boolean;
+  date?: boolean;
+  leaveAsIs?: boolean;
 };
 
 export type FieldOptions<T = any> = {
@@ -199,7 +214,10 @@ export default abstract class Entity {
   })
   public updated_at_diff = '';
 
-  protected constructor(adapter: any, protected parameters?: SimpleMapType) {
+  protected constructor(
+    adapter: any,
+    protected requestParameters?: SimpleMapType
+  ) {
     this.adapter = adapter;
   }
 
@@ -208,7 +226,7 @@ export default abstract class Entity {
    * @param parameters
    */
   public setParameters(parameters: SimpleMapType): this {
-    this.parameters = parameters;
+    this.requestParameters = parameters;
     return this;
   }
 
@@ -225,7 +243,7 @@ export default abstract class Entity {
       created_at: dayjs(),
       updated_at: dayjs(),
     };
-    this.parameters = parameters ?? {};
+    this.requestParameters = parameters ?? {};
     return this;
   }
 
@@ -239,7 +257,7 @@ export default abstract class Entity {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
     this.fillDataArray(d);
-    this.parameters = parameters ?? {};
+    this.requestParameters = parameters ?? {};
     this.initialized = true;
     this.dirty = false;
     return this;
@@ -253,7 +271,10 @@ export default abstract class Entity {
     parameters?: SimpleMapType
   ): this {
     this.fillDataArray(d);
-    this.parameters = { ...this.parameters, ...(parameters ?? {}) };
+    this.requestParameters = {
+      ...this.requestParameters,
+      ...(parameters ?? {}),
+    };
     this.dirty = false;
     return this;
   }
@@ -269,7 +290,7 @@ export default abstract class Entity {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
     set(this.data, 'id', id);
-    this.parameters = parameters ?? {};
+    this.requestParameters = parameters ?? {};
     if (d) {
       this.fillDataArray(d);
     } else if (id > 0) {
@@ -431,9 +452,11 @@ export default abstract class Entity {
   }
 
   /**
-   * Converts this entity to an objects where related entities are converted to identifiers
+   * Converts this entity to an object that can be used for Formik forms
    */
-  public toFormObject(): PartialWithoutRelations<this, EntityObject> {
+  public toFormObject(
+    customRelations: CustomRelationConfig = {}
+  ): PartialWithoutRelations<this, EntityObject> {
     const fillables = getMetadataArray<string>(FILLABLE, this);
     const relations = getMetadataMap<Relation<any>>(RELATIONS, this);
     const dates = getMetadataArray<string>(DATES, this);
@@ -448,22 +471,13 @@ export default abstract class Entity {
     }
     const doNotTouch: string[] = [];
     for (const [f, r] of relations) {
-      const value = data[f];
-      if (r.type === RelationsType.ONE) {
-        if (r.fullyDumpInDataObject) {
-          data[f] = value ? (<Entity>value).toFormObject() : {};
-          doNotTouch.push(f.toString());
-        } else {
-          data[f] = get(value, 'id');
-        }
-      } else if (r.type === RelationsType.MANY) {
-        data[f] =
-          value instanceof HasMany
-            ? value.toFormObject(r.fullyDumpInDataObject)
-            : [];
-      } else if (r.type === RelationsType.MANY_READONLY) {
-        data[f] = value instanceof HasManyReadonly ? value.toFormObject() : [];
-      }
+      const config: Relation<any> = has(customRelations, f)
+        ? {
+            ...r,
+            ...get(customRelations, f),
+          }
+        : r;
+      data[f] = this.dumpRelation(f.toString(), config, doNotTouch);
     }
     for (const f of Object.keys(data).filter((d) => !doNotTouch.includes(d))) {
       data[f] = data[f] === undefined ? '' : data[f];
@@ -485,7 +499,7 @@ export default abstract class Entity {
       if (config.serializable ?? true) {
         result[config.serializedKey ?? f] = (
           config.serialize ?? this.defaultSerializer
-        )(this.data[f], config);
+        ).bind(this)(this.data[f], config);
       }
     }
     return result;
@@ -496,9 +510,61 @@ export default abstract class Entity {
    */
   public getParameters(): SimpleMapType {
     return {
-      ...(this.parameters ?? {}),
+      ...(this.requestParameters ?? {}),
       ...this,
     };
+  }
+
+  protected dumpHasOneRelation(
+    fieldName: string,
+    relation: HasOneRelation<any>,
+    doNotTouch: string[]
+  ) {
+    const value = this.data[fieldName];
+    if (relation.fullyDumpInFormObject) {
+      doNotTouch.push(fieldName);
+      let entity: Entity;
+      if (value) {
+        entity = <Entity>value;
+      } else {
+        entity = container.resolve(relation.repositoryToken).createEntitySync();
+      }
+      return relation.dumpAsFormObject ? entity.toFormObject() : entity;
+    }
+    return <number>get(value, 'id');
+  }
+
+  protected dumpHasManyRelation(
+    fieldName: string,
+    relation: HasManyRelation<any>
+  ) {
+    const value = this.data[fieldName];
+    if (value instanceof HasMany) {
+      value.toFormObject(
+        relation.fullyDumpInFormObject,
+        relation.dumpAsFormObject
+      );
+    }
+    return [];
+  }
+
+  protected dumpHasManyReadonlyRelation(fieldName: string) {
+    const value = this.data[fieldName];
+    return value instanceof HasManyReadonly ? value.toFormObject() : [];
+  }
+
+  protected dumpRelation(
+    fieldName: string,
+    relation: Relation<any>,
+    doNotTouch: string[]
+  ) {
+    if (relation.type === RelationsType.ONE) {
+      return this.dumpHasOneRelation(fieldName, relation, doNotTouch);
+    }
+    if (relation.type === RelationsType.MANY) {
+      return this.dumpHasManyRelation(fieldName, relation);
+    }
+    return this.dumpHasManyReadonlyRelation(fieldName);
   }
 
   protected async create(): Promise<this> {
@@ -535,22 +601,89 @@ export default abstract class Entity {
     return this;
   }
 
+  protected performNullableSerialization(
+    value: any,
+    config: SerializationConfig<any>
+  ) {
+    if (config.identifier) {
+      const number = +value;
+      if (Number.isNaN(number) || number <= 0) return null;
+    }
+    if (
+      config.number &&
+      (Number.isNaN(+value) ||
+        (typeof value === 'string' && value.trim().length === 0))
+    ) {
+      return null;
+    }
+    if (
+      config.date &&
+      (!value ||
+        (typeof value === 'string' && value.trim().length === 0) ||
+        !dayjs(value).isValid())
+    ) {
+      return null;
+    }
+    if (typeof value === 'string' && value.trim().length === 0) {
+      return null;
+    }
+    if (typeof value === 'object' && !value) return null;
+    if (typeof value === 'undefined') return null;
+    return undefined;
+  }
+
+  protected performObjectSerialization(
+    value: any,
+    config: SerializationConfig<any>
+  ) {
+    if (value instanceof Entity) {
+      if (config.dumpFullObject) {
+        const result = value.serialize();
+        if (config.dumpIdWithFullObject) {
+          result.id = +value.id > 0 ? +value.id : undefined;
+        }
+        return result;
+      }
+      if (value.id > 0) return value.id;
+      return config.nullable ? null : undefined;
+    }
+    if (value instanceof HasMany) {
+      if (config.nullable && value.length === 0) return null;
+      return value.serialize(config.dumpFullObject);
+    }
+    if (value instanceof HasManyReadonly) {
+      return value.serialize();
+    }
+    if (dayjs.isDayjs(value)) {
+      return value.format('YYYY-MM-DD HH:mm:ss');
+    }
+    return undefined;
+  }
+
   protected defaultSerializer(
     value: any,
     config: SerializationConfig<any>
   ): MapValueType {
-    if (typeof value === 'object') {
-      if (value instanceof Entity)
-        return config.dumpFullObject ? value.serialize() : value.id;
-      if (dayjs.isDayjs(value)) {
-        return value.format('YYYY-MM-DD HH:mm:ss');
-      }
-      if (value instanceof HasMany)
-        return value.serialize(config.dumpFullObject);
-      if (value instanceof HasManyReadonly) return value.serialize();
-    }
-    if (typeof value === 'undefined') {
+    if (config.leaveAsIs) return value;
+    if (
+      config.nullable &&
+      this.performNullableSerialization(value, config) === null
+    ) {
       return null;
+    }
+    if (config.date || value instanceof dayjs) {
+      const dateValue = dayjs(value);
+      if (!dateValue.isValid()) return undefined;
+      return dateValue.format('YYYY-MM-DD HH:mm:ss');
+    }
+    if (config.number) {
+      return +value;
+    }
+    if (config.identifier) {
+      return +value > 0 ? +value : undefined;
+    }
+    if (typeof value === 'object') {
+      return this.performObjectSerialization(value, config);
     }
     return value;
   }

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
@@ -15,7 +16,6 @@ import * as Yup from 'yup';
 import { generatePath } from 'react-router';
 import {
   JobRepository,
-  PatientEntity,
   PatientRepository,
   TransferManager,
   Utils,
@@ -28,7 +28,6 @@ import {
   TypeOfNotification,
   UploadState,
 } from '../../../../interfaces';
-import { runAsync } from '../../utils';
 import { useService } from '../../../../reactInjector';
 import SelectField from '../../ui/Form/SelectField';
 import TextField from '../../ui/Form/TextField';
@@ -36,9 +35,14 @@ import Routes from '../../../../constants/routes.json';
 import SwitchField from '../../ui/Form/SwitchField';
 import Wizard from '../../ui/Wizard';
 import FileSelector, { File } from '../../ui/FileSelector';
-import { useUpload } from '../../ui/hooks';
 import UploadProgress from '../../ui/UploadProgress';
 import { SubmitButton } from '../../ui/Button';
+import { Capabilities } from '../../../../api/utils';
+import useUpload from '../../../hooks/useUpload';
+import useCapabilities from '../../../hooks/useCapabilities';
+import useEffectOnce from '../../../hooks/useEffectOnce';
+import useRepositoryFetchOne from '../../../hooks/useRepositoryFetchOne';
+import useNotifications from '../../../hooks/useNotifications';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -72,8 +76,6 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-
-type MaybePatient = PatientEntity | undefined;
 
 const steps = [
   'Choose analysis type',
@@ -115,7 +117,27 @@ function CustomErrorMessage(props: {}) {
   return <FormHelperText error {...props} />;
 }
 
-function Step0() {
+type ThreadsTextProps = {
+  capabilities: Capabilities | undefined;
+  values: LocalData;
+};
+
+function ThreadsText({ capabilities, values }: ThreadsTextProps) {
+  const allCores = capabilities?.numCores ?? 1;
+  const { threads } = values;
+  const maxMultiple = Math.floor(allCores / 3);
+  const standardMessage = `Do not select more than ${maxMultiple} cores to allow for multiple concurrent analysis.`;
+  if (threads <= maxMultiple) {
+    return <>{standardMessage}</>;
+  }
+  return (
+    <Typography color="error" component="span">
+      {standardMessage}
+    </Typography>
+  );
+}
+
+function Step0({ capabilities, values }: ThreadsTextProps) {
   const classes = useStyles();
   return (
     <>
@@ -150,9 +172,7 @@ function Step0() {
         label="Number of threads"
         name="threads"
         type="number"
-        helperText={`Do not select more than ${Math.floor(
-          Utils.cpuCount() / 3
-        )} cores if you wish to submit multiple analysis.`}
+        helperText={<ThreadsText capabilities={capabilities} values={values} />}
         required
       />
     </>
@@ -374,7 +394,8 @@ function Step2({ values, uploadState, setFieldValue }: Step2Prop) {
   );
 }
 
-function useValidationSchema() {
+function useValidationSchema(capabilities: Capabilities | undefined) {
+  const cores = capabilities?.availableCores ?? 1;
   return Yup.object().shape({
     sample_code: Yup.string()
       .defined()
@@ -389,7 +410,7 @@ function useValidationSchema() {
     inputType: Yup.mixed()
       .oneOf(Object.keys(Utils.supportedAnalysisFileTypes()))
       .defined(),
-    threads: Yup.number().defined().min(1).max(Utils.cpuCount()),
+    threads: Yup.number().defined().min(1).max(cores),
     paired: Yup.boolean().defined(),
     genome: Yup.mixed().oneOf([Genome.hg19, Genome.hg38]).defined(),
     depthFilter: Yup.mixed().when('type', {
@@ -431,43 +452,128 @@ function useValidationSchema() {
   });
 }
 
+function handleFileUpload(d: LocalData, parameters: JobConfig) {
+  const toUpload: File[] = [];
+  const { inputType, type, paired } = d;
+  switch (inputType) {
+    case 'vcf':
+      if (!d.firstFile) throw new Error('Input file missing');
+      parameters.vcf = d.firstFile.name;
+      toUpload.push(d.firstFile);
+      break;
+    case 'bam':
+      if (!d.firstFile) throw new Error('Input file missing');
+      toUpload.push(d.firstFile);
+      if (type === JobTypes.tumorOnly) {
+        parameters.bam = d.firstFile.name;
+      } else {
+        parameters.tumor = {
+          bam: d.firstFile.name,
+        };
+        if (!d.thirdFile) throw new Error('Normal input file missing');
+        parameters.normal = {
+          bam: d.thirdFile.name,
+        };
+        toUpload.push(d.thirdFile);
+      }
+      break;
+    case 'ubam':
+      if (!d.firstFile) throw new Error('Input file missing');
+      toUpload.push(d.firstFile);
+      if (type === JobTypes.tumorOnly) {
+        parameters.ubam = d.firstFile.name;
+      } else {
+        parameters.tumor = {
+          ubam: d.firstFile.name,
+        };
+        if (!d.thirdFile) throw new Error('Normal input file missing');
+        parameters.normal = {
+          ubam: d.thirdFile.name,
+        };
+        toUpload.push(d.thirdFile);
+      }
+      break;
+    case 'fastq':
+      if (!d.firstFile) throw new Error('Input file missing');
+      toUpload.push(d.firstFile);
+      if (type === JobTypes.tumorOnly) {
+        parameters.fastq1 = d.firstFile.name;
+        if (paired) {
+          if (!d.secondFile) throw new Error('Second input file missing');
+          parameters.fastq2 = d.secondFile.name;
+          toUpload.push(d.secondFile);
+        }
+      } else {
+        if (!d.thirdFile) throw new Error('Normal input file missing');
+        toUpload.push(d.thirdFile);
+        if (paired) {
+          if (!d.secondFile) throw new Error('Second input file missing');
+          if (!d.fourthFile)
+            throw new Error('Second normal input file missing');
+          parameters.tumor = {
+            fastq1: d.firstFile.name,
+            fastq2: d.secondFile.name,
+          };
+          parameters.normal = {
+            fastq1: d.thirdFile.name,
+            fastq2: d.fourthFile.name,
+          };
+          toUpload.push(d.secondFile);
+          toUpload.push(d.fourthFile);
+        } else {
+          parameters.tumor = {
+            fastq1: d.firstFile.name,
+          };
+          parameters.normal = {
+            fastq1: d.thirdFile.name,
+          };
+        }
+      }
+      break;
+    default:
+      throw new Error('Unknown error');
+  }
+  return toUpload;
+}
+
 export default function NewAnalysisForm() {
   const classes = useStyles();
-  const repository = useService(PatientRepository);
   const jobRepository = useService(JobRepository);
   const transferManager = useService(TransferManager);
-  const [loading, setLoading] = useState(false);
-  const [patient, setPatient] = useState<MaybePatient>();
+  const history = useHistory();
+  const { pushSimple } = useNotifications();
   const [uploadState, uploadCallbacks] = useUpload();
   const [submitting, setSubmitting] = useState(false);
-  const history = useHistory();
   const { id } = useParams<{ id: string }>();
 
-  useEffect(() => {
-    runAsync(async () => {
-      setLoading(true);
-      setPatient(await (await repository.fetch(+id)).refresh());
-      setLoading(false);
-    });
-  }, [id, repository]);
+  const [loadingPatient, patient] = useRepositoryFetchOne(
+    PatientRepository,
+    +id
+  );
+  const [loadingCapabilities, capabilities, refresh] = useCapabilities();
+  const validationSchema = useValidationSchema(capabilities);
+  useEffectOnce(() => refresh());
 
-  const validationSchema = useValidationSchema();
+  const loading = loadingPatient || loadingCapabilities;
 
-  const jobData: LocalData = {
-    inputType: 'fastq',
-    name: '',
-    paired: false,
-    sample_code: '',
-    threads: Math.floor(Utils.cpuCount() / 3),
-    type: JobTypes.tumorOnly,
-    genome: Genome.hg38,
-    alleleFractionFilter: { comparison: Comparison.gt, value: 0.3 },
-    depthFilter: { comparison: Comparison.lt, value: 0 },
-    firstFile: undefined,
-    secondFile: undefined,
-    thirdFile: undefined,
-    fourthFile: undefined,
-  };
+  const jobData: LocalData = useMemo(
+    () => ({
+      inputType: 'fastq',
+      name: '',
+      paired: false,
+      sample_code: '',
+      threads: 1,
+      type: JobTypes.tumorOnly,
+      genome: Genome.hg38,
+      alleleFractionFilter: { comparison: Comparison.gt, value: 0.3 },
+      depthFilter: { comparison: Comparison.lt, value: 0 },
+      firstFile: undefined,
+      secondFile: undefined,
+      thirdFile: undefined,
+      fourthFile: undefined,
+    }),
+    []
+  );
 
   return (
     <Paper elevation={1} className={classes.paper}>
@@ -494,99 +600,15 @@ export default function NewAnalysisForm() {
             initialValues={jobData}
             validationSchema={validationSchema}
             onSubmit={async (d) => {
-              runAsync(async (manager) => {
-                if (!patient) throw new Error('Unknown error');
+              try {
                 setSubmitting(true);
-                const { type, inputType, paired } = d;
-                const toUpload: File[] = [];
+                const { type } = d;
                 const parameters: JobConfig = {
                   paired: d.paired,
                   genome: d.genome,
                   threads: d.threads,
                 };
-                switch (inputType) {
-                  case 'vcf':
-                    if (!d.firstFile) throw new Error('Input file missing');
-                    parameters.vcf = d.firstFile.name;
-                    toUpload.push(d.firstFile);
-                    break;
-                  case 'bam':
-                    if (!d.firstFile) throw new Error('Input file missing');
-                    toUpload.push(d.firstFile);
-                    if (type === JobTypes.tumorOnly) {
-                      parameters.bam = d.firstFile.name;
-                    } else {
-                      parameters.tumor = {
-                        bam: d.firstFile.name,
-                      };
-                      if (!d.thirdFile)
-                        throw new Error('Normal input file missing');
-                      parameters.normal = {
-                        bam: d.thirdFile.name,
-                      };
-                      toUpload.push(d.thirdFile);
-                    }
-                    break;
-                  case 'ubam':
-                    if (!d.firstFile) throw new Error('Input file missing');
-                    toUpload.push(d.firstFile);
-                    if (type === JobTypes.tumorOnly) {
-                      parameters.ubam = d.firstFile.name;
-                    } else {
-                      parameters.tumor = {
-                        ubam: d.firstFile.name,
-                      };
-                      if (!d.thirdFile)
-                        throw new Error('Normal input file missing');
-                      parameters.normal = {
-                        ubam: d.thirdFile.name,
-                      };
-                      toUpload.push(d.thirdFile);
-                    }
-                    break;
-                  case 'fastq':
-                    if (!d.firstFile) throw new Error('Input file missing');
-                    toUpload.push(d.firstFile);
-                    if (type === JobTypes.tumorOnly) {
-                      parameters.fastq1 = d.firstFile.name;
-                      if (paired) {
-                        if (!d.secondFile)
-                          throw new Error('Second input file missing');
-                        parameters.fastq2 = d.secondFile.name;
-                        toUpload.push(d.secondFile);
-                      }
-                    } else {
-                      if (!d.thirdFile)
-                        throw new Error('Normal input file missing');
-                      toUpload.push(d.thirdFile);
-                      if (paired) {
-                        if (!d.secondFile)
-                          throw new Error('Second input file missing');
-                        if (!d.fourthFile)
-                          throw new Error('Second normal input file missing');
-                        parameters.tumor = {
-                          fastq1: d.firstFile.name,
-                          fastq2: d.secondFile.name,
-                        };
-                        parameters.normal = {
-                          fastq1: d.thirdFile.name,
-                          fastq2: d.fourthFile.name,
-                        };
-                        toUpload.push(d.secondFile);
-                        toUpload.push(d.fourthFile);
-                      } else {
-                        parameters.tumor = {
-                          fastq1: d.firstFile.name,
-                        };
-                        parameters.normal = {
-                          fastq1: d.thirdFile.name,
-                        };
-                      }
-                    }
-                    break;
-                  default:
-                    throw new Error('Unknown error');
-                }
+                const toUpload = handleFileUpload(d, parameters);
                 if (type === JobTypes.tumorOnly) {
                   parameters.depthFilter = {
                     comparison: `${d.depthFilter.comparison}`,
@@ -597,15 +619,14 @@ export default function NewAnalysisForm() {
                     value: d.alleleFractionFilter.value,
                   };
                 }
-                const data = {
+                const job = await jobRepository.create({
                   sample_code: d.sample_code,
                   name: d.name,
                   type,
                   parameters,
-                  patient,
-                };
-                const job = await jobRepository.create(data);
-                manager.pushSimple(
+                  patient: patient?.id,
+                } as any);
+                pushSimple(
                   `Job created...Starting upload!`,
                   TypeOfNotification.success
                 );
@@ -622,23 +643,18 @@ export default function NewAnalysisForm() {
                   );
                   uploadCallbacks.uploadEnd();
                 }
-                manager.pushSimple(
-                  `Upload completed!`,
-                  TypeOfNotification.success
-                );
-                await job.submit();
-                await jobRepository.refreshAllPages();
-                await jobRepository.refreshAllPagesByPatient(patient);
-                manager.pushSimple(
-                  `Job submitted!`,
-                  TypeOfNotification.success
-                );
+                pushSimple(`Upload completed!`, TypeOfNotification.success);
+                // await job.submit();
+                pushSimple(`Job submitted!`, TypeOfNotification.success);
                 history.push(
                   generatePath(Routes.JOBS_BY_PATIENT, {
-                    id: patient?.id || 0,
+                    id: patient?.id ?? 0,
                   })
                 );
-              });
+              } catch (e) {
+                pushSimple(`An error occurred: ${e}`, TypeOfNotification.error);
+                setSubmitting(false);
+              }
             }}
           >
             {({ values, setFieldValue }) => (
@@ -661,7 +677,7 @@ export default function NewAnalysisForm() {
                     ['firstFile', 'secondFile', 'thirdFile', 'fourthFile'],
                   ]}
                 >
-                  <Step0 />
+                  <Step0 values={values} capabilities={capabilities} />
                   <Step1 values={values} />
                   <Step2
                     values={values}

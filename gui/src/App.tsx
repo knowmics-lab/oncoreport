@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   createStyles,
   ImageList,
@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Route, HashRouter as Router, Switch } from 'react-router-dom';
+import { ipcRenderer } from 'electron';
 import injector from './injector';
 import InjectorContext from './reactInjector/context';
 import Constants from './constants/system.json';
@@ -15,6 +16,7 @@ import UNICT_LOGO from './resources/unict.png';
 import ThemeContext from './app/themeContext';
 import * as Pages from './app/components/pages';
 import Layout from './app/layout';
+import useCapabilities from './app/hooks/useCapabilities';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -40,6 +42,21 @@ const useStyles = makeStyles(() =>
 
 const Home = () => {
   const classes = useStyles();
+  const [loading, capabilities] = useCapabilities();
+
+  useEffect(() => {
+    if (loading) {
+      ipcRenderer.send('display-blocking-message', {
+        message: 'Loading...',
+        error: false,
+      });
+    } else {
+      setTimeout(() => {
+        ipcRenderer.send('hide-blocking-message');
+      }, 2000);
+    }
+  }, [loading]);
+
   return (
     <div>
       <Typography variant="overline">WELCOME</Typography>
@@ -47,7 +64,11 @@ const Home = () => {
         OncoReport
       </Typography>
       <Typography gutterBottom>
-        <b>{`Version ${Constants.GUI_VERSION}`}</b>
+        <b>{`You are using Oncoreport ${
+          Constants.GUI_VERSION
+        } with the Oncoreport container v. ${
+          capabilities ? capabilities.containerVersion : 'Loading...'
+        }`}</b>
       </Typography>
       <Typography>TODO text goes here</Typography>
       <ThemeContext.Consumer>
@@ -76,10 +97,10 @@ export default function App() {
         <Layout>
           <Switch>
             <Route path={Routes.JOBS} component={Pages.JobsPage} />
-            {/* <Route */}
-            {/*  path={Routes.NEW_ANALYSIS} */}
-            {/*  component={Pages.Forms.NewAnalysisForm} */}
-            {/* /> */}
+             <Route
+              path={Routes.NEW_ANALYSIS}
+              component={Pages.Forms.NewAnalysisForm}
+             />
             <Route
               path={Routes.JOBS_BY_PATIENT}
               component={Pages.JobsByPatientPage}
@@ -92,10 +113,6 @@ export default function App() {
               path={Routes.PATIENTS_EDIT}
               component={Pages.Forms.PatientForm}
             />
-            {/* <Route */}
-            {/*  path={Routes.PATIENTS_TUMORS} */}
-            {/*  component={Pages.Forms.TumorForm} */}
-            {/* /> */}
             <Route path={Routes.PATIENT} component={Pages.PatientPage} />
             <Route
               path={Routes.PATIENTS}

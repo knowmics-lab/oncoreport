@@ -14,7 +14,6 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { generatePath } from 'react-router';
-import dayjs from 'dayjs';
 import {
   DiseaseRepository,
   PatientRepository,
@@ -147,6 +146,16 @@ export default function PatientForm() {
 
   const goBackUrl = useMemo(() => generatePath(Routes.PATIENTS), []);
 
+  const initialValue = useMemo(
+    () => ({
+      ...(patient?.toFormObject() ?? {}),
+      primary_disease: patient?.primary_disease?.toFormObject?.({
+        disease: { fullyDumpInFormObject: false },
+      }),
+    }),
+    [patient]
+  );
+
   return (
     <Paper elevation={1} className={classes.paper}>
       {loading || !patient ? (
@@ -168,11 +177,13 @@ export default function PatientForm() {
             {patient.isNew ? 'New Patient' : 'Edit Patient'}
           </Typography>
           <Formik
-            initialValues={patient.toFormObject()}
+            initialValues={initialValue}
             validationSchema={validationSchema}
             onSubmit={async (d) => {
               try {
                 setSubmitting(true);
+                /*
+                TODO: remove this code if everything works fine
                 const primaryDisease = d.primary_disease as unknown as Record<
                   string,
                   any
@@ -202,7 +213,8 @@ export default function PatientForm() {
                     type: primaryDisease.type,
                   },
                 };
-                await patient?.fill(cleanedData).save();
+                 */
+                await patient?.fill(d).save();
                 pushSimple('Patient saved!', TypeOfNotification.success);
                 if (patient?.wasRecentlyCreated) {
                   history.push(
@@ -215,7 +227,6 @@ export default function PatientForm() {
                 pushSimple(`An error occurred: ${e}`, TypeOfNotification.error);
                 setSubmitting(false);
               }
-              // setSubmitting(false);
             }}
           >
             <Form>

@@ -44,6 +44,11 @@ abstract class AbstractJob
     public const NO_PATIENT       = 'no_patient';
 
     /**
+     * @var int
+     */
+    protected int $defaultNumberOfThreads = 1;
+
+    /**
      * @var \App\Models\Job
      */
     protected Job $model;
@@ -121,7 +126,7 @@ abstract class AbstractJob
      */
     public static function scriptPath(string $script): string
     {
-        return realpath(env('BASH_SCRIPT_PATH') . '/' . $script);
+        return realpath(config('oncoreport.bash_script_path') . '/' . $script);
     }
 
     /**
@@ -135,6 +140,7 @@ abstract class AbstractJob
      *
      * @return string
      * @throws \App\Exceptions\ProcessingJobException
+     * @throws \Exception
      */
     public static function runCommand(
         array $command,
@@ -183,6 +189,16 @@ abstract class AbstractJob
     public function isInputValid(): bool
     {
         return true;
+    }
+
+    /**
+     * Returns the number of threads used by this job
+     *
+     * @return int
+     */
+    public function threads(): int
+    {
+        return (int)$this->getParameter('threads', $this->defaultNumberOfThreads);
     }
 
     /**
@@ -346,11 +362,11 @@ abstract class AbstractJob
     /**
      * This function returns the relative path and url of a file to be saved as output of a job.
      *
-     * @param  string|array  $filename
+     * @param  array|string  $filename
      *
      * @return array|null
      */
-    protected function getFilePathsForOutput($filename): ?array
+    protected function getFilePathsForOutput(array|string $filename): ?array
     {
         if (is_array($filename) && count($filename) === 3) {
             if (!$this->fileExistsRelative($filename[0])) {

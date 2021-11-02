@@ -14,11 +14,15 @@ import {
   PatientDiseaseRepository,
   SuspensionReasonRepository,
 } from '../repositories';
+import type { Nullable } from '../../apiConnector/interfaces/common';
 
 @injectable()
 export default class PatientDrug extends Entity {
-  @field<number>({
+  @field({
     fillable: true,
+    serialize: {
+      identifier: true,
+    },
   })
   patient_id = -1;
 
@@ -28,6 +32,9 @@ export default class PatientDrug extends Entity {
       type: RelationsType.ONE,
       repositoryToken: PatientDiseaseRepository,
       noRecursionSave: true,
+    },
+    serialize: {
+      nullable: true,
     },
   })
   disease?: PatientDiseaseEntity;
@@ -48,25 +55,38 @@ export default class PatientDrug extends Entity {
       type: RelationsType.MANY_READONLY,
       repositoryToken: SuspensionReasonRepository,
     },
+    serialize: {
+      nullable: true,
+    },
   })
   suspension_reasons?: HasManyReadonly<SuspensionReasonEntity>;
 
-  @field<string>({
+  @field({
     fillable: true,
+    serialize: {
+      nullable: true,
+    },
   })
-  comment = '';
+  comment: Nullable<string> = null;
 
   @field<Dayjs>({
     fillable: true,
     date: true,
+    serialize: {
+      date: true,
+    },
   })
   start_date: Dayjs = dayjs();
 
-  @field<Dayjs>({
+  @field({
     fillable: true,
     date: true,
+    serialize: {
+      nullable: true,
+      date: true,
+    },
   })
-  end_date: Dayjs = dayjs();
+  end_date: Nullable<Dayjs> = dayjs();
 
   public constructor(adapter: PatientDrugAdapter) {
     super(adapter);

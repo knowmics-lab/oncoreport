@@ -14,7 +14,7 @@ import {
   PatientDiseaseRepository,
   PatientDrugEntity,
   PatientEntity,
-  SuspensionReasonRepository
+  SuspensionReasonRepository,
 } from '../../../../../api';
 import { SimpleMapArray, TypeOfNotification } from '../../../../../interfaces';
 import SelectField from '../../../ui/Form/SelectField';
@@ -133,17 +133,18 @@ export default function PatientDrugForm({ drug, patient, onSave }: Props) {
                 setSubmitting(true);
                 await drug
                   .fill({
-                    drug: +(d.drug?.id ?? 0),
-                    disease: d.disease ? +d.disease : undefined,
-                    suspension_reasons: d.suspension_reasons
-                      ? d.suspension_reasons
-                      : undefined,
+                    ...d,
                     start_date: d.start_date ? dayjs(d.start_date) : dayjs(),
                     end_date: d.end_date ? dayjs(d.end_date) : undefined,
-                    comment:
-                      d.comment && `${d.comment}`.trim().length > 0
-                        ? `${d.comment}`.trim()
-                        : undefined,
+                    // drug: +(d.drug?.id ?? 0),
+                    // disease: d.disease ? +d.disease : undefined,
+                    // suspension_reasons: d.suspension_reasons
+                    //   ? d.suspension_reasons
+                    //   : undefined,
+                    // comment:
+                    //   d.comment && `${d.comment}`.trim().length > 0
+                    //     ? `${d.comment}`.trim()
+                    //     : undefined,
                   })
                   .save();
                 setSubmitting(false);

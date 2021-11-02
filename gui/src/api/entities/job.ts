@@ -44,6 +44,9 @@ export default class Job extends Entity {
 
   @field<JobConfig>({
     fillable: true,
+    serialize: {
+      leaveAsIs: true,
+    },
   })
   public parameters?: JobConfig;
 
@@ -63,6 +66,9 @@ export default class Job extends Entity {
       type: RelationsType.ONE,
       repositoryToken: PatientRepository,
       noRecursionSave: true,
+    },
+    serialize: {
+      serializedKey: 'patient_id',
     },
   })
   public patient!: Nullable<Patient>;

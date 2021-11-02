@@ -1,18 +1,69 @@
 import fs, { FSWatcher } from 'fs';
 import path from 'path';
-import os from 'os';
 import { has } from 'lodash';
 import checkInternetConnection from 'check-internet-connected';
 // import type { FileFilter } from '../types/common';
 // import type { AnalysisFileTypes } from '../types/analysis';
+import { container } from 'tsyringe';
 import TimeoutError from '../errors/TimeoutError';
 import type { FileFilter, JobPath } from '../interfaces';
+import { HttpClient } from '../apiConnector';
+
+export type Capabilities = {
+  containerVersion: string;
+  containerVersionNumber: number;
+  maxMemory: number;
+  availableMemory: number;
+  numCores: number;
+  usedCores: number;
+  availableCores: number;
+};
 
 let watcher: FSWatcher | null = null;
 
+let containerCapabilities: Capabilities | undefined;
+
 export default {
-  cpuCount() {
-    return os.cpus().length;
+  capabilitiesLoaded() {
+    return !!containerCapabilities;
+  },
+  capabilities() {
+    return containerCapabilities;
+  },
+  async refreshCapabilities() {
+    const httpClient = container.resolve(HttpClient);
+    const response = await httpClient.get<{
+      data: Capabilities;
+    }>('sys-info');
+    containerCapabilities = {
+      ...response.data,
+      availableCores: response.data.numCores - response.data.usedCores,
+    };
+    return containerCapabilities;
+  },
+  async containerVersion() {
+    if (!containerCapabilities) {
+      return (await this.refreshCapabilities()).containerVersion;
+    }
+    return containerCapabilities.containerVersion;
+  },
+  async maxMemory() {
+    if (!containerCapabilities) {
+      return (await this.refreshCapabilities()).maxMemory;
+    }
+    return containerCapabilities.maxMemory;
+  },
+  async availableCores(refresh = false) {
+    if (refresh || !containerCapabilities) {
+      return (await this.refreshCapabilities()).availableCores;
+    }
+    return containerCapabilities.availableCores;
+  },
+  async cpuCount(refresh = false) {
+    if (refresh || !containerCapabilities) {
+      return (await this.refreshCapabilities()).numCores;
+    }
+    return containerCapabilities.numCores;
   },
   supportedAnalysisFileTypes() {
     return {

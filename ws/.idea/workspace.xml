@@ -2,27 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDrugForm.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/AutocompleteField.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/MultiSelectField.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useCapabilities.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Services/SystemInfoService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patientDrug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patientDrug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/entity/entity.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasManyReadonly.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/relations/hasMany.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/newAnalysisForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DrugsPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DrugsPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patient.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDiseaseForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDiseaseForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/tumorList.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Form/FormikSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/PatientForm/AddPreviousDiseasesDialog.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/PatientForm/AddPreviousTumorDialog.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/PatientForm/EditPreviousDiseasesDialog.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/PatientForm/EditPreviousTumorDialog.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useDebounce.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDrugForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDrugForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/BuilderRequestService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/PingController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -347,6 +346,7 @@
       <workItem from="1635625867554" duration="617000" />
       <workItem from="1635664885526" duration="5114000" />
       <workItem from="1635748965974" duration="6894000" />
+      <workItem from="1635868638271" duration="3126000" />
     </task>
     <servers />
   </component>

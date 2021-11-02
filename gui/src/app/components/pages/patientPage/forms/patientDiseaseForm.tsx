@@ -130,8 +130,8 @@ export default function PatientDiseaseForm({
             onSubmit={async (d) => {
               try {
                 setSubmitting(true);
-                await disease
-                  .fill({
+                /*
+                {
                     T: d.T ? +d.T : undefined,
                     N: d.N ? +d.N : undefined,
                     M: d.M ? +d.M : undefined,
@@ -140,6 +140,13 @@ export default function PatientDiseaseForm({
                     location: d.location ? +d.location : undefined,
                     start_date: d.start_date ? dayjs(d.start_date) : dayjs(),
                     type: d.type,
+                  }
+                 */
+                await disease
+                  .fill({
+                    ...d,
+                    start_date: d.start_date ? dayjs(d.start_date) : dayjs(),
+                    end_date: d.end_date ? dayjs(d.end_date) : undefined,
                   })
                   .save();
                 setSubmitting(false);

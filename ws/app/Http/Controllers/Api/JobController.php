@@ -53,10 +53,10 @@ class JobController extends Controller
      * @param  \App\Http\Requests\Api\Job\StoreJobRequest  $request
      * @param  \App\Http\Services\JobHelperService  $helperService
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\JobResource
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(StoreJobRequest $request, JobHelperService $helperService): JsonResponse
+    public function store(StoreJobRequest $request, JobHelperService $helperService): JobResource
     {
         $this->tokenAuthorize($request, ['read', 'create'], 'create', Job::class);
         $validValues = $request->validated();
@@ -68,7 +68,7 @@ class JobController extends Controller
         }
         $job = $helperService->storeJob($validValues, $validParameters, $patient, optional($request->user())->id);
 
-        return $this->respondCreated(new JobResource($job));
+        return new JobResource($job);
     }
 
     /**

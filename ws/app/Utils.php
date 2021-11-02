@@ -25,6 +25,8 @@ final class Utils
 
     public const VERSION_NUMBER = 1;
 
+    public const DEFAULT_VERSION_NUMBER = 1;
+
     public const IGNORED_ERROR_CODE = '===IGNORED===';
 
     public const VALID_GENOMES = ['hg19', 'hg38'];

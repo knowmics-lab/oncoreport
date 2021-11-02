@@ -255,9 +255,12 @@ export default class HasMany<R extends EntityObject>
    * Convert this object to a list of identifiers
    */
   public toFormObject(
-    fullyDump?: boolean
-  ): (PartialWithoutRelations<R, EntityObject> | number)[] {
-    return this.map((o) => (fullyDump ? o.toFormObject() : o.id));
+    fullyDump?: boolean,
+    dumpAsFormObject?: boolean
+  ): (EntityObject | PartialWithoutRelations<R, EntityObject> | number)[] {
+    return this.map((o) => (fullyDump ? o : o.id)).map((o) =>
+      dumpAsFormObject && typeof o === 'object' ? o.toFormObject() : o
+    );
   }
 
   /**

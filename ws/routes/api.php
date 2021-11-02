@@ -27,6 +27,7 @@ Route::group(
     ],
     static function () {
         Route::get('/auth-ping', [PingController::class, 'ping']);
+        Route::get('/sys-info', [PingController::class, 'sysInfo']);
 
         Route::apiResource('diseases', DiseaseController::class)->only(['index', 'show']);
         Route::apiResource('drugs', DrugController::class)->only(['index', 'show']);

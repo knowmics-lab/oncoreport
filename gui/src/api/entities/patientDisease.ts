@@ -33,38 +33,63 @@ export default class PatientDisease extends Entity {
       repositoryToken: LocationRepository,
       noRecursionSave: true,
     },
+    serialize: {
+      nullable: true,
+    },
   })
   location?: LocationEntity;
 
   @field<Nullable<TumorTypes>>({
     fillable: true,
+    serialize: {
+      nullable: true,
+    },
   })
-  type: Nullable<TumorTypes> = undefined;
-
-  @field<number>({
-    fillable: true,
-  })
-  T: Nullable<number> = undefined;
-
-  @field<number>({
-    fillable: true,
-  })
-  N: Nullable<number> = undefined;
+  type: Nullable<TumorTypes> = null;
 
   @field<Nullable<number>>({
     fillable: true,
+    serialize: {
+      nullable: true,
+      number: true,
+    },
   })
-  M: Nullable<number> = undefined;
+  T: Nullable<number> = null;
+
+  @field<Nullable<number>>({
+    fillable: true,
+    serialize: {
+      nullable: true,
+      number: true,
+    },
+  })
+  N: Nullable<number> = null;
+
+  @field<Nullable<number>>({
+    fillable: true,
+    serialize: {
+      nullable: true,
+      number: true,
+    },
+  })
+  M: Nullable<number> = null;
 
   @field<Dayjs>({
     fillable: true,
     date: true,
+    serialize: {
+      date: true,
+    },
   })
   start_date: Dayjs = dayjs();
 
   @field<Nullable<Dayjs>>({
     fillable: true,
     date: true,
+    serialize: {
+      nullable: true,
+      date: true,
+    },
   })
   end_date: Nullable<Dayjs> = undefined;
 

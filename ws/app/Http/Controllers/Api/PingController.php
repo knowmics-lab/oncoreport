@@ -8,11 +8,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Services\SystemInfoService;
+use F9Web\ApiResponseHelpers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PingController extends Controller
 {
+    use ApiResponseHelpers;
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -37,5 +41,16 @@ class PingController extends Controller
         abort_unless($request->user()->tokenCan('read'), 403, 'User token is not allowed to read objects');
 
         return $request->user();
+    }
+
+    /**
+     *
+     * @param  \App\Http\Services\SystemInfoService  $service
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sysInfo(SystemInfoService $service): JsonResponse
+    {
+        return $this->respondWithSuccess($service->toArray());
     }
 }
