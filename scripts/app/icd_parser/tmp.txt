@@ -1,0 +1,2212 @@
+PA00	Unintentional land transport traffic event injuring a pedestrian
+PA01	Unintentional land transport traffic event injuring the user of a pedestrian conveyance
+PA02	Unintentional land transport traffic event injuring a pedal cyclist
+PA03	Unintentional land transport traffic event injuring a motor cyclist
+PA04	Unintentional land transport traffic event injuring a car occupant
+PA05	Unintentional land transport traffic event injuring an occupant of a bus or coach
+PA06	Unintentional land transport traffic event injuring an occupant of a light goods vehicle
+PA07	Unintentional land transport traffic event injuring an occupant of a heavy goods vehicle
+PA08	Unintentional land transport traffic event injuring an occupant of a streetcar or tram
+PA09	Unintentional land transport traffic event injuring an occupant of a low powered passenger vehicle
+PA0A	Unintentional land transport traffic event injuring a user of a special vehicle mainly used in agriculture
+PA0B	Unintentional land transport traffic event injuring a user of a special vehicle mainly used on industrial premises
+PA0C	Unintentional land transport traffic event injuring a user of a special construction vehicle
+PA0D	Unintentional land transport traffic event injuring a user of an all-terrain vehicle
+PA0E	Unintentional land transport traffic event injuring a rider of an animal
+PA0F	Unintentional land transport traffic event injuring an occupant of an animal-drawn vehicle
+PA0Y	Unintentional land transport traffic event injuring a user of other specified land transport
+PA0Z	Unintentional land transport traffic event injuring a user of unspecified land transport
+PA10	Unintentional land transport nontraffic event injuring a pedestrian
+PA11	Unintentional land transport nontraffic event injuring the user of a pedestrian conveyance
+PA12	Unintentional land transport nontraffic event injuring a pedal cyclist
+PA13	Unintentional land transport nontraffic event injuring a motor cyclist
+PA14	Unintentional land transport nontraffic event injuring a car occupant
+PA15	Unintentional land transport nontraffic event injuring an occupant of a bus or coach
+PA16	Unintentional land transport nontraffic event injuring an occupant of a light goods vehicle
+PA17	Unintentional land transport nontraffic event injuring an occupant of a heavy goods vehicle
+PA18	Unintentional land transport nontraffic event injuring an occupant of a streetcar or tram
+PA19	Unintentional land transport nontraffic event injuring an occupant of a low powered passenger vehicle
+PA1A	Unintentional land transport nontraffic event injuring a user of a special vehicle mainly used in agriculture
+PA1B	Unintentional land transport nontraffic event injuring a user of a special vehicle mainly used on industrial premises
+PA1C	Unintentional land transport nontraffic event injuring a user of a special construction vehicle
+PA1D	Unintentional land transport nontraffic event injuring a user of an all-terrain vehicle
+PA1E	Unintentional land transport nontraffic event injuring a rider of an animal
+PA1F	Unintentional land transport nontraffic event injuring an occupant of an animal-drawn vehicle
+PA1Y	Unintentional land transport nontraffic event injuring a user of other specified land transport
+PA1Z	Unintentional land transport nontraffic event injuring a user of unknown or unspecified land transport
+PA20	Unintentional land transport event unknown whether traffic or nontraffic injuring a pedestrian
+PA21	Unintentional land transport event unknown whether traffic or nontraffic injuring the user of a pedestrian conveyance
+PA22	Unintentional land transport event unknown whether traffic or nontraffic injuring a pedal cyclist
+PA23	Unintentional land transport event unknown whether traffic or nontraffic injuring a motor cyclist
+PA24	Unintentional land transport event unknown whether traffic or nontraffic injuring a car occupant
+PA25	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a bus or coach
+PA26	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a light goods vehicle
+PA27	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a heavy goods vehicle
+PA28	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a streetcar or tram
+PA29	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a low powered passenger vehicle
+PA2A	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a special vehicle mainly used in agriculture
+PA2B	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a special vehicle mainly used on industrial premises
+PA2C	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of a special construction vehicle
+PA2D	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of an all-terrain vehicle
+PA2E	Unintentional land transport event unknown whether traffic or nontraffic injuring a rider of an animal
+PA2F	Unintentional land transport event unknown whether traffic or nontraffic injuring an occupant of an animal-drawn vehicle
+PA2Y	Unintentional land transport injury event unknown whether traffic or nontraffic injuring a user of other specified transport
+PA2Z	Unintentional land transport injury event unknown whether traffic or nontraffic injuring a user of unspecified transport
+PA30	Unintentional railway transport injury event with collision or derailment
+PA31	Unintentional railway transport injury event without collision or derailment
+PA3Z	Unintentional railway transport injury event of unspecified type
+PA40.0	Unintentional water transport injury event with water vessel not damaged, disabled or destroyed, causing submersion or drowning
+PA40.1	Unintentional water transport injury event with water vessel not damaged, disabled or destroyed, causing other injury
+PA40.Z	Unintentional water transport injury event with water vessel not damaged, disabled or destroyed, causing unspecified injury
+PA41.0	Unintentional water transport injury event with water vessel damaged, disabled or destroyed, causing submersion or drowning
+PA41.Z	Unintentional water transport injury event with water vessel damaged, disabled or destroyed, causing unspecified injury
+PA4Z	Unintentional water transport injury event with damage to water vessel unspecified
+PA50.0	Unintentional air or space transport injury event with aircraft or spacecraft not damaged, disabled or destroyed
+PA50.1	Unintentional air or space transport injury event with aircraft or spacecraft damaged, disabled or destroyed
+PA50.Z	Unintentional air or space transport injury event, unspecified
+PA5Y	Other specified unintentional transport injury event
+PA5Z	Unintentional transport injury event, unspecified
+PA60	Unintentional fall on the same level or from less than 1 metre
+PA61	Unintentional fall from a height of 1 metre or more
+PA6Z	Unintentional fall from unspecified height
+PA70	Unintentionally struck, kicked, or bumped by person
+PA71	Unintentionally struck, kicked, or bumped by animal
+PA72	Unintentionally stepped on or crushed by person
+PA73	Unintentionally stepped on or crushed by animal
+PA74	Unintentionally bitten by person
+PA75	Unintentionally bitten by animal
+PA76	Unintentionally scratched or clawed by person
+PA77	Unintentionally scratched or clawed by animal
+PA78	Unintentionally stung or envenomated by animal
+PA79	Unintentionally injured by contact with plant
+PA7Y	Other specified type of unintentional contact with person, animal or plant
+PA7Z	Unintentional contact with person, animal or plant, type unspecified
+PA80.0	Unintentionally struck by projectile from handgun
+PA80.1	Unintentionally struck by projectile from rifle, shotgun or larger firearm
+PA80.2	Unintentional exposure to other and unspecified firearm
+PA81	Unintentionally struck by moving object
+PA82	Unintentional striking against stationary object
+PA83.0	Unintentionally cut or pierced by knife, sword, or dagger
+PA83.1	Unintentionally cut or pierced by sharp glass
+PA83.2	Unintentionally cut or pierced by other or unspecified sharp object
+PA84	Unintentionally struck by blunt object
+PA85	Unintentionally caught, crushed, jammed or pinched between objects
+PA8Y	Unintentional exposure to other specified object, not elsewhere classified
+PA8Z	Unintentional exposure to object, unspecified
+PA90	Unintentional drowning or submersion, while in body of water
+PA91	Unintentional drowning or submersion, following fall into body of water
+PA92	Unintentional injury other than drowning following fall into body of water
+PA9Z	Unintentional immersion, submersion or falling into water, unspecified
+PB00	Unintentional threat to breathing by suffocation from object covering mouth or nose
+PB01	Unintentional threat to breathing by hanging
+PB02	Unintentional threat to breathing by strangulation
+PB03	Unintentional threat to breathing by external compression of airways or chest
+PB04	Unintentional threat to breathing by inhalation or ingestion of gastric contents
+PB05	Unintentional threat to breathing by inhalation or ingestion of liquids
+PB06	Unintentional threat to breathing by inhalation or ingestion of food
+PB07	Unintentional threat to breathing by inhalation or ingestion of other objects or materials
+PB08	Unintentional threat to breathing from low oxygen environment
+PB0Y	Unintentional threat to breathing by other specified means
+PB0Z	Unintentional threat to breathing by unspecified means
+PB10	Unintentional exposure to uncontrolled fire
+PB11	Unintentional exposure to controlled fire
+PB12	Unintentional exposure to ignition, or melting of material
+PB13	Unintentional contact with hot object or liquid
+PB14	Unintentional exposure to steam, hot vapour, air or gases
+PB15	Unintentional exposure to excessive heat
+PB16	Unintentional exposure to excessive cold
+PB1Y	Unintentional exposure to other specified thermal mechanism
+PB1Z	Unintentional exposure to unspecified thermal mechanism
+PB20	Unintentional exposure to or harmful effects of opioids or related analgesics
+PB21	Unintentional exposure to or harmful effects of sedative hypnotic drugs or other CNS depressants
+PB22	Unintentional exposure to or harmful effects of psychostimulants
+PB23	Unintentional exposure to or harmful effects of cannabinoids or hallucinogens
+PB24	Unintentional exposure to or harmful effects of analgesics, antipyretics or nonsteroidal anti-inflammatory drugs
+PB25	Unintentional exposure to or harmful effects of antidepressants
+PB26	Unintentional exposure to or harmful effects of antipsychotics
+PB27	Unintentional exposure to or harmful effects of antiepileptics or antiparkinsonism drugs
+PB28	Unintentional exposure to or harmful effects of other or unspecified drug, medicament or biological substance
+PB29	Unintentional exposure to or harmful effects of multiple drugs, medicaments or biological substances
+PB30	Unintentional exposure to or harmful effects of alcohols
+PB31	Unintentional exposure to or harmful effects of organic solvents
+PB32	Unintentional exposure to or harmful effects of carbon monoxide
+PB33	Unintentional exposure to or harmful effects of pesticides
+PB34	Unintentional exposure to or harmful effects of corrosive substances
+PB35	Unintentional exposure to or harmful effects of halogen derivatives of aliphatic or aromatic hydrocarbons
+PB36	Unintentional exposure to or harmful effects of other or unspecified substances chiefly nonmedicinal as to source
+PB50	Unintentional exposure to foreign body in orifice
+PB51	Unintentional exposure to electric current
+PB52	Unintentional exposure to sunlight
+PB53	Unintentional exposure to radiation
+PB54	Unintentional exposure to high or low air pressure or changes in air pressure
+PB55.0	Unintentional exposure to chemical explosion
+PB55.1	Unintentional exposure to explosion or rupture of pressurised materials or object
+PB55.Y	Other specified unintentional exposure to explosion
+PB55.Z	Unintentional exposure to explosion, unspecified
+PB56	Unintentional exposure to physical overexertion
+PB57	Unintentional lack of food
+PB58	Unintentional lack of water
+PB59	Unintentional other specified privation
+PB5A	Unintentional abandonment
+PB5B	Unintentional neglect
+PB6Y	Other unintentional cause of morbidity or mortality
+PB6Z	Unspecified unintentional cause of morbidity or mortality
+PB80	Intentional self-harm by land transport road traffic injury event
+PB81	Intentional self-harm by land transport off-road nontraffic injury event
+PB82	Intentional self-harm by land transport injury event unknown whether traffic or nontraffic
+PB83	Intentional self-harm by railway transport injury event
+PB90	Intentional self-harm by water transport injury event with water vessel damaged, disabled or destroyed
+PB91.0	Intentional self-harm by water transport injury event with water vessel not damaged, disabled or destroyed causing submersion or drowning
+PB91.1	Intentional self-harm by water transport injury event with water vessel not damaged, disabled or destroyed causing other injury
+PB91.Z	Intentional self-harm by water transport injury event with water vessel not damaged, disabled or destroyed, unspecified
+PB9Z	Intentional self-harm by water transport injury event with damage to water vessel unspecified
+PC00	Intentional self-harm by air or space transport injury event with aircraft or spacecraft damaged, disabled or destroyed
+PC01	Intentional self-harm by air or space transport injury event with aircraft or spacecraft not damaged, disabled or destroyed
+PC0Z	Intentional self-harm by air or space transport injury event with damage to aircraft or spacecraft unspecified
+PC2Y	Intentional self-harm by other specified transport injury event
+PC2Z	Intentional self-harm by transport injury event, unspecified
+PC30	Intentional self-harm by fall or jump on same level or from less than 1 metre
+PC31	Intentional self-harm by fall or jump from a height of 1 metre or more
+PC3Y	Other specified intentional self-harm by fall or jump
+PC3Z	Intentional self-harm by fall or jump, unspecified
+PC40	Intentional self-harm by being struck, kicked, or bumped by person
+PC41	Intentional self-harm by being struck, kicked, or bumped by animal
+PC42	Intentional self-harm by being stepped on or crushed by person
+PC43	Intentional self-harm by being stepped on or crushed by animal
+PC44	Intentional self-harm by being bitten by animal
+PC45	Intentional self-harm by being scratched or clawed by person
+PC46	Intentional self-harm by being scratched or clawed by animal
+PC47	Intentional self-harm by being stung or envenomated by animal
+PC48	Intentional self-harm by contact with plant
+PC4Y	Other specified type of intentional self-harm by contact with person, animal or plant
+PC4Z	Intentional self-harm by contact with person, animal or plant, type unspecified
+PC50.0	Intentional self-harm by projectile from handgun
+PC50.1	Intentional self-harm by projectile from rifle, shotgun or larger firearm
+PC50.Y	Other specified intentional self-harm by being struck by projectile from firearm
+PC50.Z	Intentional self-harm by being struck by projectile from firearm, unspecified
+PC51	Intentional self-harm by being struck by moving object, not elsewhere classified
+PC52	Intentional self-harm by striking against stationary object
+PC53.0	Intentional self-harm by being cut or pierced by knife, sword or dagger
+PC53.1	Intentional self-harm by being cut or pierced by sharp glass
+PC53.Y	Other specified intentional self-harm by being cut or pierced by sharp object
+PC53.Z	Intentional self-harm by being cut or pierced by sharp object, unspecified
+PC54	Intentional self-harm by being struck by blunt object
+PC55	Intentional self-harm by being caught, crushed, jammed or pinched between objects
+PC5Y	Intentional self harm by contact with other specified type of weapon
+PC5Z	Intentional self harm by contact with weapon, type unspecified
+PC60	Intentional self-harm by drowning or submersion while in body of water
+PC61	Intentional self-harm by drowning or submersion following fall into body of water
+PC62	Intentional self-harm by injury other than drowning while in body of water
+PC63	Intentional self-harm by injury other than drowning following fall into body of water
+PC6Z	Intentional self-harm by immersion, submersion or falling into water, unspecified
+PC70	Intentional self-harm by threat to breathing by suffocation from object covering mouth or nose
+PC71	Intentional self-harm by threat to breathing by hanging
+PC72	Intentional self-harm by threat to breathing by strangulation
+PC73	Intentional self-harm by threat to breathing by external compression of airways or chest
+PC74	Intentional self-harm by inhalation or ingestion of gastric contents
+PC75	Intentional self-harm by threat to breathing by inhalation or ingestion of liquids
+PC76	Intentional self-harm by threat to breathing by inhalation or ingestion of food
+PC77	Intentional self-harm by threat to breathing by inhalation or ingestion of other objects or materials
+PC78	Intentional self-harm by threat to breathing from low oxygen environment
+PC7Y	Other specified intentional self-harm by threat to breathing
+PC7Z	Intentional self-harm by threat to breathing, unspecified
+PC80	Intentional self-harm by exposure to controlled fire
+PC81	Intentional self-harm by exposure to uncontrolled fire
+PC82	Intentional self-harm by exposure to ignition or melting of material
+PC83	Intentional self-harm by contact with hot object or liquid
+PC84	Intentional self-harm by exposure to steam, hot vapour, air or gases
+PC85	Intentional self-harm by exposure to excessive heat
+PC86	Intentional self-harm by exposure to excessive cold
+PC8Y	Intentional self-harm by exposure to other specified thermal mechanism
+PC8Z	Intentional self-harm by exposure to unspecified thermal mechanism
+PC90	Intentional self-harm by exposure to or harmful effects of opioids or related analgesics
+PC91	Intentional self-harm by exposure to or harmful effects of sedative hypnotic drugs or other CNS depressants
+PC92	Intentional self-harm by exposure to or harmful effects of psychostimulants
+PC93	Intentional self-harm by exposure to or harmful effects of cannabinoids or hallucinogens
+PC94	Intentional self-harm by exposure to or harmful effects of analgesics, antipyretics or nonsteroidal anti-inflammatory drugs
+PC95	Intentional self-harm by exposure to or harmful effects of antidepressants
+PC96	Intentional self-harm by exposure to or harmful effects of antipsychotics
+PC97	Intentional self-harm by exposure to or harmful effects of antiepileptics or antiparkinsonism drugs
+PC98	Intentional self-harm by and exposure to other and unspecified drug, medicament and biological substance
+PC99	Intentional self-harm by exposure to or harmful effects of multiple drugs, medicaments or biological substances
+PD00	Intentional self-harm by exposure to or harmful effects of alcohols
+PD01	Intentional self-harm by exposure to or harmful effects of organic solvents
+PD02	Intentional self-harm by exposure to or harmful effects of carbon monoxide
+PD03	Intentional self-harm by exposure to or harmful effects of pesticides
+PD04	Intentional self-harm by exposure to or harmful effects of corrosive substances
+PD05	Intentional self-harm by exposure to or harmful effects of other or unspecified substances chiefly nonmedicinal as to source
+PD20	Intentional self-harm by foreign body in orifice
+PD21	Intentional self-harm by exposure to electric current
+PD22	Intentional self-harm by exposure to sunlight
+PD23	Intentional self-harm by exposure to radiation
+PD24	Intentional self-harm by exposure to high or low air pressure or changes in air pressure
+PD25	Intentional self-harm by explosion or rupture of pressurised materials or object
+PD26	Intentional self-harm by physical overexertion
+PD27	Intentional self-harm by lack of food
+PD28	Intentional self-harm by lack of water
+PD29	Intentional self-harm by other specified privation
+PD3Y	Other specified intentional self-harm
+PD3Z	Intentional self-harm, unspecified
+PD50	Assault by land transport road traffic injury event
+PD51	Assault by land transport off-road nontraffic injury event
+PD52	Assault by land transport injury event unknown whether road traffic or off-road nontraffic
+PD53	Assault by railway transport injury event
+PD60.0	Assault by water transport injury event with water vessel damaged, disabled or destroyed, causing submersion or drowning
+PD60.1	Assault by water transport injury event with water vessel damaged, disabled or destroyed, causing other injury
+PD60.Z	Assault by water transport injury event with water vessel damaged, disabled or destroyed, causing unspecified injury
+PD61.0	Assault by water transport injury event with water vessel not damaged, disabled or destroyed, causing submersion or drowning
+PD61.1	Assault by water transport injury event with water vessel not damaged, disabled or destroyed, causing other injury
+PD61.Y	Assault by water transport injury event with water vessel not damaged, disabled or destroyed, causing unspecified injury
+PD61.Z	Assault by water transport injury event with water vessel not damaged, disabled or destroyed, unspecified
+PD6Z	Assault by water transport injury event with damage to water vessel unspecified
+PD70	Assault by air or space transport injury event with aircraft or spacecraft damaged, disabled or destroyed
+PD71	Assault by air or space transport injury event with aircraft or spacecraft not damaged, disabled or destroyed
+PD7Z	Assault by air or space transport injury event with damage to aircraft or spacecraft unspecified
+PD9Y	Other specified assault by transport injury event
+PD9Z	Assault by transport injury event, unspecified
+PE00	Assault by causing a fall or jump on same level or from less than 1 metre
+PE01	Assault by causing a fall or jump from a height of 1 metre or more
+PE0Z	Assault by causing a fall or jump from unspecified height
+PE10	Assault by being struck, kicked or bumped by person
+PE11	Assault by being struck, kicked or bumped by animal
+PE12	Assault by being crushed or stepped on by person
+PE13	Assault by being crushed or stepped on by animal
+PE14	Assault by being bitten by person
+PE15	Assault by being bitten by animal
+PE16	Assault by being scratched or clawed by person
+PE17	Assault by being scratched or clawed by animal
+PE18	Assault by being stung or envenomated by animal
+PE19	Assault by contact with plant
+PE1Y	Other specified type of assault by contact with person, animal or plant
+PE1Z	Assault by contact with person, animal or plant, type unspecified
+PE20.0	Assault by projectile from handgun
+PE20.1	Assault by projectile from rifle, shotgun or larger firearm
+PE20.Y	Assault by being struck by projectile from other specified firearm
+PE20.Z	Assault by being struck by projectile from unspecified firearm
+PE21	Assault by being struck by moving object, not elsewhere classified
+PE22	Assault by striking against stationary object
+PE30	Assault by being cut or pierced by knife, sword, or dagger
+PE31	Assault by being cut or pierced by sharp glass
+PE3Z	Assault by being cut or pierced by other or unspecified sharp object
+PE40	Assault by being struck by blunt object
+PE41	Assault by being caught, crushed, jammed or pinched between objects
+PE4Y	Assault by contact with other specified object, not elsewhere classified
+PE4Z	Assault by exposure to unspecified object, not elsewhere classified
+PE50	Assault by drowning or submersion, while in body of water
+PE51	Assault by drowning or submersion following fall into body of water
+PE52	Assault by injury other than drowning while in body of water
+PE53	Assault by injury other than drowning following fall into body of water
+PE5Y	Other specified assault by immersion, submersion or falling into water
+PE5Z	Assault by immersion, submersion or falling into water, unspecified
+PE60	Assault by threat to breathing, suffocation from object covering mouth or nose
+PE61	Assault by threat to breathing by hanging
+PE62	Assault by threat to breathing by strangulation
+PE63	Assault by threat to breathing by external compression of airways or chest
+PE64	Assault by threat to breathing by inhalation or ingestion of liquids
+PE65	Assault by threat to breathing by inhalation or ingestion of food
+PE66	Assault by threat to breathing by inhalation or ingestion of other objects or materials
+PE67	Assault by threat to breathing by low oxygen environment
+PE6Y	Other specified assault by threat to breathing
+PE6Z	Assault by threat to breathing, unspecified
+PE70	Assault by exposure to uncontrolled fire
+PE71	Assault by exposure to controlled fire
+PE72	Assault by exposure to ignition or melting of materials
+PE73	Assault by contact with hot object or liquid
+PE74	Assault by contact with steam, hot vapour, air or gases
+PE75	Assault by exposure to excessive heat
+PE76	Assault by exposure to excessive cold
+PE7Y	Assault by exposure to other specified thermal mechanism
+PE7Z	Assault by exposure to unspecified thermal mechanism
+PE80	Assault by exposure to or harmful effects of opioids or related analgesics
+PE81	Assault by exposure to or harmful effects of sedative, hypnotic drugs & other CNS depressants
+PE82	Assault by exposure to or harmful effects of psychostimulants
+PE83	Assault by exposure to or harmful effects of cannabinoids or hallucinogens
+PE84	Assault by exposure to or harmful effects of analgesics, antipyretics or nonsteroidal anti-inflammatory drugs
+PE85	Assault by exposure to or harmful effects of antidepressants
+PE86	Assault by exposure to or harmful effects of antipsychotics
+PE87	Assault by exposure to or harmful effects of antiepileptics or antiparkinsonism drugs
+PE88	Assault by exposure to or harmful effects of other or unspecified drug, medicament or biological substance
+PE89	Assault by exposure to or harmful effects of multiple drugs, medicaments or biological substances
+PE8Y	Other specified assault by exposure to or harmful effects of drugs, medicaments or biological substances
+PE8Z	Assault by exposure to or harmful effects of drugs, medicaments or biological substances, unspecified
+PE90	Assault by exposure to or harmful effects of alcohols
+PE91	Assault by exposure to or harmful effects of organic solvents
+PE92	Assault by exposure to or harmful effects of carbon monoxide
+PE93	Assault by exposure to or harmful effects of pesticides
+PE94	Assault by exposure to or harmful effects of corrosive substances
+PE95	Assault by exposure to or harmful effects of other or unspecified substances chiefly nonmedicinal as to source
+PF10	Assault by foreign body in orifice or eye
+PF11	Assault by exposure to electric current
+PF12	Assault by exposure to sunlight
+PF13	Assault by exposure to radiation
+PF14	Assault by exposure to high or low air pressure or changes in air pressure
+PF15.0	Assault by exposure to chemical explosion
+PF15.1	Assault by explosion or rupture of materials or object
+PF15.Y	Other specified assault by exposure to explosion
+PF15.Z	Assault by exposure to explosion, unspecified
+PF16	Assault by physical overexertion
+PF17	Assault by lack of food
+PF18	Assault by lack of water
+PF19	Assault by other specified privation
+PF1A	Assault by abandonment
+PF1B	Assault by neglect
+PF2Y	Other specified assault
+PF2Z	Assault, unspecified
+PF40	Land transport traffic injury event of undetermined intent injuring a pedestrian
+PF41	Land transport traffic injury event of undetermined intent injuring the user of a pedestrian conveyance
+PF42	Land transport traffic injury event of undetermined intent injuring a pedal cyclist
+PF43	Land transport traffic injury event of undetermined intent injuring a motor cyclist
+PF44	Land transport traffic injury event of undetermined intent injuring a car occupant
+PF45	Land transport traffic injury event of undetermined intent injuring a bus or coach occupant
+PF46	Land transport traffic injury event of undetermined intent injuring an occupant of light goods vehicle
+PF47	Land transport traffic injury event of undetermined intent injuring an occupant of heavy goods vehicle
+PF48	Land transport traffic injury event of undetermined intent injuring an occupant of a streetcar or tram
+PF49	Land transport traffic injury event of undetermined intent injuring an occupant of a low powered passenger vehicle
+PF4A	Land transport traffic injury event of undetermined intent injuring a user of a special vehicle mainly used in agriculture
+PF4B	Land transport traffic injury event of undetermined intent injuring a user of a special vehicle mainly used on industrial premises
+PF4C	Land transport traffic injury event of undetermined intent injuring a user of a special construction vehicle
+PF4D	Land transport traffic injury event of undetermined intent injuring a user of an all-terrain vehicle
+PF4E	Land transport traffic injury event of undetermined intent injuring a rider of an animal
+PF4F	Land transport traffic injury event of undetermined intent injuring an occupant of an animal-drawn vehicle
+PF4Y	Land transport traffic injury event of undetermined intent injuring a user of other specified land transport
+PF4Z	Land transport traffic injury event of undetermined intent injuring a user of unknown or unspecified land transport
+PF50	Land transport nontraffic injury event of undetermined intent injuring a pedestrian
+PF51	Land transport nontraffic injury event of undetermined intent injuring the user of a pedestrian conveyance
+PF52	Land transport nontraffic injury event of undetermined intent injuring a pedal cyclist
+PF53	Land transport nontraffic injury event of undetermined intent injuring a motor cyclist
+PF54	Land transport nontraffic injury event of undetermined intent injuring a car occupant
+PF55	Land transport nontraffic injury event of undetermined intent injuring a bus or coach occupant
+PF56	Land transport nontraffic injury event of undetermined intent injuring an occupant of light goods vehicle
+PF57	Land transport nontraffic injury event of undetermined intent injuring an occupant of heavy goods vehicle
+PF58	Land transport nontraffic injury event of undetermined intent injuring an occupant of a streetcar or tram
+PF59	Land transport nontraffic injury event of undetermined intent injuring an occupant of a low powered passenger vehicle
+PF5A	Land transport nontraffic injury event of undetermined intent injuring a user of a special vehicle mainly used in agriculture
+PF5B	Land transport nontraffic injury event of undetermined intent injuring a user of a special vehicle mainly used on industrial premises
+PF5C	Land transport nontraffic injury event of undetermined intent injuring a user of a special construction vehicle
+PF5D	Land transport nontraffic injury event of undetermined intent injuring a user of an all-terrain vehicle
+PF5E	Land transport nontraffic injury event of undetermined intent injuring a rider of an animal
+PF5F	Land transport nontraffic injury event of undetermined intent injuring an occupant of an animal-drawn vehicle
+PF5Y	Land transport nontraffic injury event of undetermined intent injuring a user of other specified land transport
+PF5Z	Land transport nontraffic injury event of undetermined intent injuring a user of unknown or unspecified land transport
+PF60	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a pedestrian
+PF61	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring the user of a pedestrian conveyance
+PF62	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a pedal cyclist
+PF63	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a motor cyclist
+PF64	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a car occupant
+PF65	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a bus or coach occupant
+PF66	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring an occupant of light goods vehicle
+PF67	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring an occupant of heavy goods vehicle
+PF68	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring an occupant of a streetcar or tram
+PF69	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring an occupant of a low powered passenger vehicle
+PF6A	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of a special vehicle mainly used in agriculture
+PF6B	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of a special vehicle mainly used on industrial premises
+PF6C	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of a special construction vehicle
+PF6D	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of an all-terrain vehicle
+PF6E	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a rider of an animal
+PF6F	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring an occupant of an animal-drawn vehicle
+PF6Y	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of an other specified vehicle
+PF6Z	Land transport injury event of undetermined intent, unknown whether road traffic or off-road nontraffic injuring a user of an unknown or unspecified vehicle
+PF70	Railway transport injury event of undetermined intent with collision or derailment
+PF71	Railway transport injury event of undetermined intent without collision or derailment
+PF7Z	Railway transport injury event of undetermined intent of unspecified type
+PF80	Water transport injury event of undetermined intent with water vessel damaged, disabled or destroyed causing submersion or drowning
+PF8Y	Water transport injury event of undetermined intent with water vessel damaged, disabled or destroyed causing other injury
+PF8Z	Water transport injury event of undetermined intent with water vessel damaged, disabled or destroyed causing unspecified injury
+PF90	Water transport injury event of undetermined intent with water vessel not damaged, disabled or destroyed causing submersion or drowning
+PF9Y	Water transport injury event of undetermined intent with water vessel not damaged, disabled or destroyed causing other injury
+PF9Z	Water transport injury event of undetermined intent with water vessel not damaged, disabled or destroyed causing unspecified injury
+PG1Z	Water transport injury event of undetermined intent, damage to water vessel unspecified
+PG20	Air or space transport injury event of undetermined intent with aircraft or spacecraft damaged, disabled or destroyed
+PG21	Air or space transport injury event of undetermined intent with aircraft or spacecraft not damaged, disabled or destroyed
+PG2Z	Air or space transport event injury of undetermined intent, damage to aircraft or spacecraft unspecified
+PG4Y	Other specified transport injury event of undetermined intent
+PG4Z	Unspecified transport injury event of undetermined intent
+PG50	Fall or jump of undetermined intent on the same level or from less than 1 metre
+PG51	Fall or jump of undetermined intent from a height of 1 metre or more
+PG5Z	Fall or jump of undetermined intent, height unspecified
+PG60	Struck, kicked, or bumped with undetermined intent by person
+PG61	Struck, kicked, or bumped with undetermined intent by animal
+PG62	Stepped on or crushed with undetermined intent by person
+PG63	Stepped on or crushed with undetermined intent by animal
+PG64	Bitten with undetermined intent by person
+PG65	Bitten with undetermined intent by animal
+PG66	Scratched or clawed with undetermined intent by person
+PG67	Scratched or clawed with undetermined intent by animal
+PG68	Stung or envenomated with undetermined intent by animal
+PG69	Contact with plant of undetermined intent
+PG6Y	Other specified type of contact with person, animal or plant of undetermined intent
+PG6Z	Unspecified type of contact with person, animal or plant of undetermined intent
+PG70	Struck by projectile from handgun of undetermined intent
+PG71	Struck by projectile from rifle, shotgun or larger firearm of undetermined intent
+PG7Z	Struck by projectile from other and unspecified firearm with unknown intent
+PG80	Struck by moving object, not elsewhere classified of undetermined intent
+PG81	Striking against stationary object of undetermined intent
+PG90	Cut or pierced by knife, sword or dagger of undetermined intent
+PG91	Cut or pierced by sharp glass of undetermined intent
+PG9Z	Cut or pierced by other or unspecified sharp object, undetermined intent
+PH00	Struck by blunt object with undetermined intent
+PH01	Caught, crushed, jammed or pinched between objects with undetermined intent
+PH0Y	Contact with other specified object, not elsewhere classified with undetermined intent
+PH0Z	Exposure to unspecified object, not elsewhere classified, undetermined intent
+PH10	Drowning or submersion while in body of water with undetermined intent
+PH11	Drowning or submersion following fall into body of water with undetermined intent
+PH12	Injury other than drowning while in body of water with undetermined intent
+PH13	Injury other than drowning following fall into body of water with undetermined intent
+PH1Z	Immersion, submersion or falling into water with undetermined intent, unspecified
+PH20	Threat to breathing by suffocation from object covering mouth or nose with undetermined intent
+PH21	Threat to breathing by hanging with undetermined intent
+PH22	Threat to breathing by strangulation with undetermined intent
+PH23	Threat to breathing by external compression of airways or chest with undetermined intent
+PH24	Threat to breathing by inhalation or ingestion of liquids with undetermined intent
+PH25	Threat to breathing by inhalation or ingestion of food with undetermined intent
+PH26	Threat to breathing by inhalation or ingestion of other objects or materials with undetermined intent
+PH27	Threat to breathing by low oxygen environment with undetermined intent
+PH2Y	Other specified threat to breathing with undetermined intent
+PH2Z	Threat to breathing with undetermined intent, unspecified
+PH30	Exposure to uncontrolled fire with undetermined intent
+PH31	Exposure to controlled fire with undetermined intent
+PH32	Exposure to ignition or melting of materials with undetermined intent
+PH33	Contact with hot object or liquid with undetermined intent
+PH34	Contact with steam, hot vapour, air or gases with undetermined intent
+PH35	Exposure to excessive heat with undetermined intent
+PH36	Exposure to excessive cold with undetermined intent
+PH3Y	Exposure to other specified thermal mechanism with undetermined intent
+PH3Z	Exposure to unspecified thermal mechanism with undetermined intent
+PH40	Exposure to or harmful effects of undetermined intent of opioids or related analgesics
+PH41	Exposure to or harmful effects of undetermined intent of sedative hypnotic drugs or other CNS depressants
+PH42	Exposure to or harmful effects of undetermined intent of psychostimulants
+PH43	Exposure to or harmful effects of undetermined intent of cannabinoids or hallucinogens
+PH44	Exposure to or harmful effects of undetermined intent of analgesics, antipyretics or nonsteroidal anti-inflammatory drugs
+PH45	Exposure to or harmful effects of undetermined intent of antidepressants
+PH46	Exposure to or harmful effects of undetermined intent of antipsychotics
+PH47.0	Harmful effects of or exposure to mixed antiepileptics, not elsewhere classified, undetermined intent
+PH47.Z	Undetermined intent: Harmful effects of and exposure to noxious substances: Drugs, medicaments or biological substances: Unspecified antiepileptics or antiparkinsonism drugs
+PH48	Exposure to or harmful effects of undetermined intent of other or unspecified drugs, medicaments or biological substances
+PH49	Exposure to or harmful effects of undetermined intent of multiple drugs, medicaments or biological substances
+PH50	Exposure to or harmful effects of undetermined intent of alcohols
+PH51	Exposure to or harmful effects of undetermined intent of organic solvents
+PH52	Exposure to or harmful effects of undetermined intent of carbon monoxide
+PH53	Exposure to or harmful effects of undetermined intent of pesticides
+PH54	Exposure to or harmful effects of undetermined intent of corrosive substances
+PH55	Exposure to or harmful effects of undetermined intent of halogen derivatives of aliphatic or aromatic hydrocarbons
+PH56	Exposure to or harmful effects of undetermined intent of other or unspecified substances chiefly nonmedicinal as to source
+PH70	Exposure to foreign body in orifice or eye with undetermined intent
+PH71	Exposure to electric current with undetermined intent
+PH72	Exposure to sunlight with undetermined intent
+PH73	Exposure to radiation with undetermined intent
+PH74	Exposure to high or low air pressure or changes in air pressure with undetermined intent
+PH75.0	Exposure to chemical explosion with undetermined intent
+PH75.1	Exposure to explosion or rupture of pressurised materials or object with undetermined intent
+PH75.Y	Other specified exposure to explosion with undetermined intent
+PH75.Z	Exposure to explosion with undetermined intent, unspecified
+PH76	Physical overexertion with undetermined intent
+PH77	Lack of food with undetermined intent
+PH78	Lack of water with undetermined intent
+PH79	Other specified privation with undetermined intent
+PH7A	Abandonment with undetermined intent
+PH7B	Neglect with undetermined intent
+PH8Y	Other specified injury event of undetermined intent
+PH8Z	Unspecified injury event of undetermined intent
+PJ00	Victim of lightning
+PJ01	Victim of earthquake
+PJ02	Victim of cataclysmic earth movements caused by earthquake
+PJ03	Victim of tsunami
+PJ04	Victim of volcanic eruption
+PJ05	Victim of avalanche, landslide or other earth movements
+PJ06	Victim of cataclysmic storm
+PJ07	Victim of flood
+PJ0Y	Exposure to other specified forces of nature
+PJ0Z	Exposure to unspecified forces of nature
+PJ20	Physical maltreatment
+PJ21	Sexual maltreatment
+PJ22	Psychological maltreatment
+PJ2Y	Other specified maltreatment
+PJ2Z	Maltreatment, unspecified
+PJ40	Legal intervention involving projectile from firearm
+PJ41	Legal intervention involving other projectile
+PJ42	Legal intervention involving blunt object
+PJ43	Legal intervention involving sharp object
+PJ44	Legal intervention involving electric weapon
+PJ45	Legal intervention involving explosive
+PJ46	Legal intervention involving gas
+PJ47	Legal intervention involving application of physical force
+PJ4Y	Legal intervention involving other means
+PJ4Z	Legal intervention involving unspecified means
+PJ60	Explosion of depth-charge or marine mine during armed conflict
+PJ61	Explosion of torpedo during armed conflict
+PJ62	Explosion of sea-based artillery shell during armed conflict
+PJ6Y	Explosion of other marine weapons during armed conflict
+PJ6Z	Explosion of unspecified marine weapon
+PJ70	Attack on or destruction of aircraft during armed conflict due to enemy fire or explosives
+PJ71	Attack on or destruction of aircraft during armed conflict due to collision with other aircraft
+PJ7Y	Other destruction of aircraft during armed conflict
+PJ7Z	Unspecified destruction of aircraft during armed conflict
+PJ80	Explosion of missile during armed conflict
+PJ81	Explosion of aerial bomb during armed conflict
+PJ82	Explosion of munitions or weapons during armed conflict
+PJ83	Explosion of improvised explosive device during armed conflict
+PJ8Y	Other explosion or fragments during armed conflict
+PJ8Z	Unspecified explosion or fragments during armed conflict
+PJ90	Use of gasoline bomb during armed conflict
+PJ91	Use of flamethrower during armed conflict
+PJ92	Use of incendiary bullets during armed conflict
+PJ9Y	Other specified fires, conflagrations or hot substances during armed conflict
+PJ9Z	Unspecified fire, conflagration or hot substance during armed conflict
+PK00	Use of rubber bullets during armed conflict
+PK01	Use of firearm pellets during armed conflict
+PK02	Other firearms discharge during armed conflict
+PK03	Other weapons use during armed conflict
+PK04	Unarmed combat during armed conflict
+PK0Z	Other and unspecified forms of conventional weapons use during armed conflict
+PK10	Thermal or blast effects of nuclear weapon during armed conflict
+PK11	Nuclear radiation effects of nuclear weapon during armed conflict
+PK1Z	Other and unspecified effect of nuclear weapon during armed conflict
+PK20	Use of weaponised micro-organisms during armed conflict
+PK2Y	Use of other specified biological weapons during armed conflict
+PK2Z	Use of unspecified biological weapons during armed conflict
+PK30	Use of chemical weapons during armed conflict
+PK31	Use of lasers or other energetic beams or fields during armed conflict
+PK32	Use of electric weapons during armed conflict
+PK33	Use of autonomous or semi-autonomous machines as weapons during armed conflict
+PK3Z	Other and unspecified forms of unconventional warfare during armed conflict
+PK40	Explosion of mine after cessation of armed conflict
+PK41	Explosion of bomb after cessation of armed conflict
+PK4Z	Other and unspecified event after cessation of armed conflict
+PK6Y	Other specified armed conflict
+PK6Z	Unspecified armed conflict
+PK80.00	Neurological procedure associated with injury or harm, open approach
+PK80.01	Neurological procedure associated with injury or harm, percutaneous approach
+PK80.02	Neurological procedure associated with injury or harm, endoscopic approach
+PK80.0Y	Neurological procedure associated with injury or harm, other specified approach
+PK80.0Z	Neurological procedure associated with injury or harm, unspecified approach
+PK80.10	Cardiac procedure for repair of congenital anomaly associated with injury or harm, open approach
+PK80.11	Cardiac procedure for repair of congenital anomaly associated with injury or harm, percutaneous approach
+PK80.12	Cardiac procedure for repair of congenital anomaly associated with injury or harm, endoscopic approach
+PK80.13	Cardiac procedure for repair of congenital anomaly associated with injury or harm, unspecified approach
+PK80.14	Other cardiac procedure associated with injury or harm, open approach
+PK80.15	Other cardiac procedure associated with injury or harm, percutaneous approach
+PK80.16	Other cardiac procedure associated with injury or harm, endoscopic approach
+PK80.17	Other cardiac procedure associated with injury or harm, unspecified approach
+PK80.1Y	Unspecified type of cardiac procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.1Z	Unspecified type of cardiac procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.20	Thoracic procedure associated with injury or harm, open approach
+PK80.21	Thoracic procedure associated with injury or harm, percutaneous approach
+PK80.22	Thoracic procedure associated with injury or harm, endoscopic approach
+PK80.2Y	Thoracic procedure associated with injury or harm, other specified approach
+PK80.2Z	Thoracic procedure associated with injury or harm, unspecified approach
+PK80.30	Gastrointestinal, abdominal, or abdominal wall procedure associated with injury or harm, open approach
+PK80.31	Gastrointestinal, abdominal, or abdominal wall procedure associated with injury or harm, percutaneous approach
+PK80.32	Gastrointestinal, abdominal, or abdominal wall procedure associated with injury or harm, endoscopic approach
+PK80.3Y	Gastrointestinal, abdominal, or abdominal wall procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.3Z	Gastrointestinal, abdominal, or abdominal wall procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.40	Endocrine procedure associated with injury or harm, open approach
+PK80.41	Endocrine procedure associated with injury or harm, percutaneous approach
+PK80.42	Endocrine procedure associated with injury or harm, endoscopic approach
+PK80.4Y	Endocrine procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.4Z	Endocrine procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.50	Gynaecological or breast procedure associated with injury or harm, open approach
+PK80.51	Gynaecological or breast procedure associated with injury or harm, percutaneous approach
+PK80.52	Gynaecological or breast procedure associated with injury or harm, endoscopic approach
+PK80.53	Gynaecological or breast procedure associated with injury or harm in therapeutic use, per orifice approach
+PK80.5Y	Gynaecological or breast procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.5Z	Gynaecological or breast procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.60	Urological procedure associated with injury or harm, open approach
+PK80.61	Urological procedure associated with injury or harm, percutaneous approach
+PK80.62	Urological procedure associated with injury or harm, endoscopic approach
+PK80.6Y	Urological procedure associated with injury or harm, other specified approach
+PK80.6Z	Urological procedure associated with injury or harm, unspecified approach
+PK80.70	Caesarean section or other obstetric procedure associated with injury or harm, open approach
+PK80.71	Obstetric procedure associated with injury or harm, percutaneous approach
+PK80.72	Obstetric procedure associated with injury or harm, endoscopic approach
+PK80.73	Obstetric procedure associated with injury or harm in therapeutic use, per orifice approach
+PK80.7Y	Caesarean section or other obstetric procedure associated with injury or harm, other specified approach
+PK80.7Z	Caesarean section or other obstetric procedure associated with injury or harm, unspecified approach
+PK80.80	Musculoskeletal procedure associated with injury or harm, open approach
+PK80.81	Musculoskeletal procedure associated with injury or harm, percutaneous approach
+PK80.82	Musculoskeletal procedure associated with injury or harm, endoscopic approach
+PK80.8Y	Musculoskeletal procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.8Z	Musculoskeletal procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.90	Vascular procedure associated with injury or harm, open approach
+PK80.91	Vascular procedure associated with injury or harm, percutaneous approach
+PK80.92	Vascular procedure associated with injury or harm, endoscopic approach
+PK80.9Y	Vascular procedure associated with injury or harm, other specified approach
+PK80.9Z	Vascular procedure associated with injury or harm, unspecified approach
+PK80.A0	Ear, nose, oral, or throat procedure associated with injury or harm, open approach
+PK80.A1	Ear, nose, oral, or throat procedure associated with injury or harm, percutaneous approach
+PK80.A2	Ear, nose, oral, or throat procedure associated with injury or harm, endoscopic approach
+PK80.AY	Ear, nose, oral, or throat procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.AZ	Ear, nose, oral, or throat procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.B0	Dental procedure associated with injury or harm, open approach
+PK80.B1	Dental procedure associated with injury or harm, percutaneous approach
+PK80.B2	Dental procedure associated with injury or harm, endoscopic approach
+PK80.BY	Dental procedure associated with injury or harm, other specified approach
+PK80.BZ	Dental procedure associated with injury or harm, unspecified approach
+PK80.C0	Skin or integument procedure associated with injury or harm, open approach
+PK80.C1	Skin or integument procedure associated with injury or harm, percutaneous approach
+PK80.C2	Skin or integument procedure associated with injury or harm, endoscopic approach
+PK80.CY	Skin or integument procedure associated with injury or harm in therapeutic use, other specified approach
+PK80.CZ	Skin or integument procedure associated with injury or harm in therapeutic use, unspecified approach
+PK80.D	Ophthalmic procedure associated with injury or harm in therapeutic use
+PK81.0	Ventilation associated with injury or harm in therapeutic use
+PK81.1	Extracorporeal life support procedure associated with injury or harm in therapeutic use
+PK81.2	Aspiration or drainage of body cavity or fluid collection associated with injury or harm in therapeutic use
+PK81.30	Acupuncture cupping associated with injury or harm in therapeutic use
+PK81.3Y	Other specified acupuncture or related therapies associated with injury or harm in therapeutic use
+PK81.3Z	Acupuncture or related therapies associated with injury or harm in therapeutic use, unspecified
+PK81.4	Bone marrow aspiration or biopsy associated with injury or harm in therapeutic use
+PK81.5	Biopsy procedure, not elsewhere classified, associated with injury or harm in therapeutic use
+PK81.6	Dialysis associated with injury or harm in therapeutic use
+PK81.7	Injection or infusion for therapeutic or diagnostic purposes associated with injury or harm in therapeutic use
+PK81.8	Insertion of tube associated with injury or harm in therapeutic use
+PK81.9	Joint aspiration associated with injury or harm in therapeutic use
+PK81.A	Lumbar puncture associated with injury or harm in therapeutic use
+PK81.B	Manipulative therapies associated with injury or harm in therapeutic use
+PK81.C	Radiation therapy associated with injury or harm in therapeutic use
+PK81.D	Other specified medical procedure associated with injury or harm in therapeutic use
+PK81.E	Cardiopulmonary resuscitation associated with injury or harm in therapeutic use
+PK81.F	Needle stick associated with injury or harm in therapeutic use
+PK8Y	Other specified surgical or other medical procedures associated with injury or harm in diagnostic or therapeutic use
+PK8Z	Surgical or other medical procedures associated with injury or harm in diagnostic or therapeutic use, unspecified
+PK90.0	Anaesthesiology devices associated with injury or harm, diagnostic or monitoring devices
+PK90.1	Anaesthesiology devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK90.2	Anaesthesiology devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK90.3	Anaesthesiology devices associated with injury or harm, surgical instruments, materials or devices
+PK90.4	Anaesthesiology devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK90.Y	Other specified anaesthesiology devices associated with injury or harm
+PK90.Z	Anaesthesiology devices associated with injury or harm, unspecified
+PK91.0	Cardiovascular devices associated with injury or harm, diagnostic or monitoring devices
+PK91.10	Cardiovascular devices associated with injury or harm, Pacemaker
+PK91.11	Cardiovascular devices associated with injury or harm, implantable defibrillator
+PK91.12	Cardiovascular devices associated with injury or harm, left ventricular assist devices
+PK91.13	Cardiovascular devices associated with injury or harm, intra-aortic balloon pump
+PK91.14	Cardiovascular devices associated with injury or harm, IVC filter
+PK91.15	Cardiovascular devices associated with injury or harm, central venous catheter
+PK91.16	Cardiovascular devices associated with injury or harm: peripheral venous catheter
+PK91.1Y	Other specified cardiovascular devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK91.1Z	Cardiovascular devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices, unspecified
+PK91.20	Cardiovascular devices associated with injury or harm, grafts
+PK91.21	Cardiovascular devices associated with injury or harm, stents
+PK91.22	Cardiovascular devices associated with injury or harm, mechanical or bioprosthetic valves
+PK91.2Y	Other specified cardiovascular devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK91.2Z	Cardiovascular devices associated with injury or harm, prosthetic or other implants, materials or accessory devices, unspecified
+PK91.3	Cardiovascular devices associated with injury or harm, surgical instruments, materials or devices
+PK91.4	Cardiovascular devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK91.Y	Other specified cardiovascular devices, implants or grafts associated with injury or harm
+PK91.Z	Cardiovascular devices, implants or grafts associated with injury or harm, unspecified
+PK92.0	Otorhinolaryngological devices associated with injury or harm, diagnostic or monitoring devices
+PK92.1	Otorhinolaryngological devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK92.2	Otorhinolaryngological devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK92.3	Otorhinolaryngological devices associated with injury or harm, surgical instruments, materials or devices
+PK92.4	Otorhinolaryngological devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK92.Y	Other specified otorhinolaryngological devices, implants or grafts associated with injury or harm
+PK92.Z	Otorhinolaryngological devices, implants or grafts associated with injury or harm, unspecified
+PK93.0	Gastroenterology or urology devices associated with injury or harm, diagnostic or monitoring devices
+PK93.10	Gastroenterology or urology devices associated with injury or harm, urinary catheter
+PK93.1Y	Other specified gastroenterology or urology devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK93.1Z	Gastroenterology or urology devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices, unspecified
+PK93.2	Gastroenterology or urology devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK93.3	Gastroenterology or urology devices associated with injury or harm, surgical instruments, materials or devices
+PK93.4	Gastroenterology or urology devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK93.Y	Other specified gastroenterology or urology devices, implants or grafts associated with injury or harm
+PK93.Z	Gastroenterology or urology devices, implants or grafts associated with injury or harm, unspecified
+PK94.0	General hospital or personal use devices associated with injury or harm, diagnostic or monitoring devices
+PK94.1	General hospital or personal use devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK94.2	General hospital or personal use devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK94.3	General hospital or personal use devices associated with injury or harm, surgical instruments, materials or devices
+PK94.4	General hospital or personal use devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK94.Y	Other specified general hospital or personal use devices associated with injury or harm
+PK94.Z	General hospital or personal use devices associated with injury or harm, unspecified
+PK95.0	Neurological devices associated with injury or harm, diagnostic or monitoring devices
+PK95.1	Neurological devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK95.20	Neurological devices associated with injury or harm, ventricular shunt
+PK95.2Y	Other specified neurological devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK95.2Z	Neurological devices associated with injury or harm, prosthetic or other implants, materials or accessory devices, unspecified
+PK95.3	Neurological devices associated with injury or harm, surgical instruments, materials or devices
+PK95.4	Neurological devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK95.Y	Other specified neurological devices, implants or grafts associated with injury or harm
+PK95.Z	Neurological devices, implants or grafts associated with injury or harm, unspecified
+PK96.0	Obstetric or gynaecological devices associated with injury or harm, diagnostic or monitoring devices
+PK96.1	Obstetric or gynaecological devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK96.2	Obstetric or gynaecological devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK96.3	Obstetric or gynaecological devices associated with injury or harm, surgical instruments, materials or devices
+PK96.4	Obstetric or gynaecological devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK96.Y	Other specified obstetric or gynaecological devices, implants or grafts associated with injury or harm
+PK96.Z	Obstetric or gynaecological devices, implants or grafts associated with injury or harm, unspecified
+PK97.0	Ophthalmic devices associated with injury or harm, diagnostic or monitoring devices
+PK97.1	Ophthalmic devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK97.2	Ophthalmic devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK97.3	Ophthalmic devices associated with injury or harm, surgical instruments, materials or devices
+PK97.4	Ophthalmic devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK97.Y	Other specified ophthalmic devices, implants or grafts associated with injury or harm
+PK97.Z	Ophthalmic devices, implants or grafts associated with injury or harm, unspecified
+PK98.0	Radiological devices associated with injury or harm, diagnostic or monitoring devices
+PK98.1	Radiological devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK98.2	Radiological devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK98.3	Radiological devices associated with injury or harm, surgical instruments, materials or devices
+PK98.4	Radiological devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK98.Y	Other specified radiological devices associated with injury or harm
+PK98.Z	Radiological devices associated with injury or harm, unspecified
+PK99.0	Orthopaedic devices associated with injury or harm, diagnostic or monitoring devices
+PK99.1	Orthopaedic devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK99.2	Orthopaedic devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK99.3	Orthopaedic devices associated with injury or harm, surgical instruments, materials or devices
+PK99.4	Orthopaedic devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK99.Y	Other specified orthopaedic devices, implants or grafts associated with injury or harm
+PK99.Z	Orthopaedic devices, implants or grafts associated with injury or harm, unspecified
+PK9A.0	Physical medicine devices associated with injury or harm, diagnostic or monitoring devices
+PK9A.1	Physical medicine devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK9A.20	Communication system devices associated with adverse incidents
+PK9A.21	Communication system devices associated with adverse incidents in a physical medicine care environment
+PK9A.22	Environmental control system devices associated with adverse incidents
+PK9A.23	Mobility aids associated with adverse incidents
+PK9A.24	Orthotic devices associated with adverse incidents
+PK9A.2Y	Other specified physical medicine devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK9A.2Z	Physical medicine devices associated with injury or harm, prosthetic or other implants, materials or accessory devices, unspecified
+PK9A.3	Physical medicine devices associated with injury or harm, surgical instruments, materials or devices
+PK9A.4	Physical medicine devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK9A.Y	Other specified physical medicine devices associated with injury or harm
+PK9A.Z	Physical medicine devices associated with injury or harm, unspecified
+PK9B.0	General or plastic surgery devices associated with injury or harm, diagnostic or monitoring devices
+PK9B.1	General or plastic surgery devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK9B.2	General or plastic surgery devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK9B.3	General or plastic surgery devices associated with injury or harm, surgical instruments, materials or devices
+PK9B.4	General or plastic surgery devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PK9B.Y	Other specified general or plastic surgery devices, implants or grafts associated with injury or harm
+PK9B.Z	General or plastic surgery devices, implants or grafts associated with injury or harm, unspecified
+PK9C.0	Other or unspecified medical devices associated with injury or harm, diagnostic or monitoring devices
+PK9C.1	Other or unspecified medical devices associated with injury or harm, therapeutic, nonsurgical or rehabilitative devices
+PK9C.2	Other or unspecified medical devices associated with injury or harm, prosthetic or other implants, materials or accessory devices
+PK9C.30	Mechanical complication of nonabsorbable surgical material, not otherwise specified
+PK9C.31	Mechanical complication of permanent sutures
+PK9C.3Y	Other specified other or unspecified medical devices associated with injury or harm, surgical instruments, materials or devices
+PK9C.3Z	Other or unspecified medical devices associated with injury or harm, surgical instruments, materials or devices, unspecified
+PK9C.4	Other or unspecified medical devices associated with injury or harm, miscellaneous devices, not elsewhere classified
+PL00	Drugs, medicaments or biological substances associated with injury or harm in therapeutic use
+PL01.0	Complementary or traditional medicines associated with injury or harm in therapeutic use, Herbal Preparations or Formulas
+PL01.1	Complementary or traditional medicines associated with injury or harm in therapeutic use, Dietary Supplements, Vitamins or Minerals
+PL01.2	Complementary or traditional medicines associated with injury or harm in therapeutic use, Complementary or Traditional Medicines, not elsewhere classified
+PL01.Y	Other specified complementary or traditional medicines associated with injury or harm in therapeutic use
+PL01.Z	Complementary or traditional medicines associated with injury or harm in therapeutic use, unspecified
+PL0Z	Substances associated with injury or harm in therapeutic use, unspecified
+PL10	Other health care related causes of injury or harm
+PL11.0	Cut, puncture or tear, as mode of injury or harm
+PL11.1	Burn arising during procedure, as mode of injury or harm
+PL11.20	Air embolism, as mode of injury
+PL11.2Y	Other specified embolisation, as mode of injury or harm
+PL11.2Z	Embolisation, as mode of injury or harm, unspecified
+PL11.3	Foreign body accidentally left in body, as mode of injury or harm
+PL11.4	Failure of sterile precautions, as mode of injury or harm
+PL11.5	Procedure undertaken at wrong site or wrong side, as mode of injury or harm
+PL11.6	Pressure, as mode of injury or harm
+PL11.Y	Other specified mode of injury or harm associated with a surgical or other medical procedure
+PL11.Z	Unspecified mode of injury or harm associated with a surgical or other medical procedure
+PL12.0	Structural device failure, as mode of injury or harm
+PL12.1	Functional device failure, as mode of injury or harm
+PL12.2	Perforation or protrusion by device, as mode of injury or harm
+PL12.3	Obstruction of device, as mode of injury or harm
+PL12.4	Dislodgement, misconnection or de-attachment, as mode of injury or harm
+PL12.5	Operator error, as mode of injury or harm
+PL12.6	Combination or interaction of operator error and device failure, as mode of injury or harm
+PL12.Y	Other specified mode of injury or harm associated with a surgical or other medical device, implant or graft
+PL12.Z	Mode of injury or harm associated with a surgical or other medical device, implant or graft, unspecified
+PL13.0	Overdose of substance, as mode of injury or harm
+PL13.1	Underdosing, as mode of injury or harm
+PL13.2	Drug-related injury or harm in the context of correct administration or dosage, as mode of injury or harm
+PL13.3	Incorrect substance, as mode of injury or harm
+PL13.50	Incorrect route of drug or medicament, as mode of injury
+PL13.51	Incorrect rate of drug or medicament, as mode of injury
+PL13.52	Incorrect timing of drug or medicament, as mode of injury
+PL13.53	Incorrect duration of drug or medicament, as mode of injury
+PL13.5Y	Other specified incorrect administration of drug or medicament, as mode of injury
+PL13.5Z	Incorrect administration of drug or medicament, as mode of injury, unspecified
+PL13.6	Medication or substance that is known to be an allergen, as mode of injury or harm
+PL13.7	Medication or substance that is known to be contraindicated for the patient, as mode of injury or harm
+PL13.8	Expired or deteriorated medication or substance, as mode of injury or harm
+PL13.9	Drug or substance interactions, as mode of injury or harm
+PL13.A	Inappropriate stoppage or discontinuation of drug, as mode of injury or harm
+PL13.Y	Other specified mode of injury or harm associated with exposure to a drug, medicament or biological substance
+PL13.Z	Mode of injury or harm associated with exposure to a drug, medicament or biological substance, unspecified
+PL14.0	Non-administration of necessary drug
+PL14.1	Non provision of necessary procedure
+PL14.2	Problem associated with physical transfer of patient
+PL14.3	Mismatched blood used in transfusion
+PL14.4	Other problem associated with transfusion
+PL14.5	Problem associated with physical restraints
+PL14.6	Problem associated with isolation protocol
+PL14.7	Problem associated with clinical documentation
+PL14.8	Problem associated with clinical software
+PL14.9	Incorrect diagnosis
+PL14.A	Delayed diagnosis
+PL14.B	Delayed treatment
+PL14.C	Patient received diagnostic test or treatment intended for another patient
+PL14.D	Problem associated with transitions of care, hand offs, or handovers
+PL14.E	Fall in health care
+PL14.Y	Other specified aspects of care associated with injury or harm
+PL14.Z	Mode of injury or harm associated with other health care related causes, unspecified
+PL2Y	Other specified external causes of morbidity or mortality
+PL2Z	External causes of morbidity or mortality, unspecified
+QA00.0	General adult medical examination
+QA00.1	Routine child health examination
+QA00.2	Routine newborn health examination
+QA00.3	General psychiatric examination
+QA00.4	Examination of potential donor of organ or tissue
+QA00.5	Examination for normal comparison or control in clinical research programme
+QA00.6	Examination of eyes or vision
+QA00.7	Examination of ears and hearing
+QA00.8	Dental examination
+QA00.9	Gynaecological examination
+QA00.A	Skin or other sensitisation tests
+QA00.B	Radiological examination
+QA00.C	Laboratory examination
+QA00.D	Encounter for blood typing
+QA00.E	Encounter for antibody response examination
+QA00.Y	Other specified general examination or investigation of persons without complaint or reported diagnosis
+QA00.Z	General examination or investigation of persons without complaint or reported diagnosis, unspecified
+QA01.0	Examination for admission to educational institution
+QA01.1	Pre-employment examination
+QA01.2	Examination for admission to residential institutions
+QA01.3	Examination for recruitment to armed forces
+QA01.4	Examination for driving license
+QA01.5	Examination for participation in sport
+QA01.6	Examination for insurance purposes
+QA01.7	Issue of medical certificate
+QA01.8	Encounter for adoption services
+QA01.Y	Other specified examination or encounter for administrative purposes
+QA01.Z	Examination or encounter for administrative purposes, unspecified
+QA02.0	Observation for suspected tuberculosis, ruled out
+QA02.1	Observation for suspected Dengue, ruled out
+QA02.2	Observation for suspected malignant neoplasm, ruled out
+QA02.3	Observation for suspected mental or behavioural disorders, ruled out
+QA02.4	Observation for suspected nervous system disorder, ruled out
+QA02.5	Observation for suspected toxic effect from ingested substance, ruled out
+QA02.6	Observation and evaluation of newborn for suspected condition, ruled out
+QA02.7	Observation for suspected suicide ideation or attempt, ruled out
+QA02.8	Observation for suspected allergy or hypersensitivity, ruled out
+QA02.Y	Medical observation or evaluation for other suspected diseases or conditions, ruled out
+QA03.0	Occupational health examination
+QA03.1	Routine general health check-up of inhabitants of institutions
+QA03.2	Routine general health check-up of armed forces
+QA03.3	Routine general health check-up of sports teams
+QA03.Y	Other specified routine general health check-up of defined subpopulation
+QA03.Z	Routine general health check-up of defined subpopulation, unspecified
+QA04.0	Blood-alcohol or blood-drug test
+QA04.1	Alcohol and drug testing other than by blood
+QA04.2	Examination or observation following transport accident
+QA04.3	Examination or observation following work accident
+QA04.4	Examination or observation following accident other than work or transport
+QA04.50	Examination or observation for suspected physical maltreatment
+QA04.51	Examination or observation for suspected sexual maltreatment
+QA04.52	Examination or observation for suspected psychological maltreatment
+QA04.53	Examination or observation for suspected neglect or abandonment
+QA04.5Y	Other specified examination or observation for suspected maltreatment
+QA04.5Z	Examination or observation for suspected maltreatment, unspecified
+QA04.6	General psychiatric examination, requested by authority
+QA04.7	Examination for medicolegal reasons
+QA04.Y	Other specified examination or observation for reasons other than suspected diseases or conditions or administrative purposes
+QA04.Z	Examination or observation for reasons other than suspected diseases or conditions or administrative purposes, unspecified
+QA05	Person consulting for explanation of investigation findings
+QA06	Follow-up examination after treatment for malignant neoplasms
+QA07.0	Follow-up examination after organ transplant
+QA07.Y	Other specified follow-up examination after treatment for conditions other than malignant neoplasms
+QA07.Z	Follow-up examination after treatment for conditions other than malignant neoplasms, unspecified
+QA08.0	Special screening examination for intestinal infectious diseases
+QA08.1	Special screening examination for respiratory tuberculosis
+QA08.2	Special screening examination for other bacterial diseases
+QA08.3	Special screening examination for infections with a predominantly sexual mode of transmission
+QA08.4	Special screening examination for human immunodeficiency virus
+QA08.5	Special screening examination for other viral diseases
+QA08.6	Special screening examination for other protozoal diseases or helminthiases
+QA08.Y	Special screening examination for other specified infectious diseases
+QA08.Z	Special screening examination for unspecified infectious diseases
+QA09.0	Special screening examination for neoplasm of stomach
+QA09.1	Special screening examination for neoplasm of intestinal tract
+QA09.2	Special screening examination for neoplasm of respiratory organs
+QA09.3	Special screening examination for neoplasm of breast
+QA09.4	Special screening examination for neoplasm of cervix
+QA09.5	Special screening examination for neoplasm of prostate
+QA09.6	Special screening examination for neoplasm of bladder
+QA09.7	Special screening examination for neoplasm of skin
+QA09.Y	Other specified special screening examination for neoplasms
+QA09.Z	Special screening for neoplasm of unspecified site
+QA0A.0	Special screening examination for diseases of the blood or blood-forming organs or certain disorders involving the immune mechanism
+QA0A.10	Special screening examination for diabetes mellitus
+QA0A.1Y	Other specified special screening examination for endocrine and metabolic disorder
+QA0A.1Z	Special screening examination for endocrine and metabolic disorder, unspecified
+QA0A.2	Special screening examination for nutritional disorders
+QA0A.3	Special screening examination for mental or behavioural disorders
+QA0A.4	Special screening examination for certain developmental disorders in childhood
+QA0A.5	Special screening examination for eye or ear disorders
+QA0A.6	Special screening examination for cardiovascular disorders
+QA0A.7	Special screening examination for allergic and hypersensitivity conditions
+QA0A.Y	Special screening for diseases and disorders not elsewhere classified
+QA0A.Z	Special screening examination for other diseases or disorders, unspecified
+QA0B	Preprocedural examination
+QA0Y	Other examination or investigation
+QA0Z	Examination or investigation, unspecified
+QA10	Contact with health services for dietary counselling or surveillance
+QA11	Contact with health services for alcohol use counselling or surveillance
+QA12	Contact with health services for drug use counselling or surveillance
+QA13	Contact with health services for tobacco use counselling
+QA14	Contact with health services for human immunodeficiency virus counselling
+QA15.0	Counselling related to sexual attitudes
+QA15.1	Counselling related to sexual behaviour and orientation or sexual relationships of the person
+QA15.2	Counselling related to sexual behaviour and orientation or sexual relationships of third party
+QA15.3	Counselling related to combined sexual attitudes, sexual behaviour and sexual relationships
+QA15.Y	Other specified counselling related to sexuality
+QA15.Z	Counselling related to sexuality, unspecified
+QA16	Individual psychological or behavioural counselling
+QA17	Marital or couples counselling
+QA18	Family counselling
+QA19	Group counselling
+QA1A	Discussion of issues surrounding impending death
+QA1B	Concern about or fear of medical treatment
+QA1C	Person with feared complaint in whom no diagnosis is made
+QA1Y	Contact with health services for other specified counselling
+QA1Z	Contact with health services for unspecified counselling
+QA20	Contact with health services for concerns about pregnancy
+QA21.0	Contact with health services for postcoital contraception
+QA21.1	Contact with health services for general counselling or advice on contraception
+QA21.2	Contact with health services for insertion of contraceptive device
+QA21.3	Contact with health services for sterilisation
+QA21.4	Contact with health services for menstrual extraction
+QA21.5	Surveillance of contraceptive drugs
+QA21.60	Retained intrauterine device without injury or harm in non-pregnant uterus
+QA21.6Y	Other specified surveillance of contraceptive device
+QA21.6Z	Surveillance of contraceptive device, unspecified
+QA21.Y	Other specified contact with health services for contraceptive management
+QA21.Z	Contact with health services for contraceptive management, unspecified
+QA30.00	Contact with health services for gamete intrafallopian transfer
+QA30.01	Contact with health services for procreative management by artificial insemination
+QA30.02	Contact with health services for medically assisted sperm insemination
+QA30.0Y	Contact with health services for other specified assisted insemination
+QA30.0Z	Contact with health services for unspecified assisted insemination
+QA30.10	Contact with health services for in vitro fertilisation
+QA30.11	Contact with health services for egg retrieval
+QA30.12	Contact with health services for embryo transfer
+QA30.13	Contact with health services for ovum implantation
+QA30.14	Contact with health services for harvesting ovum for in vitro fertilisation
+QA30.15	Contact with health services for harvesting or implantation of ova
+QA30.1Y	Contact with health services for other specified assisted reproductive technology
+QA30.1Z	Contact with health services for unspecified assisted reproductive technology
+QA30.20	Contact with health services for controlled ovarian stimulation for assisted reproductive technology
+QA30.21	Contact with health services for controlled ovarian stimulation for non-assisted reproductive technology cycles
+QA30.22	Contact with health services for ovulation induction
+QA30.2Y	Contact with health services for other specified assisted fertilisation methods
+QA30.2Z	Contact with health services for unspecified assisted fertilisation methods
+QA30.Y	Other specified contact with health services for medically assisted reproduction
+QA30.Z	Contact with health services for medically assisted reproduction, unspecified
+QA31	Contact with health services for genetic counselling
+QA32	Contact with health services for tuboplasty or vasoplasty after previous sterilisation
+QA33	Contact with health services for preconception counselling
+QA34	Contact with health services for fertility preservation counselling
+QA35	Contact with health services by gestational carrier
+QA3Y	Contact with health services for other specified procreative management
+QA3Z	Contact with health services for procreative management, unspecified
+QA40	Pregnancy examination or test
+QA41	Pregnant state
+QA42.0	Supervision of normal first pregnancy
+QA42.Y	Supervision of other specified normal pregnancy
+QA42.Z	Supervision of normal pregnancy, unspecified
+QA43.0	Supervision of pregnancy with history of infertility
+QA43.1	Supervision of pregnancy with history of abortive outcome
+QA43.2	Supervision of pregnancy with other poor reproductive or obstetric history
+QA43.30	Concealed pregnancy
+QA43.3Y	Other specified supervision of pregnancy with history of insufficient antenatal care
+QA43.3Z	Supervision of pregnancy with history of insufficient antenatal care, unspecified
+QA43.4	Supervision of elderly primigravida
+QA43.5	Supervision of very young primigravida
+QA43.6	Supervision of high-risk pregnancy due to social problems
+QA43.Y	Other specified supervision of high-risk pregnancy
+QA43.Z	Supervision of high-risk pregnancy, unspecified
+QA44	Expectant parent pre-birth visit
+QA45.0	Antenatal screening for chromosomal anomalies
+QA45.1	Antenatal screening due to raised alphafetoprotein level
+QA45.Y	Other specified antenatal screening
+QA45.Z	Antenatal screening, unspecified
+QA46.0	Single live birth
+QA46.1	Single stillbirth
+QA46.2	Twins, both liveborn
+QA46.3	Twins, one liveborn and one stillborn
+QA46.4	Twins, both stillborn
+QA46.5	Triplets, all liveborn
+QA46.6	Triplets, some liveborn
+QA46.7	Triplets, all stillborn
+QA46.8	Quadruplets, all liveborn
+QA46.9	Quadruplets, some liveborn
+QA46.A	Quadruplets, all stillborn
+QA46.B	Quintuplets, all liveborn
+QA46.C	Quintuplets, some liveborn
+QA46.D	Quintuplets, all stillborn
+QA46.E	Sextuplets, all liveborn
+QA46.F	Sextuplets, some liveborn
+QA46.G	Sextuplets, all stillborn
+QA46.H	Other multiple births, all liveborn
+QA46.J	Other multiple births, some liveborn
+QA46.K	Other multiple births, all stillborn
+QA46.Z	Outcome of delivery, unspecified
+QA47.00	Single liveborn infant, delivered vaginally
+QA47.01	Single liveborn infant, delivered by caesarean
+QA47.0Y	Other specified singleton, born in hospital
+QA47.0Z	Singleton, born in hospital, unspecified
+QA47.1	Singleton, born outside hospital
+QA47.2	Singleton, unspecified as to place of birth
+QA47.30	Twin liveborn infant, delivered vaginally
+QA47.31	Twin liveborn infant, delivered by caesarean
+QA47.3Y	Other specified twin, born in hospital
+QA47.3Z	Twin, born in hospital, unspecified
+QA47.4	Twin, born outside hospital
+QA47.5	Twin, unspecified as to place of birth
+QA47.60	Multiple other than twins, delivered vaginally
+QA47.61	Multiple other than twins, delivered by caesarean section
+QA47.6Y	Other specified multiple other than twins, born in hospital
+QA47.6Z	Multiple other than twins, born in hospital, unspecified
+QA47.7	Multiple other than twins, born outside hospital
+QA47.8	Other multiple, unspecified as to place of birth
+QA47.Z	Liveborn infants according to place of birth, unspecified
+QA48.0	Care or examination immediately after delivery
+QA48.1	Care or examination of lactating mother
+QA48.2	Routine postpartum follow-up
+QA48.Y	Other specified postpartum care or examination
+QA48.Z	Postpartum care or examination, unspecified
+QA49	Problems related to unwanted pregnancy
+QA4A	Problems related to multiparity
+QA4B	Contact with health services for menopausal counselling
+QA4Y	Other specified contact with health services for reasons associated with reproduction
+QA4Z	Contact with health services for reasons associated with reproduction, unspecified
+QA50	Embolisation without injury or harm
+QA51	Foreign body accidentally left in body without injury or harm
+QA52	Failure of sterile precautions without injury or harm
+QA53	Pressure as potential mode of injury without injury or harm
+QA5Y	Other specified circumstances associated with a surgical or other medical procedure influencing the episode of care, without injury or harm
+QA5Z	Circumstances associated with a surgical or other medical procedure influencing the episode of care, without injury or harm, unspecified
+QA60	Structural device failure without injury or harm
+QA61	Functional device failure without injury or harm
+QA62	Dislodgement, misconnection or de-attachment of a surgical or medical device without injury or harm
+QA63	Obstruction of device without injury or harm
+QA64	Operator error without injury or harm
+QA65	Combination or interaction of operator error and device failure without injury or harm
+QA6Y	Other specified circumstances associated with a surgical or other medical device influencing the episode of care without injury or harm
+QA6Z	Circumstances associated with a surgical or other medical device influencing the episode of care without injury or harm, unspecified
+QA70	Overdose of substance without injury or harm
+QA71	Underdosing without injury or harm
+QA72	Incorrect substance without injury or harm
+QA73	Incorrect route of administration without injury or harm
+QA74	Unspecified appropriateness of dosing or administration without injury or harm
+QA75	Incorrect duration of administration or course of therapy without injury or harm
+QA76	Medication or substance that is known to be an allergen without injury or harm
+QA77	Medication or substance that is known to be contraindicated for the patient without injury or harm
+QA78	Expired or deteriorated medication or substance without injury or harm
+QA79	Drug or substance interactions without injury or harm
+QA7A	Inappropriate stoppage or discontinuation of drug without injury or harm
+QA7Y	Other specified circumstances associated with exposure to a drug, medicament or biological substance influencing the episode of care without injury or harm
+QA7Z	Circumstances associated with exposure to a drug, medicament or biological substance influencing the episode of care without injury or harm, unspecified
+QA80	Non-administration of necessary drug without injury or harm
+QA81	Non-provision of necessary procedure without injury or harm
+QA82	Problem associated with physical transfer of patient without injury or harm
+QA83	Mismatched blood used in transfusion without injury or harm
+QA84	Other problem with transfusion without injury or harm
+QA85	Problem with physical restraints without injury or harm
+QA86	Problem with isolation protocol without injury or harm
+QA87	Problem with clinical documentation without injury or harm
+QA88	Problem with clinical software without injury or harm
+QA89	Incorrect diagnosis without injury or harm
+QA8A	Delayed diagnosis without injury or harm
+QA8B	Delayed treatment without injury or harm
+QA8C	Problem with transitions of care, hand offs, or handovers without injury or harm
+QA8D	Patient received diagnostic test or treatment intended for another patient without injury or harm
+QA8E	Fall in health care without injury or harm
+QA8F	Needle stick without injury or harm
+QA8Y	Other specified circumstances associated with other aspects of care influencing the episode of care without injury or harm
+QA8Z	Circumstances associated with other aspects of care influencing the episode of care without injury or harm, unspecified
+QB0Y	Other specified health care related circumstances influencing the episode of care without injury or harm
+QB0Z	Health care related circumstances influencing the episode of care without injury or harm, unspecified
+QB10	Medical services not available in home
+QB11	Person awaiting admission to adequate facility elsewhere
+QB12.0	Organ transplant candidate
+QB12.Y	Other specified waiting period for investigation or treatment other than awaiting admission to adequate facility elsewhere
+QB12.Z	Waiting period for investigation or treatment other than awaiting admission to adequate facility elsewhere, unspecified
+QB13	Unavailability or inaccessibility of helping agencies other than health care facilities
+QB14	Unavailability or inaccessibility of health care facilities
+QB15	Medical services not available in current medical facility
+QB16	Respite care
+QB1Y	Other specified factors related to medical facilities and other health care
+QB1Z	Factors related to medical facilities and other health care, unspecified
+QB20	Blood donor
+QB21	Bone marrow donor
+QB22	Kidney donor
+QB23	Cornea donor
+QB24	Liver donor
+QB25	Heart donor
+QB2Y	Donors of other specified organs or tissues
+QB2Z	Donors of organs or tissues, unspecified
+QB30.00	Adjustment or management of bone conduction device
+QB30.01	Adjustment or management of cochlear device
+QB30.0Y	Adjustment or management of other implanted hearing device
+QB30.0Z	Adjustment or management of implanted hearing device, unspecified
+QB30.1	Adjustment or management of infusion pump
+QB30.20	Adjustment or management of cardiac pacemaker
+QB30.21	Adjustment or management of cardiac resynchronization therapy defibrillator
+QB30.22	Adjustment or management of cardiac resynchronization therapy pacemaker
+QB30.23	Adjustment or management of cardioverter-defibrillator
+QB30.2Y	Other specified adjustment or management of cardiac devices
+QB30.2Z	Adjustment or management of cardiac devices, unspecified
+QB30.3	Adjustment or management of vascular access device
+QB30.4	Adjustment or management of implanted gastric device
+QB30.5	Fitting or adjustment of urinary device
+QB30.6	Adjustment or management of breast implant
+QB30.7	Adjustment or removal of myringotomy stent or tube
+QB30.8	Adjustment and management of a neurostimulator
+QB30.9	Fitting or adjustment of cerebrospinal fluid drainage device
+QB30.A	Fitting or adjustment of neuropacemaker
+QB30.Y	Fitting, adjustment or management of other specified implanted devices
+QB30.Z	Adjustment or management of implanted devices, unspecified
+QB31.00	Fitting or adjustment of artificial arm
+QB31.01	Fitting or adjustment of artificial leg
+QB31.02	Fitting or adjustment of artificial eye
+QB31.03	Fitting or adjustment of external breast prosthesis
+QB31.0Y	Other specified fitting or adjustment of external prosthetic device
+QB31.0Z	Fitting or adjustment of external prosthetic device, unspecified
+QB31.1	Fitting or adjustment of orthopaedic device
+QB31.2	Fitting or adjustment of orthodontic device
+QB31.3	Fitting or adjustment of dental prosthetic device
+QB31.4	Fitting or adjustment of hearing aid
+QB31.5	Fitting or adjustment of spectacles or contact lenses
+QB31.Y	Fitting, adjustment or management of other specified external devices
+QB31.Z	Fitting, adjustment or management of external devices, unspecified
+QB3Z	Fitting, adjustment or management of devices, unspecified
+QB40	Dependence on aspirator
+QB41	Dependence on respirator
+QB42	Dependence on renal dialysis
+QB43	Dependence on artificial heart
+QB44	Dependence on wheelchair
+QB4Y	Dependence on other specified machine or device
+QB4Z	Dependence on unspecified machine or device
+QB50.00	Presence of cardiac pacemaker
+QB50.01	Presence of cardiac resynchronization therapy defibrillator
+QB50.02	Presence of cardiac resynchronization therapy pacemaker
+QB50.03	Presence of cardioverter-defibrillator
+QB50.0Y	Other specified presence of electronic cardiac devices
+QB50.0Z	Presence of electronic cardiac devices, unspecified
+QB50.1	Presence of aortocoronary bypass graft
+QB50.2	Presence of prosthetic heart valve
+QB50.3	Presence of xenogenic heart valve
+QB50.4	Presence of coronary angioplasty implant or graft
+QB50.Y	Presence of other specified cardiac or vascular implants or grafts
+QB50.Z	Presence of unspecified cardiac or vascular implants or grafts
+QB51.0	Presence of a neurostimulator
+QB51.1	Presence of urogenital implants
+QB51.2	Presence of intraocular lens
+QB51.3	Presence of otological or audiological implants
+QB51.4	Presence of artificial larynx
+QB51.5	Presence of endocrine implants
+QB51.6	Presence of tooth-root or mandibular implants
+QB51.7	Presence of orthopaedic joint implants
+QB51.8	Presence of artificial eye
+QB51.9	Presence of artificial limb
+QB51.A	Presence of dental prosthetic device
+QB51.B	Presence of external hearing-aid
+QB51.C	Presence of contraceptive device
+QB51.D	Presence of cerebrospinal fluid drainage device
+QB51.Y	Presence of other specified devices other than cardiac or vascular implants
+QB5Z	Presence of unspecified device
+QB60	Presence of arthrodesis
+QB61.0	Presence of tracheostomy
+QB61.1	Presence of thoracostomy
+QB61.2	Presence of gastrostomy
+QB61.30	Presence of ileostomy
+QB61.3Y	Other specified presence of enterostomy
+QB61.3Z	Presence of enterostomy, unspecified
+QB61.4	Presence of colostomy
+QB61.5	Presence of cystostomy
+QB61.6	Presence of nephrostomy
+QB61.7	Presence of ureterostomy
+QB61.8	Presence of urethrostomy
+QB61.Y	Presence of other artificial opening
+QB61.Z	Presence of artificial opening, unspecified
+QB62.0	Attention to tracheostomy
+QB62.1	Attention to gastrostomy
+QB62.2	Attention to ileostomy
+QB62.3	Attention to colostomy
+QB62.4	Attention to cystostomy
+QB62.5	Attention to artificial vagina
+QB62.6	Attention to nephrostomy
+QB62.7	Attention to ureterostomy
+QB62.8	Attention to urethrostomy
+QB62.Y	Attention to other artificial openings
+QB62.Z	Attention to artificial openings, unspecified
+QB63.0	Presence of transplanted kidney
+QB63.1	Presence of transplanted heart
+QB63.2	Presence of transplanted lung
+QB63.3	Presence of transplanted liver
+QB63.4	Presence of transplanted skin
+QB63.5	Presence of transplanted bone
+QB63.6	Presence of transplanted bone marrow
+QB63.7	Presence of transfused blood
+QB63.8	Presence of transplanted stem cell
+QB63.9	Presence of transplanted cornea
+QB63.Y	Presence of other transplanted organ or tissue
+QB63.Z	Presence of transplanted organ or tissue, unspecified
+QB6Y	Other specified surgical or postsurgical states
+QB6Z	Surgical or postsurgical states, unspecified
+QB70	Convalescence following chemotherapy
+QB71	Convalescence following psychotherapy
+QB72	Convalescence following treatment of fracture
+QB73	Convalescence following combined treatment
+QB7Y	Other specified convalescence
+QB7Z	Convalescence, unspecified
+QB80.0	Contact with health services for prophylactic surgery for risk-factors related to malignant neoplasms
+QB80.Y	Other specified contact with health services for prophylactic surgery
+QB80.Z	Contact with health services for prophylactic surgery, unspecified
+QB81	Contact with health services for plastic surgery for unacceptable cosmetic appearance other than hair transplant
+QB82	Contact with health services for routine or ritual circumcision
+QB83	Follow-up care involving plastic surgery
+QB84	Follow-up care involving removal of fracture plate or other internal fixation device
+QB85	Attention to surgical dressings, drains or sutures
+QB86	Contact with health services for hair transplant
+QB8Y	Contact with health services for other specified surgical interventions
+QB8Z	Contact with health services for specific surgical interventions, unspecified
+QB90	Contact with health services for ear piercing
+QB91	Contact with health services for piercing of body site other than ear
+QB92	Contact with health services for issue of repeat prescription
+QB93	Contact with health services for orthodontic care
+QB94.0	Preparatory care for dialysis
+QB94.1	Care involving extracorporeal dialysis
+QB94.2	Care involving peritoneal dialysis
+QB94.Y	Care involving other specified dialysis
+QB94.Z	Care involving dialysis, unspecified
+QB95.0	Cardiac rehabilitation
+QB95.1	Physical rehabilitation
+QB95.2	Alcohol rehabilitation
+QB95.3	Drug rehabilitation
+QB95.4	Psychotherapy
+QB95.5	Speech therapy
+QB95.6	Orthoptic training
+QB95.7	Occupational therapy or vocational rehabilitation
+QB95.8	Tobacco rehabilitation
+QB95.Y	Care involving use of other specified rehabilitation procedures
+QB95.Z	Care involving use of rehabilitation procedures, unspecified
+QB96	Radiotherapy session
+QB97	Chemotherapy session for neoplasm
+QB98	Blood transfusion without reported diagnosis
+QB99	Apheresis
+QB9A	Preparatory care for subsequent treatment
+QB9B	Palliative care
+QB9C	Allergen immunotherapy
+QB9Y	Other specified contact with health services for nonsurgical interventions not involving devices
+QB9Z	Contact with health services for nonsurgical interventions not involving devices, unspecified
+QC00.0	Need for immunization against cholera alone
+QC00.1	Need for immunization against typhoid-paratyphoid alone
+QC00.2	Need for immunization against tuberculosis
+QC00.3	Need for immunization against plague
+QC00.4	Need for immunization against tularaemia
+QC00.5	Need for immunization against tetanus alone
+QC00.6	Need for immunization against diphtheria alone
+QC00.7	Need for immunization against pertussis alone
+QC00.Y	Other specified need for immunization against single bacterial diseases
+QC00.Z	Need for immunization against single bacterial diseases, unspecified
+QC01.0	Need for immunization against poliomyelitis
+QC01.1	Need for immunization against arthropod-borne viral encephalitis
+QC01.2	Need for immunization against rabies
+QC01.3	Need for immunization against yellow fever
+QC01.4	Need for immunization against measles alone
+QC01.5	Need for immunization against rubella alone
+QC01.6	Need for immunization against viral hepatitis
+QC01.7	Need for immunization against mumps alone
+QC01.8	Need for immunization against influenza
+QC01.9	Need for immunization against COVID-19
+QC01.Y	Other specified need for immunization against certain single viral diseases
+QC01.Z	Need for immunization against certain single viral diseases, unspecified
+QC02.0	Need for immunization against leishmaniasis
+QC02.Y	Other specified need for immunization against certain specified single infectious diseases
+QC02.Z	Need for immunization against certain specified single infectious diseases, unspecified
+QC03.0	Need for immunization against cholera with typhoid-paratyphoid
+QC03.1	Need for immunization against diphtheria-tetanus-pertussis, combined
+QC03.2	Need for immunization against diphtheria-tetanus-pertussis with typhoid-paratyphoid
+QC03.3	Need for immunization against diphtheria-tetanus-pertussis with poliomyelitis
+QC03.4	Need for immunization against measles-mumps-rubella
+QC03.Y	Other specified need for immunization against combinations of infectious diseases
+QC03.Z	Need for immunization against combinations of infectious diseases, unspecified
+QC04.0	Immunization not carried out due to patient having had the disease
+QC04.1	Immunization not carried out because of acute illness
+QC04.2	Immunization not carried out because of chronic illness or condition of patient
+QC04.3	Immunization not carried out because of immune-compromised state of patient
+QC04.4	Immunization not carried out because of patient allergy to vaccine or component
+QC04.5	Immunization not carried out because of patient refusal
+QC04.6	Immunization not carried out because of caregiver refusal
+QC04.7	Immunization not carried out due to lack of availability
+QC04.Y	Immunization not carried out for other reasons
+QC04.Z	Immunization not carried out for unspecified reason
+QC05.0	Isolation
+QC05.1	Prophylactic immunotherapy
+QC05.Y	Other specified prophylactic measures
+QC05.Z	Prophylactic measures, unspecified
+QC06	Underimmunization status
+QC0Y	Other specified contact with health services related to immunizations or certain other prophylactic measures
+QC0Z	Contact with health services related to immunizations or certain other prophylactic measures, unspecified
+QC10	Procedure not carried out because of contraindication
+QC11	Procedure not carried out because of patient's decision for reasons of belief or group pressure
+QC12	Procedure not carried out because of patient's decision for reasons other than belief or group pressure
+QC1Y	Intervention not carried out for other reasons
+QC1Z	Intervention not carried out, unspecified reason
+QC20.0	Partner illness problem
+QC20.1	Illness problem with child
+QC20.Y	Other specified person consulting on behalf of another person
+QC20.Z	Person consulting on behalf of another person, unspecified
+QC21	Healthy person accompanying sick person
+QC22	Health supervision or care of abandoned infant
+QC2Y	Other specified contact with health services associated with the health of others
+QC2Z	Contact with health services associated with the health of others, unspecified
+QC30	Malingering
+QC40.0	Personal history of malignant neoplasm of digestive organs
+QC40.1	Personal history of malignant neoplasm of trachea, bronchus or lung
+QC40.2	Personal history of malignant neoplasm of respiratory or intrathoracic organs other than the digestive organs, trachea, bronchus or lung
+QC40.3	Personal history of malignant neoplasm of breast
+QC40.4	Personal history of malignant neoplasm of genital organs
+QC40.5	Personal history of malignant neoplasm of urinary tract
+QC40.6	Personal history of leukaemia
+QC40.7	Personal history of other malignant neoplasms of lymphoid, haematopoietic or related tissues
+QC40.Y	Personal history of malignant neoplasm of other specified site
+QC40.Z	Personal history of malignant neoplasm of unspecified site
+QC41	Personal history of non-malignant neoplasms
+QC42.0	Personal history of COVID-19
+QC42.Y	Other specified personal history of infectious or parasitic diseases
+QC42.Z	Personal history of infectious or parasitic diseases, unspecified
+QC43	Personal history of diseases of the blood or blood-forming organs
+QC44.0	Personal history of anaphylaxis
+QC44.1	Personal history of food-induced allergy or hypersensitivity
+QC44.2	Personal history of allergy to drugs, medicaments or biological substances
+QC44.3	Personal history of allergy, other than to drugs or biological substances
+QC44.Y	Other specified personal history of diseases of the immune system
+QC44.Z	Personal history of diseases of the immune system, unspecified
+QC45	Personal history of endocrine, nutritional or metabolic diseases
+QC46	Personal history of mental or behavioural disorder
+QC47	Personal history of diseases of the nervous system or sense organs
+QC48.0	Personal history of long-term use of anticoagulants
+QC48.Y	Other specified personal history of medical treatment
+QC48.Z	Personal history of medical treatment, unspecified
+QC49	Personal history of noncompliance with medical treatment or regimen
+QC4A	Personal history of poor personal hygiene
+QC4B	Personal history of self-harm
+QC4Y	Personal history of other specified health problems
+QC4Z	Personal history of health problems, unspecified
+QC50	Late effect of prior health problem, not elsewhere classified
+QC60	Family history of infectious diseases
+QC61.0	Family history of malignant neoplasm of digestive organs
+QC61.1	Family history of malignant neoplasm of trachea, bronchus or lung
+QC61.2	Family history of malignant neoplasm of respiratory or intrathoracic organs other than digestive organs, trachea, bronchus or lung
+QC61.3	Family history of malignant neoplasm of breast
+QC61.4	Family history of malignant neoplasm of genital organs
+QC61.5	Family history of malignant neoplasm of urinary tract
+QC61.6	Family history of leukaemia
+QC61.7	Family history of malignant neoplasms of lymphoid, haematopoietic or related tissues
+QC61.Y	Other specified family history of malignant neoplasm
+QC61.Z	Family history of malignant neoplasm, unspecified
+QC62	Family history of diseases of the blood or blood-forming organs
+QC63	Family history of disorders involving the immune mechanism
+QC64.0	Family history of diabetes mellitus
+QC64.Y	Other specified family history of endocrine, nutritional or metabolic diseases
+QC64.Z	Family history of endocrine, nutritional or metabolic diseases, unspecified
+QC65	Family history of mental or behavioural disorder
+QC66	Family history of eye or ear disorders
+QC67	Family history of ischaemic heart disease or other diseases of the circulatory system
+QC68	Family history of consanguinity
+QC69	Family history of stroke
+QC6Y	Family history of other specified health problems
+QC6Z	Family history of health problems, unspecified
+QC8Y	Other specified personal or family history or late effect of prior health problems
+QC8Z	Personal or family history or late effect of prior health problems, unspecified
+QC90.00	Exposure to cholera
+QC90.0Y	Other specified contact with or exposure to intestinal infectious diseases
+QC90.0Z	Contact with or exposure to intestinal infectious diseases, unspecified
+QC90.1	Contact with or exposure to tuberculosis
+QC90.2	Contact with or exposure to infections with a predominantly sexual mode of transmission
+QC90.3	Contact with or exposure to rabies
+QC90.4	Contact with or exposure to rubella
+QC90.5	Contact with or exposure to viral hepatitis
+QC90.6	Contact with or exposure to human immunodeficiency virus
+QC90.7	Contact with or exposure to pediculosis, acariasis or other infestations
+QC90.Y	Contact with or exposure to other specified communicable diseases
+QC90.Z	Contact with or exposure to communicable diseases, unspecified
+QD00	Carrier of salmonella typhi
+QD01.0	Asymptomatic enteric carriage of Entamoeba
+QD01.Y	Other specified carrier of intestinal infectious agents
+QD01.Z	Carrier of intestinal infectious agents, unspecified
+QD02	Carrier of corynebacterium diphtheriae
+QD03	Carrier of infectious agents with a predominantly sexual mode of transmission
+QD04	Asymptomatic colonization of the skin by virulent or therapy resistant bacteria
+QD0Y	Carrier of other specified infectious disease agent
+QD0Z	Carrier of infectious disease agent, unspecified
+QD2Y	Other specified health status associated with infectious or certain specified conditions
+QD2Z	Unspecified health status associated with infectious or certain specified conditions
+QD30	Concern about breast appearance
+QD31	Contact with health services for concerns about body image related to pregnancy
+QD3Y	Other specified concern about body appearance
+QD3Z	Concern about body appearance, unspecified
+QD50	Poverty
+QD51	Low income
+QD5Y	Other specified problems associated with finances
+QD5Z	Problems associated with finances, unspecified
+QD60	Problems associated with inadequate drinking-water
+QD61	Inadequate food
+QD6Z	Problems associated with drinking water or nutrition, unspecified
+QD70.0	Problems associated with exposure to noise
+QD70.1	Problems associated with exposure to air pollution
+QD70.2	Problems associated with exposure to water pollution
+QD70.3	Problems associated with exposure to soil pollution
+QD70.4	Problems associated with exposure to radiation
+QD70.5	Problems associated with exposure to tobacco smoke
+QD70.6	Problems associated with inadequate access to electricity
+QD70.Z	Problems associated with the natural environment or human-made changes to the environment, unspecified
+QD71.0	Homelessness
+QD71.1	Inadequate housing
+QD71.2	Problems related to living in residential institution
+QD71.Z	Problems associated with housing, unspecified
+QD7Y	Other specified problems associated with the environment
+QD7Z	Problems associated with the environment, unspecified
+QD80	Problem associated with unemployment
+QD81	Problem associated with change of job
+QD82	Problem associated with threat of job loss
+QD83.0	Problem associated with uncongenial work
+QD83.1	Problem associated with stressful work schedule
+QD83.Y	Other specified problem with employment conditions
+QD84.0	Occupational exposure to dust
+QD84.1	Occupational exposure to toxic agents in agriculture
+QD84.2	Occupational exposure to toxic agents in industries other than agriculture
+QD84.3	Occupational exposure to vibration
+QD84.4	Occupational exposure to ergonomic risk
+QD84.Y	Other specified occupational exposure to risk-factors
+QD84.Z	Occupational exposure to risk-factors, unspecified
+QD85	Burnout
+QD8Y	Other specified problems associated with employment or unemployment
+QD8Z	Problems associated with employment or unemployment, unspecified
+QD90	Problem associated with illiteracy or low-level literacy
+QD91	Problem associated with education unavailable or unattainable
+QD92	Problem with educational progress
+QD9Y	Other specified problems associated with education
+QD9Z	Problems associated with education, unspecified
+QE00	Acculturation difficulty
+QE01	Stress, not elsewhere classified
+QE02	Social role conflict
+QE03	Social exclusion or rejection
+QE04	Target of perceived adverse discrimination or persecution
+QE0Y	Other specified problems associated with social or cultural environment
+QE0Z	Problems associated with social or cultural environment, unspecified
+QE10	Hazardous alcohol use
+QE11.0	Hazardous use of opioids
+QE11.1	Hazardous use of cannabis
+QE11.2	Hazardous use of sedatives, hypnotics or anxiolytics
+QE11.3	Hazardous use of cocaine
+QE11.4	Hazardous use of stimulants including amphetamines or methamphetamine
+QE11.5	Hazardous use of caffeine
+QE11.6	Hazardous use of MDMA or related drugs
+QE11.7	Hazardous use of dissociative drugs including ketamine or PCP
+QE11.8	Hazardous use of other specified psychoactive substances
+QE11.9	Hazardous use of unknown or unspecified psychoactive substances
+QE11.Y	Other specified hazardous drug use
+QE11.Z	Hazardous drug use, unspecified
+QE12	Hazardous nicotine use
+QE13	Tobacco use
+QE1Y	Other specified hazardous substance use
+QE1Z	Hazardous substance use, unspecified
+QE20	Lack of physical exercise
+QE21	Hazardous gambling or betting
+QE22	Hazardous gaming
+QE23	Problems with inappropriate diet or eating habits
+QE24	Problems with hygiene behaviours
+QE25	Problems with oral health behaviours
+QE26	Problem with sun exposure behaviour
+QE27	Problem with behaviours related to psychological health or wellbeing
+QE28	Problem with health literacy
+QE2Y	Problems with other specified health-related behaviours
+QE2Z	Problem with health-related behaviours, unspecified
+QE30.0	Insufficient social insurance support, aged
+QE30.1	Insufficient social insurance support, disability
+QE30.2	Insufficient social insurance support, unemployment
+QE30.3	Insufficient social insurance support, family support
+QE31.0	Insufficient social welfare support, child protection
+QE31.1	Insufficient social welfare support, protection against domestic violence
+QE31.2	Insufficient social welfare support, protection against homelessness
+QE31.3	Insufficient social welfare support, post prison services
+QE3Y	Other specified problems associated with social insurance or welfare
+QE3Z	Problems associated with social insurance or welfare, unspecified
+QE40	Problem associated with conviction in civil or criminal proceedings without imprisonment
+QE41	Problem associated with imprisonment and other incarceration
+QE42	Problem associated with release from prison
+QE4Y	Other specified problems associated with the justice system
+QE4Z	Problems associated with the justice system, unspecified
+QE50.0	Problem associated with relationship with friend
+QE50.10	Dissatisfaction with school environment
+QE50.1Y	Other specified relationships with teachers or classmates
+QE50.1Z	Relationships with teachers or classmates, unspecified
+QE50.2	Problem associated with relationships with people at work
+QE50.3	Relationships with neighbours, tenant or landlord
+QE50.4	Relationship with parents, in-laws or other family members
+QE50.5	Discord with counsellors
+QE50.6	Inadequate social skills
+QE50.7	Personality difficulty
+QE50.Y	Other specified problem associated with interpersonal interactions
+QE51.0	Relationship distress with spouse or partner
+QE51.1	History of spouse or partner violence
+QE52.0	Caregiver-child relationship problem
+QE52.1	Loss of love relationship in childhood
+QE5Y	Other specified problems associated with relationships
+QE5Z	Problems associated with relationships, unspecified
+QE60	Absence of family member
+QE61.0	Loss or death of child
+QE61.Y	Disappearance or death of other family member
+QE62	Uncomplicated bereavement
+QE6Y	Other specified problems associated with absence, loss or death of others
+QE6Z	Problems associated with absence, loss or death of others, unspecified
+QE70.0	Inadequate family support
+QE70.1	Disruption of family by separation or divorce
+QE70.2	Dependent relative needing care at home
+QE70.Z	Problems related to primary support group, including family circumstances, unspecified
+QE80	Victim of crime or terrorism
+QE81	Exposure to disaster, war or other hostilities
+QE82.0	Personal history of physical abuse
+QE82.1	Personal history of sexual abuse
+QE82.2	Personal history of psychological abuse
+QE82.3	Personal history of neglect
+QE82.Y	Other specified personal history of maltreatment
+QE82.Z	Personal history of maltreatment, unspecified
+QE83	Personal frightening experience in childhood
+QE84	Acute stress reaction
+QE8Y	Other specified problems associated with harmful or traumatic events
+QE8Z	Problems associated with harmful or traumatic events, unspecified
+QE90	Inadequate parental supervision or control
+QE91	Parental overprotection
+QE92	Altered pattern of family relationships in childhood
+QE93	Removal from home in childhood
+QE94	Institutional upbringing
+QE95	Inappropriate parental pressure or other abnormal qualities of upbringing
+QE96	Events resulting in loss of self-esteem in childhood
+QE9Y	Other specified problems associated with upbringing
+QE9Z	Problems associated with upbringing, unspecified
+QF00	Acquired absence of limb
+QF01.0	Acquired absence of breast
+QF01.10	Acquired absence of female genital organs
+QF01.11	Acquired absence of male genital organs
+QF01.Y	Other specified acquired absence of organs
+QF01.Z	Acquired absence of organs, unspecified
+QF0Y	Other specified acquired absence of body structure
+QF0Z	Acquired absence of body structure, unspecified
+QF10	Limited function or disability of body organ or system
+QF20	Difficulty or need for assistance with learning
+QF21	Difficulty or need for assistance with general life tasks or life management
+QF22	Difficulty or need for assistance with communication
+QF23	Difficulty or need for assistance with mobility
+QF24	Difficulty or need for assistance with self-care
+QF25	Difficulty or need for assistance with relationships
+QF26	Difficulty or need for assistance with household tasks
+QF27	Difficulty or need for assistance at home and no other household member able to render care
+QF28	Difficulty or need for assistance with work activities
+QF29	Difficulty or need for assistance with major areas of life
+QF2A	Difficulty or need for assistance with community participation
+QF2B	Need for continuous supervision
+QF2Y	Difficulty or need for assistance with other specified activity
+QF2Z	Difficulty or need for assistance with unspecified activity
+QF4Y	Other specified factors influencing health status or contact with health services
+QF4Z	Factors influencing health status or contact with health services, unspecified
+SA00	Hypochondrium pain disorder (TM1)
+SA01	Jaundice disorder (TM1)
+SA02	Liver distension disorder (TM1)
+SA03	Tympanites disorder (TM1)
+SA04	Liver abscess disorder (TM1)
+SA05	Gallbladder distension disorder (TM1)
+SA0Y	Other specified liver system disorders (TM1)
+SA0Z	Liver system disorders (TM1), unspecified
+SA10	Inducible palpitation disorder (TM1)
+SA11	Spontaneous palpitation disorder (TM1)
+SA1Y	Other specified palpitation disorders (TM1)
+SA1Z	Palpitation disorders (TM1), unspecified
+SA20	True heart pain disorder (TM1)
+SA2Y	Other specified chest impediment disorders (TM1)
+SA2Z	Chest impediment disorders (TM1), unspecified
+SA4Y	Other specified heart system disorders (TM1)
+SA4Z	Heart system disorders (TM1), unspecified
+SA50	Dysphagia disorder (TM1)
+SA51	Stomach ache disorder (TM1)
+SA52	Epigastric distension disorder (TM1)
+SA53	Epigastric upset disorder (TM1)
+SA54	Food retention disorder (TM1)
+SA55	Diarrhea disorder (TM1)
+SA56	Dysentery disorder (TM1)
+SA57	Constipation disorder (TM1)
+SA58	Abdominal pain disorder (TM1)
+SA59	Intestinal abscess disorder (TM1)
+SA5Y	Other specified spleen system disorders (TM1)
+SA5Z	Spleen system disorders (TM1), unspecified
+SA60	Common cold disorder (TM1)
+SA70	Cough with dyspnea disorder (TM1)
+SA7Y	Other specified cough disorders (TM1)
+SA7Z	Cough disorders (TM1), unspecified
+SA80	Dyspnea disorder (TM1)
+SA81	Wheezing disorder (TM1)
+SA82	Lung distension disorder (TM1)
+SA83	Pleural fluid retention disorder (TM1)
+SA84	Lung heat disorder (TM1)
+SA85	Lung withering disorder (TM1)
+SA86	Chest bind disorder (TM1)
+SA8Y	Other specified lung system disorders (TM1)
+SA8Z	Lung system disorders (TM1), unspecified
+SA90	Stony stranguria disorder (TM1)
+SA91	Heat stranguria disorder (TM1)
+SA9Y	Other specified strangury disorders (TM1)
+SA9Z	Strangury disorders (TM1), unspecified
+SB00	Kidney stagnation disorder (TM1)
+SB01	Flooding urine disorder (TM1)
+SB02	Enuresis disorder (TM1)
+SB03	Turbid urine disorder (TM1)
+SB04	Dribbling urinary block disorder (TM1)
+SB05	Block and repulsion disorder (TM1)
+SB06.0	Kidney edema disorder (TM1)
+SB06.1	Wind edema disorder (TM1)
+SB06.Y	Other specified edema disorders (TM1)
+SB06.Z	Edema disorders (TM1), unspecified
+SB07	Lower abdominal colic disorder (TM1)
+SB08	Premature ejaculation disorder (TM1)
+SB09	Involuntary ejaculation disorder (TM1)
+SB0A	Persistent erection disorder (TM1)
+SB0B	Impotence disorder (TM1)
+SB0C	Male Infertility disorder (TM1)
+SB0Y	Other specified kidney system disorders (TM1)
+SB0Z	Kidney system disorders (TM1), unspecified
+SB2Y	Other specified organ system disorders (TM1)
+SB2Z	Organ system disorders (TM1), unspecified
+SB30	Dampness sore disorder (TM1)
+SB31	Impetigo disorder (TM1)
+SB40	Septicemic furunculosis disorder (TM1)
+SB4Y	Other specified furuncle disorders (TM1)
+SB4Z	Furuncle disorders (TM1), unspecified
+SB50	Bed sore disorder (TM1)
+SB60	Deep multiple abscess disorder (TM1)
+SB61	Anal abscess disorder (TM1)
+SB6Y	Other specified abscess disorders (TM1)
+SB6Z	Abscess disorders (TM1), unspecified
+SB70	Headed carbuncle disorder (TM1)
+SB71	Foot dampness itch disorder (TM1)
+SB72	Tinea circinate disorder (TM1)
+SB73	Dry skin disorder (TM1)
+SB74	Gangrene disorder (TM1)
+SB75	Wart disorder (TM1)
+SB76	Hand dampness itch disorder (TM1)
+SB77	Erysipelas disorder (TM1)
+SB78	Cellulitis disorder (TM1)
+SB79	Thrush disorder (TM1)
+SB7A	Herpes zoster disorder (TM1)
+SB7B	Interior haemorroid disorder (TM1)
+SB7C	Fissured anus disorder (TM1)
+SB7Y	Other specified skin and mucosa system disorders (TM1)
+SB7Z	Skin and mucosa system disorders (TM1), unspecified
+SB80	Advanced menstruation disorder (TM1)
+SB81	Delayed menstruation disorder (TM1)
+SB82	Irregular menstruation disorders (TM1)
+SB8Y	Other specified menstruation cycle disorders (TM1)
+SB8Z	Menstruation cycle disorders (TM1), unspecified
+SB90	Menorrhagia disorder (TM1)
+SB91	Decreased menstruation disorder (TM1)
+SB92	Prolonged menstruation disorder (TM1)
+SB93	Metrorrhagia disorder (TM1)
+SB94	Amenorrhea disorder (TM1)
+SB95	Menopausal disorder (TM1)
+SB96	Dysmenorrhea disorder (TM1)
+SB9Y	Other specified menstruation associated disorders (TM1)
+SB9Z	Menstruation associated disorders (TM1), unspecified
+SC00	Morning sickness disorder (TM1)
+SC01	Unstable fetus disorder (TM1)
+SC02	Bladder pressure disorder (TM1)
+SC03	Eclampsia disorder (TM1)
+SC04	Floating sensation pregnancy disorder (TM1)
+SC0Y	Other specified pregnancy associated disorders (TM1)
+SC0Z	Pregnancy associated disorders (TM1), unspecified
+SC10	Puerperal abdominal pain disorder (TM1)
+SC11	Puerperal wind disorder (TM1)
+SC12	Hypogalactia disorder (TM1)
+SC13	Postpartum lochiorrhea disorder (TM1)
+SC1Y	Other specified puerperium associated disorders (TM1)
+SC1Z	Puerperium associated disorders (TM1), unspecified
+SC20	Leukorrhea disorder (TM1)
+SC21	Vaginal flatus disorder (TM1)
+SC22	Infertility disorder (TM1)
+SC23	Uterine mass disorder (TM1)
+SC24	Breast lump disorder (TM1)
+SC2Y	Other specified other female reproductive system associated disorders (TM1)
+SC2Z	Other female reproductive system associated disorders (TM1), unspecified
+SC4Y	Other specified female reproductive system disorders (TM1) (including childbirth)
+SC4Z	Female reproductive system disorders (TM1) (including childbirth), unspecified
+SC50	Cold impediment disorder (TM1)
+SC51	Wind impediment disorder (TM1)
+SC52	Dampness impediment disorder (TM1)
+SC5Y	Other specified joint impediment disorders (TM1)
+SC5Z	Joint impediment disorders (TM1), unspecified
+SC60	Muscle spasm disorder (TM1)
+SC61	Lumbago disorder (TM1)
+SC62	Numbness disorder (TM1)
+SC63	Wilting disorder (TM1)
+SC6Y	Other specified bone, joint and muscle system disorders (TM1)
+SC6Z	Bone, joint and muscle system disorders (TM1), unspecified
+SC70	Night blindness disorder (TM1)
+SC71	Wind glaucoma disorder (TM1)
+SC72	Inflammatory eyelid disorder (TM1)
+SC73	Non-inflammatory eyelid disorder (TM1)
+SC74	Corneal opacity disorder (TM1)
+SC75	Tinnitus disorder (TM1)
+SC80	Sudden deafness disorder (TM1)
+SC81	Gradual deafness disorder (TM1)
+SC8Y	Other specified deafness disorders (TM1)
+SC8Z	Deafness disorders (TM1), unspecified
+SC90	Allergic rhinitis disorder (TM1)
+SC91	Nasal sinusitis disorder (TM1)
+SC92	Hoarseness disorder (TM1)
+SC93	Tonsillitis disorder (TM1)
+SC9Y	Other specified eye, ear, nose and throat system disorders (TM1)
+SC9Z	Eye, ear, nose and throat system disorders (TM1), unspecified
+SD00	Facial paralysis disorder (TM1)
+SD10	Migraine disorder (TM1)
+SD11	Head wind disorder (TM1)
+SD1Y	Other specified headache disorders (TM1)
+SD1Z	Headache disorders (TM1), unspecified
+SD20	Convulsion disorder (TM1)
+SD21	Cerebral tinnitus disorder (TM1)
+SD22	Vertigo disorder (TM1)
+SD23	Forgetfulness disorder (TM1)
+SD24	Frequent protrusion of tongue disorder (TM1)
+SD30	Prodrome of wind stroke disorder (TM1)
+SD31	Sequela of wind stroke disorder (TM1)
+SD3Y	Other specified wind stroke disorders (TM1)
+SD3Z	Wind stroke disorders (TM1), unspecified
+SD40	Syncope disorder (TM1)
+SD4Y	Other specified brain system disorders (TM1)
+SD4Z	Brain system disorders (TM1), unspecified
+SD6Y	Other specified other body system disorders (TM1)
+SD6Z	Other body system disorders (TM1), unspecified
+SD70	Qi goiter disorder (TM1)
+SD71	Wasting thirst disorder (TM1)
+SD72	Consumptive disorder (TM1)
+SD7Y	Other specified qi, blood and fluid disorders (TM1)
+SD7Z	Qi, blood and fluid disorders (TM1), unspecified
+SD80	Lily disorder (TM1)
+SD81	Manic disorder (TM1)
+SD82	Depression disorder (TM1)
+SD83	Uneasiness disorder (TM1)
+SD84	Insomnia disorder (TM1)
+SD85	Somnolence disorder (TM1)
+SD86	Dementia disorder (TM1)
+SD87	Repressed fire disorder (TM1)
+SD8Y	Other specified mental and emotional disorders (TM1)
+SD8Z	Mental and emotional disorders (TM1), unspecified
+SD90	Seasonal cold disorder (TM1)
+SD91	Fatigue consumption disorder (TM1)
+SD92	Severe vomiting and diarrhoea disorder (TM1)
+SD93	Alternating fever and chills disorder (TM1)
+SD94	Parasitic disorder (TM1)
+SD95	Flowing phlegm disorder (TM1)
+SE00	Summer-heat disorder (TM1)
+SE01	Spring warmth disorder (TM1)
+SE02	Dampness and warmth disorder (TM1)
+SE0Y	Other specified warmth disorders (TM1)
+SE0Z	Warmth disorders (TM1), unspecified
+SE2Y	Other specified external contraction disorders (TM1)
+SE2Z	External contraction disorders (TM1), unspecified
+SE30	Developmental delay disorder (TM1)
+SE31	Growth fever disorder (TM1)
+SE32	Growth pain disorder (TM1)
+SE33	Acute convulsion disorder (TM1)
+SE34	Recurrent convulsion disorder (TM1)
+SE35	Fright seizure disorder (TM1)
+SE36	Night crying disorder (TM1)
+SE37	Infantile malnutrition disorder (TM1)
+SE38	Dribbling disorder (TM1)
+SE39	Diaper dermatitis disorder (TM1)
+SE3A	Infant stiffness disorder (TM1)
+SE3B	Infant limpness disorder (TM1)
+SE3Y	Other specified childhood and adolescence associated disorders (TM1)
+SE3Z	Childhood and adolescence associated disorders (TM1), unspecified
+SE5Y	Other specified traditional medicine disorders (TM1)
+SE5Z	Traditional medicine disorders (TM1), unspecified
+SE70	Yang pattern (TM1)
+SE71	Yin pattern (TM1)
+SE72	Heat pattern (TM1)
+SE73	Cold pattern (TM1)
+SE74	Excess pattern (TM1)
+SE75	Deficiency pattern (TM1)
+SE76	Exterior pattern (TM1)
+SE77	Interior pattern (TM1)
+SE78	Moderate (Heat/Cold) pattern (TM1)
+SE79	Medium (Excess/Deficiency) pattern (TM1)
+SE7A	Tangled cold and heat pattern (TM1)
+SE7Y	Other specified principle-based patterns (TM1)
+SE7Z	Principle-based patterns (TM1), unspecified
+SE80	Wind factor pattern (TM1)
+SE81	Cold factor pattern (TM1)
+SE82	Dampness factor pattern (TM1)
+SE83	Dryness factor pattern (TM1)
+SE84	Fire-heat factor pattern (TM1)
+SE85	Summer-heat factor pattern (TM1)
+SE86	Pestilent factor pattern (TM1)
+SE8Y	Other specified environmental factor patterns (TM1)
+SE8Z	Environmental factor patterns (TM1), unspecified
+SE90	Qi deficiency pattern (TM1)
+SE91	Qi stagnation pattern (TM1)
+SE92	Qi uprising pattern (TM1)
+SE93	Qi sinking pattern (TM1)
+SE94	Qi collapse pattern (TM1)
+SE9Y	Other specified qi patterns (TM1)
+SE9Z	Qi patterns (TM1), unspecified
+SF00	Blood deficiency pattern (TM1)
+SF01	Blood stasis pattern (TM1)
+SF02	Blood heat pattern (TM1)
+SF03	Blood cold pattern (TM1)
+SF04	Blood dryness pattern (TM1)
+SF0Y	Other specified blood patterns (TM1)
+SF0Z	Blood patterns (TM1), unspecified
+SF10	Fluid deficiency pattern (TM1)
+SF11	Fluid disturbance pattern (TM1)
+SF12	Dry-phlegm pattern (TM1)
+SF13	Damp phlegm pattern (TM1)
+SF14	Phlegm-fire harassing the heart system pattern (TM1)
+SF15	Wind-phlegm pattern (TM1)
+SF1Y	Other specified fluid patterns (TM1)
+SF1Z	Fluid patterns (TM1), unspecified
+SF20	Essence deficiency pattern (TM1)
+SF2Y	Other specified essence patterns (TM1)
+SF2Z	Essence patterns (TM1), unspecified
+SF4Y	Other specified body constituents patterns (TM1)
+SF4Z	Body constituents patterns (TM1), unspecified
+SF50	Liver yin deficiency pattern (TM1)
+SF51	Liver yang deficiency pattern (TM1)
+SF52	Liver yang ascendant hyperactivity pattern (TM1)
+SF53	Liver qi deficiency pattern (TM1)
+SF54	Liver blood deficiency pattern (TM1)
+SF55	Liver depression and blood stasis pattern (TM1)
+SF56	Liver wind stirring the interior pattern (TM1)
+SF57	Liver qi stagnation pattern (TM1)
+SF58	Liver fire flaming upward pattern (TM1)
+SF59	Liver heat stirring wind pattern (TM1)
+SF5A	Liver-gallbladder dampness-heat pattern (TM1)
+SF5B	Liver meridian dampness-heat pattern (TM1)
+SF5C	Liver meridian cold stagnation pattern (TM1)
+SF5D	Gallbladder qi deficiency pattern (TM1)
+SF5E	Gallbladder depression with phlegm harassment pattern (TM1)
+SF5F	Gallbladder heat pattern (TM1)
+SF5G	Gallbladder cold pattern (TM1)
+SF5H	Liver and kidney yin deficiency pattern (TM1)
+SF5J	Disharmony of liver and spleen systems pattern (TM1)
+SF5K	Disharmony of liver and stomach systems pattern (TM1)
+SF5L	Liver fire invading the stomach system pattern (TM1)
+SF5M	Liver fire invading the lung system pattern (TM1)
+SF5Y	Other specified liver system patterns (TM1)
+SF5Z	Liver system patterns (TM1), unspecified
+SF60	Heart qi deficiency pattern (TM1)
+SF61	Heart blood deficiency pattern (TM1)
+SF62	Dual deficiency of heart qi and blood pattern (TM1)
+SF63	Heart meridian obstruction pattern (TM1)
+SF64	Heart yin deficiency pattern (TM1)
+SF65	Deficiency of heart qi and yin pattern (TM1)
+SF66	Heart yang deficiency pattern (TM1)
+SF67	Heart yang collapse pattern (TM1)
+SF68	Heart fire flaming upward pattern (TM1)
+SF69	Fire harassing heart spirit pattern (TM1)
+SF6A	Water qi intimidating the heart system pattern (TM1)
+SF6B	Heart spirit restlessness pattern (TM1)
+SF6C	Anxiety damaging the spirit pattern (TM1)
+SF6D	Small intestine qi stagnation pattern (TM1)
+SF6E	Small intestine excess heat pattern (TM1)
+SF6F	Small intestine deficiency cold pattern (TM1)
+SF6G	Heart and liver blood deficiency pattern (TM1)
+SF6H	Heart and gallbladder qi deficiency pattern (TM1)
+SF6J	Heart and spleen systems deficiency pattern (TM1)
+SF6K	Heart and lung qi deficiency pattern (TM1)
+SF6L	Heart and kidney systems disharmony pattern (TM1)
+SF6M	Heart and kidney yang deficiency pattern (TM1)
+SF6Y	Other specified heart system patterns (TM1)
+SF6Z	Heart system patterns (TM1), unspecified
+SF70	Spleen qi deficiency pattern (TM1)
+SF71	Spleen qi sinking pattern (TM1)
+SF72	Spleen deficiency with qi stagnation pattern (TM1)
+SF73	Spleen deficiency with food retention pattern (TM1)
+SF74	Spleen failing to control the blood pattern (TM1)
+SF75	Spleen deficiency and blood depletion pattern (TM1)
+SF76	Spleen yin deficiency pattern (TM1)
+SF77	Spleen yang deficiency pattern (TM1)
+SF78	Dampness-heat encumbering the spleen system pattern (TM1)
+SF79	Spleen deficiency with dampness accumulation pattern (TM1)
+SF7A	Spleen deficiency with water flooding pattern (TM1)
+SF7B	Cold-dampness encumbering the spleen system pattern (TM1)
+SF7C	Stomach qi deficiency pattern (TM1)
+SF7D	Stomach qi uprising pattern (TM1)
+SF7E	Stomach yin deficiency pattern (TM1)
+SF7F	Stomach heat pattern (TM1)
+SF7G	Dampness in the intestines pattern (TM1)
+SF7H	Cold invading the stomach system pattern (TM1)
+SF7J	Intestine cold stagnation pattern (TM1)
+SF7K	Anxiety damaging the spleen system pattern (TM1)
+SF7L	Lung and spleen deficiency pattern (TM1)
+SF7M	Spleen and kidney yang deficiency pattern (TM1)
+SF7Y	Other specified spleen system patterns (TM1)
+SF7Z	Spleen system patterns (TM1), unspecified
+SF80	Lung qi deficiency pattern (TM1)
+SF81	Lung yin deficiency pattern (TM1)
+SF82	Lung and kidney yin deficiency pattern (TM1)
+SF83	Lung qi and yin deficiency pattern (TM1)
+SF84	Lung yang deficiency pattern (TM1)
+SF85	Cold phlegm obstructing the lung pattern (TM1)
+SF86	Turbid phlegm accumulation in the lung pattern (TM1)
+SF87	Exterior cold with lung heat pattern (TM1)
+SF88	Intense congestion of lung heat pattern (TM1)
+SF89	Phlegm heat obstructing the lung pattern (TM1)
+SF8A	Wind-heat invading the lung pattern (TM1)
+SF8B	Lung heat transmitting into the intestine pattern (TM1)
+SF8C	Wind-cold fettering the lung pattern (TM1)
+SF8D	Dryness invading the lung pattern (TM1)
+SF8E	Lung dryness with intestinal obstruction pattern (TM1)
+SF8F	Large intestine excess heat pattern (TM1)
+SF8G	Large intestine dampness heat pattern (TM1)
+SF8H	Large intestine fluid deficiency pattern (TM1)
+SF8J	Large intestine deficiency cold pattern (TM1)
+SF8Y	Other specified lung system patterns (TM1)
+SF8Z	Lung system patterns (TM1), unspecified
+SF90	Kidney qi deficiency pattern (TM1)
+SF91	Kidney failing to receive qi pattern (TM1)
+SF92	Kidney qi deficiency with water retention pattern (TM1)
+SF93	Kidney yin deficiency pattern (TM1)
+SF94	Kidney yin and yang deficiency pattern (TM1)
+SF95	Kidney deficiency with marrow depletion pattern (TM1)
+SF96	Kidney essence deficiency pattern (TM1)
+SF97	Kidney yang deficiency pattern (TM1)
+SF98	Fear damaging the kidney system pattern (TM1)
+SF99	Blood and heat accumulation in the uterus pattern (TM1)
+SF9A	Phlegm obstructing the uterus pattern (TM1)
+SF9B	Dampness-heat in the uterus pattern (TM1)
+SF9C	Cold stagnation in the uterus pattern (TM1)
+SF9D	Uterine deficiency cold pattern (TM1)
+SF9E	Blood accumulation in the bladder pattern (TM1)
+SF9F	Bladder heat accumulation pattern (TM1)
+SF9G	Bladder dampness-heat pattern (TM1)
+SF9H	Bladder water accumulation pattern (TM1)
+SF9J	Bladder deficiency cold pattern (TM1)
+SF9Y	Other specified kidney system patterns (TM1)
+SF9Z	Kidney system patterns (TM1), unspecified
+SG1Y	Other specified organ system patterns (TM1)
+SG1Z	Organ system patterns (TM1), unspecified
+SG20	Lung meridian pattern (TM1)
+SG21	Large intestine meridian pattern (TM1)
+SG22	Stomach meridian pattern (TM1)
+SG23	Spleen meridian pattern (TM1)
+SG24	Heart meridian pattern (TM1)
+SG25	Small intestine meridian pattern (TM1)
+SG26	Bladder meridian pattern (TM1)
+SG27	Kidney meridian pattern (TM1)
+SG28	Pericardium meridian pattern (TM1)
+SG29	Triple energizer meridian pattern (TM1)
+SG2A	Gallbladder meridian pattern (TM1)
+SG2B	Liver meridian pattern (TM1)
+SG2Y	Other specified main Meridian Patterns (TM1)
+SG2Z	Main Meridian Patterns (TM1), unspecified
+SG30	Governor vessel pattern (TM1)
+SG31	Conception vessel pattern (TM1)
+SG32	Yin heel vessel pattern (TM1)
+SG33	Yang heel vessel pattern (TM1)
+SG34	Yin link vessel pattern (TM1)
+SG35	Yang link vessel pattern (TM1)
+SG36	Thoroughfare vessel pattern (TM1)
+SG37	Belt vessel pattern (TM1)
+SG3Y	Other specified extra Meridian Patterns (TM1)
+SG3Z	Extra Meridian Patterns (TM1), unspecified
+SG5Y	Other specified meridian and collateral patterns (TM1)
+SG5Z	Meridian and collateral patterns (TM1), unspecified
+SG60	Early yang stage pattern (TM1)
+SG61	Middle yang stage pattern (TM1)
+SG62	Late yang stage pattern (TM1)
+SG63	Early yin stage pattern (TM1)
+SG64	Middle yin stage Pattern (TM), Middle yin stage pattern (TM1)
+SG65	Late Yin stage Patterns (TM1)
+SG6Y	Other specified six stage patterns (TM1)
+SG6Z	Six stage patterns (TM1), unspecified
+SG70	Upper energizer stage patterns (TM1)
+SG71	Middle energizer stage patterns (TM1)
+SG72	Lower energizer stage patterns (TM1)
+SG7Y	Other specified triple energizer stage patterns (TM1)
+SG7Z	Triple energizer stage patterns (TM1), unspecified
+SG80	Dampness obstructing the defense yang pattern (TM1)
+SG81	Heat attacking the lung defense pattern (TM1)
+SG8Y	Other specified defense phase patterns (TM1)
+SG8Z	Defense phase patterns (TM1), unspecified
+SG90	Heat entering the qi phase pattern (TM1)
+SG91	Qi phase dampness and heat pattern (TM1)
+SG92	Dampness obstructing the qi phase pattern (TM1)
+SG9Y	Other specified qi phase patterns (TM1)
+SG9Z	Qi phase patterns (TM1), unspecified
+SH00	Nutrient qi and defense qi disharmony pattern (TM1)
+SH01	Heat in the nutrient phase pattern(TM1)
+SH02	Heat entering the nutrient and blood phase pattern (TM1)
+SH0Y	Other specified nutrient phase patterns (TM1)
+SH0Z	Nutrient phase patterns (TM1), unspecified
+SH10	Blood phase pattern (TM1)
+SH11	Heat entering the blood phase pattern(TM1)
+SH1Y	Other specified blood phase patterns (TM1)
+SH1Z	Blood phase patterns (TM1), unspecified
+SH3Y	Other specified four phase patterns (TM1)
+SH3Z	Four phase patterns (TM1), unspecified
+SH40	Large yang type exterior origin lower back pattern (TM1)
+SH41	Large yang type interior origin small intestine pattern (TM1)
+SH42	Large yang type exterior interior combined pattern (TM1)
+SH4Y	Other specified large yang type patterns (TM1)
+SH4Z	Large yang type patterns (TM1), unspecified
+SH50	Small yang type lesser yang wind damage pattern (TM1)
+SH51	Small yang type yin depletion pattern (TM1)
+SH52	Small yang type chest heat congested pattern (TM1)
+SH53	Small yang type yin deficit pattern (TM1)
+SH54	Small yang type exterior interior combined pattern (TM1)
+SH5Y	Other specified small yang type patterns (TM1)
+SH5Z	Small yang type patterns (TM1), unspecified
+SH60	Large yin type supraspinal exterior pattern (TM1)
+SH61	Large yin type esophagus cold pattern (TM1)
+SH62	Large yin type liver heat pattern (TM1)
+SH63	Large yin type dryness heat pattern (TM1)
+SH64	Large yin type exterior Interior combined pattern (TM1)
+SH6Y	Other specified large yin type patterns (TM1)
+SH6Z	Large yin type patterns (TM1), unspecified
+SH70	Small yin type congestive hyperpsychotic pattern (TM1)
+SH71	Small yin type yang depletion pattern (TM1)
+SH72	Small yin type greater yin pattern (TM1)
+SH73	Small yin type lesser yin pattern (TM1)
+SH74	Small yin type exterior interior combined pattern (TM1)
+SH7Y	Other specified small yin type patterns(TM1)
+SH7Z	Small yin type patterns(TM1), unspecified
+SH9Y	Other specified four constitution medicine patterns (TM1)
+SH9Z	Four constitution medicine patterns (TM1), unspecified
+SJ1Y	Other specified traditional medicine patterns (TM1)
+SJ1Z	Traditional medicine patterns (TM1), unspecified
+SJ3Y	Other specified supplementary Chapter Traditional Medicine Conditions - Module I
+SJ3Z	Supplementary Chapter Traditional Medicine Conditions - Module I, unspecified
+VD00	Attention functions [WHODAS]
+VD01	Memory functions [WHODAS]
+VD02	Solving problems [WHODAS]
+VD03	Basic learning [WHODAS]
+VD04	Communicating with - receiving - spoken messages [WHODAS]
+VD05	Conversation [WHODAS]
+VD10	Maintaining a standing position [WHODAS]
+VD11	Changing body position - standing [WHODAS]
+VD12	Moving around within the home [WHODAS]
+VD13	Moving around outside the home and other buildings [WHODAS]
+VD14	Walking [WHODAS]
+VD20	Washing oneself [WHODAS]
+VD21	Dressing [WHODAS]
+VD22	Eating [WHODAS]
+VD23	Carrying out daily routine [WHODAS]
+VD30	Relating with strangers [WHODAS]
+VD31	Informal relationship with friends - maintaining [WHODAS]
+VD32	Family relationships [WHODAS]
+VD33	Informal relationship with friends - making new friends [WHODAS]
+VD34	Intimate relationships [WHODAS]
+VD40	Taking care of household responsibilities [WHODAS]
+VD41	Doing most important household tasks [WHODAS]
+VD42.0	Getting all needed housework done [WHODAS]
+VD42.1	Getting household work done quickly [WHODAS]
+VD42.Y	Other specified doing housework [WHODAS]
+VD42.Z	Doing housework [WHODAS], unspecified
+VD43.0	Difficulties in daily work or school [WHODAS]
+VD43.1	Doing most important work or school task [WHODAS]
+VD43.2	Getting all needed work or school work done [WHODAS]
+VD43.3	Getting remunerative work or school work done quickly [WHODAS]
+VD43.Y	Other specified remunerative employment [WHODAS]
+VD43.Z	Remunerative employment [WHODAS], unspecified
+VD50	Recreation and leisure [WHODAS]
+VD51	Problems by barriers [WHODAS]
+VD52	Human rights [WHODAS]
+VD53	Time spent on health condition [WHODAS]
+VD54	Emotional effect of health condition [WHODAS]
+VD55	Health drain on financial resources [WHODAS]
+VD56	Health problems causing family problems [WHODAS]
+VD57	Problems in relaxation or pleasure [WHODAS]
+VE00	Seeing and related functions [BMDS]
+VE01	Hearing and vestibular functions [BMDS]
+VE10	Energy and drive functions [BMDS]
+VE11	Sleep functions [BMDS]
+VE12	Emotional functions [BMDS]
+VE13	Attention functions [BMDS]
+VE14	Memory functions [BMDS]
+VE20	Sensation of pain [BMDS]
+VV00	Energy and drive functions
+VV01	Sleep functions
+VV02	Attention functions
+VV03	Memory functions
+VV04	Emotional functions
+VV0Y	Other specified mental functions
+VV0Z	Mental functions, unspecified
+VV10	Seeing and related functions
+VV11	Hearing and vestibular functions
+VV12	Sensation of pain
+VV1Y	Other specified sensory functions and pain
+VV1Z	Sensory functions and pain, unspecified
+VV20	Voice functions
+VV2Y	Other specified voice and speech functions
+VV2Z	Voice and speech functions, unspecified
+VV30	Exercise tolerance functions
+VV3Y	Other specified functions of the cardiovascular, haematological, immunological and respiratory systems
+VV3Z	Functions of the cardiovascular, haematological, immunological and respiratory systems, unspecified
+VV40	Functions related to the digestive system
+VV4Y	Other specified functions of the digestive, metabolic and endocrine systems
+VV4Z	Functions of the digestive, metabolic and endocrine systems, unspecified
+VV50	Urination functions
+VV51	Sexual functions
+VV5Y	Other specified genitourinary and reproductive functions
+VV5Z	Genitourinary and reproductive functions, unspecified
+VV60	Mobility of joint functions
+VV61	Muscle power functions
+VV6Y	Other specified neuromusculoskeletal and movement-related functions
+VV6Z	Neuromusculoskeletal and movement-related functions, unspecified
+VV70	Functions of the skin
+VV7Y	Other specified functions of the skin and related structures
+VV7Z	Functions of the skin and related structures, unspecified
+VV80	Basic learning
+VV81	Solving problems
+VV8Y	Other specified learning and applying knowledge
+VV8Z	Learning and applying knowledge, unspecified
+VV90	Carrying out daily routine
+VV91	Handling stress and other psychological demands
+VV9Y	Other specified general tasks and demands
+VV9Z	General tasks and demands, unspecified
+VW00	Communicating with - receiving - spoken messages
+VW01	Conversation
+VW0Y	Other specified communication
+VW0Z	Communication, unspecified
+VW10	Maintaining a standing position
+VW11	Transferring oneself
+VW12	Carrying, moving and handling objects
+VW13	Walking
+VW14	Moving around within the home
+VW15	Moving around using equipment
+VW16	Using transportation
+VW1Y	Other specified mobility
+VW1Z	Mobility, unspecified
+VW20	Washing oneself
+VW21	Caring for body parts
+VW22	Toileting
+VW23	Dressing
+VW24	Eating
+VW25	Looking after one's health
+VW2Y	Other specified self-care
+VW2Z	Self-care, unspecified
+VW30	Preparing meals
+VW31	Doing housework
+VW32	Assisting others
+VW3Y	Other specified domestic life
+VW3Z	Domestic life, unspecified
+VW40	Basic interpersonal interactions
+VW41	Relating with strangers
+VW42	Intimate relationships
+VW4Y	Other specified interpersonal interactions and relationships
+VW4Z	Interpersonal interactions and relationships, unspecified
+VW50	Remunerative employment
+VW5Y	Other specified major life areas
+VW5Z	Major life areas, unspecified
+VW60	Recreation and leisure
+VW61	Human rights
+VW6Y	Other specified community, social and civic life
+VW6Z	Community, social and civic life, unspecified
+VW8Y	Other specified generic functioning domains
+VW8Z	Generic functioning domains, unspecified
+
+

@@ -1,0 +1,13 @@
+{
+    "name": "alaimos/icd",
+    "type": "project",
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "authors": [
+        {
+            "name": "Salvatore Alaimo",
+            "email": "alaimos@gmail.com"
+        }
+    ]
+}
