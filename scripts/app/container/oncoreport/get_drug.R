@@ -1,5 +1,6 @@
 #Drug Information
 library(dbparser)
+library(dplyr)
 
 cargs <- commandArgs(trailingOnly = TRUE)
 db_path <- cargs[1]
