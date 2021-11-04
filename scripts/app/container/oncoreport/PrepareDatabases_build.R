@@ -235,12 +235,3 @@ write.table(pharm, paste0(database.path, "/pharm_database_", genome, ".txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 
 #################################################################################
-
-#DrugFood
-
-if (!file.exists(paste0(database.path, "/drugfood_database.csv"))) {
-  cat(" - Drugfood database...\n")
-  source("get_drug.R")
-} else {
-  cat(" - Skipping Drugfood database. The file already exist.\n")
-}
