@@ -22,6 +22,9 @@ class DiseasesTableSeeder extends Seeder
             $fp = @fopen($path, 'rb');
             fgetcsv($fp, separator: "\t");
             while (($line = fgetcsv($fp, separator: "\t")) !== false) {
+                if ((int)($line[4]) === 1) {
+                    continue;
+                }
                 $icdCodes =
                     collect(explode(',', trim($line[2])))
                         ->flatMap(fn($x) => explode('/', $x))
