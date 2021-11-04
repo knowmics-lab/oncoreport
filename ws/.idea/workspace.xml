@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../scripts/app/icd_parser/process_icd11.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/icd_parser/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/icd.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/php.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/rGraphicsSettings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.idea/rSettings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/download_icd.php" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/icd_parser/download_icd.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/icd_to_diseases.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/output.tsv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/prepare_icd_to_disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/icd_parser/prepare_icd_to_disease.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/tmp.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -342,6 +330,7 @@
       <workItem from="1635748965974" duration="6894000" />
       <workItem from="1635868638271" duration="3126000" />
       <workItem from="1636011414670" duration="4171000" />
+      <workItem from="1636021847011" duration="653000" />
     </task>
     <servers />
   </component>
