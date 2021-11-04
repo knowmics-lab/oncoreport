@@ -17,6 +17,7 @@ else
     exit 1
   fi
 fi
+[ -f "$CURR_DIR/databases/Disease_old.txt" ] && rm "$CURR_DIR/databases/Disease_old.txt"
 cd "$CURR_DIR" || exit 1
 
 if [ ! -f ws.tgz ]; then
