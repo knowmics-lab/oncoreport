@@ -20,6 +20,7 @@ trait UsesDrugsFile
                                         ->whereNull('end_date')
                                         ->get()
                                         ->map(fn(PatientDrug $pd) => $pd->drug->drugbank_id)
+                                        ->unique()
                                         ->join("\n");
         file_put_contents($file, $drugIds);
 
