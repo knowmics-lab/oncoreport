@@ -4,3 +4,5 @@ scripts/app/container/ws.tgz
 onco.bkp.zip
 
 scripts/app/container/drugbank.xml
+
+scripts/app/container/databases/Disease.txt
