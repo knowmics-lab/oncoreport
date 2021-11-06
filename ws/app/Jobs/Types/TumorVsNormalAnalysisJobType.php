@@ -211,7 +211,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 '-g',
                 $patient->gender,
                 '-t',
-                $patient->primaryDisease->icd_code,
+                $patient->primaryDisease->disease->icd_code,
                 '-pp',
                 $outputAbsolute,
                 '-th',

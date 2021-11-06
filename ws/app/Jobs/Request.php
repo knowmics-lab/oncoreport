@@ -7,6 +7,7 @@
 
 namespace App\Jobs;
 
+use App\Constants;
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use App\Models\Job as JobModel;
@@ -30,23 +31,17 @@ class Request implements ShouldQueue
      *
      * @var bool
      */
-    public $deleteWhenMissingModels = true;
+    public bool $deleteWhenMissingModels = true;
 
-    public $timeout = 0;
-
-    /**
-     * @var \App\Models\Job
-     */
-    protected $model;
+    public int $timeout = 0;
 
     /**
      * Create a new job instance.
      *
      * @param  \App\Models\Job  $model
      */
-    public function __construct(JobModel $model)
+    public function __construct(protected JobModel $model)
     {
-        $this->model = $model;
     }
 
     /**
@@ -64,22 +59,22 @@ class Request implements ShouldQueue
                 return;
             }
             $this->model->log = '';
-            $this->model->setStatus(JobModel::PROCESSING);
+            $this->model->setStatus(Constants::PROCESSING);
             $this->delete();
             $jobProcessor = Types\Factory::get($this->model);
             if (!$jobProcessor->isInputValid()) {
                 throw new ProcessingJobException('Job input format is not valid');
             }
-            Auth::login($this->model->user);
+            Auth::login($this->model->owner);
             $jobProcessor->handle();
             Auth::logout();
-            $this->model->setStatus(JobModel::COMPLETED);
+            $this->model->setStatus(Constants::COMPLETED);
         } catch (Throwable $e) {
             if (!($e instanceof IgnoredException)) {
                 $this->model->appendLog('Error: ' . $e);
             }
-            $this->model->setStatus(JobModel::FAILED);
-            if ($jobProcessor && ($jobProcessor instanceof Types\AbstractJob)) {
+            $this->model->setStatus(Constants::FAILED);
+            if ($jobProcessor instanceof Types\AbstractJob) {
                 $jobProcessor->cleanupOnFail();
             }
             $this->fail($e);
