@@ -126,6 +126,8 @@ mv /ProcessVariantTable.R /oncoreport/scripts || exit 131
 mv /setup.bash /oncoreport/scripts || exit 132
 
 # Download drugbank.xml file
+DRUGBANK_USERNAME="$(head -n 1 /run/secrets/drugbank)"
+DRUGBANK_PASSWORD="$(tail -n 1 /run/secrets/drugbank)"
 (
   cd /oncoreport/tmp/ &&
     curl -Lf -o drugbank.zip -u "$DRUGBANK_USERNAME:$DRUGBANK_PASSWORD" https://go.drugbank.com/releases/latest/downloads/all-full-database &&

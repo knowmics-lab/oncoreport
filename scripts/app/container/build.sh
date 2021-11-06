@@ -37,5 +37,7 @@ echo "Enter your drugbank username:"
 read -r DRUGBANK_USERNAME
 echo "Enter your drugbank password:"
 read -r -s DRUGBANK_PASSWORD
-
-docker build --build-arg DRUGBANK_USERNAME --build-arg DRUGBANK_PASSWORD -t alaimos/oncoreport:v0.0.1 . && rm ws.tgz && rm drugbank.xml
+printf '%s\n%s\n' "$DRUGBANK_USERNAME" "$DRUGBANK_PASSWORD" >/tmp/secret_drugbank
+DOCKER_BUILDKIT=1 docker build --secret id=drugbank,src=/tmp/secret_drugbank --squash -t alaimos/oncoreport:v0.0.1 . &&
+  rm ws.tgz &&
+  rm /tmp/secret_drugbank

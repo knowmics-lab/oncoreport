@@ -1,15 +1,10 @@
 FROM ubuntu:focal
-
-ENV DOCKER_USER_ID 501 
+ENV DOCKER_USER_ID 501
 ENV DOCKER_USER_GID 20
-
 ENV BOOT2DOCKER_ID 1000
 ENV BOOT2DOCKER_GID 50
-
 ENV SUPERVISOR_VERSION 4.2.0
-
 ENV DEBUG false
-
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
 # Tweaks to give Apache/PHP write permissions to the app
@@ -106,7 +101,7 @@ RUN chmod 755 /usr/local/bin/*.sh
 RUN /usr/bin/Rscript /usr/local/bin/installPackages.R
 
 # Complete the setup
-RUN /bin/bash /usr/local/bin/setup.sh
+RUN --mount=type=secret,id=drugbank /usr/local/bin/setup.sh
 
 RUN ln -s /usr/local/bin/bootstrap.sh /bootstrap.sh
 
