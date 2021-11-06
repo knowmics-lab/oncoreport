@@ -2,7 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/Disease.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/layout/appStartedContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/layout/blockingMessageHandler.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/layout/blockingMessageHandler.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useCapabilities.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useCapabilities.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/main.dev.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/main.dev.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/get_drug.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/get_drug.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,7 +211,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Jobs/Traits" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
-    <property name="settings.editor.selected.configurable" value="preferences.general" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -333,6 +343,7 @@
       <workItem from="1636024150415" duration="813000" />
       <workItem from="1636064896689" duration="59000" />
       <workItem from="1636126391528" duration="1474000" />
+      <workItem from="1636183944404" duration="1172000" />
     </task>
     <servers />
   </component>

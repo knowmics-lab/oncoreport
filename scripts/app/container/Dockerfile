@@ -97,7 +97,6 @@ ADD oncoreport/PrepareCOSMIC.R                      /PrepareCOSMIC.R
 ADD oncoreport/PrepareDatabases_build.R             /PrepareDatabases_build.R
 ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
 ADD oncoreport/setup.bash                           /setup.bash
-ADD drugbank.xml                                    /databases/drugbank.xml
 ADD html_source                                     /html_source
 COPY ws.tgz                                         /ws.tgz
 

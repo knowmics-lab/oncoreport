@@ -33,16 +33,9 @@ if [ ! -f ws.tgz ]; then
   rm -rf repo/ || exit
 fi
 [[ ! -f ws.tgz ]] && echo "Archive not built!" && exit
-if [ ! -f drugbank.xml ]; then
-  echo "Enter your drugbank username:"
-  read -r USERNAME
-  echo "Enter your drugbank password:"
-  read -r -s PASSWORD
-  curl -Lf -o drugbank.zip -u "$USERNAME:$PASSWORD" https://go.drugbank.com/releases/5-1-8/downloads/all-full-database
-  unzip drugbank.zip
-  mv "full database.xml" drugbank.xml
-  rm drugbank.zip
-fi
-[[ ! -f drugbank.xml ]] && echo "Unable to download drugbank.xml" && exit
+echo "Enter your drugbank username:"
+read -r DRUGBANK_USERNAME
+echo "Enter your drugbank password:"
+read -r -s DRUGBANK_PASSWORD
 
-docker build -t alaimos/oncoreport:v0.0.1 . && rm ws.tgz && rm drugbank.xml
+docker build --build-arg DRUGBANK_USERNAME --build-arg DRUGBANK_PASSWORD -t alaimos/oncoreport:v0.0.1 . && rm ws.tgz && rm drugbank.xml

@@ -7,16 +7,14 @@ setwd(db_path)
 read_drugbank_xml_db(file.path(db_path, "drugbank.xml"))
 
 cat("Preparing drug general informations\n")
-drug_general_information(
+drug_info <- drug_general_information(
   save_table = FALSE,
-  save_csv = TRUE,
+  save_csv = FALSE,
   csv_path = ".",
   override_csv = FALSE,
   database_connection = NULL
 )
-
-# Prepares drug list
-drug_info <- read.csv(paste0(db_path,"/drug.csv"), sep= ",")
+class(drug_info) <- "data.frame"
 drug_info <- cbind(drug_info$primary_key,drug_info$name)
 colnames(drug_info) <- c("id","name")
 
@@ -68,15 +66,14 @@ write.table(e1, file = paste0(db_path,"/drug_drug_interactions_light.txt"),
 
 cat("Preparing drug-food interactions\n")
 # data for food interactions
-drug_food_interactions(
+drug_food_info <- drug_food_interactions(
   save_table = FALSE,
-  save_csv = TRUE,
+  save_csv = FALSE,
   csv_path = ".",
   override_csv = FALSE,
   database_connection = NULL
 )
-# join db to build tuple like ("id" "drug_name" "food_interactions" ) for drug-food
-drug_food_info <- read.csv(paste0(db_path,"/drug_food_interactions.csv"), sep = ",")
+class(drug_food_info) <- "data.frame"
 drug_gen_info <- data.frame(drug_info)
 colnames(drug_gen_info) <- c("Drugbank_ID", "Drug")
 colnames(drug_food_info) <- c("Food_interaction","Drugbank_ID")

@@ -7,7 +7,7 @@ mkdir /oncoreport/scripts || exit 102
 mv /html_source /oncoreport/html_source || exit 102
 
 (
-    cd /oncoreport &&
+  cd /oncoreport &&
     tar -zxvf /ws.tgz &&
     rm /ws.tgz &&
     rm -fr /var/www/html &&
@@ -19,7 +19,7 @@ pip3 install cutadapt || exit 104
 
 # Install trim_galore
 (
-    cd /oncoreport/tmp/ &&
+  cd /oncoreport/tmp/ &&
     curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.5.tar.gz -o trim_galore.tar.gz &&
     tar -zxvf trim_galore.tar.gz &&
     cp TrimGalore-0.6.5/trim_galore /usr/local/bin/
@@ -27,7 +27,7 @@ pip3 install cutadapt || exit 104
 
 # Install gatk
 (
-    cd /oncoreport/tmp/ &&
+  cd /oncoreport/tmp/ &&
     wget https://github.com/broadinstitute/gatk/releases/download/4.1.0.0/gatk-4.1.0.0.zip &&
     unzip gatk-4.1.0.0.zip &&
     [ -d gatk-4.1.0.0/ ] &&
@@ -36,7 +36,7 @@ pip3 install cutadapt || exit 104
 
 # Install picard
 (
-    cd /oncoreport/tmp/ &&
+  cd /oncoreport/tmp/ &&
     wget https://github.com/broadinstitute/picard/releases/download/2.21.1/picard.jar &&
     mv picard.jar /usr/local/bin/
 ) || exit 107
@@ -44,7 +44,7 @@ pip3 install cutadapt || exit 104
 # Removes pandoc 1 and install pandoc 2
 apt remove -y pandoc
 (
-    cd /oncoreport/tmp/ &&
+  cd /oncoreport/tmp/ &&
     curl -fsSL https://github.com/jgm/pandoc/releases/download/2.11.0.4/pandoc-2.11.0.4-1-amd64.deb -o pandoc.deb &&
     dpkg -i pandoc.deb
 ) || exit 108
@@ -57,19 +57,19 @@ pip3 install CrossMap --upgrade || exit 111
 # Copy databases
 cd /oncoreport/tmp/ || exit 99
 (
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz &&
+  wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz &&
     [ -f hg19ToHg38.over.chain.gz ] &&
     mv hg19ToHg38.over.chain.gz /oncoreport/databases
 ) || exit 112
 
 (
-    wget https://civicdb.org/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv &&
+  wget https://civicdb.org/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv &&
     [ -f nightly-ClinicalEvidenceSummaries.tsv ] &&
     mv nightly-ClinicalEvidenceSummaries.tsv /oncoreport/databases/civic.txt
 ) || exit 113
 
 (
-    wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2021/clinvar_20211025.vcf.gz &&
+  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2021/clinvar_20211025.vcf.gz &&
     [ -f clinvar_20211025.vcf.gz ] &&
     gunzip clinvar_20211025.vcf.gz &&
     [ -f clinvar_20211025.vcf ] &&
@@ -77,7 +77,7 @@ cd /oncoreport/tmp/ || exit 99
 ) || exit 114
 
 (
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz &&
+  wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz &&
     [ -f ncbiRefSeq.txt.gz ] &&
     gunzip ncbiRefSeq.txt.gz &&
     [ -f ncbiRefSeq.txt ] &&
@@ -85,7 +85,7 @@ cd /oncoreport/tmp/ || exit 99
 ) || exit 115
 
 (
-    wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2021/clinvar_20211025.vcf.gz &&
+  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2021/clinvar_20211025.vcf.gz &&
     [ -f clinvar_20211025.vcf.gz ] &&
     gunzip clinvar_20211025.vcf.gz &&
     [ -f clinvar_20211025.vcf ] &&
@@ -93,7 +93,7 @@ cd /oncoreport/tmp/ || exit 99
 ) || exit 116
 
 (
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeq.txt.gz &&
+  wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeq.txt.gz &&
     [ -f ncbiRefSeq.txt.gz ] &&
     gunzip ncbiRefSeq.txt.gz &&
     [ -f ncbiRefSeq.txt ] &&
@@ -125,23 +125,34 @@ mv /PrepareDatabases_build.R /oncoreport/scripts || exit 130
 mv /ProcessVariantTable.R /oncoreport/scripts || exit 131
 mv /setup.bash /oncoreport/scripts || exit 132
 
+# Download drugbank.xml file
+(
+  cd /oncoreport/tmp/ &&
+    curl -Lf -o drugbank.zip -u "$DRUGBANK_USERNAME:$DRUGBANK_PASSWORD" https://go.drugbank.com/releases/latest/downloads/all-full-database &&
+    unzip drugbank.zip &&
+    mv "full database.xml" /oncoreport/databases/drugbank.xml &&
+    rm drugbank.zip
+) || exit 133
+[[ ! -f /oncoreport/databases/drugbank.xml ]] && echo "Unable to download drugbank.xml" && exit 133
+
 # Build database files
 (
-    cd /oncoreport/databases &&
+  cd /oncoreport/databases &&
     Rscript /oncoreport/scripts/get_drug.R /oncoreport/databases &&
     Rscript /oncoreport/scripts/CreateCivicBed.R /oncoreport/databases &&
     CrossMap.py bed /oncoreport/databases/hg19ToHg38.over.chain.gz /oncoreport/databases/civic_bed.bed /oncoreport/databases/civic_bed_hg38.bed &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg19 &&
-    Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg38
+    Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg38 &&
+    rm /oncoreport/databases/drugbank.xml
 ) || exit 138
 
 # Apply MYSQL configuration fixes
 apply_configuration_fixes() {
-    sed -i 's/^log_error/# log_error/' /etc/mysql/mysql.conf.d/mysqld.cnf
-    sed -i 's/.*datadir.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' /etc/mysql/mysql.conf.d/mysqld.cnf
-    sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
-    sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
-    sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf
+  sed -i 's/^log_error/# log_error/' /etc/mysql/mysql.conf.d/mysqld.cnf
+  sed -i 's/.*datadir.*/datadir = \/oncoreport\/ws\/storage\/app\/database/' /etc/mysql/mysql.conf.d/mysqld.cnf
+  sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+  sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+  sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf
   cat >/etc/mysql/conf.d/mysql-skip-name-resolv.cnf <<EOF
 [mysqld]
 skip_name_resolve
@@ -149,7 +160,7 @@ EOF
 }
 
 remove_debian_system_maint_password() {
-    sed 's/password = .*/password = /g' -i /etc/mysql/debian.cnf
+  sed 's/password = .*/password = /g' -i /etc/mysql/debian.cnf
 }
 
 apply_configuration_fixes
@@ -157,7 +168,7 @@ remove_debian_system_maint_password
 
 # Install the web service
 (
-    cd /oncoreport/ws/ &&
+  cd /oncoreport/ws/ &&
     mv .env.docker .env &&
     composer install --optimize-autoloader --no-dev &&
     php artisan key:generate &&
