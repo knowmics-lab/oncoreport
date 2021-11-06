@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   createStyles,
   ImageList,
@@ -17,6 +17,9 @@ import ThemeContext from './app/themeContext';
 import * as Pages from './app/components/pages';
 import Layout from './app/layout';
 import useCapabilities from './app/hooks/useCapabilities';
+import AppStartedContext, {
+  StartedContext,
+} from './app/components/layout/appStartedContext';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -42,20 +45,23 @@ const useStyles = makeStyles(() =>
 
 const Home = () => {
   const classes = useStyles();
-  const [loading, capabilities] = useCapabilities();
+  const { started } = useContext(StartedContext);
+  const [loading, capabilities] = useCapabilities(!started);
 
   useEffect(() => {
-    if (loading) {
-      ipcRenderer.send('display-blocking-message', {
-        message: 'Loading...',
-        error: false,
-      });
-    } else {
-      setTimeout(() => {
-        ipcRenderer.send('hide-blocking-message');
-      }, 2000);
+    if (started) {
+      if (loading) {
+        ipcRenderer.send('display-blocking-message', {
+          message: 'Loading...',
+          error: false,
+        });
+      } else {
+        setTimeout(() => {
+          ipcRenderer.send('hide-blocking-message');
+        }, 2000);
+      }
     }
-  }, [loading]);
+  }, [loading, started]);
 
   return (
     <div>
@@ -93,41 +99,43 @@ const Home = () => {
 export default function App() {
   return (
     <InjectorContext.Provider value={injector}>
-      <Router>
-        <Layout>
-          <Switch>
-            <Route path={Routes.JOBS} component={Pages.JobsPage} />
-             <Route
-              path={Routes.NEW_ANALYSIS}
-              component={Pages.Forms.NewAnalysisForm}
-             />
-            <Route
-              path={Routes.JOBS_BY_PATIENT}
-              component={Pages.JobsByPatientPage}
-            />
-            <Route
-              path={Routes.PATIENTS_CREATE}
-              component={Pages.Forms.PatientForm}
-            />
-            <Route
-              path={Routes.PATIENTS_EDIT}
-              component={Pages.Forms.PatientForm}
-            />
-            <Route path={Routes.PATIENT} component={Pages.PatientPage} />
-            <Route
-              path={Routes.PATIENTS}
-              exact
-              component={Pages.PatientsPage}
-            />
-            <Route
-              path={Routes.SETTINGS}
-              exact
-              component={Pages.SettingsPage}
-            />
-            <Route path={Routes.HOME} exact component={Home} />
-          </Switch>
-        </Layout>
-      </Router>
+      <AppStartedContext>
+        <Router>
+          <Layout>
+            <Switch>
+              <Route path={Routes.JOBS} component={Pages.JobsPage} />
+              <Route
+                path={Routes.NEW_ANALYSIS}
+                component={Pages.Forms.NewAnalysisForm}
+              />
+              <Route
+                path={Routes.JOBS_BY_PATIENT}
+                component={Pages.JobsByPatientPage}
+              />
+              <Route
+                path={Routes.PATIENTS_CREATE}
+                component={Pages.Forms.PatientForm}
+              />
+              <Route
+                path={Routes.PATIENTS_EDIT}
+                component={Pages.Forms.PatientForm}
+              />
+              <Route path={Routes.PATIENT} component={Pages.PatientPage} />
+              <Route
+                path={Routes.PATIENTS}
+                exact
+                component={Pages.PatientsPage}
+              />
+              <Route
+                path={Routes.SETTINGS}
+                exact
+                component={Pages.SettingsPage}
+              />
+              <Route path={Routes.HOME} exact component={Home} />
+            </Switch>
+          </Layout>
+        </Router>
+      </AppStartedContext>
     </InjectorContext.Provider>
   );
 }

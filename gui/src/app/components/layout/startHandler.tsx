@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
+import React, { useContext } from 'react';
 import { ipcRenderer } from 'electron';
 import { useService } from '../../../reactInjector';
 import { DockerManager, Settings } from '../../../api';
+import { StartedContext } from './appStartedContext';
 
 export default function StartHandler() {
   const settings = useService(Settings);
   const manager = useService(DockerManager);
+  const { setStarted } = useContext(StartedContext);
   const [first, setFirst] = React.useState(false);
 
   React.useEffect(() => {
@@ -22,6 +24,7 @@ export default function StartHandler() {
         manager
           .startupSequence(sendMessage, showLog)
           .then(() => ipcRenderer.send('hide-blocking-message'))
+          .finally(() => setStarted(true))
           .catch((e) => sendMessage(e.message, true));
       }
       setFirst(true);

@@ -37,7 +37,13 @@ const LogHandler = () => {
       ipcRenderer.removeAllListeners('on-blocking-message-log');
     };
   }, []);
-  return <>{log ? <pre>{log}</pre> : null}</>;
+  return (
+    <>
+      {log ? (
+        <pre style={{ maxHeight: '400px', overflow: 'auto' }}>{log}</pre>
+      ) : null}
+    </>
+  );
 };
 
 export default function BlockingMessageHandler() {
