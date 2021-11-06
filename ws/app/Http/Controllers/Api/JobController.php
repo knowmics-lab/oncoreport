@@ -154,7 +154,7 @@ class JobController extends Controller
      */
     public function submit(Request $request, Job $job): JobResource
     {
-        $this->tokenAuthorize($request, ['read', 'update'], 'submitJob', $job);
+        $this->tokenAuthorize($request, ['read', 'update'], 'submit', $job);
         abort_unless($job->canBeModified(), 400, 'Unable to submit a job that is already submitted.');
         $job->setStatus(Constants::QUEUED);
         JobRequest::dispatch($job);
@@ -173,7 +173,7 @@ class JobController extends Controller
      */
     public function upload(Request $request, Job $job): mixed
     {
-        $this->tokenAuthorize($request, ['read', 'update'], 'uploadJob', $job);
+        $this->tokenAuthorize($request, ['read', 'update'], 'upload', $job);
         abort_unless($job->canBeModified(), 400, 'Unable to upload a file for a job that is already submitted.');
         set_time_limit(0);
         /** @var \TusPhp\Tus\Server $server */

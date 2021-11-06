@@ -35,10 +35,10 @@ Route::group(
         Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
         Route::patch('/jobs/{job}/submit', [JobController::class, 'submit'])
-             ->middleware('can:submit-job,job')
+             ->middleware('can:submit,job')
              ->name('jobs.submit');
         Route::any('/jobs/{job}/upload/{any?}', [JobController::class, 'upload'])
-             ->middleware('can:upload-job,job')
+             ->middleware('can:upload,job')
              ->where('any', '.*');
         Route::apiResource('jobs', JobController::class);
         Route::get('/job-types', [JobTypeController::class, 'index'])->name('job-types.index');
