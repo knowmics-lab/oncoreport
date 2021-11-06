@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/esmo/get_cancer_gl.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/esmo/get_cancer_gl.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Request.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Request.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -339,6 +344,8 @@
       <workItem from="1636183944404" duration="5237000" />
       <workItem from="1636201328528" duration="1922000" />
       <workItem from="1636204152133" duration="49000" />
+      <workItem from="1636209013014" duration="608000" />
+      <workItem from="1636210602875" duration="7755000" />
     </task>
     <servers />
   </component>

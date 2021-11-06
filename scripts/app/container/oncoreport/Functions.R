@@ -33,19 +33,24 @@ cosmic.urls <- function(x)
 leading.urls <- function(x)
 {
   dis <- read.csv(paste0(database.path, "/Disease.txt"), sep = "\t")
-  x <- merge(dis, x, by = "Disease")
+  x <- merge(dis, x, by.x = "Disease_database_name", by.y = "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
-  x <- data.frame(lapply(x, as.character), stringsAsFactors = F)
+  x <- data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
   x[is.na(x)] <- " "
-  x <- x[x$Evidence_direction == "Supports" & x$Disease == leading.disease, , drop = F]
+  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code == leading.disease, , drop = FALSE]
   x$Drug <- as.character(x$Drug, levels = (x$Drug))
   x$Drug_interaction_type <- gsub(" ", "", x$Drug_interaction_type)
-  x$Evidence_type <- factor(x$Evidence_type, levels = c("Diagnostic",
-                                                        "Prognostic", "Predisposing", "Predictive"))
-  x$Evidence_level <- factor(x$Evidence_level, levels = c("Validated association", "FDA guidelines",
-                                                          "NCCN guidelines", "Clinical evidence", "Late trials", "Early trials", "Case study", "Case
-  report", "Preclinical evidence", "Pre-clinical", "Inferential association"))
+  x$Evidence_type <- factor(
+    x$Evidence_type, 
+    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive")
+  )
+  x$Evidence_level <- factor(
+    x$Evidence_level, 
+    levels = c("Validated association", "FDA guidelines", "NCCN guidelines", 
+               "Clinical evidence", "Late trials", "Early trials", "Case study", 
+               "Case report", "Preclinical evidence", "Pre-clinical", "Inferential association")
+  )
   x <- x[order(x$Gene, x$Evidence_level, x$Evidence_type, x$Variant, x$Drug, x$Drug_interaction_type,
                x$Clinical_significance, x$PMID),]
   list.pubmed <- list.pubmed.urls(x, "leading")
@@ -59,18 +64,22 @@ leading.urls <- function(x)
 off.urls <- function(x)
 {
   dis <- read.csv(paste0(database.path, "/Disease.txt"), sep = "\t")
-  x <- merge(dis, x, by = "Disease")
+  x <- merge(dis, x, by.x = "Disease_database_name", by.y = "Disease")
   x$Disease <- NULL
   colnames(x)[1] <- "Disease"
   x <- x[x$Evidence_direction == "Supports" & x$Disease != leading.disease, , drop = F]
   x[is.na(x)] <- " "
   x$Drug <- as.character(x$Drug, levels = (x$Drug))
-  x$Evidence_type <- factor(x$Evidence_type, levels = c("Diagnostic", "Prognostic",
-                                                        "Predisposing", "Predictive"))
-  x$Evidence_level <- factor(x$Evidence_level, levels = c("Validated association",
-                                                          "FDA guidelines", "NCCN guidelines", "Clinical evidence", "Late trials",
-                                                          "Early trials", "Case study", "Case report", "Preclinical evidence", "Pre-clinical",
-                                                          "Inferential association"))
+  x$Evidence_type <- factor(
+    x$Evidence_type, 
+    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive")
+  )
+  x$Evidence_level <- factor(
+    x$Evidence_level, 
+    levels = c("Validated association", "FDA guidelines", "NCCN guidelines", 
+               "Clinical evidence", "Late trials", "Early trials", "Case study", 
+               "Case report", "Preclinical evidence", "Pre-clinical","Inferential association")
+  )
   x$Disease <- as.character(x$Disease, levels = (x$Disease))
   x <- x[order(x$Disease, x$Evidence_level, x$Evidence_type, x$Gene, x$Variant, x$Drug,
                x$Clinical_significance, x$PMID),]

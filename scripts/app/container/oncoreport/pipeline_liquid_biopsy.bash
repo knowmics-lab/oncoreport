@@ -89,7 +89,7 @@ while [ -n "$1" ]; do
     echo "The value provided for patient surname is $surname"
     shift
     ;;
-  -drug_path | -dpath)
+  -drug_path | -d_path)
     drug_path="$2"
     echo "The path for comorbid drugs is $drug_path"
     shift
@@ -138,7 +138,7 @@ while [ -n "$1" ]; do
   -tumor | -t)
     tumor="$2"
     echo "The value provided for patient tumor is $tumor"
-    if ! grep -w "$tumor" "$ONCOREPORT_DATABASES_PATH/disease_list.txt" >/dev/null; then
+    if ! grep -w "$tumor" "$ONCOREPORT_DATABASES_PATH/Disease.txt" >/dev/null; then
       exit_abnormal_usage "Error: Invalid tumor supplied."
     fi
     shift
@@ -182,7 +182,7 @@ if [[ -z "$fastq1" ]] && { [[ -z "$ubam" ]] || [[ -z "$paired" ]]; } && [[ -z "$
   exit_abnormal_usage "One input file should be specified."
 fi
 
-if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$stage" ]] || [[ -z "$drug_path" ]] || [[ -z "$phone" ]] || [[ -z "$city" ]] || [[ -z "$site" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
+if [[ -z "$name" ]] || [[ -z "$surname" ]] || [[ -z "$tumor" ]] || [[ -z "$age" ]] || [[ -z "$drug_path" ]] || [[ -z "$gender" ]] || [[ -z "$depth" ]] || [[ -z "$AF" ]] || [[ -z "$id" ]] || [[ -z "$threads" ]] || [[ -z "$project_path" ]]; then
   exit_abnormal_usage "All parameters must be passed"
 fi
 
@@ -370,16 +370,17 @@ else
 fi
 
 echo "Annotation of VCF files"
+
+#echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/MergeInfo.R\" \"$index\" \"$ONCOREPORT_DATABASES_PATH\" \"$ONCOREPORT_COSMIC_PATH\" \"$PATH_PROJECT\" \"$FASTQ1_NAME\" \"$tumor\" \"$type\""
+#echo "bash \"$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh\" -t \"$site\" -i \"$FASTQ1_NAME\" -o \"$PATH_PROJECT\""
+#echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
+
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 119
-
 echo "Report creation"
-
 mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
 chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
+export ONCOREPORT_ESMO_PATH
 bash "$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh" -t "${site}" -i "${FASTQ1_NAME}" -o "$PATH_PROJECT"
-#html source è una cartella in cui c'è il template di partenza del report
-
-
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
 
 echo "Removing folders"

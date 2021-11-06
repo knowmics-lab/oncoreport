@@ -28,7 +28,7 @@ class DiseasesTableSeeder extends Seeder
                 $icdCodes =
                     collect(explode(',', trim($line[2])))
                         ->flatMap(fn($x) => explode('/', $x))
-                        ->map('trim')
+                        ->map(fn($x) => trim($x))
                         ->filter()
                         ->unique();
                 $name = trim($line[1]);

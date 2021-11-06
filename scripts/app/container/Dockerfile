@@ -35,7 +35,7 @@ RUN /usr/bin/apt update --fix-missing && \
                             openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
                             libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
                             python3-setuptools git apache2 php-xdebug composer php-cli jq \
-                            libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
+                            libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd libfontconfig1-dev \
                             php-xml php-mbstring zip php-zip php-curl php-intl pigz unixodbc-dev && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
