@@ -1,5 +1,6 @@
 args <- commandArgs(trailingOnly = TRUE)
 
+suppressPackageStartupMessages(library(readr))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(RCurl))
@@ -278,13 +279,11 @@ if(dim(tot)[1]!=0)
 def$Chromosome <- paste0("chr", def$Chromosome)
 write.table(def, paste0(project.path, "/txt/", sample.name ,"_definitive.txt"),
             quote=FALSE, row.names = FALSE, na= "NA", sep = "\t")
-
 #Food interactions
 pharm <- read.csv(paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
                   sep = "\t", colClasses = c("character"))
 list.drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
-drugfood <- read.csv(paste0(database.path, "/drugfood_database.csv"),
-                     sep = "\t", colClasses = c("character"))
+drugfood <- suppressMessages(suppressWarnings(read_csv(paste0(database.path, "/drugfood_database.csv"))))
 drugfood <- drugfood[drugfood$Drug %in% list.drugs,]
 write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")

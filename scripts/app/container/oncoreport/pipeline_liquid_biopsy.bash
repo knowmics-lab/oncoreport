@@ -9,7 +9,7 @@ usage() {
   [-surname/-s patient surname ] [-allfreq/-af filter-expression of AF ]
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
   [-city/-c where patient lives] [-phone/-ph telephone number of the patient]
-  [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
+  [-tumor/-t patient tumor]
   [-site/-st site of the tumor] [-stage/-sg stage of the tumor]
   [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
@@ -376,11 +376,10 @@ echo "Annotation of VCF files"
 #echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
 
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 119
-echo "Report creation"
 mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
 chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
-export ONCOREPORT_ESMO_PATH
-bash "$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh" -t "${site}" -i "${FASTQ1_NAME}" -o "$PATH_PROJECT"
+php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" parse:esmo "$tumor" "$PATH_PROJECT"
+echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
 
 echo "Removing folders"

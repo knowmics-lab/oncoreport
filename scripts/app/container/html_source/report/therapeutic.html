@@ -1,307 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Template &middot; Bootstrap</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <head>
+        <meta charset="utf-8">
+        <title>Template &middot; Bootstrap</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- Le styles -->
+        <link href="assets/css/bootstrap.css" rel="stylesheet">
+        <style type="text/css">
+            body {
+                padding-top: 20px;
+                padding-bottom: 60px;
+            }
 
-  <!-- Le styles -->
-  <link href="../assets/css/bootstrap.css" rel="stylesheet">
-  <style type="text/css">
-    body {
-      padding-top: 20px;
-      padding-bottom: 60px;
-    }
+            /* Custom container */
+            .container {
+                margin: 0 auto;
+                max-width: 1200px;
+            }
 
-    /* Custom container */
-    .container {
-      margin: 0 auto;
-      max-width: 1200px;
-    }
-    .container > hr {
-      margin: 60px 0;
-    }
+            .container > hr {
+                margin: 60px 0;
+            }
 
-    /* Main marketing message and sign up button */
-    .jumbotron {
-      margin: 80px 0;
-      text-align: center;
-    }
-    .jumbotron h1 {
-      font-size: 100px;
-      line-height: 1;
-    }
-    .jumbotron .lead {
-      font-size: 24px;
-      line-height: 1.25;
-    }
-    .jumbotron .btn {
-      font-size: 21px;
-      padding: 14px 24px;
-    }
+            /* Main marketing message and sign up button */
+            .jumbotron {
+                margin: 80px 0;
+                text-align: center;
+            }
 
-    /* Supporting marketing content */
-    .marketing {
-      margin: 60px 0;
-    }
-    .marketing p + h4 {
-      margin-top: 28px;
-    }
-    /* Customize the navbar links to be fill the entire space of the .navbar */
-    .navbar .navbar-inner {
-      padding: 0;
-    }
-    .navbar .nav {
-      margin: 0;
-      display: table;
-      width: 100%;
-    }
-    .navbar .nav li {
-      display: table-cell;
-      width: 1%;
-      float: none;
-    }
-    .navbar .nav li a {
-      font-weight: bold;
-      text-align: center;
-      border-left: 1px solid rgba(255,255,255,.75);
-      border-right: 1px solid rgba(0,0,0,.1);
-    }
-    .navbar .nav li:first-child a {
-      border-left: 0;
-      border-radius: 3px 0 0 3px;
-    }
-    .navbar .nav li:last-child a {
-      border-right: 0;
-      border-radius: 0 3px 3px 0;
-    }
-  </style>
-  <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+            .jumbotron h1 {
+                font-size: 100px;
+                line-height: 1;
+            }
 
-  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="../assets/js/html5shiv.js"></script>
-    <![endif]-->
+            .jumbotron .lead {
+                font-size: 24px;
+                line-height: 1.25;
+            }
 
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-    <link rel="shortcut icon" href="../assets/ico/favicon.png">
-  </head>
+            .jumbotron .btn {
+                font-size: 21px;
+                padding: 14px 24px;
+            }
 
-  <body>
+            /* Supporting marketing content */
+            .marketing {
+                margin: 60px 0;
+            }
 
-    <div class="container">
-      <div class="masthead">
-        <h3 class="muted">Mutation report</h3>
-        <div class="card text-dark bg-light mb-3" style="max-width: 100%;">
-          <div class="card-header"><b>Patient's Information</b></div>
-          <div class="card-body">
-           <div class="span4">Surname:<br>
-                              Name:<br>
-                              Sex:</div>
-           <div class="span4">Age:<br>
-                              Address:<br></div>
-           <div class="span3">...</div>
-         </div>
-       </div>
-       <br>
+            .marketing p + h4 {
+                margin-top: 28px;
+            }
 
-      <div class="navbar">
+            /* Customize the navbar links to be fill the entire space of the .navbar */
+            .navbar .navbar-inner {
+                padding: 0;
+            }
 
-        <div class="navbar-inner">
-          <div class="container">
-            <ul class="nav">
-              <li class="active"><a href="therapeutic.html" >Therapeutic indication</a></li>
-              <li><a href="drugdrug.html" >Drug-Drug Interaction</a></li>
-              <li><a href="drugfood.html">Drug-Food interaction</a></li>
-              <li><a href="esmoguide.html">
-                <span style='color: #32502d'>E</span>
-                <span style='color: #6e1e50'>S</span>
-                <span style='color: #7d8232'>M</span>
-                <span style='color: #1f325f'>O</span> guidelines</a></li> 
-                <li><a href="pharmgkb.html">Drug response</a></li>
-                <li><a href="mutations.html">Mutations annotations</a></li>
-                <li><a href="offlabel.html">Off label drug</a></li>
-                <li><a href="cosmic.html">Known resistance</a></li>
-                <li><a href="reference.html">Reference Details</a></li>
-              </ul>
+            .navbar .nav {
+                margin: 0;
+                display: table;
+                width: 100%;
+            }
+
+            .navbar .nav li {
+                display: table-cell;
+                width: 1%;
+                float: none;
+            }
+
+            .navbar .nav li a {
+                font-weight: bold;
+                text-align: center;
+                border-left: 1px solid rgba(255, 255, 255, .75);
+                border-right: 1px solid rgba(0, 0, 0, .1);
+            }
+
+            .navbar .nav li:first-child a {
+                border-left: 0;
+                border-radius: 3px 0 0 3px;
+            }
+
+            .navbar .nav li:last-child a {
+                border-right: 0;
+                border-radius: 0 3px 3px 0;
+            }
+        </style>
+        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.js"></script>
+        <![endif]-->
+
+        <!-- Fav and touch icons -->
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+        <link rel="shortcut icon" href="assets/ico/favicon.png">
+    </head>
+
+    <body>
+
+        <div class="container">
+            <div class="masthead">
+                <h3 class="muted">Mutation report</h3>
+                <div class="card text-dark bg-light mb-3" style="max-width: 100%;">
+                    <div class="card-header"><b>Patient's Information</b></div>
+                    <div class="card-body">
+                        <div class="span4">Surname:<br>
+                            Name:<br>
+                            Sex:
+                        </div>
+                        <div class="span4">Age:<br>
+                            Address:<br></div>
+                        <div class="span3">...</div>
+                    </div>
+                </div>
+                <br>
+
+                <div class="navbar">
+
+                    <div class="navbar-inner">
+                        <div class="container">
+                            <ul class="nav">
+                                <li class="active"><a href="therapeutic.html">Therapeutic indication</a></li>
+                                <li><a href="drugdrug.html">Drug-Drug Interaction</a></li>
+                                <li><a href="drugfood.html">Drug-Food interaction</a></li>
+                                <li><a href="esmoguide.html">
+                                    <span style='color: #32502d'>E</span>
+                                    <span style='color: #6e1e50'>S</span>
+                                    <span style='color: #7d8232'>M</span>
+                                    <span style='color: #1f325f'>O</span> guidelines</a></li>
+                                <li><a href="pharmgkb.html">Drug response</a></li>
+                                <li><a href="mutations.html">Mutations annotations</a></li>
+                                <li><a href="offlabel.html">Off label drug</a></li>
+                                <li><a href="cosmic.html">Known resistance</a></li>
+                                <li><a href="reference.html">Reference Details</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- /.navbar -->
             </div>
-          </div>
-        </div><!-- /.navbar -->
-      </div>
 
 
+            <div id="detected-variant-therapeutic-benefit" class="section level2 tabset">
+                <div name="Detected_variant_therapeutic_benefit"
+                     data-unique="Detected_variant_therapeutic_benefit"></div>
+                <h2 class="hasAnchor">Detected variant therapeutic benefit<a
+                        href="#detected-variant-therapeutic-benefit" class="anchor-section"></a>
+                </h2>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a role="tab" data-toggle="tab" href="#variant-mutation"
+                                                              aria-controls="variant-mutation" aria-expanded="true">Variant
+                        Mutation</a></li>
+                    <li role="presentation" class=""><a role="tab" data-toggle="tab" href="#evidence-details"
+                                                        aria-controls="evidence-details" aria-expanded="false">Evidence
+                        Details</a></li>
+                    <li role="presentation" class=""><a role="tab" data-toggle="tab" href="#variant-details"
+                                                        aria-controls="variant-details" aria-expanded="false">Variant
+                        Details</a></li>
+                </ul>
 
-      <div id="detected-variant-therapeutic-benefit" class="section level2 tabset">
-        <div name="Detected_variant_therapeutic_benefit" data-unique="Detected_variant_therapeutic_benefit"></div>
-        <h2 class="hasAnchor">Detected variant therapeutic benefit<a href="#detected-variant-therapeutic-benefit" class="anchor-section"></a>
-        </h2>
-        <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a role="tab" data-toggle="tab" href="#variant-mutation" aria-controls="variant-mutation" aria-expanded="true">Variant Mutation</a></li>
-          <li role="presentation" class=""><a role="tab" data-toggle="tab" href="#evidence-details" aria-controls="evidence-details" aria-expanded="false">Evidence Details</a></li>
-          <li role="presentation" class=""><a role="tab" data-toggle="tab" href="#variant-details" aria-controls="variant-details" aria-expanded="false">Variant Details</a></li>
-        </ul>
+                <div class="tab-content">
+                    <div id="variant-mutation" class="section level3 tab-pane tabbed-pane active" role="tabpanel">
 
-        <div class="tab-content">
-          <div id="variant-mutation" class="section level3 tab-pane tabbed-pane active" role="tabpanel">
+                        <div class="accordion" id="accordion2">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <h4>
+                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                                           href="#collapseOne">
+                                            Mutations with clinical evidence
+                                        </a></h4>
+                                </div>
+                                <div id="collapseOne" class="accordion-body collapse in">
+                                    <div class="accordion-inner">
 
-            <div class="accordion" id="accordion2">
-              <div class="accordion-group">
-                <div class="accordion-heading">
-                  <h4>
+
+                                        <div id="no-data-available.-2" class="section level5">
+                                            <h5 class="hasAnchor">No data available.<a href="#no-data-available.-2"
+                                                                                       class="anchor-section"></a></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-group">
+                            <div class="accordion-heading">
+                                <h4><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                                       href="#collapseTwo">
+                                    Other evidence level
+                                </a></h4>
+                            </div>
+                            <div id="collapseTwo" class="accordion-body collapse">
+                                <div class="accordion-inner">
+
+                                    <div id="no-data-available.-2" class="section level5">
+                                        <h5 class="hasAnchor">No data available.<a href="#no-data-available.-2"
+                                                                                   class="anchor-section"></a></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="evidence-details" class="section level3 tab-pane tabbed-pane" role="tabpanel">
+                        <div id="gene-kras-1" class="section level4">
+
+                            <h5 class="hasAnchor">No data available.<a href="#no-data-available."
+                                                                       class="anchor-section"></a>
+                            </h5>
+                        </div>
+                    </div>
+                    <div id="variant-details" class="section level3 tab-pane tabbed-pane" role="tabpanel">
+
+                        <div id="gene-kras-2" class="section level4">
+
+                            <h5 class="hasAnchor">No data available.<a href="#no-data-available."
+                                                                       class="anchor-section"></a>
+                            </h5>
+                            <table class="table table-striped table-hover table-responsive"
+                                   style="margin-left: auto; margin-right: auto;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left;">
+                                            Variant
+                                        </th>
+                                        <th style="text-align:left;">
+                                            Variant_summary
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align:left;">
+                                            G13D
+                                        </td>
+                                        <td style="text-align:left;">
+                                            While the KRAS G13 region is a widely studied recurrent region in cancer,
+                                            its impact on clinical action is still debated. Often associated with tumors
+                                            that are wild-type for other drivers (EGFR and ALK specifically), the
+                                            prognosis for patients with this mutation seems to be worse than the KRAS
+                                            wild-type cohort. This mutation, along with the mutations affecting the
+                                            neighboring G12 position, may result in a less responsive tumor when treated
+                                            with first-generation TKI's like gefitinib. However, results are conflicting
+                                            with retrospective analyses suggesting a better response to EGFR-Inhibition.
+                                            A recent prospective phase-II study (12 patients, Schirripa et. al. 2015)
+                                            could not reproduce this finding and another prospective phase II trial is
+                                            currently ongoing.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="alert alert-error">
+                <i class="icon-warning-sign icon-black"></i> <b>Warning</b>: This is a clinical decision support system.
+                Always consult with a healthcare professional.
+            </div>
+        </div>
+
+
+        <!--
+              <ul class="nav nav-tabs" role="tablist"><li role="presentation" class="active"><a role="tab" data-toggle="tab" href="#variant-mutation" aria-controls="variant-mutation" aria-expanded="true">Variant Mutation</a></li><li role="presentation" class=""><a role="tab" data-toggle="tab" href="#evidence-details" aria-controls="evidence-details" aria-expanded="false">Evidence Details</a></li><li role="presentation" class=""><a role="tab" data-toggle="tab" href="#variant-details" aria-controls="variant-details" aria-expanded="false">Variant Details</a></li></ul>
+              <div class="accordion" id="accordion2">
+                <div class="accordion-group">
+                  <div class="accordion-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
                       Mutations with clinical evidence
-                    </a></h4>
+                    </a>
                   </div>
                   <div id="collapseOne" class="accordion-body collapse in">
                     <div class="accordion-inner">
-
-
-
-                      <div id="no-data-available.-2" class="section level5">
-<h5 class="hasAnchor">No data available.<a href="#no-data-available.-2" class="anchor-section"></a></h5>
-</div>
+                      Anim pariatur cliche...
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                      Other evidence level
+                    </a>
+                  </div>
+                  <div id="collapseTwo" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                      Anim pariatur cliche...
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="accordion-group">
-                <div class="accordion-heading">
-                  <h4><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-                    Other evidence level
-                  </a></h4>
-                </div>
-                <div id="collapseTwo" class="accordion-body collapse">
-                  <div class="accordion-inner">
-
-                    <div id="no-data-available.-2" class="section level5">
-<h5 class="hasAnchor">No data available.<a href="#no-data-available.-2" class="anchor-section"></a></h5>
-</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="evidence-details" class="section level3 tab-pane tabbed-pane" role="tabpanel">
-              <div id="gene-kras-1" class="section level4">
-                
-                <h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>
-</h5>
-</div>
-            </div>
-<div id="variant-details" class="section level3 tab-pane tabbed-pane" role="tabpanel">
-
-              <div id="gene-kras-2" class="section level4">
-                
-                <h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>
-</h5>
-<table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead><tr>
-<th style="text-align:left;">
-                        Variant
-                      </th>
-                      <th style="text-align:left;">
-                        Variant_summary
-                      </th>
-                    </tr></thead>
-<tbody><tr>
-<td style="text-align:left;">
-                        G13D
-                      </td>
-                      <td style="text-align:left;">
-                        While the KRAS G13 region is a widely studied recurrent region in cancer, its impact on clinical action is still debated. Often associated with tumors that are wild-type for other drivers (EGFR and ALK specifically), the prognosis for patients with this mutation seems to be worse than the KRAS wild-type cohort. This mutation, along with the mutations affecting the neighboring G12 position, may result in a less responsive tumor when treated with first-generation TKI's like gefitinib. However, results are conflicting with retrospective analyses suggesting a better response to EGFR-Inhibition. A recent prospective phase-II study (12 patients, Schirripa et. al. 2015) could not reproduce this finding and another prospective phase II trial is currently ongoing.
-                      </td>
-                    </tr></tbody>
-</table>
-</div>
-            </div>
-</div>
+            -->
 
 
-          </div>
+        <!-- Le javascript
+          ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script>
+            function myFunction1 () {
+                location.replace('reference.html');
+            }
+        </script>
+        <script src="assets/js/jquery.js"></script>
+        <script src="assets/js/bootstrap-transition.js"></script>
+        <script src="assets/js/bootstrap-alert.js"></script>
+        <script src="assets/js/bootstrap-modal.js"></script>
+        <script src="assets/js/bootstrap-dropdown.js"></script>
+        <script src="assets/js/bootstrap-scrollspy.js"></script>
+        <script src="assets/js/bootstrap-tab.js"></script>
+        <script src="assets/js/bootstrap-tooltip.js"></script>
+        <script src="assets/js/bootstrap-popover.js"></script>
+        <script src="assets/js/bootstrap-button.js"></script>
+        <script src="assets/js/bootstrap-collapse.js"></script>
+        <script src="assets/js/bootstrap-carousel.js"></script>
+        <script src="assets/js/bootstrap-typeahead.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $(window).load(function () {
+                    $('.show-all-start').each(function () {
+                        var t = $(this);
+                        t.find('a[role="tab"]').each(function () { $(this).click(); });
+                        t.find('a[role="tab"]').first().click();
+                    });
 
-          <div class="alert alert-error">
-            <i class="icon-warning-sign icon-black"></i> <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare professional.</div>
-          </div>
-
-
-<!-- 
-      <ul class="nav nav-tabs" role="tablist"><li role="presentation" class="active"><a role="tab" data-toggle="tab" href="#variant-mutation" aria-controls="variant-mutation" aria-expanded="true">Variant Mutation</a></li><li role="presentation" class=""><a role="tab" data-toggle="tab" href="#evidence-details" aria-controls="evidence-details" aria-expanded="false">Evidence Details</a></li><li role="presentation" class=""><a role="tab" data-toggle="tab" href="#variant-details" aria-controls="variant-details" aria-expanded="false">Variant Details</a></li></ul>
-      <div class="accordion" id="accordion2">
-        <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-              Mutations with clinical evidence
-            </a>
-          </div>
-          <div id="collapseOne" class="accordion-body collapse in">
-            <div class="accordion-inner">
-              Anim pariatur cliche...
-            </div>
-          </div>
-        </div>
-        <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-              Other evidence level
-            </a>
-          </div>
-          <div id="collapseTwo" class="accordion-body collapse">
-            <div class="accordion-inner">
-              Anim pariatur cliche...
-            </div>
-          </div>
-        </div>
-      </div>
-    -->
-
-
-    <!-- Le javascript
-      ================================================== -->
-      <!-- Placed at the end of the document so the pages load faster -->
-      <script>
-        function myFunction1() {
-          location.replace("reference.html")
-        }
-      </script>
-      <script src="../assets/js/jquery.js"></script>
-      <script src="../assets/js/bootstrap-transition.js"></script>
-      <script src="../assets/js/bootstrap-alert.js"></script>
-      <script src="../assets/js/bootstrap-modal.js"></script>
-      <script src="../assets/js/bootstrap-dropdown.js"></script>
-      <script src="../assets/js/bootstrap-scrollspy.js"></script>
-      <script src="../assets/js/bootstrap-tab.js"></script>
-      <script src="../assets/js/bootstrap-tooltip.js"></script>
-      <script src="../assets/js/bootstrap-popover.js"></script>
-      <script src="../assets/js/bootstrap-button.js"></script>
-      <script src="../assets/js/bootstrap-collapse.js"></script>
-      <script src="../assets/js/bootstrap-carousel.js"></script>
-      <script src="../assets/js/bootstrap-typeahead.js"></script>
-      <script type="text/javascript">
-        $(function() {
-          $(window).load(function() {
-            $('.show-all-start').each(function() {
-              var t=$(this);
-              t.find('a[role="tab"]').each(function () { $(this).click(); });
-              t.find('a[role="tab"]').first().click();
+                    $('a.my_ref_link').click(function () {
+                        var t = $(this), id = t.data('id'), o = $(id);
+                        o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
+                        var tabId = o.closest('.tab-pane').attr('id');
+                        console.log(tabId);
+                        o.closest('.tabset').find('a[href="#' + tabId + '"]').click();
+                        console.log(o.closest('.tabset').find('a[href="#' + tabId + '"]'));
+                        $('body').scrollTo(id);
+                    });
+                });
             });
-            
-            $('a.my_ref_link').click(function () {
-              var t = $(this), id=t.data('id'), o=$(id);
-              o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
-              var tabId = o.closest('.tab-pane').attr('id');
-              console.log(tabId);
-              o.closest('.tabset').find('a[href="#'+tabId+'"]').click()
-              console.log(o.closest('.tabset').find('a[href="#'+tabId+'"]'));
-              $('body').scrollTo(id)
-            });
-          });
-        });
-      </script>
-
+        </script>
     </body>
-    </html>
+</html>
