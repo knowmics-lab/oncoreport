@@ -32,6 +32,7 @@ import { TumorTypes } from '../../../../interfaces/enums';
 import useRepositoryQuery from '../../../hooks/useRepositoryQuery';
 import useRepositoryFetchOneOrNew from '../../../hooks/useRepositoryFetchOneOrNew';
 import useNotifications from '../../../hooks/useNotifications';
+import AutocompleteField from '../../ui/Form/AutocompleteField';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -80,7 +81,7 @@ function useValidationSchema() {
     telephone: Yup.string().notRequired().nullable().max(255),
     city: Yup.string().notRequired().nullable().max(255),
     primary_disease: Yup.object().shape({
-      disease: Yup.number().defined(),
+      disease: Yup.object().defined(),
       location: Yup.number().notRequired().nullable(),
       type: Yup.mixed()
         .oneOf([TumorTypes.primary, TumorTypes.secondary] as TumorTypes[])
@@ -101,21 +102,6 @@ export default function PatientForm() {
   const validationSchema = useValidationSchema();
   const { id } = useParams<{ id?: string }>();
   const { pushSimple } = useNotifications();
-
-  const [loadingDiseases, diseases] = useRepositoryQuery(
-    DiseaseRepository,
-    (builder) => builder.doNotPaginate(),
-    {
-      tumor: true,
-    }
-  );
-  const diseaseOptions = useMemo(() => {
-    if (loadingDiseases || !diseases) return {};
-    return diseases.reduce((prev: SimpleMapArray<string>, location) => {
-      prev[location.id] = location.name;
-      return prev;
-    }, {});
-  }, [diseases, loadingDiseases]);
 
   const [loadingLocations, locations] = useRepositoryQuery(
     LocationRepository,
@@ -142,19 +128,11 @@ export default function PatientForm() {
     id ? +id : undefined
   );
 
-  const loading = loadingPatient || loadingLocations || loadingDiseases;
+  const loading = loadingPatient || loadingLocations;
 
   const goBackUrl = useMemo(() => generatePath(Routes.PATIENTS), []);
 
-  const initialValue = useMemo(
-    () => ({
-      ...(patient?.toFormObject() ?? {}),
-      primary_disease: patient?.primary_disease?.toFormObject?.({
-        disease: { fullyDumpInFormObject: false },
-      }),
-    }),
-    [patient]
-  );
+  const initialValue = useMemo(() => patient?.toFormObject() ?? {}, [patient]);
 
   return (
     <Paper elevation={1} className={classes.paper}>
@@ -182,38 +160,6 @@ export default function PatientForm() {
             onSubmit={async (d) => {
               try {
                 setSubmitting(true);
-                /*
-                TODO: remove this code if everything works fine
-                const primaryDisease = d.primary_disease as unknown as Record<
-                  string,
-                  any
-                >;
-                const cleanedData = {
-                  code: d.code,
-                  first_name: d.first_name,
-                  last_name: d.last_name,
-                  age: d.age ? +d.age : undefined,
-                  gender: d.gender,
-                  email: d.email,
-                  fiscal_number: d.fiscal_number,
-                  telephone: d.telephone,
-                  city: d.city,
-                  primary_disease: {
-                    T: primaryDisease.T ? +primaryDisease.T : undefined,
-                    N: primaryDisease.N ? +primaryDisease.N : undefined,
-                    M: primaryDisease.M ? +primaryDisease.M : undefined,
-                    disease: +primaryDisease.disease,
-                    end_date: undefined,
-                    location: primaryDisease.location
-                      ? +primaryDisease.location
-                      : undefined,
-                    start_date: primaryDisease.start_date
-                      ? dayjs(primaryDisease.start_date)
-                      : dayjs(),
-                    type: primaryDisease.type,
-                  },
-                };
-                 */
                 await patient?.fill(d).save();
                 pushSimple('Patient saved!', TypeOfNotification.success);
                 if (patient?.wasRecentlyCreated) {
@@ -271,13 +217,22 @@ export default function PatientForm() {
               </Grid>
               <Grid container spacing={2}>
                 <Grid item md>
-                  <SelectField
+                  <AutocompleteField
                     name="primary_disease.disease"
                     label="Primary Disease"
-                    required
-                    emptyText="Select a disease"
-                    addEmpty
-                    options={diseaseOptions}
+                    repositoryToken={DiseaseRepository}
+                    queryBuilderCallback={(q) => q.paginate(100)}
+                    parameters={{
+                      tumor: true,
+                    }}
+                    getOptionSelected={(option, value) => {
+                      return option.id === value.id;
+                    }}
+                    getOptionLabel={(option) =>
+                      option
+                        ? `${option.icd_code} - ${option.name}`
+                        : 'Select a disease'
+                    }
                   />
                 </Grid>
                 <Grid item md>
