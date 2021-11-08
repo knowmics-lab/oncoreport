@@ -371,9 +371,9 @@ fi
 
 echo "Annotation of VCF files"
 
-#echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/MergeInfo.R\" \"$index\" \"$ONCOREPORT_DATABASES_PATH\" \"$ONCOREPORT_COSMIC_PATH\" \"$PATH_PROJECT\" \"$FASTQ1_NAME\" \"$tumor\" \"$type\""
-#echo "bash \"$ONCOREPORT_ESMO_PATH/get_cancer_gl.sh\" -t \"$site\" -i \"$FASTQ1_NAME\" -o \"$PATH_PROJECT\""
-#echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
+echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/MergeInfo.R\" \"$index\" \"$ONCOREPORT_DATABASES_PATH\" \"$ONCOREPORT_COSMIC_PATH\" \"$PATH_PROJECT\" \"$FASTQ1_NAME\" \"$tumor\" \"$type\""
+echo "php \"$ONCOREPORT_SCRIPT_PATH/../ws/artisan\" parse:esmo \"$tumor\" \"$PATH_PROJECT\""
+echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
 
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" "$index" "$ONCOREPORT_DATABASES_PATH" "$ONCOREPORT_COSMIC_PATH" "$PATH_PROJECT" "$FASTQ1_NAME" "$tumor" "$type" || exit_abnormal_code "Unable to prepare report input files" 119
 mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"

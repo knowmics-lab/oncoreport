@@ -8,14 +8,12 @@
 namespace App\Console\Commands;
 
 use App\Models\Disease;
-use Error;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use JsonException;
+use Throwable;
 
-class EsmoParser extends Command
+class TestWords extends Command
 {
 
     private const ESMO_PATH = 'app/esmo/';
@@ -27,14 +25,14 @@ class EsmoParser extends Command
      *
      * @var string
      */
-    protected $signature = 'parse:esmo {disease : The name of the patient disease} {output : The output folder}';
+    protected $signature = 'test:words';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Parse esmo guidelines given the cancer type building the HTML file needed for the report.';
+    protected $description = 'Parse all diseases to test for words distribution.';
 
     /**
      * Download a file or uses cached content if download is not working.
@@ -174,18 +172,6 @@ class EsmoParser extends Command
         return array_map(static fn($d) => $d[0], $scoredGuidelines);
     }
 
-    /**
-     * Find all arguments from the ESMO guideline
-     *
-     * @param  string  $cmsID
-     * @param  array  $idx
-     *
-     * @return array
-     */
-    protected function findRelatedArguments(string $cmsID, array &$idx): array
-    {
-        return array_values(array_filter($idx, static fn($d) => str_starts_with($d['jumpto'], $cmsID)));
-    }
 
     /**
      * Execute the console command.
@@ -194,48 +180,37 @@ class EsmoParser extends Command
      */
     public function handle(): int
     {
-        $diseaseName = Disease::where('icd_code', $this->argument('disease'))->firstOrFail(['name'])->name;
-        $outputDir = $this->argument('output');
-        if (!file_exists($outputDir) && !mkdir($outputDir, 0777, true) && !is_dir($outputDir)) {
-            $this->error('Unable to create output directory.');
-
-            return 101;
-        }
-        $this->info('Downloading ESMO guidelines index');
-        [$tocPath, $idxPath] = self::downloadEsmo();
-        if ($tocPath === null || $idxPath === null) {
-            $this->error('Unable to download ESMO guidelines!');
-
-            return 102;
-        }
         try {
-            $this->info('Processing guidelines for ' . $diseaseName);
+            [$tocPath,] = self::downloadEsmo();
             $toc = self::readJson($tocPath);
-            $matches = $this->findBestMatch($diseaseName, $toc);
-            $idx = self::readJson($idxPath);
-            $matches = array_filter(
-                array_map(
-                    fn($d) => $d + ['args' => $this->findRelatedArguments($d['cmsID'], $idx)],
-                    $matches
-                ),
-                static fn($d) => count($d['args']) > 0
-            );
-            if (count($matches) === 0) {
-                $this->warn('No matching diseases found in the ESMO guideline.');
-            }
-            if (file_put_contents(
-                    $outputDir . '/esmo_parsed.html',
-                    view('esmo.index', compact('matches'))->render()
-                ) === false) {
-                $this->error('Unable to render ESMO index file.');
+            $disease =
+                Disease::where('tumor', 1)
+                       ->get()
+                       ->map(function (Disease $d) use (&$toc) {
+                           $m = $this->findBestMatch($d->name, $toc);
+                           $guidelines = array_map(static fn($d) => $d['guidelineName'], $m);
 
-                return 103;
+                           return [
+                               $d->icd_code,
+                               $d->name,
+                               implode(';', $guidelines),
+                           ];
+                       });
+            $fp = fopen('tumors_to_ecmo.txt', 'wb');
+            fputcsv($fp, ['ICD_Code', 'Name', 'ECMO_Guidelines_Titles'], separator: "\t");
+            foreach ($disease as $d) {
+                fputcsv($fp, $d, separator: "\t");
             }
-            $this->info("Processing completed!");
-        } catch (JsonException $e) {
-            $this->error($e->getMessage());
+            fclose($fp);
+            $fp = fopen('ecmo_titles.txt', 'wb');
+            foreach ($toc as $t) {
+                fwrite($fp, $t['guidelineName'] . "\n");
+            }
+            fclose($fp);
+        } catch (Throwable $e) {
+            $this->error($e);
 
-            return 104;
+            return 1;
         }
 
         return 0;
