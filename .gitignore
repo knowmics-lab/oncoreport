@@ -6,3 +6,5 @@ onco.bkp.zip
 scripts/app/container/drugbank.xml
 
 scripts/app/container/databases/Disease.txt
+
+scripts/app/container/oncoreport/.Rhistory
