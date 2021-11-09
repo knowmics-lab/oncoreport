@@ -120,25 +120,29 @@ class TestWords extends Command
     protected function removeStopWords(string $text): string
     {
         if (!Cache::has('stopwords')) {
-            $words = collect(file(resource_path('stopwords.txt')))
+            $stopwords = collect(file(resource_path('stopwords.txt')))
                 ->map(fn($w) => trim($w))
                 ->map(fn($w) => '/\b' . preg_quote($w, '/') . '\b/iu')->toArray();
-            Cache::put('stopwords', $words);
+            Cache::put('stopwords', $stopwords);
         } else {
-            $words = Cache::get('stopwords');
+            $stopwords = Cache::get('stopwords');
         }
 
-        return trim(
+        $cleanText = trim(
             preg_replace(
                 '/\s+/',
                 ' ',
                 preg_replace(
-                    $words,
+                    $stopwords,
                     '',
                     Str::slug($text, ' ')
                 )
             )
         );
+        $splitText = array_filter(preg_split('/\s+/', $cleanText));
+        asort($splitText);
+
+        return implode(' ', $splitText);
     }
 
     /**

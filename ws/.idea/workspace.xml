@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/stopwords.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/stopwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/stopwords.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,9 +34,9 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -346,6 +343,7 @@
       <workItem from="1636210602875" duration="7755000" />
       <workItem from="1636271253469" duration="15932000" />
       <workItem from="1636383676455" duration="9244000" />
+      <workItem from="1636445163760" duration="2180000" />
     </task>
     <servers />
   </component>

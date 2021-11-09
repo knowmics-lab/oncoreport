@@ -40,6 +40,8 @@ elsewhere
 classified
 acute
 tumour
+tumor
+tumors
 benign
 cartilage
 chronic
