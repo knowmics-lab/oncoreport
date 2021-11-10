@@ -210,7 +210,7 @@ drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t", quot
 def$Drug <- as.character(def$Drug)
 m <- max(sapply(strsplit(def$Drug, ",", fixed = TRUE), length))
 if (m > 0) {
-  b <- paste0("Drug_", seq(from=1, to=m, by=-1))
+  b <- paste0("Drug_", seq(from=m, to=1, by=-1))
   def <- suppressWarnings(separate(def, Drug, b, sep = ",", remove = FALSE))
   for (i in 1:m) {
     colnames(drug)[1] <- paste0("Drug_", i)
