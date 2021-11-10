@@ -5,6 +5,8 @@ suppressPackageStartupMessages({
   library(data.table)
   library(RCurl)
   library(tidyr)
+  library(fuzzyjoin)
+  library(IRanges)
 })
 
 option_list <- list(
@@ -137,7 +139,7 @@ d <- join.and.write(
 
 #Merge with COSMIC
 cat("Annotating with COSMIC...\n")
-d <- join.and.write(
+cosmic <- join.and.write(
   variants = pat,
   db = "cosmic_database",
   selected.columns = NULL,
@@ -149,7 +151,7 @@ d <- join.and.write(
 
 #Merge with PharmGKB
 cat("Annotating with PharmGKB...\n")
-d <- join.and.write(
+pharm <- join.and.write(
   variants = pat,
   db = "pharm_database",
   selected.columns = c("Database", "Gene", "Variant_summary", "Evidence_statement",
@@ -165,13 +167,18 @@ d <- join.and.write(
 #Merge with RefGene
 cat("Annotating with RefGene...\n")
 data <- fread(paste0(database.path, "/refgene_database_", genome, ".txt"), quote = "")
-data <- pat %>%
-  left_join(data, by = c("Chromosome")) %>%
-  filter(Stop >= exonStarts & Stop <= exonEnds)
+tmp.pat <- pat
+tmp.pat$exonStarts <- tmp.pat$Stop
+tmp.pat$exonEnds   <- tmp.pat$Stop
+data <- genome_left_join(
+  tmp.pat, data,
+  by = c("Chromosome", "exonStarts", "exonEnds")
+)
 if (pipeline.type == "tumnorm") {
   data$Type <- rep("NA", nrow(data))
 }
-data <- data[, c("Chromosome", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
+data <- data[, c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
+colnames(data)[1] <- "Chromosome"
 data <- unique(data)
 write.table(data, paste0(project.path, "/txt/", sample.name, "_refgene.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
@@ -211,7 +218,6 @@ if (m > 0) {
     drug[, 2] <- as.character(drug[, 2])
     def <- merge(def, drug, all.x = TRUE)
     def[length(def)][is.na(def[length(def)])] <- ""
-    print(head(def))
   }
   x1 <- grepl("approved", colnames(def))
   x1 <- def[x1]
@@ -231,12 +237,13 @@ def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = T)
 cat("Computing scores...\n")
 def$Chromosome <- gsub("chr", "", def$Chromosome)
 def$Chromosome <- as.numeric(def$Chromosome)
-def$Start <- as.numeric(def$Start)
-def$Stop <- as.numeric(def$Stop)
-a <- read.csv(paste0(database.path, "/Colnames_dbNSFP.txt"), sep = "\t")
-a <- as.vector(t(a))
-a[1:5] <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
-files_db <- list.files(paste0(database.path, "/", genome, "/dbNSFP"), pattern = "*.gz", full.names = TRUE, recursive = TRUE)
+def$Start      <- as.numeric(def$Start)
+def$Stop       <- as.numeric(def$Stop)
+a              <- read.csv(paste0(database.path, "/Colnames_dbNSFP.txt"), sep = "\t")
+a              <- as.vector(t(a))
+a[1:5]         <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
+files_db       <- list.files(paste0(database.path, "/", genome, "/dbNSFP"), pattern = "*.gz", full.names = TRUE, recursive = TRUE)
+
 db_join <- function(i, y) {
   x <- fread(i)
   colnames(x) <- a
@@ -273,11 +280,9 @@ def$Chromosome <- paste0("chr", def$Chromosome)
 write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 #Food interactions
-pharm <- read.csv(paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
-                  sep = "\t", colClasses = c("character"))
 list.drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
-drugfood <- suppressMessages(suppressWarnings(read_csv(paste0(database.path, "/drugfood_database.csv"))))
-drugfood <- drugfood[drugfood$Drug %in% list.drugs,]
+drugfood   <- suppressMessages(suppressWarnings(read_csv(paste0(database.path, "/drugfood_database.csv"))))
+drugfood   <- drugfood[drugfood$Drug %in% list.drugs,]
 write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 
@@ -285,15 +290,13 @@ write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"
 #Create Pubmed URLs and links to clinical trials
 
 #Leading disease
-cat("Searching URLs related to leading disease...\n")
+cat("Searching URLs related to the primary disease...\n")
 leading.urls(def)
 #OFF - Other diseases
-cat("Searching URLs related to other diseases...\n")
+cat("Searching URLs related to the other diseases...\n")
 off.urls(def)
 #Cosmic
 cat("Searching COSMIC URLs...\n")
-cosmic <- read.csv(paste0(project.path, "/txt/", sample.name, "_cosmic.txt"),
-                   sep = "\t", colClasses = c("character"))
 cosmic.urls(cosmic)
 #PharmGKB
 cat("Searching PharmGKB URLs...\n")

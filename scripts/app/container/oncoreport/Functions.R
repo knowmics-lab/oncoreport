@@ -1,18 +1,12 @@
-create.dummy.type <- function(x)
-{
-  if (nrow(x) > 0) {
-    x$Type <- "NA"
-  } else {
-    x$Type <- character()
-  }
-  x
+create.dummy.type <- function(x) {
+  x$Type = rep("NA", nrow(x))
+  return (x)
 }
 
-pharm.urls <- function(x)
-{
+pharm.urls <- function(x) {
   x[is.na(x)] <- " "
-  x$Drug <- as.character(x$Drug, levels = (x$Drug))
-  x$Gene <- as.character(x$Gene, levels = (x$Gene))
+  x$Drug <- as.character(x$Drug)
+  x$Gene <- as.character(x$Gene)
   x$Clinical_significance <- gsub(pattern = " ", replace = "", x$Clinical_significance)
   x <- x[order(x$Gene, x$Variant, x$Drug, x$Clinical_significance, x$PMID),]
   list.pubmed <- list.pubmed.urls(x, "pharm")

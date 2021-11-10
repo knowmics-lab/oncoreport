@@ -94,7 +94,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
 
         return [
             'paired'        => ['filled', 'boolean'],
-            'tumor'         => ['required', 'array'],
+            'tumor'         => ['filled', 'array'],
             'tumor.fastq1'  => [
                 'nullable',
                 'required_without_all:parameters.tumor.ubam,parameters.tumor.bam,parameters.vcf',
@@ -117,7 +117,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 'nullable',
                 'required_without_all:parameters.tumor.fastq1,parameters.tumor.ubam,parameters.vcf',
             ],
-            'normal'        => ['required', 'array'],
+            'normal'        => ['filled', 'array'],
             'normal.fastq1' => [
                 'nullable',
                 'required_with:parameters.tumor.fastq1',
