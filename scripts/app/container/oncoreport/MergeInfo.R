@@ -205,27 +205,23 @@ def <- merge(civic, cgi, all = TRUE)
 def$Clinical_significance[def$Clinical_significance == "Responsive"] <- "Sensitivity/Response"
 def$Clinical_significance[def$Clinical_significance == "Resistant"] <- "Resistance"
 
-cat("Annotating with Agency Approval...\n")
-drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t", quote = "", na.strings = c("", "NA"))
-def$Drug <- as.character(def$Drug)
-m <- max(sapply(strsplit(def$Drug, ",", fixed = TRUE), length))
-if (m > 0) {
-  b <- paste0("Drug_", seq(from=m, to=1, by=-1))
-  def <- suppressWarnings(separate(def, Drug, b, sep = ",", remove = FALSE))
-  for (i in 1:m) {
-    colnames(drug)[1] <- paste0("Drug_", i)
-    colnames(drug)[2] <- paste0("approved_", i)
-    drug[, 2] <- as.character(drug[, 2])
-    def <- merge(def, drug, all.x = TRUE)
-    def[length(def)][is.na(def[length(def)])] <- ""
-  }
-  x1 <- grepl("approved", colnames(def))
-  x1 <- def[x1]
-  a <- colnames(x1)
-  def <- def %>% unite(Approved, all_of(a), sep = ",", na.rm = FALSE)
-} else {
-  def$Approved <- rep("", nrow(def))
-}
+cat("Annotating Agency Approval...\n")
+drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t", 
+                 quote = "", na.strings = c("", "NA"), 
+                 stringsAsFactors = FALSE)
+drug.map <- setNames(drug[[2]], drug[[1]])
+def$Approved <- unname(sapply(
+  def$Drug, 
+  function(x) (
+    ifelse(is.na(x), "", paste0(
+      sapply(
+        drug.map[unlist(strsplit(x, ",", fixed = TRUE))], 
+        function(x) (ifelse(is.na(x), "", x))), 
+      collapse = ",")
+    )
+  )
+))
+def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = T)
 def <- def[, c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
                "Evidence_type", "Evidence_level", "Evidence_direction", "Clinical_significance",
                "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome",
@@ -234,21 +230,18 @@ def <- def[, c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interacti
 def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = T)
 
 #Score
-cat("Computing scores...\n")
-def$Chromosome <- gsub("chr", "", def$Chromosome)
-def$Chromosome <- as.numeric(def$Chromosome)
-def$Start      <- as.numeric(def$Start)
-def$Stop       <- as.numeric(def$Stop)
-a              <- read.csv(paste0(database.path, "/Colnames_dbNSFP.txt"), sep = "\t")
-a              <- as.vector(t(a))
-a[1:5]         <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
-files_db       <- list.files(paste0(database.path, "/", genome, "/dbNSFP"), pattern = "*.gz", full.names = TRUE, recursive = TRUE)
+cat("Computing scores with dbNSFP...\n")
+def$Start <- as.numeric(def$Start)
+def$Stop  <- as.numeric(def$Stop)
+a         <- readLines(paste0(database.path, "/Colnames_dbNSFP.txt"))[-1]
+a[1:5]    <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
+files_db  <- list.files(paste0(database.path, "/", genome, "/dbNSFP"),
+                        pattern = "*.gz", full.names = TRUE, recursive = TRUE)
 
 db_join <- function(i, y) {
   x <- fread(i)
   colnames(x) <- a
-  colnames(x)[1] <- "Chromosome"
-  x$Chromosome <- as.numeric(x$Chromosome)
+  x$Chromosome <- paste0("chr", x$Chromosome)
   return (suppressMessages(x %>% inner_join(y)))
 }
 tot <- lapply(files_db, db_join, def)
@@ -276,7 +269,6 @@ if (nrow(tot) != 0) {
 } else {
   def$Score <- rep(0, nrow(def))
 }
-def$Chromosome <- paste0("chr", def$Chromosome)
 write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 #Food interactions
@@ -291,10 +283,10 @@ write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"
 
 #Leading disease
 cat("Searching URLs related to the primary disease...\n")
-leading.urls(def)
+leading.urls(def, leading.disease)
 #OFF - Other diseases
 cat("Searching URLs related to the other diseases...\n")
-off.urls(def)
+off.urls(def, leading.disease)
 #Cosmic
 cat("Searching COSMIC URLs...\n")
 cosmic.urls(cosmic)
