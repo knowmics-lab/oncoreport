@@ -195,7 +195,7 @@ class TestWords extends Command
                            $guidelines = array_map(static fn($d) => $d['guidelineName'], $m);
 
                            return [
-                               $d->icd_code,
+                               $d->doid,
                                $d->name,
                                implode(';', $guidelines),
                            ];

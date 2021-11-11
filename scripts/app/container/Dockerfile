@@ -78,6 +78,7 @@ ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_inn
 ADD databases                                       /databases
 ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
 ADD oncoreport/CreateReport.R                       /CreateReport.R
+ADD oncoreport/doi_parser.R                         /doi_parser.R
 ADD oncoreport/Functions.R                          /Functions.R
 ADD oncoreport/genkey.sh                            /genkey.sh
 ADD oncoreport/get_drug.R                           /get_drug.R

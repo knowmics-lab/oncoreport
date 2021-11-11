@@ -16,7 +16,7 @@ class Disease extends Resource
      * @var array
      */
     protected $fillable = [
-        'icd_code',
+        'doid',
         'name',
         'tumor',
     ];

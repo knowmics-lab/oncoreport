@@ -195,7 +195,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 '-g',
                 $patient->gender,
                 '-t',
-                $patient->primaryDisease->disease->icd_code,
+                $patient->primaryDisease->disease->doid,
                 '-pp',
                 $outputAbsolute,
                 '-th',

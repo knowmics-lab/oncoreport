@@ -194,7 +194,7 @@ class EsmoParser extends Command
      */
     public function handle(): int
     {
-        $diseaseName = Disease::where('icd_code', $this->argument('disease'))->firstOrFail(['name'])->name;
+        $diseaseName = Disease::where('doid', $this->argument('disease'))->firstOrFail(['name'])->name;
         $outputDir = $this->argument('output');
         if (!file_exists($outputDir) && !mkdir($outputDir, 0777, true) && !is_dir($outputDir)) {
             $this->error('Unable to create output directory.');

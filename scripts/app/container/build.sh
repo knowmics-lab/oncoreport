@@ -1,24 +1,6 @@
 #!/usr/bin/env bash
 
-[ -f "./databases/Disease.txt" ] && mv ./databases/Disease.txt ./databases/Disease_old.txt
-CURR_DIR="$(pwd)"
-cd "../icd_parser/" || exit 1
-bash process_icd11.bash
-if [ -f "icd11_diseases.txt" ]; then
-  mv icd11_diseases.txt "$CURR_DIR/databases/Disease.txt"
-else
-  if [ -f "$CURR_DIR/databases/Disease_old.txt" ]; then
-    if ! mv "$CURR_DIR/databases/Disease_old.txt" "$CURR_DIR/databases/Disease.txt"; then
-      echo "Unable to generate ICD11 database or restore the previous database"
-      exit 1
-    fi
-  else
-    echo "Unable to generate ICD11 database or restore the previous database"
-    exit 1
-  fi
-fi
-[ -f "$CURR_DIR/databases/Disease_old.txt" ] && rm "$CURR_DIR/databases/Disease_old.txt"
-cd "$CURR_DIR" || exit 1
+[ -f "./databases/Disease.txt" ] && rm ./databases/Disease.txt
 
 if [ ! -f ws.tgz ]; then
   mkdir repo || exit

@@ -111,19 +111,20 @@ cd /oncoreport/tmp/ || exit 99
 # Copy scripts
 mv /CreateCivicBed.R /oncoreport/scripts || exit 118
 mv /CreateReport.R /oncoreport/scripts || exit 119
-mv /Functions.R /oncoreport/scripts || exit 120
-mv /get_drug.R /oncoreport/scripts || exit 121
-mv /imports.R /oncoreport/scripts || exit 122
-mv /MergeInfo.R /oncoreport/scripts || exit 123
-mv /path.bash /oncoreport/scripts || exit 124
-mv /pipeline_liquid_biopsy.bash /oncoreport/scripts || exit 125
-mv /pipeline_tumVSnormal.bash /oncoreport/scripts || exit 126
-mv /prepare_cosmic.bash /oncoreport/scripts || exit 127
-mv /prepare_indexes.bash /oncoreport/scripts || exit 128
-mv /PrepareCOSMIC.R /oncoreport/scripts || exit 129
-mv /PrepareDatabases_build.R /oncoreport/scripts || exit 130
-mv /ProcessVariantTable.R /oncoreport/scripts || exit 131
-mv /setup.bash /oncoreport/scripts || exit 132
+mv /doi_parser.R /oncoreport/scripts || exit 120
+mv /Functions.R /oncoreport/scripts || exit 121
+mv /get_drug.R /oncoreport/scripts || exit 122
+mv /imports.R /oncoreport/scripts || exit 123
+mv /MergeInfo.R /oncoreport/scripts || exit 124
+mv /path.bash /oncoreport/scripts || exit 125
+mv /pipeline_liquid_biopsy.bash /oncoreport/scripts || exit 126
+mv /pipeline_tumVSnormal.bash /oncoreport/scripts || exit 127
+mv /prepare_cosmic.bash /oncoreport/scripts || exit 128
+mv /prepare_indexes.bash /oncoreport/scripts || exit 129
+mv /PrepareCOSMIC.R /oncoreport/scripts || exit 130
+mv /PrepareDatabases_build.R /oncoreport/scripts || exit 131
+mv /ProcessVariantTable.R /oncoreport/scripts || exit 132
+mv /setup.bash /oncoreport/scripts || exit 133
 
 # Download drugbank.xml file
 DRUGBANK_USERNAME="$(head -n 1 /run/secrets/drugbank)"
@@ -134,8 +135,8 @@ DRUGBANK_PASSWORD="$(tail -n 1 /run/secrets/drugbank)"
     unzip drugbank.zip &&
     mv "full database.xml" /oncoreport/databases/drugbank.xml &&
     rm drugbank.zip
-) || exit 133
-[[ ! -f /oncoreport/databases/drugbank.xml ]] && echo "Unable to download drugbank.xml" && exit 133
+) || exit 134
+[[ ! -f /oncoreport/databases/drugbank.xml ]] && echo "Unable to download drugbank.xml" && exit 134
 
 # Build database files
 (
@@ -145,6 +146,7 @@ DRUGBANK_PASSWORD="$(tail -n 1 /run/secrets/drugbank)"
     CrossMap.py bed /oncoreport/databases/hg19ToHg38.over.chain.gz /oncoreport/databases/civic_bed.bed /oncoreport/databases/civic_bed_hg38.bed &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg19 &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg38 &&
+    Rscript /oncoreport/script/doi_parser.R -c /oncoreport/databases/civic.txt -g /oncoreport/databases/cgi_original_hg19.txt -d /oncoreport/databases/diseases_map.txt -o /oncoreport/databases/Disease.txt &&
     rm /oncoreport/databases/drugbank.xml
 ) || exit 138
 
