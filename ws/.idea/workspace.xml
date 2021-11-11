@@ -2,26 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/composer.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/composer.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/disease.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/download_icd.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/prepare_icd_to_disease.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/icd_parser/process_icd11.bash" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/DiseaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Disease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Disease.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_110601_create_diseases_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DiseasesTableSeeder.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
