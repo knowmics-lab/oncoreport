@@ -2,6 +2,7 @@ suppressPackageStartupMessages({
   library(optparse)
   library(readr)
   library(dplyr)
+  library(ontologyIndex)
 })
 
 option_list <- list(
@@ -39,9 +40,9 @@ onto <- get_ontology(tmp.file)
 df.onto <- data.frame(doid=gsub("DOID:", "", names(onto$name)), name=unname(onto$name), key=gsub("'s", "", gsub("ö", "oe", tolower(unname(onto$name)), fixed = TRUE), fixed = TRUE), doid.orig=names(onto$name))
 
 
-civic       <- read_delim(opt$civic, delim = "\t", escape_double = FALSE, trim_ws = TRUE)
-cgidb       <- read_delim(opt$cgi, delim = "\t", escape_double = FALSE, trim_ws = TRUE)
-disease.map <- read_delim(opt$diseases, delim = "\t", escape_double = FALSE, trim_ws = TRUE)
+civic       <- suppressWarnings(suppressMessages(read_delim(opt$civic, delim = "\t", escape_double = FALSE, trim_ws = TRUE)))
+cgidb       <- suppressWarnings(suppressMessages(read_delim(opt$cgi, delim = "\t", escape_double = FALSE, trim_ws = TRUE)))
+disease.map <- suppressWarnings(suppressMessages(read_delim(opt$diseases, delim = "\t", escape_double = FALSE, trim_ws = TRUE)))
 
 civic.diseases <- unique(civic[,c("disease", "doid")])
 civic.diseases$key <- gsub("'s", "", gsub("ö", "oe", tolower(civic.diseases$disease), fixed = TRUE), fixed = TRUE)
@@ -83,6 +84,9 @@ onto.remaining  <- df.onto[!(df.onto$doid.orig %in% na.omit(all.db.diseases$rdoi
 all.onto.diseases <- data.frame(disease=onto.remaining$name, name=onto.remaining$name, rdoid=onto.remaining$doid.orig, tumor=0, general=0)
 final.db.diseases <- rbind(all.db.diseases, all.onto.diseases)
 colnames(final.db.diseases) <- c("Database_name", "DO_name", "DOID", "tumor", "general")
-write.table(final.db.diseases, file = opt$output, append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
+final.db.diseases <- final.db.diseases[grepl("^DOID", final.db.diseases$DOID),]
+final.db.diseases <- final.db.diseases[!onto$obsolete[final.db.diseases$DOID],]
+final.db.diseases$DO_name <- gsub("–", "-", final.db.diseases$DO_name)
+write.table(final.db.diseases, file = opt$output, append = FALSE, quote = TRUE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
 unlink(tmp.file)
