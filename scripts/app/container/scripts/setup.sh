@@ -146,9 +146,11 @@ DRUGBANK_PASSWORD="$(tail -n 1 /run/secrets/drugbank)"
     CrossMap.py bed /oncoreport/databases/hg19ToHg38.over.chain.gz /oncoreport/databases/civic_bed.bed /oncoreport/databases/civic_bed_hg38.bed &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg19 &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg38 &&
-    Rscript /oncoreport/scripts/doi_parser.R -c /oncoreport/databases/civic.txt -g /oncoreport/databases/cgi_original_hg19.txt -d /oncoreport/databases/diseases_map.txt -o /oncoreport/databases/Disease.txt &&
     rm /oncoreport/databases/drugbank.xml
 ) || exit 138
+
+## TODO: include the following line in the build database block!
+# Rscript /oncoreport/scripts/doi_parser.R -c /oncoreport/databases/civic.txt -g /oncoreport/databases/cgi_original_hg19.txt -d /oncoreport/databases/diseases_map.txt -o /oncoreport/databases/Disease.txt &&
 
 # Apply MYSQL configuration fixes
 apply_configuration_fixes() {
