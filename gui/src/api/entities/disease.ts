@@ -8,7 +8,7 @@ export default class Disease extends Entity {
     fillable: true,
     readonly: true,
   })
-  public icd_code = '';
+  public doid = '';
 
   @field({
     fillable: true,

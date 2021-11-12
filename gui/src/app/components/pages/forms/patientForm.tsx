@@ -229,9 +229,7 @@ export default function PatientForm() {
                       return option.id === value.id;
                     }}
                     getOptionLabel={(option) =>
-                      option
-                        ? `${option.icd_code} - ${option.name}`
-                        : 'Select a disease'
+                      option ? option.name : 'Select a disease'
                     }
                   />
                 </Grid>

@@ -1,7 +1,7 @@
 import { Entity } from '../common';
 
 export interface Disease extends Entity {
-  icd_code: string;
+  doid: string;
   name: string;
   tumor: boolean;
 }
