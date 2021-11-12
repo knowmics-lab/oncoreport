@@ -8,7 +8,7 @@ option_list <- list(
   make_option(c("-c", "--civic"), type="character", default=NULL, help="CIVIC hg19 database file", metavar="character"),
   make_option(c("-g", "--cgi"), type="character", default=FALSE, help="CGI hg19 database file", metavar="character"),
   make_option(c("-d", "--diseases"), type="character", default=FALSE, help="diseases map file", metavar="character"),
-  make_option(c("-o", "--output"), type="character", default=NULL, help="output file", metavar="character"),
+  make_option(c("-o", "--output"), type="character", default=NULL, help="output file", metavar="character")
 ); 
 
 opt_parser <- OptionParser(option_list=option_list)
