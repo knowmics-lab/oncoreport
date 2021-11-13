@@ -5,9 +5,7 @@ other
 specified
 organs
 or
-adenocarcinoma
 cancer
-cell
 gland
 and
 of
@@ -38,13 +36,10 @@ site
 not
 elsewhere
 classified
-acute
 tumour
 tumor
 tumors
 benign
-cartilage
-chronic
 parts
 situ
 system
@@ -53,7 +48,6 @@ otherwise
 male
 defined
 grade
-female
 involving
 overlapping
 mixed
@@ -77,7 +71,6 @@ specialised
 low
 high
 part
-germ
 except
 undifferentiated
 neoplastic

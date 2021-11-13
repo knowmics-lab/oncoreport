@@ -378,7 +378,7 @@ echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" 
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 119
 mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
 chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
-php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" parse:esmo "$tumor" "$PATH_PROJECT"
+php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT"
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
 

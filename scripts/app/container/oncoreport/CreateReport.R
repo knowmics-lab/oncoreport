@@ -115,9 +115,9 @@ try({
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   x$id <- 1:nrow(x)
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code == pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID == pt_tumor, , drop = F]
+  x$DOID <- NULL
 
   empty <- T
   if (nrow(x) != 0)
@@ -467,9 +467,9 @@ try({
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   x$id <- 1:nrow(x)
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code == pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID == pt_tumor, , drop = F]
+  x$DOID <- NULL
   empty <- T
   if (nrow(x) != 0)
   {
@@ -583,9 +583,9 @@ try({
   colnames(x)[1] <- "Disease"
   #cat("2\n")
   x[is.na(x)] <- " "
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code == pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID == pt_tumor, , drop = F]
+  x$DOID <- NULL
   if (nrow(x) > 0) {
     x$Var_base <- as.character(x$Var_base)
     x$Ref_base <- as.character(x$Ref_base)
@@ -642,7 +642,7 @@ write_html(therapeutic, paste0(path_project, "/", pt_fastq, "/therapeutic.html")
 #DRUG INTERACTIONS TAB
 #
 if (!require("DT")) install.packages("DT")
-cat("DRUG INTERACTIONS - ", cargs,"\n")
+cat("DRUG INTERACTIONS - ", cargs, "\n")
 drugs <- read.csv(paste0(path_db, "/drug_drug_interactions_light.txt"), sep = "\t")
 drug_ind <- drug_recommended
 #Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere
@@ -1015,9 +1015,9 @@ try({
   x$Disease <- NULL
   x$Category <- NULL
   colnames(x)[1] <- "Disease"
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code != pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID != pt_tumor, , drop = F]
+  x$DOID <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1336,9 +1336,9 @@ try({
   x$Category <- NULL
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code != pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID != pt_tumor, , drop = F]
+  x$DOID <- NULL
   sub <- x[x$Drug_interaction_type == "Substitutes",]
   x <- x[x$Drug_interaction_type != "Substitutes",]
   sub <- sub %>%
@@ -1440,9 +1440,9 @@ try({
   colnames(x)[1] <- "Disease"
   x[is.na(x)] <- " "
   cat("OFFLABEL-VD-1\n")
-  x <- separate_rows(x, ICD.11_Code, sep = ",")
-  x <- x[x$Evidence_direction == "Supports" & x$ICD.11_Code != pt_tumor, , drop = F]
-  x$ICD.11_Code <- NULL
+  x <- separate_rows(x, DOID, sep = ",")
+  x <- x[x$Evidence_direction == "Supports" & x$DOID != pt_tumor, , drop = F]
+  x$DOID <- NULL
   x$Var_base <- as.character(x$Var_base)
   x$Ref_base <- as.character(x$Ref_base)
   if (nrow(x) > 0)
@@ -1743,7 +1743,7 @@ try({
   colnames(dis)[1] <- "Disease"
   x_url <- merge(dis, x_url, by = "Disease")
   x$Category <- NULL
-  x$ICD.11_Code <- NULL
+  x$DOID <- NULL
   x_url$Disease <- NULL
   colnames(x_url)[1] <- "Disease"
   x_url <- x_url[!duplicated(x_url[, c("PMID")]),]
@@ -1839,5 +1839,5 @@ xml_replace(children_esmoguide, xml_esmo)
 write_html(esmoguide, paste0(path_project, "/", pt_fastq, "/esmoguide.html"))
 
 cat("Copying assets\n")
-file.copy(file.path(path_html_source, "assets"), file.path(path_project, pt_fastq), recursive=TRUE)
+file.copy(file.path(path_html_source, "assets"), file.path(path_project, pt_fastq), recursive = TRUE)
 cat("OK!\n")

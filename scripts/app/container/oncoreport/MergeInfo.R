@@ -11,13 +11,13 @@ suppressPackageStartupMessages({
 
 option_list <- list(
   make_option(c("-g", "--genome"), type="character", default=NULL, help="human genome version (hg19 or hg38)", metavar="character"),
-  make_option(c("-d", "--database"), type="character", default=FALSE, help="databases folder", metavar="character"),
-  make_option(c("-c", "--cosmic"), type="character", default=FALSE, help="cosmic folder", metavar="character"),
+  make_option(c("-d", "--database"), type="character", default=NULL, help="databases folder", metavar="character"),
+  make_option(c("-c", "--cosmic"), type="character", default=NULL, help="cosmic folder", metavar="character"),
   make_option(c("-p", "--project"), type="character", default=NULL, help="project folder", metavar="character"),
   make_option(c("-s", "--sample"), type="character", default=NULL, help="sample name", metavar="character"),
   make_option(c("-t", "--tumor"), type="character", default=NULL, help="patient tumor", metavar="character"),
   make_option(c("-a", "--pipeline"), type="character", default=NULL, help="pipeline type (biopsy or tumnorm)", metavar="character")
-); 
+);
 
 opt_parser <- OptionParser(option_list=option_list)
 opt        <- parse_args(opt_parser)
@@ -94,29 +94,15 @@ colnames(pat)[2] <- "Stop"
 colnames(pat)[3] <- "Ref_base"
 colnames(pat)[4] <- "Var_base"
 
-join.and.write <- function(variants, db, selected.columns = NULL, output.file, genome, db.path, check.for.type) {
-  data <- fread(paste0(db.path, "/", db, "_", genome, ".txt", quote = ""))
-  data <- suppressMessages(data %>% inner_join(variants))
-  if (check.for.type) {
-    data$Type <- rep("NA", nrow(data))
-  }
-  if (!is.null(selected.columns)) {
-    data <- data.frame(data)[,selected.columns,drop=FALSE]
-  }
-  write.table(data, output.file, quote = FALSE, row.names = FALSE, 
-              na = "NA", sep = "\t")
-  return (data.frame(data))
-}
-
 ## Merge with CIVIC
 cat("Annotating with CIVIC...\n")
 civic <- join.and.write(
   variants = pat,
   db = "civic_database",
-  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug", 
-                       "Drug_interaction_type", "Evidence_type", "Evidence_level", 
-                       "Evidence_direction", "Clinical_significance", 
-                       "Evidence_statement", "Variant_summary", "PMID", "Citation", 
+  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug",
+                       "Drug_interaction_type", "Evidence_type", "Evidence_level",
+                       "Evidence_direction", "Clinical_significance",
+                       "Evidence_statement", "Variant_summary", "PMID", "Citation",
                        "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_civic.txt"),
   genome = genome,
@@ -155,8 +141,8 @@ pharm <- join.and.write(
   variants = pat,
   db = "pharm_database",
   selected.columns = c("Database", "Gene", "Variant_summary", "Evidence_statement",
-                       "Evidence_level", "Clinical_significance", "PMID", "Drug", 
-                       "PharmGKB_ID", "Variant", "Chromosome", "Start", "Stop", 
+                       "Evidence_level", "Clinical_significance", "PMID", "Drug",
+                       "PharmGKB_ID", "Variant", "Chromosome", "Start", "Stop",
                        "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
   genome = genome,
@@ -188,10 +174,10 @@ cat("Annotating with CGI...\n")
 cgi <- join.and.write(
   variants = pat,
   db = "cgi_database",
-  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug", 
-                       "Drug_interaction_type", "Evidence_type", "Evidence_level", 
-                       "Evidence_direction", "Clinical_significance", 
-                       "Evidence_statement", "Variant_summary", "PMID", "Citation", 
+  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug",
+                       "Drug_interaction_type", "Evidence_type", "Evidence_level",
+                       "Evidence_direction", "Clinical_significance",
+                       "Evidence_statement", "Variant_summary", "PMID", "Citation",
                        "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_cgi.txt"),
   genome = genome,
@@ -206,17 +192,17 @@ def$Clinical_significance[def$Clinical_significance == "Responsive"] <- "Sensiti
 def$Clinical_significance[def$Clinical_significance == "Resistant"] <- "Resistance"
 
 cat("Annotating Agency Approval...\n")
-drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t", 
-                 quote = "", na.strings = c("", "NA"), 
+drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t",
+                 quote = "", na.strings = c("", "NA"),
                  stringsAsFactors = FALSE)
 drug.map <- setNames(drug[[2]], drug[[1]])
 def$Approved <- unname(sapply(
-  def$Drug, 
+  def$Drug,
   function(x) (
     ifelse(is.na(x), "", paste0(
       sapply(
-        drug.map[unlist(strsplit(x, ",", fixed = TRUE))], 
-        function(x) (ifelse(is.na(x), "", x))), 
+        drug.map[unlist(strsplit(x, ",", fixed = TRUE))],
+        function(x) (ifelse(is.na(x), "", x))),
       collapse = ",")
     )
   )
@@ -280,16 +266,16 @@ write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"
 
 
 #Create Pubmed URLs and links to clinical trials
-
+dis <- read.csv(paste0(database.path, "/Disease.txt"), sep = "\t", stringsAsFactors = FALSE)
 #Leading disease
 cat("Searching URLs related to the primary disease...\n")
-leading.urls(def, leading.disease)
+leading.urls(def, leading.disease, dis, project.path, sample.name)
 #OFF - Other diseases
 cat("Searching URLs related to the other diseases...\n")
-off.urls(def, leading.disease)
+off.urls(def, leading.disease, dis, project.path, sample.name)
 #Cosmic
 cat("Searching COSMIC URLs...\n")
-cosmic.urls(cosmic)
+cosmic.urls(cosmic, project.path, sample.name)
 #PharmGKB
 cat("Searching PharmGKB URLs...\n")
-pharm.urls(pharm)
+pharm.urls(pharm, project.path, sample.name)

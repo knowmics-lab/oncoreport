@@ -9,7 +9,8 @@ option_list <- list(
   make_option(c("-c", "--civic"), type="character", default=NULL, help="CIVIC hg19 database file", metavar="character"),
   make_option(c("-g", "--cgi"), type="character", default=FALSE, help="CGI hg19 database file", metavar="character"),
   make_option(c("-d", "--diseases"), type="character", default=FALSE, help="diseases map file", metavar="character"),
-  make_option(c("-o", "--output"), type="character", default=NULL, help="output file", metavar="character")
+  make_option(c("-o", "--output"), type="character", default=NULL, help="output file", metavar="character"),
+  make_option(c("-p", "--parents"), type="character", default=NULL, help="DO parents output file", metavar="character")
 ); 
 
 opt_parser <- OptionParser(option_list=option_list)
@@ -31,11 +32,16 @@ if (is.null(opt$output)) {
   print_help(opt_parser)
   stop("Invalid output file", call.=FALSE)
 }
+if (is.null(opt$parents)) {
+  print_help(opt_parser)
+  stop("Invalid DO parents file", call.=FALSE)
+}
 
 tmp.file <- tempfile()
 download.file("https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/main/src/ontology/doid.obo", tmp.file)
 
 onto <- get_ontology(tmp.file)
+unlink(tmp.file)
 
 df.onto <- data.frame(doid=gsub("DOID:", "", names(onto$name)), name=unname(onto$name), key=gsub("'s", "", gsub("ö", "oe", tolower(unname(onto$name)), fixed = TRUE), fixed = TRUE), doid.orig=names(onto$name))
 
@@ -87,6 +93,27 @@ colnames(final.db.diseases) <- c("Database_name", "DO_name", "DOID", "tumor", "g
 final.db.diseases <- final.db.diseases[grepl("^DOID", final.db.diseases$DOID),]
 final.db.diseases <- final.db.diseases[!onto$obsolete[final.db.diseases$DOID],]
 final.db.diseases$DO_name <- gsub("–", "-", final.db.diseases$DO_name)
-write.table(final.db.diseases, file = opt$output, append = FALSE, quote = TRUE, sep = "\t", row.names = FALSE, col.names = TRUE)
+write.table(final.db.diseases, file = opt$output, append = FALSE, quote = TRUE, 
+            sep = "\t", row.names = FALSE, col.names = TRUE)
 
-unlink(tmp.file)
+remove.parents <- function (x) {
+  return (x[!(x %in% c("DOID:0050687"))])
+}
+
+onto$parents <- setNames(
+  lapply(
+    onto$parents, 
+    function (x) (remove.parents(x[order(as.numeric(gsub("DOID:", "", x)), decreasing = TRUE)]))
+  ), 
+  names(onto$parents)
+)
+
+df.parents <- data.frame(
+  doid=names(onto$parents), 
+  parents=unname(sapply(onto$parents, function(x)(paste0(x, collapse=";"))))
+)
+df.parents <- df.parents[df.parents$parents != "",]
+write.table(df.parents, file=opt$parents, quote = TRUE, append = FALSE, 
+            sep = "\t", row.names = FALSE, col.names = TRUE)
+
+

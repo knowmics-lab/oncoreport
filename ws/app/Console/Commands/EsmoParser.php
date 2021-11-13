@@ -8,15 +8,15 @@
 namespace App\Console\Commands;
 
 use App\Models\Disease;
+use App\Traits\CleanupEsmoTitles;
 use Error;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use JsonException;
 
 class EsmoParser extends Command
 {
+    use CleanupEsmoTitles;
 
     private const ESMO_PATH = 'app/esmo/';
     private const IDX_URL   = 'http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/SearchFiles/idx.json';
@@ -27,7 +27,7 @@ class EsmoParser extends Command
      *
      * @var string
      */
-    protected $signature = 'parse:esmo {disease : The name of the patient disease} {output : The output folder}';
+    protected $signature = 'esmo:parse {disease : The name of the patient disease} {output : The output folder}';
 
     /**
      * The console command description.
@@ -92,86 +92,31 @@ class EsmoParser extends Command
         return json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * Replaces abbreviations with complete text
-     *
-     * @param  string  $text
-     *
-     * @return string
-     */
-    protected function handleAbbreviation(string $text): string
+    protected function findEsmoGuidelines(string $doid, array &$toc): array
     {
-        $replacements = [
-            'NSCLC'         => 'Non-Small Cell Lung Cancer',
-            'SCLC'          => 'Small Cell Lung Cancer',
-            'ACC'           => 'Adrenocortical Carcinoma',
-            'GEP-NEN'       => 'Gastroenteropancreatic Neuroendocrine Neoplasm',
-            'Hereditary GC' => 'Hereditary gastric cancer',
-            'NET'           => 'Neuroendocrine tumor',
-            'Loc.'          => 'Locally',
-            'DLBCL'         => 'diffuse large B-cell lymphoma',
-            'PMBCL'         => 'primary mediastinal B-cell lymphoma',
-            'ö'             => 'o',
-            '’'             => '\'',
-            '\'\''          => '\'',
-        ];
-
-        return str_replace(array_keys($replacements), array_values($replacements), $text);
-    }
-
-    protected function removeStopWords(string $text): string
-    {
-        if (!Cache::has('stopwords')) {
-            $words = collect(file(resource_path('stopwords.txt')))
-                ->map(fn($w) => trim($w))
-                ->map(fn($w) => '/\b' . preg_quote($w, '/') . '\b/iu')->toArray();
-            Cache::put('stopwords', $words);
-        } else {
-            $words = Cache::get('stopwords');
+        $tumorsToEsmoFile = storage_path(self::ESMO_PATH . 'tumors_to_esmo.tsv');
+        if (!file_exists($tumorsToEsmoFile)) {
+            $this->call('match:esmo');
+        }
+        $guidelines = [];
+        $handle = fopen($tumorsToEsmoFile, 'rb');
+        if ($handle) {
+            while (($line = fgetcsv($handle, separator: "\t")) !== false) {
+                if ($line[0] === $doid) {
+                    $guidelines = array_map(
+                        static fn($g) => strtolower(trim($g)),
+                        explode(';', $line[2])
+                    );
+                    break;
+                }
+            }
+            fclose($handle);
         }
 
-        return trim(
-            preg_replace(
-                '/\s+/',
-                ' ',
-                preg_replace(
-                    $words,
-                    '',
-                    Str::slug($text, ' ')
-                )
-            )
+        return array_filter(
+            $toc,
+            static fn($d) => in_array(strtolower(trim($d['guidelineName'])), $guidelines, true)
         );
-    }
-
-    /**
-     * Find the best matches in the ESMO guidelines
-     *
-     * @param  string  $disease
-     * @param  array  $toc
-     *
-     * @return array
-     */
-    protected function findBestMatch(string $disease, array &$toc): array
-    {
-        $disease = $this->removeStopWords(strtolower(mb_convert_encoding($disease, 'ASCII')));
-        $scoredGuidelines = array_filter(
-            array_map(function ($d) use ($disease) {
-                $title = $this->removeStopWords(
-                    strtolower(mb_convert_encoding($this->handleAbbreviation($d['guidelineName']), 'ASCII'))
-                );
-                similar_text($disease, $title, $percent);
-
-                return [
-                    $d,
-                    $title,
-                    $percent,
-                ];
-            }, $toc),
-            static fn($d) => str_contains(strtolower($d[1]), $disease) || $d[2] > 50
-        );
-        usort($scoredGuidelines, static fn($x, $y) => $y[2] - $x[2]);
-
-        return array_map(static fn($d) => $d[0], $scoredGuidelines);
     }
 
     /**
@@ -194,7 +139,8 @@ class EsmoParser extends Command
      */
     public function handle(): int
     {
-        $diseaseName = Disease::where('doid', $this->argument('disease'))->firstOrFail(['name'])->name;
+        $doid = $this->argument('disease');
+        $diseaseName = Disease::where('doid', $doid)->firstOrFail(['name'])->name;
         $outputDir = $this->argument('output');
         if (!file_exists($outputDir) && !mkdir($outputDir, 0777, true) && !is_dir($outputDir)) {
             $this->error('Unable to create output directory.');
@@ -211,7 +157,7 @@ class EsmoParser extends Command
         try {
             $this->info('Processing guidelines for ' . $diseaseName);
             $toc = self::readJson($tocPath);
-            $matches = $this->findBestMatch($diseaseName, $toc);
+            $matches = $this->findEsmoGuidelines($doid, $toc);
             $idx = self::readJson($idxPath);
             $matches = array_filter(
                 array_map(

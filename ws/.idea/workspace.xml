@@ -2,8 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/test.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/rSettings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Traits/CleanupEsmoTitles.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/esmo_skip.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/doi_parser.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/doi_parser.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/stopwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/stopwords.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +51,7 @@
     <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Console/Commands/TestWords.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
@@ -201,19 +216,19 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console/Commands" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="org.jetbrains.r.configuration.RSettingsProjectConfigurable" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources" />
       <recent name="$PROJECT_DIR$/app/Console/Commands" />
       <recent name="$PROJECT_DIR$/app/Jobs/Traits" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Drug" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
@@ -350,6 +365,9 @@
       <workItem from="1636534413155" duration="635000" />
       <workItem from="1636558160530" duration="282000" />
       <workItem from="1636626479370" duration="970000" />
+      <workItem from="1636695701998" duration="5833000" />
+      <workItem from="1636738710724" duration="7563000" />
+      <workItem from="1636789007293" duration="20050000" />
     </task>
     <servers />
   </component>

@@ -400,7 +400,7 @@ type=tumnorm
 [[ ! -s "$PATH_CONVERTED/variants.txt" ]] && exit_abnormal_code "Unable to continue since no variants have been found!" 200
 
 echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/MergeInfo.R\" -g \"$index\" -d \"$ONCOREPORT_DATABASES_PATH\" -c \"$ONCOREPORT_COSMIC_PATH\" -p \"$PATH_PROJECT\" -s \"$FASTQ1_NAME\" -t \"$tumor\" -a \"$type\""
-echo "php \"$ONCOREPORT_SCRIPT_PATH/../ws/artisan\" parse:esmo \"$tumor\" \"$PATH_PROJECT\""
+echo "php \"$ONCOREPORT_SCRIPT_PATH/../ws/artisan\" esmo:parse \"$tumor\" \"$PATH_PROJECT\""
 echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
 
 echo "Annotation of VCF files"
@@ -410,19 +410,19 @@ chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
 php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" parse:esmo "$tumor" "$PATH_PROJECT"
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE"|| exit_abnormal_code "Unable to create report" 121
-
-{ rm -r "$PATH_SAM_TUMOR" &&
-  rm -r "$PATH_BAM_ANNO_TUMOR" &&
-  rm -r "$PATH_BAM_SORT_TUMOR" &&
-  rm -r "$PATH_SAM_NORMAL" &&
-  rm -r "$PATH_BAM_ANNO_NORMAL" &&
-  rm -r "$PATH_BAM_SORT_NORMAL" &&
-  rm -r "$PATH_TRIM_NORMAL" &&
-  rm -r "$PATH_BAM_ORD_NORMAL" &&
-  rm -r "$PATH_TRIM_TUMOR" &&
-  rm -r "$PATH_BAM_ORD_TUMOR" &&
-  rm -r "$PATH_VCF_MUT" &&
-  rm -r "$PATH_CONVERTED" &&
-  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
+#
+#{ rm -r "$PATH_SAM_TUMOR" &&
+#  rm -r "$PATH_BAM_ANNO_TUMOR" &&
+#  rm -r "$PATH_BAM_SORT_TUMOR" &&
+#  rm -r "$PATH_SAM_NORMAL" &&
+#  rm -r "$PATH_BAM_ANNO_NORMAL" &&
+#  rm -r "$PATH_BAM_SORT_NORMAL" &&
+#  rm -r "$PATH_TRIM_NORMAL" &&
+#  rm -r "$PATH_BAM_ORD_NORMAL" &&
+#  rm -r "$PATH_TRIM_TUMOR" &&
+#  rm -r "$PATH_BAM_ORD_TUMOR" &&
+#  rm -r "$PATH_VCF_MUT" &&
+#  rm -r "$PATH_CONVERTED" &&
+#  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
 
 echo "Done"
