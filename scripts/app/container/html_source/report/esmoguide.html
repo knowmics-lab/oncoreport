@@ -110,16 +110,19 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-4 card-text">
-                                        Surname:<br>
-                                        Name:<br>
-                                        Sex:
+                                        Surname: <%=pt_surname %><br>
+                                        Name: <%=pt_name %><br>
+                                        Sex: <%=pt_sex %>
                                     </div>
                                     <div class="col-4 card-text">
-                                        Age:<br>
-                                        Address:<br>
+                                        Age: <%=pt_age %><br>
+                                        City: <%=ifelse(is.null(pt_city), "Not Available", pt_city) %><br>
+                                        Phone: <%=ifelse(is.null(pt_phone), "Not Available", pt_phone) %><br>
                                     </div>
                                     <div class="col-4 card-text">
-                                        ...
+                                        Sample Name: <%=pt_sample_name %><br>
+                                        Disease: <%=pt_disease_name %><br>
+                                        Stage: <%=ifelse(is.null(pt_tumor_stage), "Not Available", pt_tumor_stage) %>
                                     </div>
                                 </div>
                             </div>

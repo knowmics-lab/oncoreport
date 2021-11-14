@@ -1,9 +1,12 @@
-suppressPackageStartupMessages(library(xml2))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(knitr))
-suppressPackageStartupMessages(library(tidyr))
-suppressPackageStartupMessages(library(kableExtra))
-suppressPackageStartupMessages(library(stringr))
+suppressPackageStartupMessages({
+  library(xml2)
+  library(dplyr)
+  library(knitr)
+  library(tidyr)
+  library(kableExtra)
+  library(stringr)
+  library(brew)
+})
 
 thisFile <- function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
@@ -17,6 +20,8 @@ thisFile <- function() {
     return(normalizePath(sys.frames()[[1]]$ofile))
   }
 }
+source(file.path(dirname(thisFile()), "imports.R"), local = knitr::knit_global())
+options(knitr.table.format = "html")
 
 cargs <- commandArgs(trailingOnly = TRUE)
 
@@ -41,6 +46,69 @@ if (tumor_type == "lb") {
   depth <- cargs[17]
   af <- cargs[18]
 }
+
+report_output_dir <- paste0(path_project, "/report/")
+dir.create(report_output_dir, showWarnings = FALSE)
+
+
+
+diseases_db              <- read.csv(paste0(path_db, "/Disease.txt"), sep = "\t", stringsAsFactors = FALSE)
+colnames(diseases_db)[1] <- "Disease"
+diseases_db_simple       <- unique(diseases_db[,c("Disease", "DOID")])
+pt_disease_details       <- diseases_db[diseases_db$DOID == pt_tumor,,drop = FALSE]
+pt_disease_name          <- unique(pt_disease_details$DO_name)[1]
+
+
+template.env <- new.env()
+template.env$pt_surname      <- pt_surname
+template.env$pt_name         <- pt_name
+template.env$pt_sex          <- ifelse(pt_sex == "m", "Male", "Female")
+template.env$pt_age          <- pt_age
+template.env$pt_city         <- pt_city
+template.env$pt_phone        <- pt_phone
+template.env$pt_sample_name  <- pt_sample_name
+template.env$pt_disease_name <- pt_disease_name
+template.env$pt_tumor_stage  <- pt_tumor_stage
+
+cat("THERAPEUTIC - Mutation Information\n")
+
+therapeutic.references <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, ".txt"), sep = "\t", stringsAsFactors = FALSE)
+therapeutic.references <- therapeutic.references[, c("PMID", "Reference")]
+therapeutic.references <- therapeutic.references[!duplicated(therapeutic.references$PMID),]
+
+therapeutic.trials <- read.csv(paste0(path_project, "/txt/trial/", pt_fastq, ".txt"), sep = "\t", stringsAsFactors = FALSE)
+list.all.trials    <- unique(therapeutic.trials$Clinical_trial)
+
+all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive.txt"), sep = "\t", colClasses = c("character"), stringsAsFactors = FALSE)
+all.annotations <- diseases_db_simple %>% inner_join(all.annotations, by = "Disease")
+all.annotations[is.na(all.annotations)] <- " "
+all.annotations$id <- 1:nrow(all.annotations)
+
+
+primary.annotations <- all.annotations[all.annotations$Evidence_direction == "Supports" & all.annotations$DOID == pt_tumor, , drop = F]
+primary.annotations$DOID <- NULL
+
+
+
+
+
+print(head(primary.annotations))
+stop()
+
+
+
+brew(
+  file = paste0(path_html_source, "/therapeutic.html"),
+  output = paste0(report_output_dir, "therapeutic.html"),
+  envir = template.env
+)
+
+
+cat("Copying assets\n")
+file.copy(file.path(path_html_source, "assets"), report_output_dir, recursive = TRUE)
+cat("OK!\n")
+stop()
+
 
 therapeutic <- (read_html(paste0(path_html_source, "/therapeutic.html")))
 drugdrug <- as_list(read_html(paste0(path_html_source, "/drugdrug.html")))
