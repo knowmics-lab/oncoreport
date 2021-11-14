@@ -2,229 +2,191 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Oncoreport</title>
+        <title>Oncoreport Clinical Mutation Report - Drug response</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <!-- Le styles -->
-        <link href="assets/css/bootstrap.css" rel="stylesheet">
-        <style type="text/css">
-            body {
-                padding-top: 20px;
-                padding-bottom: 60px;
-            }
-
-            /* Custom container */
-            .container {
-                margin: 0 auto;
-                max-width: 1200px;
-            }
-
-            .container > hr {
-                margin: 60px 0;
-            }
-
-            /* Main marketing message and sign up button */
-            .jumbotron {
-                margin: 80px 0;
-                text-align: center;
-            }
-
-            .jumbotron h1 {
-                font-size: 100px;
-                line-height: 1;
-            }
-
-            .jumbotron .lead {
-                font-size: 24px;
-                line-height: 1.25;
-            }
-
-            .jumbotron .btn {
-                font-size: 21px;
-                padding: 14px 24px;
-            }
-
-            /* Supporting marketing content */
-            .marketing {
-                margin: 60px 0;
-            }
-
-            .marketing p + h4 {
-                margin-top: 28px;
-            }
-
-
-            /* Customize the navbar links to be fill the entire space of the .navbar */
-            .navbar .navbar-inner {
-                padding: 0;
-            }
-
-            .navbar .nav {
-                margin: 0;
-                display: table;
-                width: 100%;
-            }
-
-            .navbar .nav li {
-                display: table-cell;
-                width: 1%;
-                float: none;
-            }
-
-            .navbar .nav li a {
-                font-weight: bold;
-                text-align: center;
-                border-left: 1px solid rgba(255, 255, 255, .75);
-                border-right: 1px solid rgba(0, 0, 0, .1);
-            }
-
-            .navbar .nav li:first-child a {
-                border-left: 0;
-                border-radius: 3px 0 0 3px;
-            }
-
-            .navbar .nav li:last-child a {
-                border-right: 0;
-                border-radius: 0 3px 3px 0;
-            }
-        </style>
-        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-
-        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-        <script src="assets/js/html5shiv.js"></script>
-        <![endif]-->
-
-        <!-- Fav and touch icons -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-        <link rel="shortcut icon" href="assets/ico/favicon.png">
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
-    <body>
+    <body class="bg-light" style="padding-top: 68px;">
 
-        <div class="container">
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </symbol>
+            <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            </symbol>
+            <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </symbol>
+        </svg>
 
-            <div class="masthead">
-                <h3 class="muted">Mutation report</h3>
-                <div class="card text-dark bg-light mb-3" style="max-width: 100%;">
-                    <div class="card-header"><b>Patient's Information</b></div>
-                    <div class="card-body">
-                        <div class="span4">Surname:<br>
-                            Name:<br>
-                            Sex:
+        <header class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+            <nav class="container-xl flex-wrap">
+                <a class="navbar-brand" href="Javascript:">Mutation Report</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation"
+                        aria-controls="main-navigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse flex-grow-0" id="main-navigation">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="therapeutic.html">Therapeutic indications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="drugdrug.html">Drug-Drug Interactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="drugfood.html">Drug-Food interactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="esmoguide.html">
+                                <span style="color: hsl(113, 50%, 43.75%)">E</span>
+                                <span style="color: hsl(323, 100%, 50%)">S</span>
+                                <span style="color: hsl(64, 62.89%, 50%)">M</span>
+                                <span style="color: hsl(222, 100%, 50%)">O</span> guidelines
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button"
+                               aria-haspopup="true" aria-expanded="false">Other details</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item active" href="pharmgkb.html">
+                                    Drug response
+                                    <span class="visually-hidden">(current)</span>
+                                </a>
+                                <a class="dropdown-item" href="mutations.html">Mutations annotations</a>
+                                <a class="dropdown-item" href="offlabel.html">Off-label indications</a>
+                                <a class="dropdown-item" href="cosmic.html">Known drug resistance</a>
+                                <a class="dropdown-item" href="reference.html">References</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <header class="py-3 border-bottom">
+            <div class="container pt-md-1 pb-md-4">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card bg-secondary" style="max-width: 100%;">
+                            <div class="card-header">Patient details</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4 card-text">
+                                        Surname:<br>
+                                        Name:<br>
+                                        Sex:
+                                    </div>
+                                    <div class="col-4 card-text">
+                                        Age:<br>
+                                        Address:<br>
+                                    </div>
+                                    <div class="col-4 card-text">
+                                        ...
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="span4">Age:<br>
-                            Address:<br></div>
-                        <div class="span3">...</div>
                     </div>
                 </div>
-                <br>
-                <div class="navbar">
-                    <div class="navbar-inner">
-                        <div class="container">
-                            <ul class="nav">
-                                <li><a href="therapeutic.html">Therapeutic indication</a></li>
-                                <li><a href="drugdrug.html">Drug-Drug Interaction</a></li>
-                                <li><a href="drugfood.html">Drug-Food interaction</a></li>
-                                <li><a href="esmoguide.html">
-                                    <span style='color: #32502d'>E</span>
-                                    <span style='color: #6e1e50'>S</span>
-                                    <span style='color: #7d8232'>M</span>
-                                    <span style='color: #1f325f'>O</span> guidelines</a></li>
-                                <li class="active"><a href="pharmgkb.html">Drug response</a></li>
-                                <li><a href="mutations.html">Mutations annotations</a></li>
-                                <li><a href="offlabel.html">Off label drug</a></li>
-                                <li><a href="cosmic.html">Known resistance</a></li>
-                                <li><a href="reference.html">Reference Details</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div><!-- /.navbar -->
             </div>
-            <div id="pharmgkb-variant" class="section level2 tabset">
-                <div name="PharmGKB_variant" data-unique="PharmGKB_variant"></div>
-                <h2 class="hasAnchor">PharmGKB variant<a href="#pharmgkb-variant" class="anchor-section"></a></h2>
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a role="tab" data-toggle="tab" href="#variant-mutation-1"
-                                                              aria-controls="variant-mutation-1">Variant Mutation</a>
+        </header>
+
+        <main class="order-1 py-5" id="content">
+            <div class="container">
+
+                <h1 class="mt-0">PharmGKB variant - Drug Response</h1>
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="variants-summary-tab" data-bs-toggle="tab"
+                                data-bs-target="#variants-summary" type="button" role="tab"
+                                aria-controls="variants-summary" aria-selected="true">
+                            Variants Summary
+                        </button>
                     </li>
-                    <li role="presentation"><a role="tab" data-toggle="tab" href="#evidence-details-1"
-                                               aria-controls="evidence-details-1">Evidence Details</a></li>
-                    <li role="presentation"><a role="tab" data-toggle="tab" href="#variant-details-1"
-                                               aria-controls="variant-details-1">Variant Details</a></li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="clinical-evidence-tab" data-bs-toggle="tab"
+                                data-bs-target="#clinical-evidence" type="button" role="tab"
+                                aria-controls="clinical-evidence" aria-selected="false">
+                            Clinical Evidence Details
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="variant-details-tab" data-bs-toggle="tab"
+                                data-bs-target="#variant-details" type="button" role="tab"
+                                aria-controls="variant-details" aria-selected="false">
+                            Variants Details
+                        </button>
+                    </li>
                 </ul>
-                <div class="tab-content">
-                    <div id="variant-mutation-1" class="section level3 tab-pane tabbed-pane active" role="tabpanel">
-
-                        <div id="no-data-available." class="section level5">
-                            <h5 class="hasAnchor">No data available.<a href="#no-data-available."
-                                                                       class="anchor-section"></a></h5>
-                        </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active p-3" id="variants-summary" role="tabpanel"
+                         aria-labelledby="variants-summary-tab">
+                        <h5>No data available.</h5>
                     </div>
-                    <div id="evidence-details-1" class="section level3 tab-pane tabbed-pane" role="tabpanel">
-
-                        <div id="no-data-available.-1" class="section level5">
-                            <h5 class="hasAnchor">No data available.<a href="#no-data-available.-1"
-                                                                       class="anchor-section"></a></h5>
-                        </div>
+                    <div class="tab-pane fade p-3" id="clinical-evidence" role="tabpanel"
+                         aria-labelledby="clinical-evidence-tab">
+                        <h5>No data available.</h5>
                     </div>
-                    <div id="variant-details-1" class="section level3 tab-pane tabbed-pane" role="tabpanel">
-                        <div id="no-data-available." class="section level5">
-                            <h5 class="hasAnchor">No data available.<a href="#no-data-available."
-                                                                       class="anchor-section"></a></h5>
-                        </div>
+                    <div class="tab-pane fade p-3" id="variant-details" role="tabpanel"
+                         aria-labelledby="variant-details-tab">
+                        <h5>No data available.</h5>
                     </div>
                 </div>
 
-
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill"/>
+                    </svg>
+                    <div>
+                        <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare
+                        professional.
+                    </div>
+                </div>
             </div>
-            <div class="alert alert-error">
-                <i class="icon-warning-sign icon-black"></i> <b>Warning</b>: This is a clinical decision support system.
-                Always consult with a healthcare professional.
-            </div>
-        </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+                crossorigin="anonymous"></script>
+        <script>
+            (function () {
+                'use strict'
+                document.querySelectorAll('a.reference')
+                         .forEach(function (link) {
+                    link.addEventListener('click', function (event) {
+                        // TODO
+                        function myFunction1 () {
+                            location.replace('reference.html');
+                        }
+                    })
+                })
+            })()
+        </script>
 
 
-        <!-- Le javascript
-          ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="assets/js/jquery.js"></script>
-        <script src="assets/js/bootstrap-transition.js"></script>
-        <script src="assets/js/bootstrap-alert.js"></script>
-        <script src="assets/js/bootstrap-modal.js"></script>
-        <script src="assets/js/bootstrap-dropdown.js"></script>
-        <script src="assets/js/bootstrap-scrollspy.js"></script>
-        <script src="assets/js/bootstrap-tab.js"></script>
-        <script src="assets/js/bootstrap-tooltip.js"></script>
-        <script src="assets/js/bootstrap-popover.js"></script>
-        <script src="assets/js/bootstrap-button.js"></script>
-        <script src="assets/js/bootstrap-collapse.js"></script>
-        <script src="assets/js/bootstrap-carousel.js"></script>
-        <script src="assets/js/bootstrap-typeahead.js"></script>
         <script type="text/javascript">
-            $(function () {
-                $(window).load(function () {
-                    $('.show-all-start').each(function () {
-                        var t = $(this);
-                        t.find('a[role="tab"]').each(function () { $(this).click(); });
-                        t.find('a[role="tab"]').first().click();
-                    });
-
-                    $('a.my_ref_link').click(function () {
-                        var t = $(this), id = t.data('id'), o = $(id);
-                        o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
-                        var tabId = o.closest('.tab-pane').attr('id');
-                        console.log(tabId);
-                        o.closest('.tabset').find('a[href="#' + tabId + '"]').click();
-                        console.log(o.closest('.tabset').find('a[href="#' + tabId + '"]'));
-                        $('body').scrollTo(id);
-                    });
-                });
-            });
+            // $('.show-all-start').each(function () {
+            //     var t = $(this);
+            //     t.find('a[role="tab"]').each(function () { $(this).click(); });
+            //     t.find('a[role="tab"]').first().click();
+            // });
+            //
+            // $('a.my_ref_link').click(function () {
+            //     var t = $(this), id = t.data('id'), o = $(id);
+            //     o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
+            //     var tabId = o.closest('.tab-pane').attr('id');
+            //     console.log(tabId);
+            //     o.closest('.tabset').find('a[href="#' + tabId + '"]').click();
+            //     console.log(o.closest('.tabset').find('a[href="#' + tabId + '"]'));
+            //     $('body').scrollTo(id);
+            // });
         </script>
     </body>
 </html>

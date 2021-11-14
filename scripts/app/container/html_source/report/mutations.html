@@ -2,158 +2,110 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Oncoreport</title>
+        <title>Oncoreport Clinical Mutation Report - Mutations annotations</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <!-- Le styles -->
-        <link href="assets/css/bootstrap.css" rel="stylesheet">
-        <style type="text/css">
-            body {
-                padding-top: 20px;
-                padding-bottom: 60px;
-            }
-
-            /* Custom container */
-            .container {
-                margin: 0 auto;
-                max-width: 1200px;
-            }
-
-            .container > hr {
-                margin: 60px 0;
-            }
-
-            /* Main marketing message and sign up button */
-            .jumbotron {
-                margin: 80px 0;
-                text-align: center;
-            }
-
-            .jumbotron h1 {
-                font-size: 100px;
-                line-height: 1;
-            }
-
-            .jumbotron .lead {
-                font-size: 24px;
-                line-height: 1.25;
-            }
-
-            .jumbotron .btn {
-                font-size: 21px;
-                padding: 14px 24px;
-            }
-
-            /* Supporting marketing content */
-            .marketing {
-                margin: 60px 0;
-            }
-
-            .marketing p + h4 {
-                margin-top: 28px;
-            }
-
-
-            /* Customize the navbar links to be fill the entire space of the .navbar */
-            .navbar .navbar-inner {
-                padding: 0;
-            }
-
-            .navbar .nav {
-                margin: 0;
-                display: table;
-                width: 100%;
-            }
-
-            .navbar .nav li {
-                display: table-cell;
-                width: 1%;
-                float: none;
-            }
-
-            .navbar .nav li a {
-                font-weight: bold;
-                text-align: center;
-                border-left: 1px solid rgba(255, 255, 255, .75);
-                border-right: 1px solid rgba(0, 0, 0, .1);
-            }
-
-            .navbar .nav li:first-child a {
-                border-left: 0;
-                border-radius: 3px 0 0 3px;
-            }
-
-            .navbar .nav li:last-child a {
-                border-right: 0;
-                border-radius: 0 3px 3px 0;
-            }
-        </style>
-        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-
-        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-        <script src="assets/js/html5shiv.js"></script>
-        <![endif]-->
-
-        <!-- Fav and touch icons -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-        <link rel="shortcut icon" href="assets/ico/favicon.png">
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
-    <body>
+    <body class="bg-light" style="padding-top: 68px;">
 
-        <div class="container">
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </symbol>
+            <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            </symbol>
+            <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </symbol>
+        </svg>
 
-            <div class="masthead">
-                <h3 class="muted">Mutation report</h3>
-                <div class="card text-dark bg-light mb-3" style="max-width: 100%;">
-                    <div class="card-header"><b>Patient's Information</b></div>
-                    <div class="card-body">
-                        <div class="span4">Surname:<br>
-                            Name:<br>
-                            Sex:
+        <header class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+            <nav class="container-xl flex-wrap">
+                <a class="navbar-brand" href="Javascript:">Mutation Report</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation"
+                        aria-controls="main-navigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse flex-grow-0" id="main-navigation">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="therapeutic.html">Therapeutic indications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="drugdrug.html">Drug-Drug Interactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="drugfood.html">Drug-Food interactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="esmoguide.html">
+                                <span style="color: hsl(113, 50%, 43.75%)">E</span>
+                                <span style="color: hsl(323, 100%, 50%)">S</span>
+                                <span style="color: hsl(64, 62.89%, 50%)">M</span>
+                                <span style="color: hsl(222, 100%, 50%)">O</span> guidelines
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button"
+                               aria-haspopup="true" aria-expanded="false">Other details</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="pharmgkb.html">Drug response</a>
+                                <a class="dropdown-item active" href="mutations.html">
+                                    Mutations annotations
+                                    <span class="visually-hidden">(current)</span>
+                                </a>
+                                <a class="dropdown-item" href="offlabel.html">Off-label indications</a>
+                                <a class="dropdown-item" href="cosmic.html">Known drug resistance</a>
+                                <a class="dropdown-item" href="reference.html">References</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <header class="py-3 border-bottom">
+            <div class="container pt-md-1 pb-md-4">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card bg-secondary" style="max-width: 100%;">
+                            <div class="card-header">Patient details</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4 card-text">
+                                        Surname:<br>
+                                        Name:<br>
+                                        Sex:
+                                    </div>
+                                    <div class="col-4 card-text">
+                                        Age:<br>
+                                        Address:<br>
+                                    </div>
+                                    <div class="col-4 card-text">
+                                        ...
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="span4">Age:<br>
-                            Address:<br></div>
-                        <div class="span3">...</div>
                     </div>
                 </div>
-                <br>
-                <div class="navbar">
-                    <div class="navbar-inner">
-                        <div class="container">
-                            <ul class="nav">
-                                <li><a href="therapeutic.html">Therapeutic indication</a></li>
-                                <li><a href="drugdrug.html">Drug-Drug Interaction</a></li>
-                                <li><a href="drugfood.html">Drug-Food interaction</a></li>
-                                <li><a href="esmoguide.html">
-                                    <span style='color: #32502d'>E</span>
-                                    <span style='color: #6e1e50'>S</span>
-                                    <span style='color: #7d8232'>M</span>
-                                    <span style='color: #1f325f'>O</span> guidelines</a></li>
-                                <li><a href="pharmgkb.html">Drug response</a></li>
-                                <li class="active"><a href="mutations.html">Mutations annotations</a></li>
-                                <li><a href="offlabel.html">Off label drug</a></li>
-                                <li><a href="cosmic.html">Known resistance</a></li>
-                                <li><a href="reference.html">Reference Details</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            </div>
+        </header>
 
-            </div><!-- /.navbar -->
-            <div id="mutations-annotations" class="section level2">
-                <div name="Mutations'_annotations" data-unique="Mutations'_annotations"></div>
-                <h2 class="hasAnchor">Mutations' annotations<a href="#mutations-annotations" class="anchor-section"></a>
-                </h2>
-                <table class="table table-striped table-hover table-responsive"
+        <main class="order-1 py-5" id="content">
+            <div class="container">
+
+                <h1 class="mt-0">Mutations annotations</h1>
+
+                <table class="table table-sm table-striped table-hover table-responsive"
                        style="margin-left: auto; margin-right: auto;">
                     <thead>
-                        <tr>
+                        <tr class="table-dark">
                             <th style="text-align:left;">
                                 Gene
                             </th>
@@ -179,9 +131,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                AASDHPPT
-                            </td>
+                            <th scope="row">AASDHPPT</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -200,9 +150,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ABCA4
-                            </td>
+                            <th scope="row">ABCA4</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -223,9 +171,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ABCB4
-                            </td>
+                            <th scope="row">ABCB4</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -244,9 +190,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ABRA
-                            </td>
+                            <th scope="row">ABRA</th>
                             <td style="text-align:left;">
                                 chr8
                             </td>
@@ -265,9 +209,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ADAM21P1
-                            </td>
+                            <th scope="row">ADAM21P1</th>
                             <td style="text-align:left;">
                                 chr14
                             </td>
@@ -286,9 +228,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ADAR
-                            </td>
+                            <th scope="row">ADAR</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -307,9 +247,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ALOX15
-                            </td>
+                            <th scope="row">ALOX15</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -328,9 +266,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                AMER1
-                            </td>
+                            <th scope="row">AMER1</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -349,9 +285,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ANGPTL7
-                            </td>
+                            <th scope="row">ANGPTL7</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -370,9 +304,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                AOC2
-                            </td>
+                            <th scope="row">AOC2</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -391,9 +323,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                APC
-                            </td>
+                            <th scope="row">APC</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -412,9 +342,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                APC
-                            </td>
+                            <th scope="row">APC</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -433,9 +361,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ARFGEF2
-                            </td>
+                            <th scope="row">ARFGEF2</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -454,9 +380,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ASXL1
-                            </td>
+                            <th scope="row">ASXL1</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -477,9 +401,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                BACH2
-                            </td>
+                            <th scope="row">BACH2</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -498,9 +420,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                BIRC6
-                            </td>
+                            <th scope="row">BIRC6</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -519,9 +439,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                BMP15
-                            </td>
+                            <th scope="row">BMP15</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -540,9 +458,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                C5orf34
-                            </td>
+                            <th scope="row">C5orf34</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -561,9 +477,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                C5orf34-AS1
-                            </td>
+                            <th scope="row">C5orf34-AS1</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -582,9 +496,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CABIN1
-                            </td>
+                            <th scope="row">CABIN1</th>
                             <td style="text-align:left;">
                                 chr22
                             </td>
@@ -603,9 +515,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CACNA1S
-                            </td>
+                            <th scope="row">CACNA1S</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -624,9 +534,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CAPNS2
-                            </td>
+                            <th scope="row">CAPNS2</th>
                             <td style="text-align:left;">
                                 chr16
                             </td>
@@ -645,9 +553,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CCDC110
-                            </td>
+                            <th scope="row">CCDC110</th>
                             <td style="text-align:left;">
                                 chr4
                             </td>
@@ -666,9 +572,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CCSER2
-                            </td>
+                            <th scope="row">CCSER2</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -687,9 +591,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CD14
-                            </td>
+                            <th scope="row">CD14</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -708,9 +610,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CEACAM4
-                            </td>
+                            <th scope="row">CEACAM4</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -729,9 +629,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                COL19A1
-                            </td>
+                            <th scope="row">COL19A1</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -750,9 +648,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CPT2
-                            </td>
+                            <th scope="row">CPT2</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -771,9 +667,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CPT2
-                            </td>
+                            <th scope="row">CPT2</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -792,9 +686,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CR2
-                            </td>
+                            <th scope="row">CR2</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -815,9 +707,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CREM
-                            </td>
+                            <th scope="row">CREM</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -836,9 +726,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CSNK2A3
-                            </td>
+                            <th scope="row">CSNK2A3</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -857,9 +745,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                CTNNBL1
-                            </td>
+                            <th scope="row">CTNNBL1</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -878,9 +764,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DACH2
-                            </td>
+                            <th scope="row">DACH2</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -899,9 +783,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DCLK3
-                            </td>
+                            <th scope="row">DCLK3</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -920,9 +802,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DEGS1
-                            </td>
+                            <th scope="row">DEGS1</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -941,9 +821,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DENND2C
-                            </td>
+                            <th scope="row">DENND2C</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -962,9 +840,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DNAH5
-                            </td>
+                            <th scope="row">DNAH5</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -983,9 +859,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DNPEP
-                            </td>
+                            <th scope="row">DNPEP</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -1004,9 +878,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DPH7
-                            </td>
+                            <th scope="row">DPH7</th>
                             <td style="text-align:left;">
                                 chr9
                             </td>
@@ -1025,9 +897,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                DYSF
-                            </td>
+                            <th scope="row">DYSF</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -1048,9 +918,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                EBP
-                            </td>
+                            <th scope="row">EBP</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -1069,9 +937,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                EPG5
-                            </td>
+                            <th scope="row">EPG5</th>
                             <td style="text-align:left;">
                                 chr18
                             </td>
@@ -1090,9 +956,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                EPHB1
-                            </td>
+                            <th scope="row">EPHB1</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -1111,9 +975,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                FARSB
-                            </td>
+                            <th scope="row">FARSB</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -1132,9 +994,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                FMR1
-                            </td>
+                            <th scope="row">FMR1</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -1153,9 +1013,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GABRA6
-                            </td>
+                            <th scope="row">GABRA6</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -1174,9 +1032,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GABRR1
-                            </td>
+                            <th scope="row">GABRR1</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1195,9 +1051,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GCC1
-                            </td>
+                            <th scope="row">GCC1</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -1216,9 +1070,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GFOD1
-                            </td>
+                            <th scope="row">GFOD1</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1237,9 +1089,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GPR12
-                            </td>
+                            <th scope="row">GPR12</th>
                             <td style="text-align:left;">
                                 chr13
                             </td>
@@ -1258,9 +1108,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GRM7
-                            </td>
+                            <th scope="row">GRM7</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -1279,9 +1127,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                GTF2IRD1
-                            </td>
+                            <th scope="row">GTF2IRD1</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -1300,9 +1146,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                HDGFL3
-                            </td>
+                            <th scope="row">HDGFL3</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -1321,9 +1165,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                HINT1
-                            </td>
+                            <th scope="row">HINT1</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -1342,9 +1184,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                HLA-DOB
-                            </td>
+                            <th scope="row">HLA-DOB</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1363,9 +1203,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                HS3ST5
-                            </td>
+                            <th scope="row">HS3ST5</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1384,9 +1222,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                IGDCC3
-                            </td>
+                            <th scope="row">IGDCC3</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -1405,9 +1241,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                IRX6
-                            </td>
+                            <th scope="row">IRX6</th>
                             <td style="text-align:left;">
                                 chr16
                             </td>
@@ -1426,9 +1260,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KANSL3
-                            </td>
+                            <th scope="row">KANSL3</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -1447,9 +1279,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KATNAL2
-                            </td>
+                            <th scope="row">KATNAL2</th>
                             <td style="text-align:left;">
                                 chr18
                             </td>
@@ -1468,9 +1298,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KCNB2
-                            </td>
+                            <th scope="row">KCNB2</th>
                             <td style="text-align:left;">
                                 chr8
                             </td>
@@ -1489,9 +1317,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KIAA0319
-                            </td>
+                            <th scope="row">KIAA0319</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1510,9 +1336,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KIF13A
-                            </td>
+                            <th scope="row">KIF13A</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1531,9 +1355,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KPNB1
-                            </td>
+                            <th scope="row">KPNB1</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -1552,9 +1374,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KRAS
-                            </td>
+                            <th scope="row">KRAS</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -1575,9 +1395,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KRT7
-                            </td>
+                            <th scope="row">KRT7</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -1596,9 +1414,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KRT87P
-                            </td>
+                            <th scope="row">KRT87P</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -1617,9 +1433,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KRTAP26-1
-                            </td>
+                            <th scope="row">KRTAP26-1</th>
                             <td style="text-align:left;">
                                 chr21
                             </td>
@@ -1638,9 +1452,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                KRTAP27-1
-                            </td>
+                            <th scope="row">KRTAP27-1</th>
                             <td style="text-align:left;">
                                 chr21
                             </td>
@@ -1659,9 +1471,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LAMA2
-                            </td>
+                            <th scope="row">LAMA2</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1680,9 +1490,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LAMA4
-                            </td>
+                            <th scope="row">LAMA4</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -1703,9 +1511,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LINC00477
-                            </td>
+                            <th scope="row">LINC00477</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -1724,9 +1530,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LINC02203
-                            </td>
+                            <th scope="row">LINC02203</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -1745,9 +1549,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LOC101929572
-                            </td>
+                            <th scope="row">LOC101929572</th>
                             <td style="text-align:left;">
                                 chr14
                             </td>
@@ -1766,9 +1568,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LOC105371675
-                            </td>
+                            <th scope="row">LOC105371675</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -1787,9 +1587,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LOC105372316
-                            </td>
+                            <th scope="row">LOC105372316</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -1808,9 +1606,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LOC105374421
-                            </td>
+                            <th scope="row">LOC105374421</th>
                             <td style="text-align:left;">
                                 chr4
                             </td>
@@ -1829,9 +1625,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LRRC4B
-                            </td>
+                            <th scope="row">LRRC4B</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -1850,9 +1644,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                LRRK2
-                            </td>
+                            <th scope="row">LRRK2</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -1871,9 +1663,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MAIP1
-                            </td>
+                            <th scope="row">MAIP1</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -1892,9 +1682,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MCTP1
-                            </td>
+                            <th scope="row">MCTP1</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -1913,9 +1701,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MCTS1
-                            </td>
+                            <th scope="row">MCTS1</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -1934,9 +1720,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MGC4859
-                            </td>
+                            <th scope="row">MGC4859</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -1955,9 +1739,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MITF
-                            </td>
+                            <th scope="row">MITF</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -1976,9 +1758,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MKS1
-                            </td>
+                            <th scope="row">MKS1</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -1997,9 +1777,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MROH2B
-                            </td>
+                            <th scope="row">MROH2B</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2018,9 +1796,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MTCL1
-                            </td>
+                            <th scope="row">MTCL1</th>
                             <td style="text-align:left;">
                                 chr18
                             </td>
@@ -2039,9 +1815,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MTMR6
-                            </td>
+                            <th scope="row">MTMR6</th>
                             <td style="text-align:left;">
                                 chr13
                             </td>
@@ -2060,9 +1834,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                MYO18A
-                            </td>
+                            <th scope="row">MYO18A</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -2081,9 +1853,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                NGEF
-                            </td>
+                            <th scope="row">NGEF</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -2102,9 +1872,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                NR0B1
-                            </td>
+                            <th scope="row">NR0B1</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -2123,9 +1891,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                NRBP1
-                            </td>
+                            <th scope="row">NRBP1</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -2144,9 +1910,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                NSD2
-                            </td>
+                            <th scope="row">NSD2</th>
                             <td style="text-align:left;">
                                 chr4
                             </td>
@@ -2165,9 +1929,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                NUDCD3
-                            </td>
+                            <th scope="row">NUDCD3</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -2186,9 +1948,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OR10W1
-                            </td>
+                            <th scope="row">OR10W1</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -2207,9 +1967,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OR2G6
-                            </td>
+                            <th scope="row">OR2G6</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -2228,9 +1986,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OR2T33
-                            </td>
+                            <th scope="row">OR2T33</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -2249,9 +2005,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OR52E8
-                            </td>
+                            <th scope="row">OR52E8</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -2270,9 +2024,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OR52J3
-                            </td>
+                            <th scope="row">OR52J3</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -2291,9 +2043,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ORC1
-                            </td>
+                            <th scope="row">ORC1</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -2312,9 +2062,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OSBPL6
-                            </td>
+                            <th scope="row">OSBPL6</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -2333,9 +2081,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OTUD6A
-                            </td>
+                            <th scope="row">OTUD6A</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -2354,9 +2100,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                OVCH1
-                            </td>
+                            <th scope="row">OVCH1</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -2375,9 +2119,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PALLD
-                            </td>
+                            <th scope="row">PALLD</th>
                             <td style="text-align:left;">
                                 chr4
                             </td>
@@ -2396,9 +2138,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PALM2AKAP2
-                            </td>
+                            <th scope="row">PALM2AKAP2</th>
                             <td style="text-align:left;">
                                 chr9
                             </td>
@@ -2417,9 +2157,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PARD3
-                            </td>
+                            <th scope="row">PARD3</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -2438,9 +2176,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PARD6B
-                            </td>
+                            <th scope="row">PARD6B</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -2459,9 +2195,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PCDHA10
-                            </td>
+                            <th scope="row">PCDHA10</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2480,9 +2214,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PCDHB12
-                            </td>
+                            <th scope="row">PCDHB12</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2501,9 +2233,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PCDHB14
-                            </td>
+                            <th scope="row">PCDHB14</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2522,9 +2252,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PCDHB3
-                            </td>
+                            <th scope="row">PCDHB3</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2543,9 +2271,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PCDHB6
-                            </td>
+                            <th scope="row">PCDHB6</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2564,9 +2290,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PDE4D
-                            </td>
+                            <th scope="row">PDE4D</th>
                             <td style="text-align:left;">
                                 chr5
                             </td>
@@ -2585,9 +2309,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PER3
-                            </td>
+                            <th scope="row">PER3</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -2606,9 +2328,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PFDN6
-                            </td>
+                            <th scope="row">PFDN6</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -2627,9 +2347,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PGBD5
-                            </td>
+                            <th scope="row">PGBD5</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -2648,9 +2366,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PKHD1
-                            </td>
+                            <th scope="row">PKHD1</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -2669,9 +2385,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PKNOX1
-                            </td>
+                            <th scope="row">PKNOX1</th>
                             <td style="text-align:left;">
                                 chr21
                             </td>
@@ -2690,9 +2404,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PLXNA4
-                            </td>
+                            <th scope="row">PLXNA4</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -2711,9 +2423,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PML
-                            </td>
+                            <th scope="row">PML</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -2732,9 +2442,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                POP5
-                            </td>
+                            <th scope="row">POP5</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -2753,9 +2461,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PRPF8
-                            </td>
+                            <th scope="row">PRPF8</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -2774,9 +2480,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PRPF8
-                            </td>
+                            <th scope="row">PRPF8</th>
                             <td style="text-align:left;">
                                 chr17
                             </td>
@@ -2795,9 +2499,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PSMD10
-                            </td>
+                            <th scope="row">PSMD10</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -2816,9 +2518,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PTCHD4
-                            </td>
+                            <th scope="row">PTCHD4</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -2837,9 +2537,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                PWARSN
-                            </td>
+                            <th scope="row">PWARSN</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -2858,9 +2556,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RAB19
-                            </td>
+                            <th scope="row">RAB19</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -2879,9 +2575,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RAB40AL
-                            </td>
+                            <th scope="row">RAB40AL</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -2900,9 +2594,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RADX
-                            </td>
+                            <th scope="row">RADX</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -2921,9 +2613,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RANBP2
-                            </td>
+                            <th scope="row">RANBP2</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -2942,9 +2632,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RELN
-                            </td>
+                            <th scope="row">RELN</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -2963,9 +2651,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RNF169
-                            </td>
+                            <th scope="row">RNF169</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -2984,9 +2670,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RPL21P44
-                            </td>
+                            <th scope="row">RPL21P44</th>
                             <td style="text-align:left;">
                                 chr4
                             </td>
@@ -3005,9 +2689,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                RXFP4
-                            </td>
+                            <th scope="row">RXFP4</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3026,9 +2708,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SARDH
-                            </td>
+                            <th scope="row">SARDH</th>
                             <td style="text-align:left;">
                                 chr9
                             </td>
@@ -3047,9 +2727,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SEMA3F
-                            </td>
+                            <th scope="row">SEMA3F</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -3068,9 +2746,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SERPINB11
-                            </td>
+                            <th scope="row">SERPINB11</th>
                             <td style="text-align:left;">
                                 chr18
                             </td>
@@ -3089,9 +2765,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SETD2
-                            </td>
+                            <th scope="row">SETD2</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -3110,9 +2784,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SLC18A3
-                            </td>
+                            <th scope="row">SLC18A3</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -3131,9 +2803,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SLC18A3
-                            </td>
+                            <th scope="row">SLC18A3</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -3152,9 +2822,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SLC25A14
-                            </td>
+                            <th scope="row">SLC25A14</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -3173,9 +2841,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SNAP47
-                            </td>
+                            <th scope="row">SNAP47</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3194,9 +2860,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SNHG14
-                            </td>
+                            <th scope="row">SNHG14</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -3215,9 +2879,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SOX6
-                            </td>
+                            <th scope="row">SOX6</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -3236,9 +2898,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SPDYE7P
-                            </td>
+                            <th scope="row">SPDYE7P</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -3257,9 +2917,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SSX6P
-                            </td>
+                            <th scope="row">SSX6P</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -3278,9 +2936,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SUPT3H
-                            </td>
+                            <th scope="row">SUPT3H</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -3299,9 +2955,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SYNM
-                            </td>
+                            <th scope="row">SYNM</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -3320,9 +2974,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SYNM
-                            </td>
+                            <th scope="row">SYNM</th>
                             <td style="text-align:left;">
                                 chr15
                             </td>
@@ -3341,9 +2993,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                SZT2
-                            </td>
+                            <th scope="row">SZT2</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3362,9 +3012,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TBCEL
-                            </td>
+                            <th scope="row">TBCEL</th>
                             <td style="text-align:left;">
                                 chr11
                             </td>
@@ -3383,9 +3031,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TET1
-                            </td>
+                            <th scope="row">TET1</th>
                             <td style="text-align:left;">
                                 chr10
                             </td>
@@ -3404,9 +3050,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                THBS2
-                            </td>
+                            <th scope="row">THBS2</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -3425,9 +3069,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                THOC2
-                            </td>
+                            <th scope="row">THOC2</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -3448,9 +3090,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TM9SF4
-                            </td>
+                            <th scope="row">TM9SF4</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -3469,9 +3109,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TMEM147
-                            </td>
+                            <th scope="row">TMEM147</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3490,9 +3128,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TNPO2
-                            </td>
+                            <th scope="row">TNPO2</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3511,9 +3147,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TSHZ2
-                            </td>
+                            <th scope="row">TSHZ2</th>
                             <td style="text-align:left;">
                                 chr20
                             </td>
@@ -3532,9 +3166,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TTN
-                            </td>
+                            <th scope="row">TTN</th>
                             <td style="text-align:left;">
                                 chr2
                             </td>
@@ -3553,9 +3185,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                TUBB6
-                            </td>
+                            <th scope="row">TUBB6</th>
                             <td style="text-align:left;">
                                 chr18
                             </td>
@@ -3574,9 +3204,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                UHRF1BP1L
-                            </td>
+                            <th scope="row">UHRF1BP1L</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -3595,9 +3223,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                UNC79
-                            </td>
+                            <th scope="row">UNC79</th>
                             <td style="text-align:left;">
                                 chr14
                             </td>
@@ -3616,9 +3242,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                VSIG10
-                            </td>
+                            <th scope="row">VSIG10</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -3637,9 +3261,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                WDR78
-                            </td>
+                            <th scope="row">WDR78</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3658,9 +3280,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                WNT3A
-                            </td>
+                            <th scope="row">WNT3A</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3679,9 +3299,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                YARS2
-                            </td>
+                            <th scope="row">YARS2</th>
                             <td style="text-align:left;">
                                 chr12
                             </td>
@@ -3700,9 +3318,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZBTB7B
-                            </td>
+                            <th scope="row">ZBTB7B</th>
                             <td style="text-align:left;">
                                 chr1
                             </td>
@@ -3721,9 +3337,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZDHHC15
-                            </td>
+                            <th scope="row">ZDHHC15</th>
                             <td style="text-align:left;">
                                 chrX
                             </td>
@@ -3742,9 +3356,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZIC4
-                            </td>
+                            <th scope="row">ZIC4</th>
                             <td style="text-align:left;">
                                 chr3
                             </td>
@@ -3763,9 +3375,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF160
-                            </td>
+                            <th scope="row">ZNF160</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3784,9 +3394,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF213
-                            </td>
+                            <th scope="row">ZNF213</th>
                             <td style="text-align:left;">
                                 chr16
                             </td>
@@ -3805,9 +3413,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF256
-                            </td>
+                            <th scope="row">ZNF256</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3826,9 +3432,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF284
-                            </td>
+                            <th scope="row">ZNF284</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3847,9 +3451,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF318
-                            </td>
+                            <th scope="row">ZNF318</th>
                             <td style="text-align:left;">
                                 chr6
                             </td>
@@ -3868,9 +3470,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF569
-                            </td>
+                            <th scope="row">ZNF569</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3889,9 +3489,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF716
-                            </td>
+                            <th scope="row">ZNF716</th>
                             <td style="text-align:left;">
                                 chr7
                             </td>
@@ -3910,9 +3508,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="text-align:left;font-weight: bold;border-right:1px solid;">
-                                ZNF850
-                            </td>
+                            <th scope="row">ZNF850</th>
                             <td style="text-align:left;">
                                 chr19
                             </td>
@@ -3932,50 +3528,53 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill"/>
+                    </svg>
+                    <div>
+                        <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare
+                        professional.
+                    </div>
+                </div>
             </div>
-            <div class="alert alert-error">
-                <i class="icon-warning-sign icon-black"></i> <b>Warning</b>: This is a clinical decision support system.
-                Always consult with a healthcare professional.
-            </div>
-        </div>
+        </main>
 
-
-        <!-- Le javascript
-      ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="assets/js/jquery.js"></script>
-        <script src="assets/js/bootstrap-transition.js"></script>
-        <script src="assets/js/bootstrap-alert.js"></script>
-        <script src="assets/js/bootstrap-modal.js"></script>
-        <script src="assets/js/bootstrap-dropdown.js"></script>
-        <script src="assets/js/bootstrap-scrollspy.js"></script>
-        <script src="assets/js/bootstrap-tab.js"></script>
-        <script src="assets/js/bootstrap-tooltip.js"></script>
-        <script src="assets/js/bootstrap-popover.js"></script>
-        <script src="assets/js/bootstrap-button.js"></script>
-        <script src="assets/js/bootstrap-collapse.js"></script>
-        <script src="assets/js/bootstrap-carousel.js"></script>
-        <script src="assets/js/bootstrap-typeahead.js"></script>
-        <script type="text/javascript">
-            $(function () {
-                $(window).load(function () {
-                    $('.show-all-start').each(function () {
-                        var t = $(this);
-                        t.find('a[role="tab"]').each(function () { $(this).click(); });
-                        t.find('a[role="tab"]').first().click();
-                    });
-
-                    $('a.my_ref_link').click(function () {
-                        var t = $(this), id = t.data('id'), o = $(id);
-                        o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
-                        var tabId = o.closest('.tab-pane').attr('id');
-                        console.log(tabId);
-                        o.closest('.tabset').find('a[href="#' + tabId + '"]').click();
-                        console.log(o.closest('.tabset').find('a[href="#' + tabId + '"]'));
-                        $('body').scrollTo(id);
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+                crossorigin="anonymous"></script>
+        <script>
+            (function () {
+                'use strict';
+                document.querySelectorAll('a.reference').forEach(function (link) {
+                    link.addEventListener('click', function (event) {
+                        // TODO
+                        function myFunction1 () {
+                            location.replace('reference.html');
+                        }
                     });
                 });
-            });
+            })();
+        </script>
+
+
+        <script type="text/javascript">
+            // $('.show-all-start').each(function () {
+            //     var t = $(this);
+            //     t.find('a[role="tab"]').each(function () { $(this).click(); });
+            //     t.find('a[role="tab"]').first().click();
+            // });
+            //
+            // $('a.my_ref_link').click(function () {
+            //     var t = $(this), id = t.data('id'), o = $(id);
+            //     o.parent().parent().addClass('highlight').siblings().removeClass('highlight');
+            //     var tabId = o.closest('.tab-pane').attr('id');
+            //     console.log(tabId);
+            //     o.closest('.tabset').find('a[href="#' + tabId + '"]').click();
+            //     console.log(o.closest('.tabset').find('a[href="#' + tabId + '"]'));
+            //     $('body').scrollTo(id);
+            // });
         </script>
     </body>
 </html>

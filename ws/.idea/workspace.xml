@@ -2,23 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/test.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/rSettings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Traits/CleanupEsmoTitles.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/esmo_skip.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/doi_parser.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/doi_parser.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug_old.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/css/bootstrap-responsive.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/css/bootstrap.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/css/docs.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/test.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/TestWords.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/DiseaseResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/stopwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/stopwords.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +216,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="org.jetbrains.r.configuration.RSettingsProjectConfigurable" />
@@ -224,13 +224,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
+      <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets" />
       <recent name="$PROJECT_DIR$/resources" />
       <recent name="$PROJECT_DIR$/app/Console/Commands" />
       <recent name="$PROJECT_DIR$/app/Jobs/Traits" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease" />
-      <recent name="$PROJECT_DIR$/app/Http/Controllers/Api" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/css" />
       <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
       <recent name="$PROJECT_DIR$/../scripts/app/container/databases" />
       <recent name="$PROJECT_DIR$/../scripts/app/container/oncoreport" />
@@ -368,6 +369,8 @@
       <workItem from="1636695701998" duration="5833000" />
       <workItem from="1636738710724" duration="7563000" />
       <workItem from="1636789007293" duration="20050000" />
+      <workItem from="1636888896672" duration="4486000" />
+      <workItem from="1636895363229" duration="6969000" />
     </task>
     <servers />
   </component>
