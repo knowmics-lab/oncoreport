@@ -72,14 +72,14 @@ template.env$pt_tumor_stage  <- pt_tumor_stage
 
 cat("THERAPEUTIC - Mutation Information\n")
 
-therapeutic.references <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, ".txt"), sep = "\t", stringsAsFactors = FALSE)
+therapeutic.references <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, ".txt"), sep = "\t", stringsAsFactors = FALSE, colClasses = "character")
 therapeutic.references <- therapeutic.references[, c("PMID", "Reference")]
 therapeutic.references <- therapeutic.references[!duplicated(therapeutic.references$PMID),]
 
 therapeutic.trials <- read.csv(paste0(path_project, "/txt/trial/", pt_fastq, ".txt"), sep = "\t", stringsAsFactors = FALSE)
 list.all.trials    <- unique(therapeutic.trials$Clinical_trial)
 
-all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive.txt"), sep = "\t", colClasses = c("character"), stringsAsFactors = FALSE)
+all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive.txt"), sep = "\t", colClasses = "character", stringsAsFactors = FALSE)
 all.annotations <- diseases_db_simple %>% inner_join(all.annotations, by = "Disease")
 all.annotations[is.na(all.annotations)] <- " "
 all.annotations$id <- 1:nrow(all.annotations)
@@ -87,6 +87,327 @@ all.annotations$id <- 1:nrow(all.annotations)
 
 primary.annotations <- all.annotations[all.annotations$Evidence_direction == "Supports" & all.annotations$DOID == pt_tumor, , drop = F]
 primary.annotations$DOID <- NULL
+primary.annotations <- unique(primary.annotations)
+
+if (nrow(primary.annotations) != 0) {
+  substitutes         <- primary.annotations[primary.annotations$Drug_interaction_type == "Substitutes",]
+  primary.annotations <- primary.annotations[primary.annotations$Drug_interaction_type != "Substitutes",]
+  substitutes         <- substitutes %>% 
+    mutate(Drug = strsplit(as.character(Drug), ","), Approved = strsplit(as.character(Approved), ",")) %>%
+    unnest(c(Drug, Approved))
+  primary.annotations <- rbind(primary.annotations, substitutes)
+  primary.annotations$Drug <- gsub(", ", ",", primary.annotations$Drug, fixed = TRUE)
+  primary.annotations$Drug_interaction_type <- NULL
+  # primary.annotations$Evidence_type <- factor(primary.annotations$Evidence_type, levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive", "Functional"))
+  # primary.annotations$Evidence_level <- factor(primary.annotations$Evidence_level, levels = c("Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence",
+  #                                                                                             "Late trials", "Early trials", "Case study", "Case report",
+  #                                                                                             "Preclinical evidence", "Pre-clinical", "Inferential association"))
+  evidence_list <- c("Validated association", "FDA guidelines", "NCCN guidelines", 
+                     "Clinical evidence", "Late trials", "Early trials", "Case study", 
+                     "Case report", "Preclinical evidence", "Pre-clinical", 
+                     "Inferential association")
+  primary.annotations <- inner_join(primary.annotations, therapeutic.references) %>%
+    arrange(Gene, Evidence_level, Evidence_type, Variant, Drug, Clinical_significance, Reference) %>%
+    group_by(Disease, Database, Gene, Variant, Drug, Evidence_type, Evidence_direction, Clinical_significance, Variant_summary, PMID,
+             Citation, Chromosome, Start, Stop, Ref_base, Var_base, Type, Approved, Score, Reference, id) %>%
+    summarize(Evidence_level = str_c(Evidence_level, collapse = ", "), Evidence_statement = str_c(Evidence_statement, collapse = ", "),
+              Citation = str_c(Citation, collapse = ", "), id = str_c(id, collapse = ", "))
+  primary.annotations$Evidence_level <- gsub("(.*),.*", "\\1", primary.annotations$Evidence_level)
+  primary.annotations$Evidence_statement <- gsub(".,", ".", primary.annotations$Evidence_statement)
+  primary.annotations <- primary.annotations[, c(
+    "Disease", "Database", "Gene", "Variant", "Drug", "Evidence_type", 
+    "Evidence_level", "Evidence_direction", "Clinical_significance", 
+    "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome", 
+    "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved", "Score", 
+    "Reference", "id")]
+  primary.annotations$Evidence_level <- ordered(primary.annotations$Evidence_level, levels = c(
+    "Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence", 
+    "Late trials", "Early trials", "Case study", "Case report", "Preclinical evidence", 
+    "Pre-clinical", "Inferential association"))
+  primary.annotations <- primary.annotations[order(primary.annotations$Evidence_level),]
+  primary.annotations$Approved <- mapply(function (dcount, approved) {
+    if (dcount < 1) return(approved)
+    sapproved <- unlist(strsplit(approved, ","))
+    if (length(unique(sapproved)) == 1) return (unique(sapproved))
+    agencies <- names(which(table(unlist(sapply(sapproved, function(x)(unlist(strsplit(x, "/")))))) == length(sapproved)))
+    if (length(agencies) < 1) return ("Not approved")
+    return (paste0(agencies, collapse = "/"))
+  }, str_count(primary.annotations$Drug, ","), primary.annotations$Approved)
+  primary.annotations$Citation   <- gsub("(,)([0-9]+)", "\\1 \\2,", primary.annotations$Citation)
+  primary.annotations$year       <- gsub(".*, (\\w+),.*", "\\1", primary.annotations$Citation)
+  current_year                   <- format(Sys.time(), "%Y")
+  print(current_year - as.numeric(primary.annotations$year))
+  stop()
+  print(primary.annotations)
+  stop()  
+  
+  
+  #########################################################################################################################
+  #Score
+  
+  x$Citation <- gsub("(,)([0-9]+)", "\\1 \\2,", x$Citation)
+  x$year <- gsub(".*, (\\w+),.*", "\\1", x$Citation)
+  x$y_score <- apply(x, 1, function(row) {
+    if (row["year"] == 2021 |
+        row["year"] == 2020 |
+        row["year"] == 2019) {
+      3 #Deleterio
+    } else if (row["year"] == 2018 |
+               row["year"] == 2017 |
+               row["year"] == 2016) {
+      2
+    }  else if (row["year"] == 2015 |
+                row["year"] == 2014 |
+                row["year"] == 2013) {
+      1
+    }  else if (row["year"] == 2012 |
+                row["year"] == 2011 |
+                row["year"] == 2010) {
+      0.5
+    } else {
+      0 #Tolerate/Benign/Unknown
+    }
+  })
+  
+  sp <- split(x, x$Gene)
+  b <- list()
+  if (length(sp) > 1) {
+    for (i in 1:length(sp)) {
+      a <- sp[[i]]
+      a <- unique(a)
+      a <- a[!a$Drug == "",]
+      if (dim(a)[1] != 0) {
+        b <- c(list(a), b)
+      }
+    }
+  }
+  
+  if (length(b) > 1) {
+    tot <- data.frame()
+    for (i in 1:length(b)) {
+      for (o in 1:length(b)) {
+        if (o != i) {
+          data <- b[[i]]
+          data$d_score <- b[[i]]$Drug %in% b[[o]]$Drug
+          data$cp <- paste(o, " - ", i)
+          data <- as.data.frame(data)
+          tot <- rbind(data, tot)
+        }
+      } }
+    tot$d_score[tot$d_score == TRUE] <- 1
+    tot$d_score[tot$d_score == FALSE] <- 0
+    tot3 <- tot %>%
+      rowwise() %>%
+      mutate(cp = paste(sort(unlist(strsplit(cp, "  -  ", fixed = TRUE))), collapse = "  -  "))
+    tot3 <- tot3[, c("Drug", "cp", "d_score")]
+    tot3 <- unique(tot3)
+    tot3$cp <- NULL
+    tot3 <- aggregate(d_score ~ Drug, tot3, sum)
+    
+    m1 <- merge(tot3, x, all.y = TRUE)
+    m1[is.na(m1)] <- 0
+    m1 <- m1[, c("Drug", "Score", "y_score", "d_score")]
+    m1 <- unique(m1)
+    m1 <- m1[-which(m1$Drug == ""),]
+    m1$Score <- as.numeric(m1$Score)
+    m1$tot <- rowSums(m1[, c("Score", "y_score", "d_score")])
+    drug_score <- aggregate(tot ~ Drug, m1, mean)
+    x <- merge(drug_score, x, all.y = TRUE)
+    x$Score <- NULL
+    colnames(x)[2] <- "Score"
+  } else {
+    x$Score <- as.numeric(x$Score)
+    x$tot <- rowSums(x[, c("Score", "y_score")])
+    x$Score <- NULL
+    colnames(x)[length(x)] <- "Score"
+  }
+  x$y_score <- NULL
+  x[is.na(x)] <- 0
+  #Alphabetic order of the drug name
+  x$Drug <- as.character(x$Drug)
+  x <- x %>%
+    rowwise() %>%
+    mutate(Drug = paste(sort(unlist(strsplit(Drug, ",", fixed = TRUE))), collapse = ","))
+  x <- unique(x)
+  
+  ###
+  g <- apply(x, 1, function(row) {
+    if (grepl("AIFA/EMA/FDA", row["Approved"])) {
+      row["AIFA"] <- "&#9989;"
+      row["FDA"] <- "&#9989;"
+      row["EMA"] <- "&#9989;"
+    } else if (grepl("AIFA/FDA", row["Approved"])) {
+      row["AIFA"] <- "&#9989;"
+      row["FDA"] <- "&#9989;"
+      row["EMA"] <- "&#10060;"
+    } else if (grepl("EMA/FDA", row["Approved"])) {
+      row["AIFA"] <- "&#10060;"
+      row["FDA"] <- "&#9989;"
+      row["EMA"] <- "&#9989;"
+    } else if (grepl("AIFA/EMA", row["Approved"])) {
+      row["AIFA"] <- "&#9989;"
+      row["FDA"] <- "&#10060;"
+      row["EMA"] <- "&#9989;"
+    } else if (grepl("AIFA", row["Approved"])) {
+      row["AIFA"] <- "&#9989;"
+      row["FDA"] <- "&#10060;"
+      row["EMA"] <- "&#10060;"
+    } else if (grepl("EMA", row["Approved"])) {
+      row["AIFA"] <- "&#10060;"
+      row["FDA"] <- "&#10060;"
+      row["EMA"] <- "&#9989;"
+    } else if (grepl("FDA", row["Approved"])) {
+      row["AIFA"] <- "&#10060;"
+      row["FDA"] <- "&#9989;"
+      row["EMA"] <- "&#10060;"
+    } else {
+      row["AIFA"] <- "&#10060;"
+      row["FDA"] <- "&#10060;"
+      row["EMA"] <- "&#10060;"
+    }
+    g <- list(row["AIFA"], row["FDA"], row["EMA"])
+    return(g)
+  })
+  g <- as.data.frame(do.call(rbind, g))
+  colnames(g) <- c("AIFA", "FDA", "EMA")
+  x <- cbind(x, g)
+  
+  if (nrow(x) > 0)
+    x$Reference <- paste0('<a href="Javascript:;" onClick="myFunction1(); return false;" data-id="#ref-', x$Reference, '">', x$Reference, '</a>')
+  #
+  x$Approved <- NULL
+  x$AIFA <- as.character(x$AIFA)
+  x$EMA <- as.character(x$EMA)
+  x$FDA <- as.character(x$FDA)
+  
+  x$Evidence_level <- factor(x$Evidence_level, levels = c("Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence",
+                                                          "Late trials", "Early trials", "Case study", "Case report",
+                                                          "Preclinical evidence", "Pre-clinical", "Inferential association"))
+  
+  
+  x <- x[order(x$Gene, x$Evidence_level, x$Evidence_type, x$Variant, x$Drug,
+               x$Clinical_significance, x$Reference),]
+  
+  
+  list_evidence <- list(evidence_list[1:4], evidence_list[5:11])
+  x_backup <- x
+  id_evidence <- 0
+  for (q in 1:2)
+  {
+    x <- x_backup
+    
+    if (sum(list_evidence[[q]] %in% x$Evidence_level) >= 1)
+    {
+      x <- x[which(x$Evidence_level %in% list_evidence[[q]]),]
+      hgx <- split(x, x$Gene)
+      empty <- T
+      for (n in hgx)
+      {
+        
+        if (nrow(n) > 0)
+        {
+          gene <- as.character(n$Gene)[1]
+          cat("  \n#### Gene", gene, " \n")
+          n <- n[, c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Evidence_statement", "Type",
+                     "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id")]
+          ui <- n
+          ui$Evidence_statement <- NULL
+          ui$Reference <- NULL
+          ui$year <- NULL
+          ui$id <- NULL
+          #ui$Order<-NULL
+          ui <- aggregate(Score ~ ., data = ui, FUN = mean)
+          n$Score <- NULL
+          #n$id <- NULL
+          n <- merge(n, ui)
+          
+          tmp <- group_by(n, Gene, Evidence_level, Evidence_type, Variant, Drug, Clinical_significance, Type, Score, AIFA, EMA, FDA, .add = FALSE)
+          tmp2 <- summarise(tmp, Evidence_statement = paste(Evidence_statement, collapse = " "), Reference = paste(sort(Reference), collapse = ", "), year = paste(sort(year), collapse = ", "), id = paste(sort(id), collapse = "-"))
+          #Lo ripeto 2 volte perché al primo non lo fa
+          #tmp2 <- summarise(tmp2,Evidence_statement=paste(Evidence_statement,collapse=" "), Reference=paste(sort(Reference),collapse=", "), year=paste(sort(year),collapse=", "), id=paste(sort(id),collapse="-"))
+          order_id <- c(order_id, tmp2$id)
+          ya <- tmp2[, c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type", "Reference", "Score",
+                         "AIFA", "EMA", "FDA", "year", "id"), drop = F]
+          yb <- tmp2[, c("Evidence_statement", "Reference"), drop = F]
+          ya$Evidence <- 1:nrow(ya)
+          ya$Details <- paste0('[<a href="Javascript:;" class="my_ref_link" data-id="#det-', gene, '-', ya$Evidence, '">+</a>]')
+          ya$Details[!complete.cases(yb) |
+                       yb$Evidence_statement == " " |
+                       yb$Evidence_statement == ""] <- ""
+          ya$Evidence <- paste0('<a id="evi-', gene, '-', ya$Evidence, '" name="evi-', gene, '-', ya$Evidence, '"></a>', ya$Evidence + id_evidence)
+          list.trials <- paste0("https://clinicaltrials.gov/ct2/results?cond=", ya$Variant, "&term=",
+                                ya$Drug, "&cntry=&state=&city=&dist=")
+          ya$Trials <- paste0("[", "<a href=\"", list.trials, "\">+</a>", "]")
+          ya$Trials[!list.trials %in% list.all.trials] <- ""
+          ya$Drug <- gsub(",", ", ", ya$Drug, fixed = T)
+          ya <- ya[, c("Evidence", "Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type", "Details",
+                       "Trials", "Reference", "Score", "AIFA", "EMA", "FDA", "year")]
+          names(ya) <- c("#", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance",
+                         "Evidence Level", "Type", "Details", "Trials", "References", "Confidence Score", "AIFA", "EMA", "FDA", "Publication year")
+          
+          
+          colfunc <- colorRampPalette(c("red", "yellow"))
+          ya$`Confidence Score` <- as.numeric(ya$`Confidence Score`)
+          ya$`Confidence Score` <- round(ya$`Confidence Score`, digits = 2)
+          cr <- ya$`Confidence Score`
+          cr_or <- cr[order(-cr)]
+          cr1 <- unique(cr_or)
+          counts <- table(-cr)
+          veccr <- colfunc(length(cr1))
+          veccr <- rep(veccr, counts)
+          vec_df <- data.frame(score = cr_or, col = veccr)
+          vec_df <- vec_df[match(cr, vec_df$score),]
+          veccr <- as.vector(vec_df$col)
+          
+          if (tumor_type == "tumnorm")
+            ya <- ya[, -which(names(ya) == "Type")]
+          order_evidence <- rbind(order_evidence, ya)
+          table_therapeutic <-
+            kable(ya, "html", escape = FALSE) %>%
+            kable_styling(bootstrap_options = c("striped", "hover", "responsive")) %>%
+            column_spec(11, bold = T, color = "black", background = veccr)
+          empty <- F
+          
+          #table_therapeutic<- kable(ya, "html", escape = FALSE) %>%
+          #        kable_styling(bootstrap_options = c("striped", "hover","responsive"))
+          xml_table_therapeutic <- kable_as_xml(table_therapeutic)
+          
+          node_to_be_replaced <- list_therapeutic_indication[[q]]
+          xml_replace(node_to_be_replaced, xml_table_therapeutic)
+          
+          empty <- F
+        }
+        id_evidence <- nrow(ya)
+      }
+    }
+    if (empty) {
+      table_therapeutic <- paste('<h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>\n</h5>')
+      node_to_be_replaced <- list_therapeutic_indication[[q]]
+      xml_replace(node_to_be_replaced, xml_table_therapeutic)
+      cat("  \n##### No data available.  \n")
+    }
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

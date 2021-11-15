@@ -5,7 +5,7 @@ BiocManager::install(c(
   "shiny", "rmarkdown", "kableExtra", "dplyr", "R.utils",
   "filesstrings", "data.table", "RCurl", "stringr",
   "xml2", "knitr", "tidyr", "DT", "devtools", "optparse",
-  "fuzzyjoin", "IRanges", "ontologyIndex"
+  "fuzzyjoin", "IRanges", "ontologyIndex", "brew"
 ), ask = FALSE)
 
 library(devtools)

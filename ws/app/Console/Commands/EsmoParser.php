@@ -96,7 +96,7 @@ class EsmoParser extends Command
     {
         $tumorsToEsmoFile = storage_path(self::ESMO_PATH . 'tumors_to_esmo.tsv');
         if (!file_exists($tumorsToEsmoFile)) {
-            $this->call('match:esmo');
+            $this->call('esmo:match');
         }
         $guidelines = [];
         $handle = fopen($tumorsToEsmoFile, 'rb');
