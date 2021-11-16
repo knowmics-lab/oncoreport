@@ -144,7 +144,15 @@
                                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
                                      aria-labelledby="panelsStayOpen-headingOne">
                                     <div class="accordion-body">
-                                        <h5>No data available.</h5>
+                                        <div class="table-responsive">
+                                            <%
+                                                if (!is.null(therapeutic_indications$summary$clinical.impact)) {
+                                                    cat(therapeutic_indications$summary$clinical.impact)
+                                                } else {
+                                                    cat("<h5>No data available.</h5>")
+                                                }
+                                            %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +167,15 @@
                                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
                                      aria-labelledby="panelsStayOpen-headingTwo">
                                     <div class="accordion-body">
-                                        <h5>No data available.</h5>
+                                        <div class="table-responsive">
+                                            <%
+                                                if (!is.null(therapeutic_indications$summary$others)) {
+                                                    cat(therapeutic_indications$summary$others)
+                                                } else {
+                                                    cat("<h5>No data available.</h5>")
+                                                }
+                                            %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,11 +185,25 @@
                     </div>
                     <div class="tab-pane fade p-3" id="clinical-evidence" role="tabpanel"
                          aria-labelledby="clinical-evidence-tab">
-                        <h5>No data available.</h5>
+                        <div class="table-responsive">
+                            <%
+                                if (!is.null(therapeutic_indications$evidences)) {
+                                    cat(therapeutic_indications$evidences)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                     <div class="tab-pane fade p-3" id="variant-details" role="tabpanel"
                          aria-labelledby="variant-details-tab">
-                        <h5>No data available.</h5>
+                        <%
+                            if (!is.null(therapeutic_indications$details)) {
+                                cat(therapeutic_indications$details)
+                            } else {
+                                cat("<h5>No data available.</h5>")
+                            }
+                        %>
                     </div>
                 </div>
 
@@ -194,17 +224,16 @@
                 crossorigin="anonymous"></script>
         <script>
             (function () {
-                'use strict'
-                document.querySelectorAll('a.reference')
-                         .forEach(function (link) {
+                'use strict';
+                document.querySelectorAll('a.reference').forEach(function (link) {
                     link.addEventListener('click', function (event) {
                         // TODO
                         function myFunction1 () {
                             location.replace('reference.html');
                         }
-                    })
-                })
-            })()
+                    });
+                });
+            })();
         </script>
 
 
