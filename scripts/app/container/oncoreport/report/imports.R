@@ -1,0 +1,10 @@
+suppressPackageStartupMessages({
+  library(xml2)
+  library(dplyr)
+  library(knitr)
+  library(tidyr)
+  library(kableExtra)
+  library(stringr)
+  library(brew)
+  library(DT)
+})

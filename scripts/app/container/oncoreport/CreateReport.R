@@ -1,13 +1,3 @@
-suppressPackageStartupMessages({
-  library(xml2)
-  library(dplyr)
-  library(knitr)
-  library(tidyr)
-  library(kableExtra)
-  library(stringr)
-  library(brew)
-})
-
 thisFile <- function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
   needle <- "--file="
@@ -20,7 +10,8 @@ thisFile <- function() {
     return(normalizePath(sys.frames()[[1]]$ofile))
   }
 }
-source(file.path(dirname(thisFile()), "imports.R"), local = knitr::knit_global())
+source(file.path(dirname(thisFile()), "report", "imports.R"), local = knitr::knit_global())
+source(file.path(dirname(thisFile()), "report", "commons.R"), local = knitr::knit_global())
 options(knitr.table.format = "html")
 
 cargs <- commandArgs(trailingOnly = TRUE)
@@ -51,16 +42,14 @@ report_output_dir <- paste0(path_project, "/report/")
 dir.create(report_output_dir, showWarnings = FALSE)
 
 
-
-diseases_db              <- read.csv(paste0(path_db, "/Disease.txt"), sep = "\t", stringsAsFactors = FALSE)
-colnames(diseases_db)[1] <- "Disease"
-diseases_db_simple       <- unique(diseases_db[,c("Disease", "DOID")])
+imported_diseases        <- read.diseases(path_db)
+diseases_db              <- imported_diseases[[1]]
+diseases_db_simple       <- imported_diseases[[2]]
 pt_disease_details       <- diseases_db[diseases_db$DOID == pt_tumor,,drop = FALSE]
 pt_disease_name          <- unique(pt_disease_details$DO_name)[1]
 
-evidence_list <- c("Validated association", "FDA guidelines", "NCCN guidelines", 
-                   "Clinical evidence", "Late trials", "Early trials", "Case study", 
-                   "Case report", "Preclinical evidence", "Pre-clinical", 
+evidence_list <- c("Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence", "Late trials", 
+                   "Early trials", "Case study", "Case report", "Preclinical evidence", "Pre-clinical", 
                    "Inferential association")
 
 
@@ -76,7 +65,8 @@ template.env$pt_disease_name <- pt_disease_name
 template.env$pt_tumor_stage  <- pt_tumor_stage
 
 
-suppressMessages(source(file.path(dirname(thisFile()), "therapeutic.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "therapeutic.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "drugInteractions.R")))
 
 stop()
 
