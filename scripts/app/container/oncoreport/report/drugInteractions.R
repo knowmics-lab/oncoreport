@@ -10,8 +10,9 @@ unique_drugs <- unique(data.frame(
   name=c(interactions_db$Drug2_name, interactions_db$Drug1_name)
 ))
 
-#####################################################################################################################
 primary_drugs <- unique(c(unique_drugs$code[unique_drugs$name %in% recommended_drugs$primary], pt_drugs))
+other_drugs   <- unique(unique_drugs$code[unique_drugs$name %in% recommended_drugs$others])
+#####################################################################################################################
 primary_interactions <- interactions_db[interactions_db$Drug2_code %in% primary_drugs & 
                                           interactions_db$Drug1_code %in% primary_drugs,,drop=FALSE] %>%
   group_by(key) %>%
@@ -44,17 +45,38 @@ colnames(other_interactions)   <- c("Drug", "Interacts with", "Effect")
 
 #####################################################################################################################
 rownames(primary_interactions) <- 1:nrow(primary_interactions)
-table <- datatable(primary_interactions, width = "100%")
-htmlwidgets::saveWidget(table, paste0(report_output_dir, "primary_drugs_interactions.html"))
+suppressWarnings({
+  table <- datatable(primary_interactions, width = "100%")
+  htmlwidgets::saveWidget(table, paste0(report_output_dir, "primary_drugs_interactions.html"))
+})
 
 rownames(other_interactions) <- 1:nrow(other_interactions)
-table <- datatable(other_interactions, width = "100%")
-htmlwidgets::saveWidget(table, paste0(report_output_dir, "all_drugs_interactions.html"))
+suppressWarnings({
+  table <- datatable(other_interactions, width = "100%")
+  htmlwidgets::saveWidget(table, paste0(report_output_dir, "other_primary_interactions.html"))
+})
 
 brew(
   file = paste0(path_html_source, "/drugdrug.html"),
   output = paste0(report_output_dir, "drugdrug.html"),
   envir = template.env
 )
+
+#####################################################################################################################
+all_drugs <- unique(c(primary_drugs, other_drugs))
+complete_interactions <- interactions_db[interactions_db$Drug2_code %in% all_drugs | 
+                                           interactions_db$Drug1_code %in% all_drugs,,drop=FALSE] %>%
+  group_by(key) %>%
+  summarise(Drug2_code=Drug2_code[1], Drug2_name=Drug2_name[1],
+            Drug1_code=Drug1_code[1], Drug1_name=Drug1_name[1],
+            Effect=Effect[1])
+complete_interactions   <- as.data.frame(unique(complete_interactions %>% select(Drug2_name, Drug1_name, Effect)))
+colnames(complete_interactions) <- c("Drug", "Interacts with", "Effect")
+rownames(complete_interactions) <- 1:nrow(complete_interactions)
+suppressWarnings({
+  table <- datatable(complete_interactions, width = "100%")
+  htmlwidgets::saveWidget(table, paste0(report_output_dir, "all_drugs_interactions.html"))
+})
+
 
 rm(list = setdiff(ls(), .variables.to.keep))

@@ -109,32 +109,15 @@
 
                 <div class="pb-5">
                     <h1 class="mt-0">Drug-Food Interactions</h1>
-
-                    <table class="table table-sm table-striped table-hover table-responsive"
-                           style="margin-left: auto; margin-right: auto;">
-                        <thead>
-                            <tr class="table-dark">
-                                <th scope="col" style="text-align:left;">
-                                    Drug
-                                </th>
-                                <th scope="col" style="text-align:left;">
-                                    Food Interaction
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align:left;">
-                                    Regorafenib
-                                </td>
-                                <td style="text-align:left;">
-                                    When taken with a high-fat meal, AUC increased by 48% and decreased mean AUC of M2
-                                    and
-                                    M5 metabolites by 20% and 51% respectively.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <%
+                            if (!is.null(drug_food_interactions)) {
+                                cat(drug_food_interactions)
+                            } else {
+                                cat("<h5>No data available.</h5>")
+                            }
+                        %>
+                    </div>
                 </div>
                 <div class="alert alert-warning d-flex align-items-center" role="alert">
                     <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">

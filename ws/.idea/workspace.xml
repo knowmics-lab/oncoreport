@@ -3,10 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/imports.R" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/therapeutic.R" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/drugInteractions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/drugInteractions.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/esmo/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/esmo/index.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,11 +39,11 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -364,6 +367,7 @@
       <workItem from="1637000863679" duration="72000" />
       <workItem from="1637055708735" duration="2768000" />
       <workItem from="1637088042631" duration="1894000" />
+      <workItem from="1637179224417" duration="3792000" />
     </task>
     <servers />
   </component>

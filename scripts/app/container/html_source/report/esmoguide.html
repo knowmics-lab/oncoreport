@@ -139,62 +139,7 @@
                     <h1 class="mt-0">ESMO Guidelines</h1>
                     <div class="row">
                         <div class="col-3">
-                            <div class="panel">
-                                <div class="panel-heading"><h5>BRCA in Breast Cancer </h5></div>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_3.0.0.0.html">
-                                    -BRCA testing
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_5.2.0.0.html">
-                                    --Chemoprevention [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.1.0.0.html">
-                                    --Prophylactic surgery, overview [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.2.0.0.html">
-                                    --Prophylactic bilateral mastectomy [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_7.3.0.0.html">
-                                    --Prophylactic bilateral salpingo-oophorectomy [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_8.1.0.0.html">
-                                    --Treatment [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_8.2.0.0.html">
-                                    --Systemic treatment [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.2.0.0.html">
-                                    --Mutation detection, summary [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.3.1.0.html">
-                                    --Risk reduction non surical options, summary [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.3.2.0.html">
-                                    --Risk reduction surical options, summary [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.1.0.html">
-                                    --Breast cancer treatment in BRCA mutations, summary [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.1.0.html">
-                                    --Surgical treatment of breast cancer in BRCA, summary [BRCA]
-                                </button>
-                                <button type="button" class="button-esmo"
-                                        href="http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/Html/GL53/ENAS5615_9.4.2.0.html">
-                                    --Systemic treatment of breast cancer in BRCA, summary [BRCA]
-                                </button>
-
-                            </div>
+                            <%=esmo_guidelines_sections -%>
                         </div>
                         <div class="col-9">
                             <iframe src="assets/clinicalesmo.jpeg" id="iframe-esmo-content"
@@ -234,6 +179,10 @@
                         const iframe = document.getElementById('iframe-esmo-content');
                         iframe.setAttribute('src', href);
                         this.classList.add('active');
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
                     });
                 });
 

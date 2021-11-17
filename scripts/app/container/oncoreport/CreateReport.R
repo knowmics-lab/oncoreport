@@ -67,6 +67,10 @@ template.env$pt_tumor_stage  <- pt_tumor_stage
 
 suppressMessages(source(file.path(dirname(thisFile()), "report", "therapeutic.R")))
 suppressMessages(source(file.path(dirname(thisFile()), "report", "drugInteractions.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "drugFoodInteractions.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "mutations.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "esmo.R")))
+
 
 stop()
 
@@ -88,97 +92,9 @@ patient_info <- kable(pat) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
 xml_patient_info <- kable_as_xml(patient_info)
 
-#
-#DRUG INTERACTIONS TAB
-#
-if (!require("DT")) install.packages("DT")
-cat("DRUG INTERACTIONS - ", cargs, "\n")
-drugs <- read.csv(paste0(path_db, "/drug_drug_interactions_light.txt"), sep = "\t")
-drug_ind <- drug_recommended
-#Drug_com fa riferimento alle drug che il paziente assume per delle comorbidità. Le drug relative alle comorbidità inserite nell'interfaccia dovranno essere
-#salvate in un file individuato nel path come commento seguente.
-#drug_com<-tryCatch(read.table(paste0("project/txt/",pt_name,"_drug_com.txt"), sep = "\n"), error=function(e) NULL)
-drug_com <- tryCatch(read.table(paste0(pt_path_file_comorbid), sep = "\n"), error = function(e) NULL)
-drug_ind <- unique(drug_ind)
-drug_com <- unique(drug_com)
-drug_com <- unlist(drug_com)
-
-unique_id_drugs <- unique(drugs[, 1:2])
-drug_ind <- unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_ind)]
-#drug_com<-unique_id_drugs$Drug2_code[which(unique_id_drugs$Drug2_name %in% drug_com)]
-drugs_comorbidities <- drugs[which(drugs$Drug2_code %in% drug_com),]
-drug_indications <- drugs[which(drugs$Drug2_code %in% drug_ind),]
-interactions_comorbidities <- drugs_comorbidities[which(drugs_comorbidities$Drug1_code %in% drug_com),]
-interactions_indications <- drug_indications[which(drug_indications$Drug1_code %in% drug_ind),]
-all_interactions <- rbind(drugs_comorbidities, drug_indications)
-exist_interactions <- all_interactions[which(all_interactions$Drug1_code %in% c(drug_com, drug_ind)),]
 
 
-#Drug interactions
-library(DT)
-options(knitr.table.format = "html")
-drug_drug_int <- (read_html(paste0(path_html_source, "/drugdrug.html")))
-# an<-xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
-# an_pat<- paste0('<div class="card-body">
-#            <div class="span4">Surname: ',pt_sample_name,'<br>
-#                                         Name: ',pt_surname,'<br>
-#                                         Sex: ',pt_sex,'</div>
-#            <div class="span4">Age: ',pt_age,'<br>
-#                                         City: ',pt_fastq,'<br>
-#                                         Phone: ',path_project,'</div>
-#            <div class="span3">Sample Name: ',tumor_type,'<br>
-#                                         Cancer Site: ',pt_tumor,'<br>
-#                                         Stage: ',path_db,'</div>
-#          </div>')
 
-an <- xml_child(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 1), 2), 2)
-xml_replace(an, an_xml)
-
-
-#substitute 1 div and 1 script to connect table existent drug interaction
-children_drugdrug <- xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 3)
-b <- exist_interactions[, c(2, 4, 5)]
-if (nrow(b) > 0)
-{
-  xml_remove(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 2), 2))
-  colnames(b)[1] <- "Drug"
-  colnames(b)[2] <- "interact with drug"
-  rownames(b) <- 1:nrow(b)
-  html_drug <- datatable(b, width = "100%")
-  htmlwidgets::saveWidget(html_drug, paste0(path_project, "/", pt_fastq, "/exs_drug.html"))
-  drug_table <- (read_html(paste0(path_project, "/", pt_fastq, "/exs_drug.html")))
-  xml_table_drugdrug <- xml_child(xml_child(drug_table, 2), 1)
-  node_to_be_replaced <- children_drugdrug
-  xml_replace(node_to_be_replaced, xml_table_drugdrug)
-  children_drugdrug <- xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 4)
-  xml_table_drugdrug <- xml_child(xml_child(drug_table, 2), 2)
-  node_to_be_replaced <- children_drugdrug
-  xml_replace(node_to_be_replaced, xml_table_drugdrug)
-}
-
-children_drugdrug <- xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 6)
-b <- all_interactions[, c(2, 4, 5)]
-if (nrow(b) > 0)
-{
-  xml_remove(xml_child(xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 5), 2))
-  colnames(b)[1] <- "Drug"
-  colnames(b)[2] <- "interact with drug"
-  rownames(b) <- 1:nrow(b)
-  html_drug <- datatable(b, width = "100%")
-  htmlwidgets::saveWidget(html_drug, paste0(path_project, "/", pt_fastq, "/all_drug.html"))
-  drug_table <- (read_html(paste0(path_project, "/", pt_fastq, "/all_drug.html")))
-  #substitute 1 div and 1 script to connect table drug interaction
-  xml_table_drugdrug <- xml_child(xml_child(drug_table, 2), 1)
-  node_to_be_replaced <- children_drugdrug
-  xml_replace(node_to_be_replaced, xml_table_drugdrug)
-  children_drugdrug <- xml_child(xml_child(xml_child(drug_drug_int, 2), 1), 7)
-  xml_table_drugdrug <- xml_child(xml_child(drug_table, 2), 2)
-  node_to_be_replaced <- children_drugdrug
-  xml_replace(node_to_be_replaced, xml_table_drugdrug)
-}
-
-system(paste0("chmod -R 777 project/report_html/"))
-write_html(drug_drug_int, paste0(path_project, "/", pt_fastq, "/drugdrug.html"))
 
 
 #
@@ -393,49 +309,6 @@ node_to_be_replaced <- children_phgkb_vd
 xml_replace(node_to_be_replaced, xml_table_evidence)
 write_html(pharmgkb, paste0(path_project, "/", pt_fastq, "/pharmgkb.html"))
 
-
-##
-## Mutations' annotations
-##
-
-cat("MUTATIONS - Annotations\n")
-mutations <- (read_html(paste0(path_html_source, "/mutations.html")))
-children_mutations <- xml_child(xml_child(xml_child(xml_child(mutations, 2), 1), 2), 3)
-array_table <- c()
-an <- xml_child(xml_child(xml_child(xml_child(xml_child(mutations, 2), 1), 1), 2), 2)
-xml_replace(an, an_xml)
-#cargs=commandArgs(trailingOnly = TRUE)
-try({
-  xref <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_refgene.txt"), sep = "\t", colClasses = c("character"))
-  xclin <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_clinvar.txt"), sep = "\t", colClasses = c("character"))
-  xcr <- merge(xref, xclin, all.x = TRUE)
-  xcr <- format.data.frame(xcr, digits = NULL, na.encode = FALSE)
-  xcr[is.na(xcr)] <- " "
-  xcr <- xcr[, c("Gene", "Chromosome", "Stop", "Ref_base", "Var_base", "Change_type", "Clinical_significance", "Type")]
-  names(xcr) <- c("Gene", "Chromosome", "Position", "Ref_base", "Var_base",
-                  "Change Type", "Clinical Significance", "Type")
-  if (tumor_type != "tumnorm")
-    xcr$Type <- factor(xcr$Type, levels = c("Somatic", "Germline"))
-  xcr <- xcr[order(xcr$Type, xcr$Gene, as.integer(xcr$Position)),]
-  rownames(xcr) <- NULL
-  if (nrow(xcr) > 0)
-  {
-    if (tumor_type == "tumnorm")
-      xcr <- xcr[, -which(names(xcr) == "Type")]
-    array_table <- c(array_table, kable(xcr) %>%
-                       kable_styling(bootstrap_options = c("striped", "hover", "responsive")) %>%
-                       column_spec(1, bold = T, border_right = T))
-  } else
-  {
-    array_table <- paste('<div id="no-data-available." class="section level5">
-                        <h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>\n</h5>')
-    cat("  \n##### No data available.  \n")
-  }
-}, silent = TRUE)
-xml_table_evidence <- kable_as_xml(paste(array_table, collapse = " "))
-node_to_be_replaced <- children_mutations
-xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(mutations, paste0(path_project, "/", pt_fastq, "/mutations.html"))
 
 
 ## Off labels Drug  {.tabset}
@@ -1048,39 +921,6 @@ node_to_be_replaced <- children_cosmic_vd
 xml_replace(node_to_be_replaced, xml_table_evidence)
 write_html(cosmic, paste0(path_project, "/", pt_fastq, "/cosmic.html"))
 
-
-##
-## Drug-Food Interactions
-##
-cat("DRUGFOOD - Food Interactions\n")
-drugfood <- (read_html(paste0(path_html_source, "/drugfood.html")))
-children_drugfood <- xml_child(xml_child(xml_child(xml_child(drugfood, 2), 1), 2), 3)
-array_table <- c()
-an <- xml_child(xml_child(xml_child(xml_child(xml_child(drugfood, 2), 1), 1), 2), 2)
-xml_replace(an, an_xml)
-#Food interactions
-#cargs=commandArgs(trailingOnly = TRUE)
-try({
-  k <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_drugfood.txt"), sep = "\t")
-  k <- k[, c("Drug", "Food_interaction")]
-  if (nrow(k) > 0) {
-    k <- unique(k)
-    tmp <- group_by(k, Drug)
-    tmp2 <- summarise(tmp, Food_interaction = paste(Food_interaction, collapse = " "))
-    names(tmp2) <- c("Drug", "Food Interaction")
-    array_table <- c(array_table, kable(tmp2) %>%
-                       kable_styling(bootstrap_options = c("striped", "hover", "responsive")))
-  } else {
-    array_table <- paste('<div id="no-data-available." class="section level5">
-                        <h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>\n</h5>')
-    cat("  \n##### No data available.  \n")
-    
-  }
-}, silent = TRUE)
-xml_table_evidence <- kable_as_xml(paste(array_table, collapse = " "))
-node_to_be_replaced <- children_drugfood
-xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(drugfood, paste0(path_project, "/", pt_fastq, "/drugfood.html"))
 ##
 ##
 ##
@@ -1272,20 +1112,6 @@ xml_table_evidence <- kable_as_xml(paste(array_table, collapse = " "))
 node_to_be_replaced <- children_reference_cosmic
 xml_replace(node_to_be_replaced, xml_table_evidence)
 write_html(reference, paste0(path_project, "/", pt_fastq, "/reference.html"))
-
-##
-## ESMO Guidelines
-##
-cat("ESMOGUIDELINES\n")
-esmoguide <- (read_html(paste0(path_html_source, "/esmoguide.html")))
-an <- xml_child(xml_child(xml_child(xml_child(xml_child(esmoguide, 2), 1), 1), 2), 2)
-xml_replace(an, an_xml)
-children_esmoguide <- xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(esmoguide, 2), 1), 2), 1), 1), 1), 1)
-cat(path_project, "/", pt_fastq, "/esmo_", pt_tumor_site, ".html\n")
-# esmo_personalized <- read_html(paste0(path_project, "/esmo_parsed.html"))
-xml_esmo <- read_xml(paste0(path_project, "/esmo_parsed.html")) # xml_child(xml_child(esmo_personalized, 1), 1)
-xml_replace(children_esmoguide, xml_esmo)
-write_html(esmoguide, paste0(path_project, "/", pt_fastq, "/esmoguide.html"))
 
 cat("Copying assets\n")
 file.copy(file.path(path_html_source, "assets"), file.path(path_project, pt_fastq), recursive = TRUE)
