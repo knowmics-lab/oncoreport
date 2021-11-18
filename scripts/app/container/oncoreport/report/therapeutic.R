@@ -18,10 +18,9 @@ all.annotations[is.na(all.annotations)] <- " "
 all.annotations$id <- 1:nrow(all.annotations)
 
 .variables.to.keep <- c(ls(), "recommended_drugs")
+primary.annotations <- build.primary.annotations(all.annotations, pt_tumor)
 order_id <- c()
 order_evidence <- c()
-
-primary.annotations <- build.primary.annotations(all.annotations, pt_tumor)
 if (nrow(primary.annotations) > 0) {
   evidence.groups <- list(clinical.impact=evidence_list[1:4], others=evidence_list[5:11])
   sorted_id <- character(0)
@@ -80,7 +79,7 @@ if (nrow(primary.annotations) > 0) {
     else sorted_evidences <<- rbind(sorted_evidences, es)
     es <- es[,-which(colnames(es) %in% c("Evidence_statement", "id"))]
     table <- kable(es, "html", escape = FALSE) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
       column_spec(11, bold = T, color = "black", background = assigned.colors)
     genes <- unique(es$Gene)
     if (length(genes) > 1) {
@@ -112,7 +111,7 @@ if (nrow(primary.annotations) > 0) {
     evidence.annotations <- evidence.annotations[, c("Evidence", "Evidence_statement", "References", "Less"), drop = FALSE]
     names(evidence.annotations) <- c("#", "Evidence Statement", "References", "")
     table <- kable(evidence.annotations, "html", escape = FALSE) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", align = "justify"))
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed", align = "justify"))
     genes <- unique(evidence.genes)
     for (g in genes) {
       rows <- which(evidence.genes == g)
@@ -139,7 +138,7 @@ if (nrow(primary.annotations) > 0) {
     annot.details <- unique(annot.details)
     annot.details <- annot.details %>% 
       group_by(Gene, Variant, Chromosome, Ref_base, Var_base, Start, Stop) %>%
-      summarise(Variant_summary = paste0("<ul>", paste0("<li>", Variant_summary, "</li>", collapse = ""), "</ul>")) %>% 
+      summarise(Variant_summary = paste0("<ul>", paste0("<li>", Variant_summary[trimws(Variant_summary) != ""], "</li>", collapse = ""), "</ul>")) %>% 
       arrange(Gene, Variant, Chromosome, Start, Stop) %>%
       mutate(Start = format(as.numeric(Start), digits=0, big.mark=",", scientific = FALSE), 
              Stop = format(as.numeric(Stop), digits=0, big.mark=",", scientific = FALSE))
@@ -148,7 +147,7 @@ if (nrow(primary.annotations) > 0) {
     annot.details$Gene <- NULL
     names(annot.details) <- c("Variant", "Chromosome", "Ref. Base", "Var. Base", "Start", "Stop", "Details")
     table <- kable(annot.details, "html", escape = FALSE) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", align = "justify"))
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed", align = "justify"))
     genes <- unique(details.genes)
     for (g in genes) {
       rows <- which(details.genes == g)

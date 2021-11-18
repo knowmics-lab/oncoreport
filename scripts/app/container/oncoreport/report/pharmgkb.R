@@ -1,4 +1,4 @@
-cat("Building PharmGKB File\n")
+cat("Building PharmGKB Report File\n")
 
 template.env$pharmgkb <- list(
   summary=NULL,
@@ -56,7 +56,8 @@ if (nrow(pharmgkb_annot) > 0) {
   if (tumor_type == "tumnorm") {
     pharmgkb_mutations$Type <- NULL
   }
-  table <- kable(pharmgkb_mutations, "html", escape = FALSE) %>% kable_styling(bootstrap_options = c("striped", "hover"))
+  table <- kable(pharmgkb_mutations, "html", escape = FALSE) %>% 
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
   genes <- unique(pharmgkb_mutations$Gene)
   if (length(genes) > 1) {
     for (g in genes) {
@@ -75,7 +76,7 @@ if (nrow(pharmgkb_annot) > 0) {
     pharmgkb_references <- pharmgkb_references[, c("Evidence", "Evidence_statement", "Reference", "Less"), drop = FALSE]
     names(pharmgkb_references) <- c("#", "Evidence Statement", "References", "")
     template.env$pharmgkb$evidences <- kable(pharmgkb_references, "html", escape = FALSE) %>% 
-      kable_styling(bootstrap_options = c("striped", "hover", align = "justify"))
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed", align = "justify"))
   }
 }
 
@@ -95,84 +96,6 @@ if (nrow(mut_details) > 0) {
   template.env$pharmgkb$details <- kable(mut_details, "html", escape = FALSE) %>% 
     kable_styling(bootstrap_options = c("striped", "hover", align = "justify"))
 }
-
-brew(
-  file = paste0(path_html_source, "/pharmgkb.html"),
-  output = paste0(report_output_dir, "pharmgkb.html"),
-  envir = template.env
-)
-
-stop()
-
-
-
-
-
-
-cat("PHARMGKB - Variant Details\n")
-children_phgkb_vd <- xml_child(xml_child(xml_child(xml_child(xml_child(xml_child(pharmgkb, 2), 1), 2), 4), 3), 1)
-array_table <- c()
-##Mutations information
-options(knitr.table.format = "html")
-#cargs=commandArgs(trailingOnly = TRUE)
-try({
-  
-  x <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_pharm.txt"), sep = "\t", colClasses = c("character"))
-  x[is.na(x)] <- " "
-  x$Gene <- as.character(x$Gene, levels = (x$Gene))
-  x$Var_base <- as.character(x$Var_base)
-  x$Ref_base <- as.character(x$Ref_base)
-  x[is.na(x$Var_base), "Var_base"] <- "T"
-  x[is.na(x$Ref_base), "Ref_base"] <- "T"
-  
-  x <- inner_join(x, x_url)
-  x <- x[order(x$Gene, x$Variant),]
-  
-  hgx <- split(x, paste(x$Gene))
-  empty <- T
-  for (n in hgx)
-  {
-    if (dim(n)[1] != 0)
-    {
-      cat("  \n#### Gene", as.character(n$Gene)[1], " \n")
-      ya <- n[, c("Variant", "Chromosome", "Ref_base", "Var_base", "Start", "Stop")]
-      ya <- unique(ya)
-      row.names(ya) <- NULL
-      print(kable(ya[1,]) %>%
-              kable_styling(bootstrap_options = c("striped", "hover", "responsive")))
-      yc <- n[, c("Variant", "Variant_summary"), drop = F]
-      yc <- yc[complete.cases(yc),]
-      yc <- unique(yc)
-      yc <- yc[!(yc$Variant_summary == " "),]
-      yc <- yc[!(yc$Variant_summary == ""),]
-      if (nrow(yc) > 0)
-      {
-        tmp <- group_by(yc, Variant)
-        tmp2 <- summarise(tmp, Variant_summary = paste(Variant_summary, collapse = " "))
-        array_table <- rbind(array_table, tmp2)
-      }
-      empty <- F
-    }
-  }
-  if (empty)
-  {
-    array_table <- paste('<div id="no-data-available." class="section level5">
-                        <h5 class="hasAnchor">No data available.<a href="#no-data-available." class="anchor-section"></a>\n</h5>')
-    cat("  \n##### No data available.  \n")
-  }
-}, silent = TRUE)
-array_table <- kable(array_table, "html", escape = FALSE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "responsive", align = "justify"))
-xml_table_evidence <- kable_as_xml(paste(array_table, collapse = " "))
-node_to_be_replaced <- children_phgkb_vd
-xml_replace(node_to_be_replaced, xml_table_evidence)
-write_html(pharmgkb, paste0(path_project, "/", pt_fastq, "/pharmgkb.html"))
-
-
-
-
-
-
 
 brew(
   file = paste0(path_html_source, "/pharmgkb.html"),

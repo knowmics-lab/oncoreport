@@ -23,7 +23,7 @@ names(mutations_data) <- c("Gene", "Chromosome", "Position", "Ref. Base", "Var. 
 rownames(mutations_data) <- NULL
 if (nrow(mutations_data) > 0) {
   table <- kable(mutations_data, "html", escape = FALSE) %>%
-    kable_styling(bootstrap_options = c("striped", "hover")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
     column_spec(1, bold = T, border_right = T)
 } else {
   table <- NULL

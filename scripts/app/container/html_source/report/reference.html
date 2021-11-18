@@ -138,193 +138,51 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active p-3" id="ref" role="tabpanel"
                          aria-labelledby="ref-tab">
-                        <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left;">
-                                        Reference
-                                    </th>
-                                    <th style="text-align:left;">
-                                        PMID
-                                    </th>
-                                    <th style="text-align:left;">
-                                        Citation
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr grouplength="9">
-                                    <td colspan="3" style="border-bottom: 1px solid;">
-                                        <strong>KRAS</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-1" name="ref-1"></a>1
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/25666295"
-                                           style="     ">25666295</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Kaczirek et al., 2015, Clin Colorectal Cancer
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-2" name="ref-2"></a>2
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/26371285"
-                                           style="     ">26371285</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Schirripa et al., 2015, Ann. Oncol.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-3" name="ref-3"></a>3
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/26812186"
-                                           style="     ">26812186</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Rowland et al., 2016, Eur. J. Cancer
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-4" name="ref-4"></a>4
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/20978259"
-                                           style="     ">20978259</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        De Roock et al., 2010, JAMA
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-5" name="ref-5"></a>5
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/27114605"
-                                           style="     ">27114605</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Segelov E. et al.,J. Clin. Oncol.,2016
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-6" name="ref-6"></a>6
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/19223544"
-                                           style="     ">19223544</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Sartore-Bianchi et al., 2009, Cancer Res.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-7" name="ref-7"></a>7
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/22722830"
-                                           style="     ">22722830</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Misale et al., 2012, Nature
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-8" name="ref-8"></a>8
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/22392911"
-                                           style="     ">22392911</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Migliardi et al., 2012, Clin. Cancer Res.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-9" name="ref-9"></a>9
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/26161928"
-                                           style="     ">26161928</a>
-                                    </td>
-                                    <td style="text-align:left;">
-                                        Camaj et al., 2015, Future Oncol
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <%
+                                if (!is.null(references$ref)) {
+                                    cat(references$ref)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                     <div class="tab-pane fade p-3" id="pharm" role="tabpanel"
                          aria-labelledby="pharm-tab">
-                        <h5>No data available.</h5>
+                        <div class="table-responsive">
+                            <%
+                                if (!is.null(references$pharm)) {
+                                    cat(references$pharm)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                     <div class="tab-pane fade p-3" id="off" role="tabpanel"
                          aria-labelledby="off-tab">
-                        <h5>No data available.</h5>
+                        <div class="table-responsive">
+                            <%
+                                if (!is.null(references$off)) {
+                                    cat(references$off)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                     <div class="tab-pane fade p-3" id="cosmic" role="tabpanel"
                          aria-labelledby="cosmic-tab">
-                        <table class="table table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left;">
-                                        Reference
-                                    </th>
-                                    <th style="text-align:left;">
-                                        PMID
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr grouplength="3">
-                                    <td colspan="2" style="border-bottom: 1px solid;">
-                                        <strong>KRAS</strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-1c" name="ref-1c"></a>1c
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/20361188"
-                                           style="     ">20361188</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-2c" name="ref-2c"></a>2c
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/22722830"
-                                           style="     ">22722830</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left;">
-                                        <a id="ref-3c" name="ref-3c"></a>3c
-                                    </td>
-                                    <td style="text-align:left;">
-                                        <a href="https://www.ncbi.nlm.nih.gov/pubmed/24553387"
-                                           style="     ">24553387</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <%
+                                if (!is.null(references$cosmic)) {
+                                    cat(references$cosmic)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                 </div>
 

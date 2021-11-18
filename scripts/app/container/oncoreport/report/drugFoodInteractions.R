@@ -11,7 +11,7 @@ if (nrow(drug_food_interactions) > 0) {
     summarise(Food_interaction = paste0("<ul>", paste0("<li>", Food_interaction, "</li>", collapse = "")  ,"</ul>"))
   names(drug_food_interactions) <- c("Drug", "Food Interaction")
   table <- kable(drug_food_interactions, "html", escape = FALSE) %>% 
-    kable_styling(bootstrap_options = c("striped", "hover"))
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
   template.env$drug_food_interactions <- table
 } else {
   template.env$drug_food_interactions <- NULL

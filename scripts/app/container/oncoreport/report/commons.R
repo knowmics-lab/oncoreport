@@ -9,12 +9,20 @@ get.raw.primary.annotations <- function (all.annotations, pt_tumor) {
   primary.annotations <- all.annotations[all.annotations$Evidence_direction == "Supports" & 
                                            all.annotations$DOID == pt_tumor, , drop = F]
   primary.annotations$DOID <- NULL
-  primary.annotations <- unique(primary.annotations)
+  primary.annotations <- unique(primary.annotations) %>% distinct_at(vars(-id), .keep_all = TRUE)
   return (primary.annotations)
 }
 
-build.primary.annotations <- function (all.annotations, pt_tumor) {
-  primary.annotations <- get.raw.primary.annotations(all.annotations, pt_tumor)
+get.raw.other.annotations <- function (all.annotations, pt_tumor) {
+  other.annotations <- all.annotations[all.annotations$Evidence_direction == "Supports" & 
+                                           all.annotations$DOID != pt_tumor, , drop = F]
+  other.annotations$DOID <- NULL
+  other.annotations <- unique(other.annotations) %>% distinct_at(vars(-id), .keep_all = TRUE)
+  return (other.annotations)
+}
+
+prepare.annotation <- function (all.annotations, pt_tumor, get.raw.function, ref.base="ref") {
+  primary.annotations <- get.raw.function(all.annotations, pt_tumor)
   if (nrow(primary.annotations) > 0) {
     substitutes         <- primary.annotations[primary.annotations$Drug_interaction_type == "Substitutes",]
     primary.annotations <- primary.annotations[primary.annotations$Drug_interaction_type != "Substitutes",]
@@ -26,18 +34,18 @@ build.primary.annotations <- function (all.annotations, pt_tumor) {
     primary.annotations$Drug_interaction_type <- NULL
     primary.annotations <- inner_join(primary.annotations, therapeutic.references) %>%
       arrange(Gene, Evidence_level, Evidence_type, Variant, Drug, Clinical_significance, Reference) %>%
-      group_by(Disease, Database, Gene, Variant, Drug, Evidence_type, Evidence_direction, Clinical_significance, Variant_summary, PMID,
-               Citation, Chromosome, Start, Stop, Ref_base, Var_base, Type, Approved, Score, Reference, id) %>%
-      summarize(Evidence_level = str_c(Evidence_level, collapse = ", "), Evidence_statement = str_c(Evidence_statement, collapse = ", "),
-                Citation = str_c(Citation, collapse = ", "), id = str_c(id, collapse = ", "))
-    primary.annotations$Evidence_level <- gsub("(.*),.*", "\\1", primary.annotations$Evidence_level)
-    primary.annotations$Evidence_statement <- gsub(".,", ".", primary.annotations$Evidence_statement)
-    primary.annotations <- primary.annotations[, c(
-      "Disease", "Database", "Gene", "Variant", "Drug", "Evidence_type", 
-      "Evidence_level", "Evidence_direction", "Clinical_significance", 
-      "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome", 
-      "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved", "Score", 
-      "Reference", "id")]
+      group_by(Disease, Database, Gene, Variant, Drug, Evidence_type, Evidence_direction, Clinical_significance, 
+               Variant_summary, PMID, Citation, Chromosome, Start, Stop, Ref_base, Var_base, Type, Approved, Score, 
+               Reference, id) %>%
+      summarize(Evidence_level = str_c(Evidence_level, collapse = ", "), 
+                Evidence_statement = str_c(Evidence_statement, collapse = ", "),
+                Citation = str_c(Citation, collapse = ", "), 
+                id = str_c(id, collapse = ", ")) %>%
+      mutate(Evidence_level=gsub("(.*),.*", "\\1", Evidence_level),
+             Evidence_statement=gsub(".,", ".", Evidence_statement)) %>%
+      select(Disease, Database, Gene, Variant, Drug, Evidence_type, Evidence_level, Evidence_direction, 
+             Clinical_significance, Evidence_statement, Variant_summary, PMID, Citation, Chromosome, Start, Stop,
+             Ref_base, Var_base, Type, Approved, Score, Reference, id)
     primary.annotations$Evidence_level <- ordered(primary.annotations$Evidence_level, levels = c(
       "Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence", 
       "Late trials", "Early trials", "Case study", "Case report", "Preclinical evidence", 
@@ -99,7 +107,7 @@ build.primary.annotations <- function (all.annotations, pt_tumor) {
     primary.annotations$Approved <- NULL
     if (nrow(primary.annotations) > 0) {
       primary.annotations$Reference <- paste0(
-        '<a href="Javascript:;" class="ref-link" data-id="#ref-', 
+        '<a href="Javascript:;" class="ref-link" data-id="#', ref.base,'-', 
         primary.annotations$Reference, '">', primary.annotations$Reference, 
         '</a>'
       )
@@ -119,3 +127,11 @@ build.primary.annotations <- function (all.annotations, pt_tumor) {
   }
   return (primary.annotations)
 }
+
+build.primary.annotations <- function (all.annotations, pt_tumor) (
+  prepare.annotation(all.annotations, pt_tumor, get.raw.primary.annotations)
+)
+
+build.other.annotations <- function (all.annotations, pt_tumor) (
+  prepare.annotation(all.annotations, pt_tumor, get.raw.other.annotations, "off")
+)
