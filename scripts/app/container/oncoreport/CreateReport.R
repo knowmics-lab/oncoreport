@@ -66,10 +66,11 @@ template.env$pt_tumor_stage  <- pt_tumor_stage
 
 
 suppressMessages(source(file.path(dirname(thisFile()), "report", "therapeutic.R")))
-suppressMessages(source(file.path(dirname(thisFile()), "report", "drugInteractions.R")))
+# suppressMessages(source(file.path(dirname(thisFile()), "report", "drugInteractions.R")))
 suppressMessages(source(file.path(dirname(thisFile()), "report", "drugFoodInteractions.R")))
 suppressMessages(source(file.path(dirname(thisFile()), "report", "mutations.R")))
 suppressMessages(source(file.path(dirname(thisFile()), "report", "esmo.R")))
+suppressMessages(source(file.path(dirname(thisFile()), "report", "pharmgkb.R")))
 
 
 stop()

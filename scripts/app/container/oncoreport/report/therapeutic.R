@@ -51,11 +51,11 @@ if (nrow(primary.annotations) > 0) {
     es <- eg[,c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type", 
                 "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id"), drop = F]
     es$Evidence <- 1:nrow(es)
-    es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '-', es$Evidence, '">+</a>]')
+    es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '">+</a>]')
     es$Details[!complete.cases(es[, c("Evidence_statement", "Reference"), drop = FALSE]) | trimws(es$Evidence_statement) == ""] <- ""
     es$Evidence <- paste0('<a id="evi-', es$id, '"></a>', es$Evidence + last_evidence)
     list.trials <- paste0("https://clinicaltrials.gov/ct2/results?cond=", es$Variant, "&term=", es$Drug, "&cntry=&state=&city=&dist=")
-    es$Trials <- paste0("[", "<a href=\"", list.trials, "\">+</a>", "]")
+    es$Trials <- paste0("[", "<a href=\"", list.trials, "\" target=\"_blank\">+</a>", "]")
     es$Trials[!list.trials %in% list.all.trials] <- ""
     es$Drug <- gsub(",", ", ", es$Drug, fixed = T)
     es <- es[, c("Evidence", "Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", 
