@@ -205,7 +205,7 @@ PATH_CONVERTED=$PATH_PROJECT/converted
 PATH_TXT=$PATH_PROJECT/txt
 PATH_TRIAL=$PATH_TXT/trial
 PATH_REFERENCE=$PATH_TXT/reference
-PATH_OUTPUT=$PATH_PROJECT/output
+PATH_OUTPUT=$PATH_PROJECT/report
 
 echo "Removing old folders"
 
@@ -370,17 +370,13 @@ else
 fi
 
 echo "Annotation of VCF files"
-
-echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/MergeInfo.R\" -g \"$index\" -d \"$ONCOREPORT_DATABASES_PATH\" -c \"$ONCOREPORT_COSMIC_PATH\" -p \"$PATH_PROJECT\" -s \"$FASTQ1_NAME\" -t \"$tumor\" -a \"$type\""
-echo "php \"$ONCOREPORT_SCRIPT_PATH/../ws/artisan\" parse:esmo \"$tumor\" \"$PATH_PROJECT\""
-echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/CreateReport.R\" \"$name\" \"$surname\" \"$id\" \"$gender\" \"$age\" \"$tumor\" \"$FASTQ1_NAME\" \"$PATH_PROJECT\" \"$ONCOREPORT_DATABASES_PATH\" \"$type\" \"$site\" \"$city\" \"$phone\" \"$stage\" \"$drug_path\" \"$ONCOREPORT_HTML_TEMPLATE\" \"$depth\" \"$AF\""
-
-Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 119
-mkdir "$PATH_OUTPUT/${FASTQ1_NAME}"
-chmod -R 777 "$PATH_OUTPUT/${FASTQ1_NAME}"
-php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT"
+Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
+  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 120
+php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 123
 echo "Report creation"
-Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" "$name" "$surname" "$id" "$gender" "$age" "$tumor" "$FASTQ1_NAME" "$PATH_PROJECT" "$ONCOREPORT_DATABASES_PATH" "$type" "$site" "$city" "$phone" "$stage" "$drug_path" "$ONCOREPORT_HTML_TEMPLATE" "$depth" "$AF" || exit_abnormal_code "Unable to create report" 121
+Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$id" -g "$gender" -a "$age" -t "$tumor" \
+  -f "$FASTQ1_NAME" -p "$PATH_PROJECT" -d "$ONCOREPORT_DATABASES_PATH" -A "$type" -S "$site" -C "$city" -P "$phone" \
+  -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$depth" -F "$AF" || exit_abnormal_code "Unable to create report" 121
 
 echo "Removing folders"
 { rm -r "$PATH_TRIM" &&
@@ -393,6 +389,6 @@ echo "Removing folders"
   rm -r "$PATH_VCF_IN_SN" &&
   rm -r "$PATH_VCF_AF" &&
   rm -r "$PATH_VCF_MERGE" &&
-  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 121
+  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
 
 echo "Done"

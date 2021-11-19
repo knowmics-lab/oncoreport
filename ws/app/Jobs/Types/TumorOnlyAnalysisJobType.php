@@ -274,14 +274,19 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 'Unable to generate report intermediate files.'
             );
             throw_unless(
-                $this->fileExistsRelative($outputRelative . '/output/report.html'),
+                $this->fileExistsRelative($outputRelative . '/report/index.html'),
                 ProcessingJobException::class,
                 'Unable to generate report output file.'
             );
             $this->log('Building intermediate archive');
             Utils::makeZipArchive(
                 $this->absoluteJobPath($outputRelative . '/txt'),
-                $this->absoluteJobPath($outputRelative . '/output/intermediate.zip')
+                $this->absoluteJobPath($outputRelative . '/report/intermediate.zip')
+            );
+            $this->log('Building report archive');
+            Utils::makeZipArchive(
+                $this->absoluteJobPath($outputRelative . '/report'),
+                $this->absoluteJobPath($outputRelative . '/report.zip')
             );
             $this->log('Writing output');
             $this->setOutput(
@@ -290,8 +295,9 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                     'bamOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/bam_ordered/ordered.bam'),
                     'vcfOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
                     'vcfPASSOutputFile' => $this->getFilePathsForOutput($outputRelative . '/pass_final/variants.vcf'),
-                    'textOutputFiles'   => $this->getFilePathsForOutput($outputRelative . '/output/intermediate.zip'),
-                    'reportOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/output/report.html'),
+                    'textOutputFiles'   => $this->getFilePathsForOutput($outputRelative . '/report/intermediate.zip'),
+                    'reportOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/report/index.html'),
+                    'reportZipFile'     => $this->getFilePathsForOutput($outputRelative . '/report.zip'),
                 ]
             );
             $this->log('Analysis completed.');
