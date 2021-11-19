@@ -2,43 +2,101 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Oncoreport Clinical Mutation Report - ESMO guidelines</title>
+        <title>Oncoreport Clinical Mutation Report - Known drug resistance</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
         <style>
-            .button-esmo {
-                background-color: var(--bs-light);
-                border: 1px solid var(--bs-green);
-                border-radius: 8px;
-                box-shadow: 0 2px 2px hsla(0, 0%, 0%, 0.2);
-                width: 100%;
-                color: var(--bs-dark);
-                padding: 15px 32px;
-                text-align: left;
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
+
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+
+            .container {
+                max-width: 960px;
+            }
+
+            /*
+             * Custom translucent site header
+             */
+
+            .site-header {
+                background-color: rgba(0, 0, 0, .85);
+                -webkit-backdrop-filter: saturate(180%) blur(20px);
+                backdrop-filter: saturate(180%) blur(20px);
+            }
+
+            .site-header a {
+                color: #8e8e8e;
+                transition: color .15s ease-in-out;
+            }
+
+            .site-header a:hover {
+                color: #fff;
                 text-decoration: none;
-                display: inline-block;
-                font-family: var(--bs-body-font-family);
-                font-size: var(--bs-body-font-size);
-                font-weight: var(--bs-body-font-weight);
-                margin: 4px 2px;
-                cursor: pointer;
-                word-break: break-word;
             }
 
-            .button-esmo:hover {
-                background-color: rgba(var(--bs-success-rgb), 0.4);
+            /*
+             * Dummy devices (replace them with your own or something else entirely!)
+             */
+
+            .product-device {
+                position: absolute;
+                right: 10%;
+                bottom: -30%;
+                width: 300px;
+                height: 540px;
+                background-color: #333;
+                border-radius: 21px;
+                transform: rotate(30deg);
             }
 
-            .active {
-                background-color: rgba(var(--bs-success-rgb), 0.4);
+            .product-device::before {
+                position: absolute;
+                top: 10%;
+                right: 10px;
+                bottom: 10%;
+                left: 10px;
+                content: "";
+                background-color: rgba(255, 255, 255, .1);
+                border-radius: 5px;
+            }
+
+            .product-device-2 {
+                top: -25%;
+                right: auto;
+                bottom: 0;
+                left: 5%;
+                background-color: #e5e5e5;
+            }
+
+
+            /*
+             * Extra utilities
+             */
+
+            .flex-equal > * {
+                flex: 1;
+            }
+
+            @media (min-width: 768px) {
+                .flex-md-equal > * {
+                    flex: 1;
+                }
             }
         </style>
     </head>
-
-    <body class="bg-light">
-
+    <body>
         <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
             <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -51,7 +109,7 @@
             </symbol>
         </svg>
 
-        <header class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+        <header class="site-header navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
             <nav class="container-fluid flex-wrap">
                 <a class="navbar-brand" href="index.html">Mutation Report</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation"
@@ -62,35 +120,31 @@
                 <div class="collapse navbar-collapse flex-grow-0" id="main-navigation">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="therapeutic.html">
-                                Therapeutic indications
-                            </a>
+                            <a class="nav-link" href="therapeutic.html">Therapeutic indications</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="drugdrug.html">
-                                Drug-Drug Interactions
-                            </a>
+                            <a class="nav-link" href="drugdrug.html">Drug-Drug Interactions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="drugfood.html">
-                                Drug-Food interactions
-                            </a>
+                            <a class="nav-link" href="drugfood.html">Drug-Food interactions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="esmoguide.html">
+                            <a class="nav-link" href="esmoguide.html">
                                 <span style="color: hsl(113, 50%, 43.75%)">E</span>
                                 <span style="color: hsl(323, 100%, 50%)">S</span>
                                 <span style="color: hsl(64, 62.89%, 50%)">M</span>
                                 <span style="color: hsl(222, 100%, 50%)">O</span> guidelines
-                                <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                            <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button"
                                aria-haspopup="true" aria-expanded="false">Other details</a>
                             <div class="dropdown-menu  dropdown-menu-end">
                                 <a class="dropdown-item" href="pharmgkb.html">Drug response</a>
-                                <a class="dropdown-item" href="mutations.html">Mutations annotations</a>
+                                <a class="dropdown-item active" href="mutations.html">
+                                    Mutations annotations
+                                    <span class="visually-hidden">(current)</span>
+                                </a>
                                 <a class="dropdown-item" href="offlabel.html">Off-label indications</a>
                                 <a class="dropdown-item" href="cosmic.html">Known drug resistance</a>
                                 <a class="dropdown-item" href="reference.html">References</a>
@@ -132,30 +186,65 @@
             </div>
         </header>
 
-        <main class="order-1 py-5" id="content">
-            <div class="container-fluid">
-
-                <div class="pb-5">
-                    <h1 class="mt-0">ESMO Guidelines</h1>
-                    <div class="row">
-                        <div class="col-3">
-                            <%=esmo_guidelines_sections -%>
-                        </div>
-                        <div class="col-9">
-                            <iframe src="assets/clinicalesmo.jpeg" id="iframe-esmo-content"
-                                    class="border border-2 bg-white rounded-3"
-                                    style="width: 100%; min-height: 800px; height: 100%"></iframe>
-                        </div>
+        <main>
+            <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+                <div class="bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+                    <div class="my-3 py-3">
+                        <h2 class="display-5 text-white">Therapeutic indications</h2>
+                        <p class="lead">&nbsp;</p>
+                    </div>
+                    <div class="bg-light shadow-sm mx-auto d-flex align-items-center justify-content-center"
+                         style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                        <a class="btn btn-dark btn-lg" href="therapeutic.html">Open</a>
                     </div>
                 </div>
-                <div class="alert alert-warning d-flex align-items-center" role="alert">
-                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
-                        <use xlink:href="#exclamation-triangle-fill"/>
-                    </svg>
-                    <div>
-                        <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare
-                        professional.
+                <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                    <div class="my-3 p-3">
+                        <h2 class="display-5">Drug-Drug Interactions</h2>
+                        <p class="lead">&nbsp;</p>
                     </div>
+                    <div class="bg-dark shadow-sm mx-auto d-flex align-items-center justify-content-center"
+                         style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                        <a class="btn btn-light btn-lg" href="drugdrug.html">Open</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+                <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                    <div class="my-3 p-3">
+                        <h2 class="display-5">Drug-Food Interactions</h2>
+                        <p class="lead">&nbsp;</p>
+                    </div>
+                    <div class="bg-dark shadow-sm mx-auto d-flex align-items-center justify-content-center"
+                         style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                        <a class="btn btn-light btn-lg" href="drugfood.html">Open</a>
+                    </div>
+                </div>
+                <div class="bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+                    <div class="my-3 py-3">
+                        <h2 class="display-5 text-white">
+                            <span style="color: hsl(113, 50%, 43.75%)">E</span>
+                            <span style="color: hsl(323, 100%, 50%)">S</span>
+                            <span style="color: hsl(64, 62.89%, 50%)">M</span>
+                            <span style="color: hsl(222, 100%, 50%)">O</span> guidelines
+                        </h2>
+                        <p class="lead">&nbsp;</p>
+                    </div>
+                    <div class="bg-light shadow-sm mx-auto d-flex align-items-center justify-content-center"
+                         style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                        <a class="btn btn-dark btn-lg" href="esmoguide.html">Open</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>
+                    <b>Warning</b>: This is a clinical decision support system. Always consult with a healthcare
+                    professional.
                 </div>
             </div>
         </main>
@@ -184,26 +273,7 @@
 
 
         <script src="assets/js/bootstrap.bundle.min.js"></script>
-        <script>
-            (function () {
-                'use strict';
-                document.querySelectorAll('.button-esmo').forEach((button) => {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        document.querySelectorAll('.button-esmo.active').forEach(function (button) {
-                            button.classList.remove('active');
-                        });
-                        const href = button.getAttribute('href');
-                        const iframe = document.getElementById('iframe-esmo-content');
-                        iframe.setAttribute('src', href);
-                        this.classList.add('active');
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                    });
-                });
-            })();
-        </script>
+
+
     </body>
 </html>

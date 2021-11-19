@@ -9,7 +9,7 @@
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
-    <body class="bg-light" style="padding-top: 68px;">
+    <body class="bg-light">
 
         <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
             <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -23,9 +23,9 @@
             </symbol>
         </svg>
 
-        <header class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-            <nav class="container-xl flex-wrap">
-                <a class="navbar-brand" href="Javascript:">Mutation Report</a>
+        <header class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+            <nav class="container-fluid flex-wrap">
+                <a class="navbar-brand" href="index.html">Mutation Report</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation"
                         aria-controls="main-navigation" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -53,7 +53,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button"
                                aria-haspopup="true" aria-expanded="false">Other details</a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu  dropdown-menu-end">
                                 <a class="dropdown-item" href="pharmgkb.html">Drug response</a>
                                 <a class="dropdown-item" href="mutations.html">Mutations annotations</a>
                                 <a class="dropdown-item" href="offlabel.html">Off-label indications</a>
@@ -70,7 +70,7 @@
         </header>
 
         <header class="py-3 border-bottom">
-            <div class="container pt-md-1 pb-md-4">
+            <div class="container-fluid pt-md-1 pb-md-4">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="card bg-secondary" style="max-width: 100%;">
@@ -101,7 +101,7 @@
         </header>
 
         <main class="order-1 py-5" id="content">
-            <div class="container">
+            <div class="container-fluid">
 
                 <h1 class="mt-0">References</h1>
 
@@ -198,18 +198,65 @@
             </div>
         </main>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-                crossorigin="anonymous"></script>
+        <footer class="container py-5">
+            <div class="row">
+                <div class="col-12">
+                    <small class="d-block mb-3 text-muted">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-inline mb-2" role="img"
+                             viewBox="0 0 24 24"><title>Product</title>
+                            <g transform="translate(-82.78836,-130.00338)">
+                                <path
+                                        d="m 95.67419,142.61651 a 27.864187,22.525275 0 0 0 2.622087,-1.20142 q -0.834986,-0.39609 -1.720999,-0.75374 c -2.307235,-0.92953 -4.274665,-2.06859 -5.846065,-3.38578 a 16.488079,13.328884 0 0 1 -2.55367,-2.77218 h 18.737327 v -3.04687 H 86.707943 c -0.08988,-0.31312 -0.147861,-0.5864 -0.190193,-0.8086 a 0.92776251,0.74999877 0 0 0 -0.924863,-0.64453 l -1.871178,0.007 a 0.92776251,0.74999877 0 0 0 -0.923706,0.84187 c 0.135682,0.88219 0.50157,2.37563 1.487317,4.09594 a 19.868034,16.061224 0 0 0 3.653065,4.31249 c 1.776668,1.51077 3.962705,2.81671 6.502458,3.8864 q 0.590287,-0.27 1.233347,-0.53016 z m 13.08666,10.5431 c -0.13626,-0.88312 -0.50505,-2.3775 -1.49717,-4.09828 a 19.877311,16.068725 0 0 0 -3.67915,-4.31812 22.217592,17.960596 0 0 0 -1.73957,-1.31812 29.903524,24.173866 0 0 1 -3.390382,1.66922 q 0.494603,0.29765 0.95733,0.61218 H 88.357617 v 2.25001 h 13.725663 a 15.776601,12.753729 0 0 1 1.69839,2.22514 13.812064,11.165607 0 0 1 1.23334,3.17672 0.93414085,0.75515502 0 0 0 0.92371,0.645 h 1.89496 a 0.92776251,0.74999877 0 0 0 0.92717,-0.84375 z"
+                                        style="mix-blend-mode:normal;fill:#0d6efd;fill-opacity:1;stroke-width:0.052135"/>
+                                <path
+                                        d="m 108.76062,130.84715 c -0.13627,0.88312 -0.50331,2.37749 -1.49136,4.09874 a 19.874847,16.066848 0 0 1 -3.66231,4.31578 c -1.89089,1.60452 -4.243322,2.97842 -6.992388,4.08327 -4.521648,1.81734 -7.031235,4.14281 -8.425186,6.15842 h 15.154314 q 0.23194,0.33469 0.43604,0.67829 a 14.336145,11.589356 0 0 1 1.02807,2.32171 H 86.72584 c -0.09799,0.33281 -0.161772,0.62109 -0.202357,0.85359 a 0.93123485,0.7528113 0 0 1 -0.923699,0.64641 h -1.87639 a 0.92775566,0.74999876 0 0 1 -0.927753,-0.84375 c 0.136261,-0.88312 0.503308,-2.3775 1.491372,-4.09874 a 19.874847,16.066848 0 0 1 3.664055,-4.31578 c 1.890872,-1.60453 4.243314,-2.97844 6.992374,-4.08327 1.867697,-0.75 3.391537,-1.58859 4.635878,-2.45531 h -7.630792 q -0.644782,-0.44906 -1.217684,-0.93094 a 17.105496,13.828102 0 0 1 -1.38815,-1.31906 h 12.855216 c 2.05208,-2.21062 2.65803,-4.29139 2.83662,-5.30671 a 0.93123485,0.7528113 0 0 1 0.92369,-0.6464 h 1.87639 a 0.92775566,0.74999876 0 0 1 0.92601,0.84375 z"
+                                        style="fill:#a8cbfe;stroke-width:0.0521347"/>
+                            </g>
+                        </svg>
+                        Report by Oncoreport
+                    </small>
+                </div>
+            </div>
+        </footer>
+
+        <script src="assets/js/bootstrap.bundle.min.js"></script>
         <script>
             (function () {
                 'use strict';
+
+                const colorAndScrollToHash = (hash) => {
+                    const anchor = document.querySelector(hash);
+                    if (!anchor) return;
+                    const trObject = anchor.closest('tr');
+                    if (!trObject) return;
+                    trObject.classList.add('table-success');
+                    setTimeout(() => trObject.classList.remove('table-success'), 2000);
+                    window.scrollTo({
+                        behavior: 'smooth',
+                        left: 0,
+                        top: trObject.offsetTop,
+                    });
+                };
+
+
                 const onChange = () => {
                     const hash = window.location.hash;
                     if (!hash) return;
-                    const elm = document.querySelector(`button[data-bs-target="${hash}"]`);
+                    const hashParts = hash.split('-');
+                    if (hashParts.length === 0) return;
+                    const elm = document.querySelector(`button[data-bs-target="${hashParts[0]}"]`);
                     if (!elm) return;
-                    elm.click();
+                    if (hashParts[0] === '#ref') {
+                        return colorAndScrollToHash(hash);
+                    }
+                    const tabObject = new bootstrap.Tab(elm);
+                    const listener = () => {
+                        colorAndScrollToHash(hash);
+                        elm.removeEventListener('shown.bs.tab', listener);
+                    };
+                    elm.addEventListener('shown.bs.tab', listener);
+                    tabObject.show();
                 };
                 window.addEventListener('hashchange', onChange);
                 onChange();

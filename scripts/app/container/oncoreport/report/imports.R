@@ -1,10 +1,10 @@
 suppressPackageStartupMessages({
-  library(xml2)
+  library(optparse)
   library(dplyr)
-  library(knitr)
   library(tidyr)
   library(kableExtra)
   library(stringr)
   library(brew)
   library(DT)
+  library(htmlwidgets)
 })
