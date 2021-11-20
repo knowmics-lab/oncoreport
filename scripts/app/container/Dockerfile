@@ -76,23 +76,7 @@ ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/super
 ADD conf/supervisord.conf                           /etc/supervisor/supervisord.conf
 ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_innodb.cnf
 ADD databases                                       /databases
-ADD oncoreport/CreateCivicBed.R                     /CreateCivicBed.R
-ADD oncoreport/CreateReport.R                       /CreateReport.R
-ADD oncoreport/doi_parser.R                         /doi_parser.R
-ADD oncoreport/Functions.R                          /Functions.R
-ADD oncoreport/genkey.sh                            /genkey.sh
-ADD oncoreport/get_drug.R                           /get_drug.R
-ADD oncoreport/imports.R                            /imports.R
-ADD oncoreport/MergeInfo.R                          /MergeInfo.R
-ADD oncoreport/path.bash                            /path.bash
-ADD oncoreport/pipeline_liquid_biopsy.bash          /pipeline_liquid_biopsy.bash
-ADD oncoreport/pipeline_tumVSnormal.bash            /pipeline_tumVSnormal.bash
-ADD oncoreport/prepare_cosmic.bash                  /prepare_cosmic.bash
-ADD oncoreport/prepare_indexes.bash                 /prepare_indexes.bash
-ADD oncoreport/PrepareCOSMIC.R                      /PrepareCOSMIC.R
-ADD oncoreport/PrepareDatabases_build.R             /PrepareDatabases_build.R
-ADD oncoreport/ProcessVariantTable.R                /ProcessVariantTable.R
-ADD oncoreport/setup.bash                           /setup.bash
+ADD oncoreport                                      /scripts
 ADD html_source                                     /html_source
 COPY ws.tgz                                         /ws.tgz
 
