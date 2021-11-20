@@ -20,7 +20,6 @@ class PatientDisease extends Model
         'T',
         'N',
         'M',
-        'location_id',
         'start_date',
         'end_date',
     ];
@@ -35,7 +34,6 @@ class PatientDisease extends Model
 
     protected $with = [
         'disease',
-        'location',
     ];
 
     public function patient(): BelongsTo
@@ -46,11 +44,6 @@ class PatientDisease extends Model
     public function disease(): BelongsTo
     {
         return $this->belongsTo(Disease::class);
-    }
-
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(Location::class);
     }
 
     public function getStageStringAttribute(): string

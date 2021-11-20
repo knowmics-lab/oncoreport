@@ -27,7 +27,6 @@ class UpdatePatientDiseaseRequest extends FormRequest
     {
         return [
             'disease'    => ['sometimes', 'required', Rule::exists('diseases', 'id')],
-            'location'   => ['sometimes', 'nullable', Rule::exists('locations', 'id')],
             'type'       => ['sometimes', 'nullable', Rule::in(Constants::TUMOR_TYPES)],
             'T'          => ['sometimes', 'nullable', 'integer'],
             'N'          => ['sometimes', 'nullable', 'integer'],

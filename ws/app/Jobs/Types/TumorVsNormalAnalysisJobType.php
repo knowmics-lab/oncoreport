@@ -221,9 +221,6 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 '-d_path',
                 $drugsListFile
             );
-            if (!is_null($patient->primaryDisease->location_id)) {
-                $this->parameters('-st', $patient->primaryDisease->location->name);
-            }
             $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
                  ->optionalParameter('-c', $patient->city)
                  ->optionalParameter('-ph', $patient->telephone);
@@ -328,6 +325,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             $this->log('Writing output');
             $this->setOutput(
                 [
+                    'type'                => Utils::TUMOR_NORMAL_TYPE,
                     'tumorBamOutputFile'  => $this->getFilePathsForOutput(
                         $outputRelative . '/mark_dup_tumor/nodup.bam'
                     ),
@@ -382,5 +380,16 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cleanupOnFail(): void
+    {
+        [, $outputAbsolute,] = $this->getJobFilePaths('output_');
+        if (file_exists($outputAbsolute)) {
+            Utils::recursiveChmod($outputAbsolute, 0777);
+        }
     }
 }

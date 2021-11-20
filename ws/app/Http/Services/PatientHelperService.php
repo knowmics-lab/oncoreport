@@ -96,9 +96,6 @@ class PatientHelperService
         $oldData = optional($patientDisease)->toArray() ?? [];
         $data = [
             'disease_id'  => (int)$this->old('disease', $disease, $oldData, $update, 'disease_id', true),
-            'location_id' => $this->nullableId(
-                $this->old('location', $disease, $oldData, $update, 'location_id', true)
-            ),
             'type'        => $this->nullableValue($this->old('type', $disease, $oldData, $update)),
             'T'           => $this->nullableValue($this->old('T', $disease, $oldData, $update)),
             'N'           => $this->nullableValue($this->old('N', $disease, $oldData, $update)),

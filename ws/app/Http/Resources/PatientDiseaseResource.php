@@ -24,7 +24,6 @@ class PatientDiseaseResource extends JsonResource
             'patient_id'      => $this->patient_id,
             'patient'         => new PatientResource($this->whenLoaded('patient')),
             'disease'         => new DiseaseResource($this->whenLoaded('disease')),
-            'location'        => new LocationResource($this->whenLoaded('location')),
             'type'            => $this->type,
             'T'               => $this->T,
             'N'               => $this->N,

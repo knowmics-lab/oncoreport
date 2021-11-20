@@ -2,11 +2,50 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useForceRerender.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/adapters/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/adapters/location.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/job.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/location.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/entities/patientDisease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/repositories/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/repositories/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/api/repositories/location.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/forms/patientForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobsByPatient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/DiseasesPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDiseaseForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patientPage/forms/patientDiseaseForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/tables/jobsTableByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/tables/jobsTableByPatient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/saveResultsMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/saveResultsMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useDebug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useDebug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/CreateReport.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/references.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/references.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/therapeutic.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/therapeutic.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/LocationController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/StorePatientDiseaseRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/StorePatientDiseaseRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/UpdatePatientDiseaseRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/Disease/UpdatePatientDiseaseRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/StorePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Api/Patient/UpdatePatientRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/LocationResource.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Resources/PatientDiseaseResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/PatientHelperService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/PatientDisease.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/PatientDisease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_110753_create_locations_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_06_120601_create_patient_diseases_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_06_120601_create_patient_diseases_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/LocationSeeder.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,10 +84,13 @@
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Http/Requests/Api/Job/StoreJobRequest.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/views/esmo/index.blade.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Jobs/Types/Factory.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
@@ -380,6 +422,7 @@
       <workItem from="1637336356241" duration="998000" />
       <workItem from="1637337467550" duration="1834000" />
       <workItem from="1637339719767" duration="4818000" />
+      <workItem from="1637391739361" duration="7340000" />
     </task>
     <servers />
   </component>

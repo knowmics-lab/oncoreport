@@ -10,11 +10,11 @@ usage() {
   [-name/-n patient name] [-id/-i patient id] [-age/-a patient age]
   [-city/-c where patient lives] [-phone/-ph telephone number of the patient]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
-  [-site/-st site of the tumor] [-stage/-sg stage of the tumor]
+  [-stage/-sg stage of the tumor]
   [-project_path/-pp project_path path]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
   [-genome/-gn genome version: hg19 or hg38]
-  [-drug_path/-d_path file path where comorbid drugs are listed (.txt, one drug per row)]
+  [-drug_path/-d_path file path where patient drugs are listed (.txt, one drug per row)]
   [-fastq1/-fq1 first fastq sample]
   [-fastq2/-fq2 second fastq sample]
   [-normal1/-nm1 first fastq sample]
@@ -102,7 +102,7 @@ while [ -n "$1" ]; do
     ;;
   -drug_path | -d_path)
     drug_path="$2"
-    echo "The path for comorbid drugs is $drug_path"
+    echo "The path for patient drugs is $drug_path"
     shift
     ;;
   -id | -i)
@@ -124,11 +124,6 @@ while [ -n "$1" ]; do
     elif ((age < 0)); then
       exit_abnormal_usage "Error: Age must be greater than zero."
     fi
-    shift
-    ;;
-  -site | -st)
-    site="$2"
-    echo "The value provided for organ is $site"
     shift
     ;;
   -stage | -sg)
@@ -405,7 +400,7 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABA
 php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 123
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$id" -g "$gender" -a "$age" -t "$tumor" \
-  -f "$FASTQ1_NAME" -p "$PATH_PROJECT" -d "$ONCOREPORT_DATABASES_PATH" -A "$type" -S "$site" -C "$city" -P "$phone" \
+  -f "$FASTQ1_NAME" -p "$PATH_PROJECT" -d "$ONCOREPORT_DATABASES_PATH" -A "$type" -C "$city" -P "$phone" \
   -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" || exit_abnormal_code "Unable to create report" 121
 
 { rm -r "$PATH_SAM_TUMOR" &&

@@ -24,7 +24,6 @@ class CreatePatientDiseasesTable extends Migration
                 $table->integer('T')->nullable();
                 $table->integer('N')->nullable();
                 $table->integer('M')->nullable();
-                $table->foreignId('location_id')->nullable()->constrained()->nullOnDelete();
                 $table->date('start_date')->nullable();
                 $table->date('end_date')->nullable();
                 $table->timestamps();

@@ -27,7 +27,6 @@ class StorePatientDiseaseRequest extends FormRequest
     {
         return [
             'disease'    => ['required', Rule::exists('diseases', 'id')],
-            'location'   => ['nullable', Rule::exists('locations', 'id')],
             'type'       => ['nullable', Rule::in(Constants::TUMOR_TYPES)],
             'T'          => ['nullable', 'integer'],
             'N'          => ['nullable', 'integer'],
