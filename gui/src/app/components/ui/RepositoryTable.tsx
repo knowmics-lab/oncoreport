@@ -22,6 +22,7 @@ import useRepositoryQuery, {
   QueryBuilderCallback,
 } from '../../hooks/useRepositoryQuery';
 import { SimpleMapType } from '../../../apiConnector/interfaces/common';
+import useForceRerender from '../../hooks/useForceRerender';
 
 export type RepositoryTableRef = {
   refresh: () => void;
@@ -46,6 +47,9 @@ export interface TableProps<E extends EntityObject> {
   collapsible?: boolean;
   collapsibleContent?: (row: E) => React.ReactNode;
   tableRef?: MutableRefObject<RepositoryTableRef | undefined>;
+  autoRefresh?: boolean;
+  autoRefreshWhen?: (data: E[]) => boolean;
+  autoRefreshTime?: number;
 }
 
 type SortingSpec = SimpleMapType<SortingDirection>;
@@ -69,9 +73,13 @@ export default function RepositoryTable<E extends EntityObject>({
   collapsible,
   collapsibleContent,
   tableRef,
+  autoRefresh,
+  autoRefreshWhen,
+  autoRefreshTime = 30000,
 }: TableProps<E>) {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [sorting, setSorting] = useState<SortingSpec>({});
+  const [, forceRender] = useForceRerender();
 
   const callbackMemoized = useMemo(() => {
     return (builder: QueryBuilderInterface<E>) => {
@@ -87,10 +95,38 @@ export default function RepositoryTable<E extends EntityObject>({
     parameters
   );
 
+  const isRefreshNeeded = useCallback(() => {
+    if (autoRefresh && autoRefreshWhen) {
+      return !!data && autoRefreshWhen(data ?? []);
+    }
+    return false;
+  }, [autoRefresh, autoRefreshWhen, data]);
+
+  useEffect(() => {
+    if (!data) return () => {};
+    const observer = {
+      refreshed: () => forceRender(),
+    };
+    data.observe(observer);
+    return () => data.removeObserver(observer);
+  }, [data, forceRefresh, forceRender]);
+
+  useEffect(() => {
+    if (autoRefresh) {
+      const timer = setInterval(() => {
+        if (isRefreshNeeded()) {
+          data?.refresh?.();
+        }
+      }, autoRefreshTime);
+      return () => timer && clearInterval(timer);
+    }
+    return () => {};
+  }, [autoRefresh, autoRefreshTime, data, forceRefresh, isRefreshNeeded]);
+
   useEffect(() => {
     if (tableRef) {
       tableRef.current = {
-        refresh: forceRefresh,
+        refresh: () => data?.refresh?.(),
       };
     }
     return () => {
@@ -98,7 +134,7 @@ export default function RepositoryTable<E extends EntityObject>({
         tableRef.current = undefined;
       }
     };
-  }, [tableRef, forceRefresh]);
+  }, [tableRef, forceRefresh, data]);
 
   const onChangeRowsPerPage = useCallback(
     (nRows: number) => {

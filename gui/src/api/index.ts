@@ -6,7 +6,6 @@ export {
   PatientDrugAdapter,
   JobAdapter,
   DrugAdapter,
-  LocationAdapter,
   SuspensionReasonAdapter,
 } from './adapters';
 export {
@@ -16,7 +15,6 @@ export {
   PatientDrugEntity,
   JobEntity,
   DrugEntity,
-  LocationEntity,
   SuspensionReasonEntity,
 } from './entities';
 export {
@@ -26,7 +24,6 @@ export {
   PatientDrugRepository,
   JobRepository,
   DrugRepository,
-  LocationRepository,
   SuspensionReasonRepository,
 } from './repositories';
 export { DockerManager, DockerPullStatus } from './docker';

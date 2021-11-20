@@ -60,5 +60,7 @@ export default function useRepositoryQuery<E extends EntityObject>(
     };
   }, [data]);
 
-  return [loading, loading ? undefined : data, () => setData(undefined)];
+  const memoizedRefresh = useCallback(() => setData(undefined), []);
+
+  return [loading, loading ? undefined : data, memoizedRefresh];
 }

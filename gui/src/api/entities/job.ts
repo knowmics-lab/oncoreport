@@ -91,6 +91,10 @@ export default class Job extends Entity {
     return this.settings.getLocalPath(`/public/jobs/${this.id}`);
   }
 
+  public hasOutputFile(outputVariable: string) {
+    return this.output && Utils.hasPathProperty(this.output, outputVariable);
+  }
+
   public async download(
     outputVariable: string,
     onStart?: (s: string) => void,

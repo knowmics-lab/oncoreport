@@ -4,9 +4,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import Entity, { field } from '../../apiConnector/entity/entity';
 import { RelationsType } from '../../apiConnector';
 import { PatientDiseaseAdapter } from '../adapters';
-import { DiseaseEntity, LocationEntity } from './index';
+import { DiseaseEntity } from './index';
 import { TumorTypes } from '../../interfaces/enums';
-import { DiseaseRepository, LocationRepository } from '../repositories';
+import { DiseaseRepository } from '../repositories';
 import type { Nullable } from '../../apiConnector/interfaces/common';
 
 @injectable()
@@ -25,19 +25,6 @@ export default class PatientDisease extends Entity {
     },
   })
   disease?: DiseaseEntity;
-
-  @field<Nullable<LocationEntity>>({
-    fillable: true,
-    relation: {
-      type: RelationsType.ONE,
-      repositoryToken: LocationRepository,
-      noRecursionSave: true,
-    },
-    serialize: {
-      nullable: true,
-    },
-  })
-  location?: LocationEntity;
 
   @field<Nullable<TumorTypes>>({
     fillable: true,

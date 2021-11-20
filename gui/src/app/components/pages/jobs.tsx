@@ -154,6 +154,12 @@ export default function Jobs() {
           },
           'actions',
         ]}
+        autoRefresh
+        autoRefreshWhen={(data) =>
+          data.some((j) =>
+            [JobStatus.queued, JobStatus.processing].includes(j.status)
+          )
+        }
       />
       <LogsDialog
         job={selectedJob}

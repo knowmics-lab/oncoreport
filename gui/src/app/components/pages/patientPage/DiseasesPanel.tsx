@@ -3,8 +3,10 @@ import { Dayjs } from 'dayjs';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { DialogContent } from '@material-ui/core';
+import Icon from '@material-ui/core/Icon';
 import {
   DiseaseEntity,
+  PatientDiseaseEntity,
   PatientDiseaseRepository,
   PatientEntity,
 } from '../../../../api';
@@ -15,6 +17,8 @@ import PatientDiseaseForm from './forms/patientDiseaseForm';
 import { Alignment } from '../../ui/Table/types';
 import { runAsync } from '../../utils';
 import { TypeOfNotification } from '../../../../interfaces';
+import IconButton from '../../ui/IconButton';
+import useForceRerender from '../../../hooks/useForceRerender';
 
 interface PanelProps {
   index: number;
@@ -28,6 +32,7 @@ export default function DiseasesPanel({
   index,
 }: PanelProps) {
   const tableRef = useRef<RepositoryTableRef>();
+  const [, forceRender] = useForceRerender();
   const {
     id,
     primary_disease: { id: primaryDiseaseId },
@@ -56,6 +61,42 @@ export default function DiseasesPanel({
               sortingField: 'disease_id',
               label: 'Disease',
               format: (v: DiseaseEntity) => v.name,
+            },
+            {
+              dataField: 'id',
+              disableSorting: true,
+              label: '',
+              format: (i: number, d: PatientDiseaseEntity) => {
+                if (!d.disease?.tumor) return <></>;
+                if (i === primaryDiseaseId)
+                  return (
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={(e) => e.preventDefault()}
+                      title="Primary disease"
+                    >
+                      <Icon className="fas fa-star fa-fw" />
+                    </IconButton>
+                  );
+                return (
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    onClick={async () => {
+                      await patient
+                        .fill({
+                          primary_disease: d,
+                        })
+                        .save();
+                      forceRender();
+                    }}
+                    title="Click to mark as primary disease"
+                  >
+                    <Icon className="far fa-star fa-fw" />
+                  </IconButton>
+                );
+              },
             },
             {
               key: 'is-tumor',

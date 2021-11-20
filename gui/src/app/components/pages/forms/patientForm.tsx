@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// noinspection RequiredAttributes
+
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
@@ -14,22 +16,14 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { generatePath } from 'react-router';
-import {
-  DiseaseRepository,
-  PatientRepository,
-  LocationRepository,
-} from '../../../../api';
-import {
-  Gender,
-  SimpleMapArray,
-  TypeOfNotification,
-} from '../../../../interfaces';
+import dayjs from 'dayjs';
+import { DiseaseRepository, PatientRepository } from '../../../../api';
+import { Gender, TypeOfNotification } from '../../../../interfaces';
 import SelectField from '../../ui/Form/SelectField';
 import TextField from '../../ui/Form/TextField';
 import Button, { SubmitButton } from '../../ui/Button';
 import Routes from '../../../../constants/routes.json';
 import { TumorTypes } from '../../../../interfaces/enums';
-import useRepositoryQuery from '../../../hooks/useRepositoryQuery';
 import useRepositoryFetchOneOrNew from '../../../hooks/useRepositoryFetchOneOrNew';
 import useNotifications from '../../../hooks/useNotifications';
 import AutocompleteField from '../../ui/Form/AutocompleteField';
@@ -80,9 +74,9 @@ function useValidationSchema() {
     fiscal_number: Yup.string().notRequired().nullable().max(255),
     telephone: Yup.string().notRequired().nullable().max(255),
     city: Yup.string().notRequired().nullable().max(255),
+    diagnosis_date: Yup.date().notRequired(),
     primary_disease: Yup.object().shape({
       disease: Yup.object().defined(),
-      location: Yup.number().notRequired().nullable(),
       type: Yup.mixed()
         .oneOf([TumorTypes.primary, TumorTypes.secondary] as TumorTypes[])
         .notRequired()
@@ -90,7 +84,6 @@ function useValidationSchema() {
       T: Yup.number().min(0).max(4).notRequired().nullable(),
       M: Yup.number().min(0).max(4).notRequired().nullable(),
       N: Yup.number().min(0).max(4).notRequired().nullable(),
-      start_date: Yup.date().notRequired(),
     }),
   });
 }
@@ -102,18 +95,6 @@ export default function PatientForm() {
   const validationSchema = useValidationSchema();
   const { id } = useParams<{ id?: string }>();
   const { pushSimple } = useNotifications();
-
-  const [loadingLocations, locations] = useRepositoryQuery(
-    LocationRepository,
-    (builder) => builder.doNotPaginate()
-  );
-  const locationOptions = useMemo(() => {
-    if (loadingLocations || !locations) return {};
-    return locations.reduce((prev: SimpleMapArray<string>, location) => {
-      prev[location.id] = location.name;
-      return prev;
-    }, {});
-  }, [loadingLocations, locations]);
 
   const typeOptions = useMemo(
     () => ({
@@ -128,15 +109,20 @@ export default function PatientForm() {
     id ? +id : undefined
   );
 
-  const loading = loadingPatient || loadingLocations;
-
   const goBackUrl = useMemo(() => generatePath(Routes.PATIENTS), []);
 
-  const initialValue = useMemo(() => patient?.toFormObject() ?? {}, [patient]);
+  const initialValue = useMemo(() => {
+    const d = patient?.toFormObject() ?? {};
+    return {
+      ...d,
+      diagnosis_date:
+        patient?.primary_disease?.start_date?.format?.('YYYY-MM-DD') ?? '',
+    };
+  }, [patient]);
 
   return (
     <Paper elevation={1} className={classes.paper}>
-      {loading || !patient ? (
+      {loadingPatient || !patient ? (
         <>
           <Grid container justifyContent="center">
             <Grid item xs="auto">
@@ -160,7 +146,13 @@ export default function PatientForm() {
             onSubmit={async (d) => {
               try {
                 setSubmitting(true);
-                await patient?.fill(d).save();
+                patient?.fill(d);
+                if (patient && patient.primary_disease) {
+                  patient.primary_disease.start_date = d.diagnosis_date
+                    ? dayjs(d.diagnosis_date)
+                    : dayjs();
+                }
+                await patient?.save();
                 pushSimple('Patient saved!', TypeOfNotification.success);
                 if (patient?.wasRecentlyCreated) {
                   history.push(
@@ -242,21 +234,10 @@ export default function PatientForm() {
                     options={typeOptions}
                   />
                 </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item md>
-                  <SelectField
-                    name="primary_disease.location"
-                    label="Site"
-                    emptyText="Select a location"
-                    addEmpty
-                    options={locationOptions}
-                  />
-                </Grid>
                 <Grid item md>
                   <TextField
                     label="Diagnosis Date"
-                    name="primary_disease.start_date"
+                    name="diagnosis_date"
                     type="date"
                     InputLabelProps={{
                       shrink: true,

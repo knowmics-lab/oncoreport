@@ -34,6 +34,7 @@ export default function useDebugInformation(componentName: string, props: any) {
     previousProps.current = props;
     lastRenderTimestamp.current = Date.now();
     console.log('[debug-info]', componentName, info);
+    console.trace();
   });
 
   return info;

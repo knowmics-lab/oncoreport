@@ -206,6 +206,12 @@ export default function JobsTableByPatient({
         parameters={{
           patient: patientId,
         }}
+        autoRefresh
+        autoRefreshWhen={(data) =>
+          data.some((j) =>
+            [JobStatus.queued, JobStatus.processing].includes(j.status)
+          )
+        }
       />
       <LogsDialog
         job={selectedJob}

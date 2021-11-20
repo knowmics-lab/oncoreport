@@ -12,9 +12,13 @@ type SaveMenuProps = {
 };
 
 const resultsMenuItems: [string, string][] = [
-  ['reportOutputFile', 'Report Archive'],
-  ['vcfOutputFile', 'VCF Output File'],
+  ['reportZipFile', 'Report Archive'],
+  ['textOutputFiles', 'RAW Annotated Output Archive'],
   ['vcfPASSOutputFile', 'VCF Output File (Passed Variants only)'],
+  ['vcfOutputFile', 'VCF Output File'],
+  ['bamOutputFile', 'Aligned BAM File'],
+  ['tumorBamOutputFile', 'Aligned Tumor Sample BAM File'],
+  ['normalBamOutputFile', 'Aligned Normal Sample BAM File'],
 ];
 
 export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
@@ -62,27 +66,29 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
               <Icon className="fas fa-save" fontSize="inherit" />
             </IconButton>
             <Menu {...bindMenu(popupState)} key={`popup-menu-job-${id}`}>
-              {resultsMenuItems.map((i) => (
-                <MenuItem
-                  key={`popup-menu-item-${i[0]}-job-${id}`}
-                  onClick={(e) => {
-                    popupState.close();
-                    e.preventDefault();
-                    runAsync(
-                      async () => {
-                        job.download(
-                          i[0],
-                          () => setDownloading(true),
-                          () => setDownloading(false)
-                        );
-                      },
-                      () => setDownloading(false)
-                    );
-                  }}
-                >
-                  {i[1]}
-                </MenuItem>
-              ))}
+              {resultsMenuItems
+                .filter(([key]) => job.hasOutputFile(key))
+                .map(([key, title]) => (
+                  <MenuItem
+                    key={`popup-menu-item-${key}-job-${id}`}
+                    onClick={(e) => {
+                      popupState.close();
+                      e.preventDefault();
+                      runAsync(
+                        async () => {
+                          job.download(
+                            key,
+                            () => setDownloading(true),
+                            () => setDownloading(false)
+                          );
+                        },
+                        () => setDownloading(false)
+                      );
+                    }}
+                  >
+                    {title}
+                  </MenuItem>
+                ))}
             </Menu>
           </>
         );

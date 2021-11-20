@@ -5,4 +5,3 @@ export { default as PatientDrugRepository } from './patientDrug';
 export { default as JobRepository } from './job';
 export { default as DrugRepository } from './drug';
 export { default as SuspensionReasonRepository } from './suspensionReason';
-export { default as LocationRepository } from './location';
