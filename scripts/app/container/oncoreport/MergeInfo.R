@@ -94,6 +94,9 @@ colnames(pat)[1] <- "Chromosome"
 colnames(pat)[2] <- "Stop"
 colnames(pat)[3] <- "Ref_base"
 colnames(pat)[4] <- "Var_base"
+pat$Chromosome <- as.character(pat$Chromosome)
+pat$Ref_base   <- as.character(pat$Ref_base)
+pat$Var_base   <- as.character(pat$Var_base)
 
 ## Merge with CIVIC
 cat("Annotating with CIVIC...\n")
@@ -153,20 +156,25 @@ pharm <- join.and.write(
 
 #Merge with RefGene
 cat("Annotating with RefGene...\n")
-data <- fread(paste0(database.path, "/refgene_database_", genome, ".txt"), quote = "")
-tmp.pat <- pat
-tmp.pat$exonStarts <- tmp.pat$Stop
-tmp.pat$exonEnds   <- tmp.pat$Stop
-data <- genome_left_join(
-  tmp.pat, data,
-  by = c("Chromosome", "exonStarts", "exonEnds")
-)
-if (pipeline.type == "tumnorm") {
-  data$Type <- rep("NA", nrow(data))
+if (nrow(pat) > 0) {
+  data <- fread(paste0(database.path, "/refgene_database_", genome, ".txt"), quote = "")
+  tmp.pat <- pat
+  tmp.pat$exonStarts <- tmp.pat$Stop
+  tmp.pat$exonEnds   <- tmp.pat$Stop
+  data <- genome_left_join(
+    tmp.pat, data,
+    by = c("Chromosome", "exonStarts", "exonEnds")
+  )
+  if (pipeline.type == "tumnorm") {
+    data$Type <- rep("NA", nrow(data))
+  }
+  data <- data[, c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
+  colnames(data)[1] <- "Chromosome"
+  data <- unique(data)
+} else {
+  data <- data.frame(Chromosome=character(0), Stop=character(0), Ref_base=character(0), Var_base=character(0),
+                     Gene=character(0), Type=character(0))
 }
-data <- data[, c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
-colnames(data)[1] <- "Chromosome"
-data <- unique(data)
 write.table(data, paste0(project.path, "/txt/", sample.name, "_refgene.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 

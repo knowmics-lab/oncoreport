@@ -35,59 +35,71 @@ create.table <- function (data, group.by="Gene") {
 
 
 #####################################################################################################################
-template.env$references$ref <- create.table(
-  read.csv(paste0(path_project, "/txt/reference/", pt_fastq, ".txt"), sep = "\t", 
-           colClasses = "character", stringsAsFactors = FALSE) %>%
-    select(Gene, Reference, PMID, Citation, URL) %>% distinct() %>% mutate(Reference = as.numeric(Reference)) %>%
-    arrange(Gene, Reference) %>%
-    mutate(PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')) %>% 
-    group_by(Gene, PMID) %>%
-    summarise(
-      ReferenceNumber = min(Reference),
-      Reference = paste0(unique(paste0('<a id="ref-', Reference, '"></a>', Reference)), collapse = ", "),
-      Citation = paste0(unique(Citation), collapse = "; ")
-    ) %>% arrange(Gene, ReferenceNumber) %>% select(Gene, Reference, PMID, Citation)
-)
+data <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, ".txt"), sep = "\t", 
+                 colClasses = "character", stringsAsFactors = FALSE)
+if (nrow(data) > 0) {
+  template.env$references$ref <- create.table(
+    data %>%
+      select(Gene, Reference, PMID, Citation, URL) %>% distinct() %>% mutate(Reference = as.numeric(Reference)) %>%
+      arrange(Gene, Reference) %>%
+      mutate(PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')) %>% 
+      group_by(Gene, PMID) %>%
+      summarise(
+        ReferenceNumber = min(Reference),
+        Reference = paste0(unique(paste0('<a id="ref-', Reference, '"></a>', Reference)), collapse = ", "),
+        Citation = paste0(unique(Citation), collapse = "; ")
+      ) %>% arrange(Gene, ReferenceNumber) %>% select(Gene, Reference, PMID, Citation)
+  )
+}
 
 #####################################################################################################################
-template.env$references$pharm <- create.table(
-  read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_pharm.txt"), sep = "\t", 
-           colClasses = "character", stringsAsFactors = FALSE) %>%
-    select(Gene, PMID, Reference, URL) %>% distinct() %>%
-    mutate(
-      ReferenceNumber = as.numeric(Reference),
-      Reference = paste0('<a id="pharm-', Reference, '"></a>', Reference),
-      PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')
-    ) %>% arrange(Gene, Reference, PMID) %>% select(Gene, Reference, PMID)
-)
+data <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_pharm.txt"), sep = "\t", 
+                 colClasses = "character", stringsAsFactors = FALSE)
+if (nrow(data) > 0) {
+  template.env$references$pharm <- create.table(
+    data %>%
+      select(Gene, PMID, Reference, URL) %>% distinct() %>%
+      mutate(
+        ReferenceNumber = as.numeric(Reference),
+        Reference = paste0('<a id="pharm-', Reference, '"></a>', Reference),
+        PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')
+      ) %>% arrange(Gene, Reference, PMID) %>% select(Gene, Reference, PMID)
+  )
+}
 
 #####################################################################################################################
-template.env$references$off <- create.table(
-  read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_off.txt"), sep = "\t", 
-           colClasses = "character", stringsAsFactors = FALSE) %>%
-    select(Reference, PMID, Citation, URL) %>% distinct() %>% mutate(Reference = as.numeric(Reference)) %>%
-    arrange(Reference) %>%
-    mutate(PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')) %>% 
-    group_by(PMID) %>%
-    summarise(
-      ReferenceNumber = min(Reference),
-      Reference = paste0(unique(paste0('<a id="off-', Reference, '"></a>', Reference)), collapse = ", "),
-      Citation = paste0(unique(Citation), collapse = "; ")
-    ) %>% arrange(ReferenceNumber) %>% select(Reference, PMID, Citation),
-  group.by = NULL
-)
+data <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_off.txt"), sep = "\t", 
+                 colClasses = "character", stringsAsFactors = FALSE)
+if (nrow(data) > 0) {
+  template.env$references$off <- create.table(
+    data %>%
+      select(Reference, PMID, Citation, URL) %>% distinct() %>% mutate(Reference = as.numeric(Reference)) %>%
+      arrange(Reference) %>%
+      mutate(PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')) %>% 
+      group_by(PMID) %>%
+      summarise(
+        ReferenceNumber = min(Reference),
+        Reference = paste0(unique(paste0('<a id="off-', Reference, '"></a>', Reference)), collapse = ", "),
+        Citation = paste0(unique(Citation), collapse = "; ")
+      ) %>% arrange(ReferenceNumber) %>% select(Reference, PMID, Citation),
+    group.by = NULL
+  )
+}
 
 #####################################################################################################################
-template.env$references$cosmic <- create.table(
-  read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_cosmic.txt"), sep = "\t", 
-           colClasses = "character", stringsAsFactors = FALSE) %>%
-    select(Gene, PMID, Reference, URL) %>% distinct() %>%
-    mutate(
-      ReferenceNumber = as.numeric(Reference),
-      Reference = paste0('<a id="cosmic-', Reference, '"></a>', Reference),
-      PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')
-    ) %>% arrange(Gene, Reference, PMID) %>% select(Gene, Reference, PMID)
-)
+data <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_cosmic.txt"), sep = "\t", 
+                 colClasses = "character", stringsAsFactors = FALSE);
+if (nrow(data) > 0) {
+  template.env$references$cosmic <- create.table(
+    data %>%
+      select(Gene, PMID, Reference, URL) %>% distinct() %>%
+      mutate(
+        ReferenceNumber = as.numeric(Reference),
+        Reference = paste0('<a id="cosmic-', Reference, '"></a>', Reference),
+        PMID = paste0('<a href=\"', URL, '\" target=\"_blank\">', PMID, '</a>')
+      ) %>% arrange(Gene, Reference, PMID) %>% select(Gene, Reference, PMID)
+  )
+}
 
 brew(
   file = paste0(path_html_source, "/reference.html"),

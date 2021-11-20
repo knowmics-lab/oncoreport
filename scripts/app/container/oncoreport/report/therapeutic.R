@@ -15,7 +15,11 @@ all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive
                             colClasses = "character", stringsAsFactors = FALSE)
 all.annotations <- diseases_db_simple %>% inner_join(all.annotations, by = "Disease")
 all.annotations[is.na(all.annotations)] <- " "
-all.annotations$id <- 1:nrow(all.annotations)
+if (nrow(all.annotations) > 0) {
+  all.annotations$id <- 1:nrow(all.annotations)
+} else {
+  all.annotations$id <- numeric(0)
+}
 
 .variables.to.keep <- c(ls(), "recommended_drugs")
 primary.annotations <- build.primary.annotations(all.annotations, pt_tumor)
