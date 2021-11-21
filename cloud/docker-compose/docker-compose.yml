@@ -1,0 +1,45 @@
+version: '3'
+services:
+  mysql:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: 'oncoreport'
+      MYSQL_USER: 'oncoreport'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+    volumes:
+      - 'oncoreport-db:/var/lib/mysql'
+    networks:
+      - oncoreport
+    healthcheck:
+      test:
+        ['CMD', 'mysqladmin', 'ping', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD']
+  oncoreport:
+    image: 'alaimos/oncoreport:v0.0.1'
+    ports:
+      - '${APP_PORT:-80}:80'
+    environment:
+      CLOUD_ENV: 'true'
+      DB_HOST: 'mysql'
+      DB_POST: '3306'
+      DB_DATABASE: 'oncoreport'
+      DB_USERNAME: 'oncoreport'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      APP_KEY: '${APP_KEY}'
+      APP_URL: '${APP_URL}'
+    volumes:
+      - 'oncoreport-data:/oncoreport/ws/storage/app/'
+    networks:
+      - oncoreport
+    depends_on:
+      - mysql
+    links:
+      - mysql
+networks:
+  oncoreport:
+    driver: bridge
+volumes:
+  oncoreport-data:
+
+  oncoreport-db:
