@@ -1,0 +1,53 @@
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+metadata:
+  name: 'oncoreport'
+  namespace: 'default'
+  labels:
+    app: 'oncoreport'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: 'oncoreport'
+  template:
+    metadata:
+      labels:
+        app: 'oncoreport'
+    spec:
+      containers:
+        - name: 'oncoreport'
+          image: 'alaimos/oncoreport:v0.0.1'
+          env:
+            - name: CLOUD_ENV
+              value: 'true'
+            - name: DB_HOST
+              value: 'mysql'
+            - name: DB_PORT
+              value: '3306'
+            - name: DB_DATABASE
+              value: 'oncoreport'
+            - name: DB_USERNAME
+              value: 'oncoreport'
+            - name: APP_URL
+              value: 'http://oncoreport'
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oncoreport
+                  key: mysql_password
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: oncoreport
+                  key: oncoreport_key
+          ports:
+            - containerPort: 80
+              name: oncoreport-ws
+          volumeMounts:
+            - name: oncoreport-persistent-storage
+              mountPath: /oncoreport/ws/storage/app/
+      volumes:
+        - name: oncoreport-persistent-storage
+          persistentVolumeClaim:
+            claimName: oncoreport-volumeclaim
