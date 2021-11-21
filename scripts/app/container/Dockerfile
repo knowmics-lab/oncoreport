@@ -73,6 +73,7 @@ ADD conf/supervisord-apache2.conf                   /etc/supervisor/conf.d/super
 ADD conf/supervisord-mysqld.conf                    /etc/supervisor/conf.d/supervisord-mysqld.conf
 ADD conf/supervisord-beanstalkd.conf                /etc/supervisor/conf.d/supervisord-beanstalkd.conf
 ADD conf/supervisord-worker.conf                    /etc/supervisor/conf.d/supervisord-worker.conf
+ADD conf/supervisord-cloud.conf                     /etc/supervisor/supervisord-cloud.conf.disabled
 ADD conf/supervisord.conf                           /etc/supervisor/supervisord.conf
 ADD conf/mysqld_innodb.cnf                          /etc/mysql/conf.d/mysqld_innodb.cnf
 ADD databases                                       /databases
