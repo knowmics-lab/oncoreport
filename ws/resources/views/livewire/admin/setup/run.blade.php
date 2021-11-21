@@ -79,6 +79,7 @@
                                 @endif
                             </div>
                         </div>
+                        <a id="bottom-pre"></a>
                         <div class="flex items-center justify-end px-4 py-3 bg-gray-800 text-right sm:px-6">
                             @if ($setupJob->status === \App\Constants::COMPLETED)
                                 <x-jet-button wire:loading.attr="disabled" wire:click.prevent="done"
@@ -91,5 +92,15 @@
                 </div>
             </div>
         </div>
+        @if ($setupJob->status !== \App\Constants::COMPLETED)
+            <script>
+              document.addEventListener('DOMContentLoaded', () => {
+                const bottomPreObject = document.getElementById('bottom-pre');
+                Livewire.hook('message.processed', () => {
+                  bottomPreObject.scrollIntoView({ behavior: 'smooth' });
+                });
+              });
+            </script>
+        @endif
     @endif
 </div>
