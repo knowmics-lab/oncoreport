@@ -25,6 +25,9 @@ class Index extends Component
      */
     public function delete(User $user): void
     {
+        if ($user->id === auth()->id()) {
+            return;
+        }
         $this->authorize('delete', $user);
         $user->deleteProfilePhoto();
         $user->tokens->each->delete();

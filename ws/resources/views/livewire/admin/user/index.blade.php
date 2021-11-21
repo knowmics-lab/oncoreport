@@ -80,12 +80,14 @@
                                                             <i class="fas fa-user-edit"></i>
                                                             Edit
                                                         </a>
-                                                        <a href="Javascript:"
-                                                           wire:click="delete({{ $user->id }})"
-                                                           class="text-red-600 hover:text-red-900">
-                                                            <i class="fas fa-user-minus"></i>
-                                                            Delete
-                                                        </a>
+                                                        @if ($user->id !== auth()->id())
+                                                            <a href="Javascript:"
+                                                               wire:click="delete({{ $user->id }})"
+                                                               class="text-red-600 hover:text-red-900">
+                                                                <i class="fas fa-user-minus"></i>
+                                                                Delete
+                                                            </a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @empty
