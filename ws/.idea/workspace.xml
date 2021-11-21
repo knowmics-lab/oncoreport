@@ -2,9 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/conf/supervisord-cloud.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env.cloud" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Console/Commands/FirstBoot.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Livewire/Admin/Setup/Run.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/SetupJobType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/livewire/admin/setup/run.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/conf/supervisord.conf" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/conf/supervisord.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/setup.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/setup.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/oncoreport.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/oncoreport.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layouts/app.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +230,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/livewire/admin/setup" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="org.jetbrains.r.configuration.RSettingsProjectConfigurable" />
@@ -222,11 +238,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
-      <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets" />
-      <recent name="$PROJECT_DIR$/resources" />
-      <recent name="$PROJECT_DIR$/app/Console/Commands" />
-      <recent name="$PROJECT_DIR$/app/Jobs/Traits" />
+      <recent name="$PROJECT_DIR$/resources/views/livewire/admin/setup" />
+      <recent name="$PROJECT_DIR$/app/Http/Livewire/Admin/Setup" />
+      <recent name="$PROJECT_DIR$/../scripts/app/container/conf" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/app/Jobs/Types" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
@@ -382,6 +398,7 @@
       <workItem from="1637339719767" duration="4818000" />
       <workItem from="1637391739361" duration="7340000" />
       <workItem from="1637435936938" duration="280000" />
+      <workItem from="1637477054565" duration="10571000" />
     </task>
     <servers />
   </component>

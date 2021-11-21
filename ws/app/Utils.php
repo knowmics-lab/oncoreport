@@ -166,4 +166,14 @@ final class Utils
 
         return $resArray;
     }
+
+    /**
+     * Checks if the admin must run the setup script
+     *
+     * @return bool
+     */
+    public static function isSetupNeeded(): bool
+    {
+        return config('oncoreport.cloud_env') && !file_exists(storage_path('app/cosmic/.setup_done'));
+    }
 }

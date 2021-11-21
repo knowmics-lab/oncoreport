@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Livewire\Admin\Setup\Run as AdminRunSetup;
 use App\Http\Livewire\Admin\User\Create as AdminUserCreate;
 use App\Http\Livewire\Admin\User\Index as AdminUserIndex;
 use App\Http\Livewire\Admin\User\Show as AdminUserShow;
@@ -36,6 +37,10 @@ Route::group(
              ->middleware('can:create,App\Models\User');
         Route::get('/admin/users/{user}', AdminUserShow::class)
              ->name('users-show');
+        if (config('oncoreport.cloud_env')) {
+            Route::get('/admin/setup', AdminRunSetup::class)
+                 ->name('run-setup');
+        }
     }
 );
 

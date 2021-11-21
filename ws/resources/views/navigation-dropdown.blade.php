@@ -16,13 +16,20 @@
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
                     @if (optional(Auth::user())->is_admin)
-                        <x-jet-nav-link href="{{ route('users-list') }}"
-                                        :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
-                            {{ __('Manage users') }}
-                        </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('users-create') }}" :active="request()->routeIs('users-create')">
-                            {{ __('Create user') }}
-                        </x-jet-nav-link>
+                        @if (\App\Utils::isSetupNeeded())
+                            <x-jet-nav-link href="{{ route('run-setup') }}" :active="request()->routeIs('run-setup')">
+                                {{ __('Run Setup Script') }}
+                            </x-jet-nav-link>
+                        @else
+                            <x-jet-nav-link href="{{ route('users-list') }}"
+                                            :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
+                                {{ __('Manage users') }}
+                            </x-jet-nav-link>
+                            <x-jet-nav-link href="{{ route('users-create') }}"
+                                            :active="request()->routeIs('users-create')">
+                                {{ __('Create user') }}
+                            </x-jet-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -109,15 +116,22 @@
                 {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
             @if (Auth::user()->admin)
-                <x-jet-responsive-nav-link href="{{ route('users-list') }}"
-                                           :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
-                    {{ __('Manage users') }}
-                </x-jet-responsive-nav-link>
-                <x-jet-responsive-nav-link href="{{ route('users-create') }}"
-                                           :active="request()->routeIs('users-create')">
-                    {{ __('Create users') }}
-                </x-jet-responsive-nav-link>
+                @if (\App\Utils::isSetupNeeded())
+                    <x-jet-responsive-nav-link href="{{ route('run-setup') }}"
+                                               :active="request()->routeIs('run-setup')">
+                        {{ __('Run Setup Script') }}
+                    </x-jet-responsive-nav-link>
+                @else
+                    <x-jet-responsive-nav-link href="{{ route('users-list') }}"
+                                               :active="request()->routeIs('users-list') || request()->routeIs('users-show')">
+                        {{ __('Manage users') }}
+                    </x-jet-responsive-nav-link>
+                    <x-jet-responsive-nav-link href="{{ route('users-create') }}"
+                                               :active="request()->routeIs('users-create')">
+                        {{ __('Create users') }}
+                    </x-jet-responsive-nav-link>
 
+                @endif
             @endif
         </div>
 

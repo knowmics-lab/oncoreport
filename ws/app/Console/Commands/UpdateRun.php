@@ -35,32 +35,38 @@ class UpdateRun extends Command
      */
     public function handle(): int
     {
-        $retCode = $this->runScript('pre_update.bash');
-        if ($retCode !== 0) {
-            return $retCode;
-        }
-        $retCode = $this->call(
-            'migrate',
-            [
-                '--force'          => true,
-                '--no-interaction' => true,
-            ]
-        );
-        if ($retCode !== 0) {
-            return $retCode;
-        }
-        $retCode = $this->call(
-            'db:seed',
-            [
-                '--force'          => true,
-                '--no-interaction' => true,
-            ]
-        );
-        if ($retCode !== 0) {
-            return $retCode;
-        }
+        try {
+            $retCode = $this->runScript('pre_update.bash');
+            if ($retCode !== 0) {
+                return $retCode;
+            }
+            $retCode = $this->call(
+                'migrate',
+                [
+                    '--force'          => true,
+                    '--no-interaction' => true,
+                ]
+            );
+            if ($retCode !== 0) {
+                return $retCode;
+            }
+            $retCode = $this->call(
+                'db:seed',
+                [
+                    '--force'          => true,
+                    '--no-interaction' => true,
+                ]
+            );
+            if ($retCode !== 0) {
+                return $retCode;
+            }
 
-        return $this->runScript('post_update.bash', true);
+            return $this->runScript('post_update.bash', true);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+
+            return 1;
+        }
     }
 
     /**
@@ -70,6 +76,7 @@ class UpdateRun extends Command
      * @param  bool  $warn
      *
      * @return int
+     * @throws \Exception
      */
     protected function runScript(string $script, bool $warn = false): int
     {
