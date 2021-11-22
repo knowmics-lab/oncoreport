@@ -14,8 +14,9 @@ get.raw.primary.annotations <- function (all.annotations, pt_tumor) {
 }
 
 get.raw.other.annotations <- function (all.annotations, pt_tumor) {
+  excluded.disease <- unique(all.annotations$Disease[all.annotations$DOID == pt_tumor])
   other.annotations <- all.annotations[all.annotations$Evidence_direction == "Supports" & 
-                                           all.annotations$DOID != pt_tumor, , drop = F]
+                                           !(all.annotations$Disease %in% excluded.disease), , drop = F]
   other.annotations$DOID <- NULL
   other.annotations <- unique(other.annotations) %>% distinct_at(vars(-id), .keep_all = TRUE)
   return (other.annotations)
