@@ -1,6 +1,6 @@
 {
   "name": "oncoreport",
-  "productName": "OncoReport",
+  "productName": "Oncoreport",
   "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -8,7 +8,7 @@
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
-    "package": "yarn build && electron-builder build --publish never",
+    "package": "yarn build && electron-builder build -mwl --publish never",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
@@ -30,8 +30,8 @@
     ]
   },
   "build": {
-    "productName": "OncoReport",
-    "appId": "com.alaimos.OncoReport",
+    "productName": "Oncoreport",
+    "appId": "com.alaimos.Oncoreport",
     "files": [
       "dist/",
       "node_modules/",
@@ -43,7 +43,11 @@
     "afterSign": ".erb/scripts/Notarize.js",
     "mac": {
       "target": [
-        "dmg"
+        "zip"
+      ],
+      "arch": [
+        "x64",
+        "arm64"
       ],
       "type": "distribution",
       "hardenedRuntime": true,
@@ -68,13 +72,22 @@
     "win": {
       "target": [
         "nsis"
+      ],
+      "arch": [
+        "x64"
       ]
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb",
+        "tar.gz"
       ],
-      "category": "Development"
+      "arch": [
+        "x64",
+        "arm64"
+      ],
+      "category": "ComputerScience"
     },
     "directories": {
       "app": "src",
@@ -97,7 +110,7 @@
   "author": {
     "name": "Salvatore Alaimo",
     "email": "salvatore.alaimo@unict.it",
-    "url": "https://alaimos.tech"
+    "url": "https://alaimos.com"
   },
   "contributors": [
     {
@@ -107,6 +120,11 @@
     },
     {
       "name": "Giovanni Micale",
+      "email": "",
+      "url": ""
+    },
+    {
+      "name": "Emanuele Martorana",
       "email": "",
       "url": ""
     }

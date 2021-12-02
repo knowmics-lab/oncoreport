@@ -103,7 +103,10 @@ const Layout = ({ children, footer }: Props) => {
               <Toolbar>
                 <LayoutHeader />
                 <Tooltip title={switcherLabel}>
-                  <IconButton aria-label={switcherLabel}>
+                  <IconButton
+                    aria-label={switcherLabel}
+                    onClick={() => setDark((v) => !v)}
+                  >
                     {dark ? <Brightness7 /> : <Brightness4 />}
                   </IconButton>
                 </Tooltip>
