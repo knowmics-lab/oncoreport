@@ -26,7 +26,7 @@ class Create extends Component
         'name'     => '',
         'email'    => '',
         'password' => '',
-        'role'     => '',
+        'role'     => Constants::DOCTOR,
     ];
 
     /**
