@@ -9,12 +9,12 @@ use Laravel\Sanctum\NewAccessToken;
 class CreateUserToken
 {
 
-    public function create(User $user): NewAccessToken
+    public function create(User $user, string $prefix = 'api-call-token-'): NewAccessToken
     {
         $key = Str::random(5);
 
         return $user->createToken(
-            'api-call-token-' . $key,
+            $prefix . $key,
             [
                 'create',
                 'read',

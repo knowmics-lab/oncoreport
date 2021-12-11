@@ -7,10 +7,10 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Api\User\CreateUserToken;
 use App\Models\User;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class GenerateAuthToken extends Command
 {
@@ -57,29 +57,23 @@ class GenerateAuthToken extends Command
 
                 return 101;
             }
-            $key = Str::random(5);
-            $token = $userObject->createToken(
-                'command-line-token-' . $key,
-                [
-                    'create',
-                    'read',
-                    'update',
-                    'delete',
-                ]
-            );
+
+            $token = (new CreateUserToken())->create($userObject, 'command-line-token-');
+
+            $displayedToken = explode('|', $token->plainTextToken, 2)[1];
 
             if ($json) {
                 $this->line(
                     json_encode(
                         [
                             'error' => 0,
-                            'data'  => $token->plainTextToken,
+                            'data'  => $displayedToken,
                         ],
                         JSON_THROW_ON_ERROR
                     )
                 );
             } else {
-                $this->info('Token generated. The new token is: ' . $token->plainTextToken);
+                $this->info('Token generated. The new token is: ' . $displayedToken);
             }
         } catch (Exception $e) {
             if ($json) {

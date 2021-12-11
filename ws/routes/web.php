@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientConfigController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Livewire\Admin\Setup\Run as AdminRunSetup;
 use App\Http\Livewire\Admin\User\Create as AdminUserCreate;
@@ -40,6 +41,9 @@ Route::group(
         if (config('oncoreport.cloud_env')) {
             Route::get('/admin/setup', AdminRunSetup::class)
                  ->name('run-setup');
+        }
+        if (config('oncoreport.config_generator')) {
+            Route::get('/config-download', ClientConfigController::class)->name('config-download');
         }
     }
 );

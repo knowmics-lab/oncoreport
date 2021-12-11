@@ -4,6 +4,7 @@ import { useService } from '../../../reactInjector';
 import { Settings } from '../../../api';
 import { Notifications } from '../layout';
 import SetupWizard from './setupWizard';
+import ConfigUploader from './configUploader';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -39,7 +40,7 @@ export default function SetupWizardContainer({ children, header }: Props) {
       {configured ? (
         children
       ) : (
-        <>
+        <ConfigUploader>
           {header}
           <div className={classes.root}>
             <main className={classes.content}>
@@ -47,7 +48,7 @@ export default function SetupWizardContainer({ children, header }: Props) {
               <Notifications />
             </main>
           </div>
-        </>
+        </ConfigUploader>
       )}
     </>
   );

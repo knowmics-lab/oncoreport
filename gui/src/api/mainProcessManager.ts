@@ -77,7 +77,7 @@ export default class MainProcessManager {
             modal: isModal,
           });
           win.setMenuBarVisibility(false);
-          win.loadURL(url);
+          win.loadURL(url).catch(console.error);
           // eslint-disable-next-line no-param-reassign
           event.newGuest = win;
         }
@@ -158,6 +158,13 @@ export default class MainProcessManager {
     });
   }
 
+  private registerRelaunchHandler() {
+    ipcMain.on('relaunch-app', () => {
+      app.relaunch();
+      this.quitNow();
+    });
+  }
+
   public registerHandlers() {
     if (!this.#registered) {
       this.registerQuitHandler();
@@ -165,6 +172,7 @@ export default class MainProcessManager {
       if (this.#window) this.transferManager.registerMainHandlers(this.#window);
       this.registerNewWindowHandler();
       this.registerConfigChangeHandler();
+      this.registerRelaunchHandler();
       this.#registered = true;
     }
   }

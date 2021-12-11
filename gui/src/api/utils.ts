@@ -99,8 +99,8 @@ export default {
         };
       }, {}) as unknown as Omit<T, K>;
   },
-  toArray(list: unknown) {
-    return Array.prototype.slice.call(list || [], 0);
+  toArray<T>(list: unknown): T[] {
+    return Array.prototype.slice.call(list || [], 0) as unknown as T[];
   },
   async retryFunction<T>(
     f: (idx: number) => Promise<T>,

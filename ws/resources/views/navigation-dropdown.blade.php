@@ -29,6 +29,11 @@
                                             :active="request()->routeIs('users-create')">
                                 {{ __('Create user') }}
                             </x-jet-nav-link>
+                            @if (config('oncoreport.config_generator'))
+                                <x-jet-nav-link href="{{ route('config-download') }}">
+                                    {{ __('Download Client Config') }}
+                                </x-jet-nav-link>
+                            @endif
                         @endif
                     @endif
                 </div>
@@ -130,7 +135,11 @@
                                                :active="request()->routeIs('users-create')">
                         {{ __('Create users') }}
                     </x-jet-responsive-nav-link>
-
+                    @if (config('oncoreport.config_generator'))
+                        <x-jet-responsive-nav-link href="{{ route('config-download') }}">
+                            {{ __('Download Client Config') }}
+                        </x-jet-responsive-nav-link>
+                    @endif
                 @endif
             @endif
         </div>
