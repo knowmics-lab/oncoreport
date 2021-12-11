@@ -74,7 +74,9 @@
       "target": [
         "AppImage",
         "deb",
-        "tar.gz"
+        "rpm",
+        "tar.gz",
+        "pacman"
       ],
       "category": "ComputerScience"
     },

@@ -16,9 +16,12 @@ import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 CheckNodeEnv('production');
 DeleteSourceMaps();
 
-const devtoolsConfig = process.env.DEBUG_PROD === 'true' ? {
-  devtool: 'source-map'
-} : {};
+const devtoolsConfig =
+  process.env.DEBUG_PROD === 'true'
+    ? {
+        devtool: 'source-map',
+      }
+    : {};
 
 export default merge(baseConfig, {
   ...devtoolsConfig,
@@ -35,7 +38,7 @@ export default merge(baseConfig, {
 
   output: {
     path: path.join(__dirname, '../../src/dist'),
-    publicPath: './dist/',
+    publicPath: './',
     filename: 'renderer.prod.js',
   },
 
@@ -80,6 +83,9 @@ export default merge(baseConfig, {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './',
+            },
           },
           {
             loader: 'css-loader',
@@ -102,6 +108,9 @@ export default merge(baseConfig, {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './',
+            },
           },
           {
             loader: 'css-loader',
@@ -179,20 +188,19 @@ export default merge(baseConfig, {
   },
 
   optimization: {
-    minimizer:
-      [
-          new TerserPlugin({
-            parallel: true,
-          }),
-          new OptimizeCSSAssetsPlugin({
-            cssProcessorOptions: {
-              map: {
-                inline: false,
-                annotation: true,
-              },
-            },
-          }),
-        ],
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+      }),
+      new OptimizeCSSAssetsPlugin({
+        cssProcessorOptions: {
+          map: {
+            inline: false,
+            annotation: true,
+          },
+        },
+      }),
+    ],
   },
 
   plugins: [
