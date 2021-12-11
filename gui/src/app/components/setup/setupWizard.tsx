@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) =>
     },
     logContainer: {
       fontFamily: "'Courier New', monospace",
+      color: 'white',
       background: 'black',
       width: '100%',
       overflowY: 'auto',

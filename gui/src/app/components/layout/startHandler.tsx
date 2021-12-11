@@ -26,6 +26,8 @@ export default function StartHandler() {
           .then(() => ipcRenderer.send('hide-blocking-message'))
           .finally(() => setStarted(true))
           .catch((e) => sendMessage(e.message, true));
+      } else {
+        setStarted(true);
       }
       setFirst(true);
     }

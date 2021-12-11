@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useState } from 'react';
+import { useService } from '../../../reactInjector';
+import { Settings } from '../../../api';
 
 type ContextType = {
   started: boolean;
@@ -15,7 +17,9 @@ StartedContext.displayName = 'AppStartedContext';
 export default function AppStartedContext({
   children,
 }: React.PropsWithChildren<{}>) {
-  const [started, setStarted] = useState(false);
+  const settings = useService(Settings);
+
+  const [started, setStarted] = useState(!settings.isLocal());
   return (
     <StartedContext.Provider
       value={{

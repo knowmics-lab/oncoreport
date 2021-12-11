@@ -136,7 +136,7 @@ class JobController extends Controller
         try {
             $job->deleteJobDirectory();
             $job->delete();
-        } catch (Throwable | Error $e) {
+        } catch (Throwable|Error $e) {
             return $this->respondError($e->getMessage());
         }
 
@@ -180,8 +180,8 @@ class JobController extends Controller
         $server = app('tus-server');
         $server->setApiPath(route('jobs.upload', $job, false))
                ->setUploadDir($job->getAbsoluteJobDirectory());
-        $response = $server->serve();
 
-        return $response->send();
+        return $server->serve()->send();
     }
+
 }

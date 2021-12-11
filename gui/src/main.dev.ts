@@ -18,6 +18,8 @@ import MenuBuilder from './menu';
 import injector from './injector';
 import { MainProcessManager } from './api';
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';

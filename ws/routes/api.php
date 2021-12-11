@@ -31,7 +31,6 @@ Route::group(
 
         Route::apiResource('diseases', DiseaseController::class)->only(['index', 'show']);
         Route::apiResource('drugs', DrugController::class)->only(['index', 'show']);
-        Route::apiResource('locations', LocationController::class)->only(['index', 'show']);
         Route::apiResource('suspension_reasons', SuspensionReasonController::class)->only(['index', 'show']);
 
         Route::patch('/jobs/{job}/submit', [JobController::class, 'submit'])
@@ -39,7 +38,8 @@ Route::group(
              ->name('jobs.submit');
         Route::any('/jobs/{job}/upload/{any?}', [JobController::class, 'upload'])
              ->middleware('can:upload,job')
-             ->where('any', '.*');
+             ->where('any', '.*')
+             ->name('jobs.upload');
         Route::apiResource('jobs', JobController::class);
         Route::get('/job-types', [JobTypeController::class, 'index'])->name('job-types.index');
         Route::get('/job-types/{type}', [JobTypeController::class, 'show'])->name('job-types.show');

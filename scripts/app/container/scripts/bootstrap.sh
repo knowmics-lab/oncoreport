@@ -72,6 +72,8 @@ else
 fi
 
 chown -R www-data:staff "/oncoreport/ws"
+[ ! -d "/oncoreport/ws/storage/app/public/jobs" ] && mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
+[ ! -d "/oncoreport/ws/storage/app/tus_cache" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
 chmod -R 777 "/oncoreport/ws/storage/"
 
 [ "$DB_CREATED" = "true" ] && touch "${MYSQL_DATA_DIR}/ready"

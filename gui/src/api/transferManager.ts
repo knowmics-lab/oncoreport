@@ -267,6 +267,7 @@ export default class TransferManager {
               });
             },
           });
+
           upload.start();
         }
       );
