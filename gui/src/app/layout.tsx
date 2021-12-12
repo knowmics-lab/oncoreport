@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
   CssBaseline,
@@ -17,7 +17,6 @@ import MUILayout, {
   getSidebarTrigger,
   Root,
 } from '@mui-treasury/layout';
-import { darkMode } from 'electron-util';
 import Brightness4 from '@material-ui/icons/Brightness4';
 import Brightness7 from '@material-ui/icons/Brightness7';
 import {
@@ -30,6 +29,7 @@ import {
 } from './components/layout';
 import SetupWizardContainer from './components/setup/setupWizardContainer';
 import ThemeContext from './themeContext';
+import useDarkMode from './hooks/useDarkMode';
 
 const Header = getHeader(styled);
 const DrawerSidebar = getDrawerSidebar(styled);
@@ -73,13 +73,7 @@ type Props = {
 };
 
 const Layout = ({ children, footer }: Props) => {
-  const [dark, setDark] = React.useState(darkMode.isEnabled);
-
-  useEffect(() => {
-    darkMode.onChange(() => {
-      setDark(darkMode.isEnabled);
-    });
-  }, []);
+  const [dark, setDark] = useDarkMode();
 
   const theme = React.useMemo(
     () =>
