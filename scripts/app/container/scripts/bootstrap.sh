@@ -48,10 +48,16 @@ initialize_mysql_database() {
 
 initialize_directories() {
   chown -R www-data:staff "/oncoreport/ws"
-  [ ! -d "/oncoreport/ws/storage/app/public/jobs" ] && mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
-  [ ! -d "/oncoreport/ws/storage/app/tus_cache" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
+  if [ ! -d "/oncoreport/ws/storage/app/public/jobs" ]; then
+    mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
+  fi
+  if [ ! -d "/oncoreport/ws/storage/app/tus_cache" ]; then
+    mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
+  fi
   chmod -R 777 "/oncoreport/ws/storage/"
-  [ -f /var/run/apache2/apache2.pid ] && rm -f /var/run/apache2/apache2.pid
+  if [ -f /var/run/apache2/apache2.pid ]; then
+    rm -f /var/run/apache2/apache2.pid
+  fi
 }
 
 [ ! -d "/oncoreport/ws/storage/app/public/" ] && mkdir -p "/oncoreport/ws/storage/app/public/"
