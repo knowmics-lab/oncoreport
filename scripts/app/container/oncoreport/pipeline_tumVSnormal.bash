@@ -131,12 +131,12 @@ while [ -n "$1" ]; do
     echo "The value provided for stage is $stage"
     shift
     ;;
-  -city)
+  -city | -c)
     city="$2"
     echo "The value provided for city is $city"
     shift
     ;;
-  -phone)
+  -phone | -ph)
     phone="$2"
     echo "The value provided for phone is $phone"
     shift
