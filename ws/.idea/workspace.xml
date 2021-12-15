@@ -2,21 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/configUploader.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ClientConfigController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/mainProcessManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/mainProcessManager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/api/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/api/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.cloud" beforeDir="false" afterPath="$PROJECT_DIR$/.env.cloud" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/conf/mysqld_innodb.cnf" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/conf/mysqld_innodb.cnf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/import_reference.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/create_mysql_users.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.docker" beforeDir="false" afterPath="$PROJECT_DIR$/.env.docker" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Actions/Api/User/CreateUserToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Actions/Api/User/CreateUserToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/GenerateAuthToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/GenerateAuthToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/oncoreport.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/oncoreport.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/admin/user/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/TusServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/TusServiceProvider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/welcome.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,23 +39,26 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Http/Requests/Api/Job/StoreJobRequest.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/resources/views/esmo/index.blade.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Jobs/Types/Factory.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/resources/views/esmo/index.blade.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Http/Requests/Api/Job/StoreJobRequest.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Jobs/Types/Factory.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -402,6 +398,8 @@
       <workItem from="1638986115884" duration="199000" />
       <workItem from="1639219247605" duration="1825000" />
       <workItem from="1639221123565" duration="29000" />
+      <workItem from="1639560228690" duration="2000" />
+      <workItem from="1639560241685" duration="1100000" />
     </task>
     <servers />
   </component>
@@ -418,7 +416,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

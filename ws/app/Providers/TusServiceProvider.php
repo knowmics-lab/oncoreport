@@ -1,6 +1,6 @@
 <?php
 /**
- * RNADetector Web Service
+ * Oncoreport Web Service
  *
  * @author S. Alaimo, Ph.D. <alaimos at gmail dot com>
  */

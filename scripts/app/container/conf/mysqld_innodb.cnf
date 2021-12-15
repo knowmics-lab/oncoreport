@@ -4,3 +4,5 @@ innodb_flush_method=O_DSYNC
 innodb-use-native-aio=0
 log_bin=ON
 bind-address=0.0.0.0
+log=/oncoreport/ws/storage/app/logs/mysqld.log
+log-error=/oncoreport/ws/storage/app/logs/mysqld.error.log

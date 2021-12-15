@@ -46,6 +46,14 @@ initialize_mysql_database() {
   fi
 }
 
+initialize_directories() {
+  chown -R www-data:staff "/oncoreport/ws"
+  [ ! -d "/oncoreport/ws/storage/app/public/jobs" ] && mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
+  [ ! -d "/oncoreport/ws/storage/app/tus_cache" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
+  chmod -R 777 "/oncoreport/ws/storage/"
+  [ -f /var/run/apache2/apache2.pid ] && rm -f /var/run/apache2/apache2.pid
+}
+
 [ ! -d "/oncoreport/ws/storage/app/public/" ] && mkdir -p "/oncoreport/ws/storage/app/public/"
 [ ! -d "/oncoreport/ws/storage/app/tus_cache/" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache/"
 [ ! -d "/oncoreport/ws/storage/app/logs/" ] && mkdir -p "/oncoreport/ws/storage/app/logs/"
@@ -63,22 +71,15 @@ if [[ "$CLOUD_ENV" == "true" ]]; then
       php /oncoreport/ws/artisan migrate --seed --force &&
       php /oncoreport/ws/artisan first:boot
   fi
-
+  initialize_directories
 else
   echo "Starting Oncoreport Webservice in Local Mode"
   create_data_dir
   create_run_dir
   initialize_mysql_database
+  [ "$DB_CREATED" = "true" ] && touch "${MYSQL_DATA_DIR}/ready"
+  initialize_directories
 fi
-
-chown -R www-data:staff "/oncoreport/ws"
-[ ! -d "/oncoreport/ws/storage/app/public/jobs" ] && mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
-[ ! -d "/oncoreport/ws/storage/app/tus_cache" ] && mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
-chmod -R 777 "/oncoreport/ws/storage/"
-
-[ "$DB_CREATED" = "true" ] && touch "${MYSQL_DATA_DIR}/ready"
-
-[ -f /var/run/apache2/apache2.pid ] && rm -f /var/run/apache2/apache2.pid
 
 echo "Starting supervisord"
 exec supervisord -n
