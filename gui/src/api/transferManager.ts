@@ -3,7 +3,7 @@ import { is } from 'electron-util';
 import uniqid from 'uniqid';
 import { singleton } from 'tsyringe';
 import cpFile, { ProgressData } from 'cp-file';
-import { debounce } from 'ts-debounce';
+// import { debounce } from 'ts-debounce';
 import { download } from 'electron-dl';
 import * as tus from 'tus-js-client';
 import fs from 'fs';
@@ -122,16 +122,26 @@ export default class TransferManager {
   }
 
   private static makeLocalOnProgress(onProgress?: UploadProgressFunction) {
-    // const oldPercent = 0;
-    return debounce(({ size, writtenBytes, percent }: ProgressData) => {
-      const percentRound = Math.round(percent * 100);
-      // if (percentRound >= oldPercent + 1) {
-      if (onProgress) {
-        onProgress(percentRound, writtenBytes, size);
+    let oldPercent = 0;
+    return ({ size, writtenBytes, percent }: ProgressData) => {
+      const roundedPercent = Math.round(percent * 100);
+      if (roundedPercent > oldPercent) {
+        if (onProgress) {
+          onProgress(roundedPercent, writtenBytes, size);
+        }
+        oldPercent = roundedPercent;
       }
-      // oldPercent = percentRound;
-      // }
-    }, 250);
+    };
+    // // const oldPercent = 0;
+    // return debounce(({ size, writtenBytes, percent }: ProgressData) => {
+    //   const percentRound = Math.round(percent * 100);
+    //   // if (percentRound >= oldPercent + 1) {
+    //   if (onProgress) {
+    //     onProgress(percentRound, writtenBytes, size);
+    //   }
+    //   // oldPercent = percentRound;
+    //   // }
+    // }, 250);
   }
 
   private static async localCopy(

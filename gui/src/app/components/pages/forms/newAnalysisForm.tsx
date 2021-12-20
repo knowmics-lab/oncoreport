@@ -431,7 +431,8 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
     }),
     firstFile: Yup.object().required(),
     secondFile: Yup.mixed().when(['inputType', 'paired'], {
-      is: (inputType: string, paired: boolean) => paired && inputType !== 'vcf',
+      is: (inputType: string, paired: boolean) =>
+        paired && !['vcf', 'bam', 'ubam'].includes(inputType),
       then: Yup.object().required(),
       otherwise: Yup.object().notRequired(),
     }),
@@ -444,7 +445,11 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
     }),
     fourthFile: Yup.mixed().when(['type', 'inputType', 'paired'], {
       is: (type: JobTypes, inputType: string, paired: boolean) => {
-        return type === JobTypes.tumorNormal && paired && inputType !== 'vcf';
+        return (
+          type === JobTypes.tumorNormal &&
+          paired &&
+          !['vcf', 'bam', 'ubam'].includes(inputType)
+        );
       },
       then: Yup.object().required(),
       otherwise: Yup.object().notRequired(),
