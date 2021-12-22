@@ -2,8 +2,8 @@ cat("Building Mutations Annotation File\n")
 
 .variables.to.keep <- ls()
 
-refgene <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_refgene.txt"), sep = "\t", colClasses = c("character"))
-clinvar <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_clinvar.txt"), sep = "\t", colClasses = c("character"))
+refgene <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_refgene.txt"), sep = "\t", colClasses = "character")
+clinvar <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_clinvar.txt"), sep = "\t", colClasses = "character")
 
 mutations_data <- refgene %>% 
   inner_join(clinvar) %>%
@@ -20,6 +20,8 @@ if (tumor_type == "tumnorm") {
 mutations_data$Stop <- format(mutations_data$Stop, digits=0, big.mark=",", scientific = FALSE)
 names(mutations_data) <- c("Gene", "Chromosome", "Position", "Ref. Base", "Var. Base", "Change Type", 
                            "Clinical Significance")
+rows_to_remove <- is.na(mutations_data$Gene) | trimws(mutations_data$Gene) == ""
+mutations_data <- mutations_data[!rows_to_remove,]
 rownames(mutations_data) <- NULL
 if (nrow(mutations_data) > 0) {
   table <- kable(mutations_data, "html", escape = FALSE) %>%
