@@ -1,69 +1,40 @@
+# Manual WORK IN PROGRESS
 # Oncoreport
+
+## System Requirements
+
+Docker need to be installed on your computer to run OncoReport
+Docker can be installed through one of these two links
+
+```
+https://www.docker.com/products/docker-desktop
+
+https://docs.docker.com/get-docker/
+```
+
+First of all to use OncoReport you need to regist yourself on https://cancer.sanger.ac.uk/cosmic
+To use OncoReport it is necessary to have Cosmic functional credentials.
 
 ## Installation
 
-Install docker through 
-https://docs.docker.com/get-docker/
-Pull the pipeline image using the command
 
-```
-   docker pull grete/oncoreport:latest
-```
-The first thing to do after the installation of docker and the download of the pipeline is to download the cosmic file that the pipeline need. 
-You will need to download both the GRCh37 version and the GRCh38 version if you want to work with both the genome version, or only one if you plan to work always with the same version.Steps:
-1.	Create a folder where to put the Cosmic files
-2.	Go to https://cancer.sanger.ac.uk/cosmic/download
-3.	If you don’t have an account create it, otherwise log in
-4.	Choose the genome version GRCh37 
-5.	Download CosmicCodingMuts.vcf.gz
-6.	Download CosmicResistenceMutation.tsv.gz
-7.	Leave the name of the cosmic file GRCh37 as you see them above
-8.	Choose the genome version GRCh38, remember when you download the file to change the name of them as I did below
-9.	Download CosmicCodingMuts_hg38.vcf.gz
-10. Download CosmicResistanceMutation_hg38.tsv.gz
-
+Download the OncoReport app from.....
+After the download it will be ask to you to add the Cosmic credential.
+The download will start
  
 
- 
+## Usage 
+### Inputs
+The pipeline takes several inputs:
+-	fastq  
+-	bam (sam??)
+-	ubam
+-	vcf (it also possible to upload a varianttable sample in this section)
 
- 
- 
+### Patients creation
 
-When you download The Cosmic file for the GRCh38 version remember to change the files name
- 
+### Analysis creation
 
-## Usage example
-### File extension
-Your fastq file need to have one of the following extension:
-1.	for both the pipeline
--  .fastq.gz
--	.fastq  
--	.bam
--	.sam
--	.vcf
-2. for the liquid biopsy/only tumor pipeline
--	.varianttable.txt (This one is specific from vcf produced with illumina sequencer)
-The Pipeline is built to be used with three different types of data, liquid biopsy sample, a tumour only sample or a tumour-normal sample. 
-When you first start the docker container you need to indicate three paths, the path where the index will be saved, the path were you have downloaded the cosmic files, and the path where you want to do your analysis and where there is your input folder, this path is called project path.
-
-
-##### FOR BOTH PIPELINES
-Example for linux
-```
-docker run -v /home/username/index:/index -v /home/username/project:/project -v /home/username/cosmic_download:/Cosmic -it grete/oncoreport:latest
-```
-Example for windows
-```
-docker run -v /home/username/index:/index -v /home/username/project:/project -v /home/username/cosmic_download:/Cosmic -it grete/oncoreport:latest
-```
-
-After you have built the container you will se your terminal change a bit, you are going to see root@ followed by a number an not anymore your username. 
-
-
-At this point, you need to create the database and the index for the alignment. To do so launch:
-```
-bash setup_databases -db database_path -index hg19 or hg38 -ip path_index -c path_cosmic
-```
 
 Now you need to choose the right script for your sample type, if you have a liquid biopsy sample or a tumour only sample choose the pipeline called pipeline_liquid_biopsy.bash, but if you have a tumour-normal sample choose pipeline_tumVSnormal.bash pipeline. 
 For both pipeline you have to set the parameters : 
