@@ -34,11 +34,17 @@ The pipeline takes several inputs:
 ### Patients creation
 
 ![immagine](https://user-images.githubusercontent.com/57007795/151526164-a1d0842f-474f-47f1-a13d-0ac3ca3f3a0f.png)
-
-![immagine](https://user-images.githubusercontent.com/57007795/151527995-8c2fa702-a4e7-4bc3-b857-91c8bb377daa.png)
+![immagine](https://user-images.githubusercontent.com/57007795/151528305-9143aa13-792c-4ca7-8285-539f54bef7ff.png)
 
 
 ### Analysis creation
+
+
+![immagine](https://user-images.githubusercontent.com/57007795/151528763-78ee9838-b172-4e22-b13d-cb5ef015f184.png)
+
+![immagine](https://user-images.githubusercontent.com/57007795/151537926-0c81f8b3-a467-478e-ab77-f789aee4cf60.png)
+
+![immagine](https://user-images.githubusercontent.com/57007795/151538534-f52ed764-bd03-4d1e-b4f9-ee0b69348ca9.png)
 
 
 Now you need to choose the right script for your sample type, if you have a liquid biopsy sample or a tumour only sample choose the pipeline called pipeline_liquid_biopsy.bash, but if you have a tumour-normal sample choose pipeline_tumVSnormal.bash pipeline. 
