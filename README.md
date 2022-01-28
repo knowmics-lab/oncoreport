@@ -33,6 +33,9 @@ The pipeline takes several inputs:
 
 ### Patients creation
 
+![immagine](https://user-images.githubusercontent.com/57007795/151526164-a1d0842f-474f-47f1-a13d-0ac3ca3f3a0f.png)
+
+
 ### Analysis creation
 
 
