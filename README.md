@@ -33,7 +33,39 @@ The pipeline takes several inputs:
 
 ### Patients creation
 
+After installing the app it is possible to start immediately the analysis.
+First of all the user should create a new patient using the "+" in the patients screen.
+You can see from the image the specific of the patients  page.
+
+
 ![immagine](https://user-images.githubusercontent.com/57007795/151526164-a1d0842f-474f-47f1-a13d-0ac3ca3f3a0f.png)
+
+
+The information necessary to add a new patient are:
+- The Patient Code*
+- The Patient First and Last Name*
+- Patient Age*
+- Patient Gender*
+- Fiscal Number
+- Email*
+- Telephone
+- City
+- Primary Disease* The disease for which we want to do the analysis
+- Disease type
+- Diagnosis Date
+- T, the tumor stage of the patient
+- N, the lymph node number
+- M, the presence or absence of the metastasis
+
+
+The information indicated with the asterisk must be added!
+
+![immagine](https://user-images.githubusercontent.com/57007795/151539525-c646d215-331a-4c0a-a682-f529a2b7a03c.png)
+
+
+After the patient creation it is possible to add also information about other disease of the patient and the drug already taken. 
+In this way we permit to OncoReport to discover possible drug-drug interaction.
+
 ![immagine](https://user-images.githubusercontent.com/57007795/151528305-9143aa13-792c-4ca7-8285-539f54bef7ff.png)
 
 
