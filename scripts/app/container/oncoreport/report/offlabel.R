@@ -29,8 +29,11 @@ if (nrow(offlabel.annotations) > 0) {
   e.annotations.clean$Reference <- NULL
   e.annotations.clean$year <- NULL
   e.annotations.clean$id <- NULL
+  if (nrow(e.annotations.clean) > 0) {
+    e.annotations.clean <- aggregate(Score ~ ., data = e.annotations.clean, FUN = mean)
+  }
   e.annotations <- e.annotations %>% 
-    inner_join(aggregate(Score ~ ., data = e.annotations.clean, FUN = mean)) %>%
+    inner_join(e.annotations.clean) %>%
     group_by(Disease, Gene, Evidence_level, Evidence_type, Variant, Drug, Clinical_significance, Type, Score, AIFA, 
              EMA, FDA, .add = FALSE) %>%
     summarise(Evidence_statement = paste0("<li>", Evidence_statement, "</li>", collapse = ""),
@@ -116,7 +119,7 @@ if (nrow(offlabel.annotations) > 0) {
     template.env$offlabel$evidences <- table
     rm(table)
   }
-
+  
   annot.details <- get.raw.other.annotations(all.annotations, pt_tumor)
   if (nrow(annot.details) > 0) {
     annot.details$Disease <- NULL
@@ -135,7 +138,7 @@ if (nrow(offlabel.annotations) > 0) {
       arrange(Gene, Variant, Chromosome, Start, Stop) %>%
       mutate(Start = format(as.numeric(Start), digits=0, big.mark=",", scientific = FALSE),
              Stop = format(as.numeric(Stop), digits=0, big.mark=",", scientific = FALSE))
-
+    
     details.genes <- annot.details$Gene
     annot.details$Gene <- NULL
     names(annot.details) <- c("Variant", "Chromosome", "Ref. Base", "Var. Base", "Start", "Stop", "Details")

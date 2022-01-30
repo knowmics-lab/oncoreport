@@ -85,7 +85,9 @@ prepare.annotation <- function (all.annotations, pt_tumor, get.raw.function, ref
       df.scores <- unique(primary.annotations[primary.annotations$Drug != "", c("Drug", "Score", "y_score")] %>% 
                             left_join(df.d_score))
       df.scores$tot <- rowSums(df.scores[, c("Score", "y_score", "d_score")])
-      df.scores <- aggregate(tot ~ Drug, df.scores, mean)
+      if (nrow(df.scores) > 0) {
+        df.scores <- aggregate(tot ~ Drug, df.scores, mean)
+      }
       primary.annotations <- primary.annotations %>% left_join(df.scores, by="Drug")
     } else {
       primary.annotations$tot <- rowSums(primary.annotations[, c("Score", "y_score")])

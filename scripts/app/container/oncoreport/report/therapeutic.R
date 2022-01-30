@@ -39,8 +39,11 @@ if (nrow(primary.annotations) > 0) {
     e.annotations.clean$Reference <- NULL
     e.annotations.clean$year <- NULL
     e.annotations.clean$id <- NULL
+    if (nrow(e.annotations.clean) > 0) {
+      e.annotations.clean <- aggregate(Score ~ ., data = e.annotations.clean, FUN = mean)
+    }
     e.annotations <- e.annotations %>% 
-      inner_join(aggregate(Score ~ ., data = e.annotations.clean, FUN = mean)) %>%
+      inner_join(e.annotations.clean) %>%
       group_by(Gene, Evidence_level, Evidence_type, Variant, Drug, Clinical_significance, Type, Score, AIFA, EMA, 
                FDA, .add = FALSE) %>%
       summarise(Evidence_statement = paste0("<li>", Evidence_statement, "</li>", collapse = ""),
@@ -53,7 +56,11 @@ if (nrow(primary.annotations) > 0) {
   template.env$therapeutic_indications$summary <- suppressMessages(lapply(evidence.groups, function(eg) {
     es <- eg[,c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type", 
                 "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id"), drop = F]
-    es$Evidence <- 1:nrow(es)
+    if (nrow(es) > 0) {
+      es$Evidence <- 1:nrow(es)
+    } else {
+      es$Evidence <- numeric(0)
+    }
     es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '">+</a>]')
     es$Details[!complete.cases(es[, c("Evidence_statement", "Reference"), drop = FALSE]) | trimws(es$Evidence_statement) == ""] <- ""
     es$Evidence <- paste0('<a id="evi-', es$id, '"></a>', es$Evidence + last_evidence)

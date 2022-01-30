@@ -74,8 +74,8 @@ const createWindow = async () => {
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true,
-      contextIsolation: false,
-    },
+      contextIsolation: false
+    }
   });
 
   mainWindow.webContents.on('did-frame-finish-load', async () => {
@@ -120,9 +120,8 @@ const createWindow = async () => {
   //   shell.openExternal(url);
   // });
 
-  // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater(); // TODO: enable this line for release
 };
 
 /**
