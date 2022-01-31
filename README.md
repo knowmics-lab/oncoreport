@@ -1,6 +1,8 @@
 # Manual WORK IN PROGRESS
 # Oncoreport
 
+![immagine](https://user-images.githubusercontent.com/57007795/151794368-902242bd-e6ca-48cf-8108-b794fa6497c1.png)
+
 ## System Requirements
 
 Docker need to be installed on your computer to run OncoReport
