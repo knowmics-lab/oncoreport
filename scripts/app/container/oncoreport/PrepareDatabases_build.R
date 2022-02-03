@@ -1,6 +1,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(stringr))
 
@@ -186,8 +187,7 @@ unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))
 
 cat(" - PharmGKB database...\n")
 pharm <- fread(paste0(database.path, "/pharm_database_", genome, ".txt"))
-if (genome == "hg19")
-{
+if (genome == "hg19") {
   names(pharm) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene",
                     "Variant_summary", "Evidence_statement", "Evidence_level",
                     "Clinical_significance", "PMID", "Drug", "PharmGKB_ID", "Variant")
@@ -198,35 +198,14 @@ if (genome == "hg19")
                     "Chromosome.1")
 }
 pharm$Database <- "PharmGKB"
-tmp <- apply(pharm, 2, function(col)
-{
-  lapply(col, function(str)
-  {
-    x <- paste0(str, ";;")
-    x <- unlist(strsplit(x, ";;", fixed = T, useBytes = T))
-    x
-  })
-})
-lengths <- unlist(lapply(tmp[["PMID"]], length))
-tmp3 <- lapply(tmp, function(col)
-{
-  unlist(sapply(1:length(lengths), function(i)
-  {
-    rep(col[[i]], lengths[i] / length(col[[i]]))
-  }))
-})
-pharm <- data.frame(tmp3)
-pharm$Gene <- gsub(" \\(.*\\)", "", pharm$Gene)
+pharm <- separate_rows(pharm, Variant_summary, Evidence_statement, Evidence_level, Clinical_significance, PMID, Drug,
+                       PharmGKB_ID, Variant, sep = ";;")
+pharm$Gene <- gsub("\\s+\\(.*\\)", "", pharm$Gene)
 pharm$Gene <- gsub(pharm$Gene, pattern = "*\\(.*?\\) *", replace = "")
 pharm$Drug <- gsub(pharm$Drug, pattern = "\\\\x2c", replace = ",")
 pharm$Drug <- gsub(pharm$Drug, pattern = "*\\(.*?\\) *", replace = "")
 pharm$Drug <- gsub("\\s+", "", gsub("^\\s+|\\s+$", "", pharm$Drug))
-pharm$Drug <- sapply(pharm$Drug, function(x)
-{
-  s <- strsplit(x, ",")[[1]]
-  paste(toupper(substring(s, 1, 1)), substring(s, 2),
-        sep = "", collapse = ",")
-})
+pharm$Drug <- unname(sapply(pharm$Drug, function(x) (paste0(str_to_title(strsplit(x, ",")[[1]]), collapse = ","))))
 pharm$Variant_summary <- gsub(pharm$Variant_summary, pattern = "\\\\x2c", replace = ",")
 pharm$Clinical_significance <- gsub(pattern = " ", replace = "", pharm$Clinical_significance)
 pharm$Evidence_statement <- gsub(pharm$Evidence_statement, pattern = "\\\\x2c", replace = ",")
