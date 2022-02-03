@@ -30,11 +30,11 @@ if (nrow(pharmgkb_annot) > 0) {
     '</a>'
   )
   pharmgkb_annot$id <- 1:nrow(pharmgkb_annot)
-  
+  is.not.empty <- function (x) (x != "")
   pharmgkb_annot <- pharmgkb_annot %>% 
     group_by(Variant, Drug, Clinical_significance, Type, Gene) %>%
     summarise(id=paste0(id, collapse = "-"),
-              Evidence_statement = paste0("<ul>", paste0("<li>",trimws(Evidence_statement),"</li>", collapse = ""), "</ul>"), 
+              Evidence_statement = paste0("<ul>", paste0("<li>",Filter(is.not.empty, trimws(Evidence_statement)),"</li>", collapse = ""), "</ul>"),
               Reference = paste(Reference, collapse = ", "))
   
   pharmgkb_mutations  <- pharmgkb_annot %>% select(Gene, Variant, Drug, Clinical_significance, Type, Reference, id)

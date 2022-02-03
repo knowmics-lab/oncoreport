@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/pharm_database_hg19.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/pharm_database_hg19.orig.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/pharm_database_hg38.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/databases/pharm_database_hg38.orig.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/PrepareDatabases_build.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/PrepareDatabases_build.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/blade.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/blade.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/pharmgkb.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/pharmgkb.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ws.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ws.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -411,6 +406,7 @@
       <workItem from="1643911663561" duration="65000" />
       <workItem from="1643911753361" duration="3731000" />
       <workItem from="1643916109468" duration="64000" />
+      <workItem from="1643922023567" duration="518000" />
     </task>
     <servers />
   </component>
