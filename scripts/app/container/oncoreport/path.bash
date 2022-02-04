@@ -1,5 +1,5 @@
 export PICARD_PATH="/usr/local/bin/picard.jar"
-export GATK_PATH="/usr/local/bin/gatk-package-4.1.0.0-local.jar"
+export GATK_PATH="/usr/local/bin/gatk-package-local.jar"
 export ONCOREPORT_SCRIPT_PATH="/oncoreport/scripts"
 export ONCOREPORT_DATABASES_PATH="/oncoreport/databases"
 export ONCOREPORT_INDEXES_PATH="/oncoreport/ws/storage/app/indexes"

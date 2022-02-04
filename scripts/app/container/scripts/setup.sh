@@ -19,34 +19,38 @@ mv /html_source /oncoreport/html_source || exit 102
 pip3 install cutadapt || exit 104
 
 # Install trim_galore
+TRIM_GALORE_VERSION="0.6.7"
 (
   cd /oncoreport/tmp/ &&
-    curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.5.tar.gz -o trim_galore.tar.gz &&
+    curl -fsSL "https://github.com/FelixKrueger/TrimGalore/archive/$TRIM_GALORE_VERSION.tar.gz" -o trim_galore.tar.gz &&
     tar -zxvf trim_galore.tar.gz &&
-    cp TrimGalore-0.6.5/trim_galore /usr/local/bin/
+    cp "TrimGalore-$TRIM_GALORE_VERSION/trim_galore" /usr/local/bin/
 ) || exit 105
 
 # Install gatk
+GATK_VERSION="4.2.4.1"
 (
   cd /oncoreport/tmp/ &&
-    wget https://github.com/broadinstitute/gatk/releases/download/4.1.0.0/gatk-4.1.0.0.zip &&
-    unzip gatk-4.1.0.0.zip &&
-    [ -d gatk-4.1.0.0/ ] &&
-    mv gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar /usr/local/bin/
+    wget "https://github.com/broadinstitute/gatk/releases/download/$GATK_VERSION/gatk-$GATK_VERSION.zip" &&
+    unzip "gatk-$GATK_VERSION.zip" &&
+    [ -d "gatk-$GATK_VERSION/" ] &&
+    mv "gatk-$GATK_VERSION/gatk-package-$GATK_VERSION-local.jar" "/usr/local/bin/gatk-package-local.jar"
 ) || exit 106
 
 # Install picard
+PICARD_VERSION="2.26.10"
 (
   cd /oncoreport/tmp/ &&
-    wget https://github.com/broadinstitute/picard/releases/download/2.21.1/picard.jar &&
+    wget "https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar" &&
     mv picard.jar /usr/local/bin/
 ) || exit 107
 
 # Removes pandoc 1 and install pandoc 2
+PANDOC_VERSION="2.17.1.1"
 apt remove -y pandoc
 (
   cd /oncoreport/tmp/ &&
-    curl -fsSL https://github.com/jgm/pandoc/releases/download/2.11.0.4/pandoc-2.11.0.4-1-amd64.deb -o pandoc.deb &&
+    curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-1-amd64.deb" -o pandoc.deb &&
     dpkg -i pandoc.deb
 ) || exit 108
 
@@ -69,12 +73,14 @@ cd /oncoreport/tmp/ || exit 99
     mv nightly-ClinicalEvidenceSummaries.tsv /oncoreport/databases/civic.txt
 ) || exit 113
 
+CLINVAR_YEAR="2022"
+CLINVAR_VERSION="20220122"
 (
-  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2021/clinvar_20211025.vcf.gz &&
-    [ -f clinvar_20211025.vcf.gz ] &&
-    gunzip clinvar_20211025.vcf.gz &&
-    [ -f clinvar_20211025.vcf ] &&
-    mv clinvar_20211025.vcf /oncoreport/databases/clinvar_hg38.vcf
+  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/$CLINVAR_YEAR/clinvar_$CLINVAR_VERSION.vcf.gz" &&
+    [ -f "clinvar_$CLINVAR_VERSION.vcf.gz" ] &&
+    gunzip "clinvar_$CLINVAR_VERSION.vcf.gz" &&
+    [ -f "clinvar_$CLINVAR_VERSION.vcf" ] &&
+    mv "clinvar_$CLINVAR_VERSION.vcf" /oncoreport/databases/clinvar_hg38.vcf
 ) || exit 114
 
 (
@@ -86,11 +92,11 @@ cd /oncoreport/tmp/ || exit 99
 ) || exit 115
 
 (
-  wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2021/clinvar_20211025.vcf.gz &&
-    [ -f clinvar_20211025.vcf.gz ] &&
-    gunzip clinvar_20211025.vcf.gz &&
-    [ -f clinvar_20211025.vcf ] &&
-    mv clinvar_20211025.vcf /oncoreport/databases/clinvar_hg19.vcf
+  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/$CLINVAR_YEAR/clinvar_$CLINVAR_VERSION.vcf.gz" &&
+    [ -f "clinvar_$CLINVAR_VERSION.vcf.gz" ] &&
+    gunzip "clinvar_$CLINVAR_VERSION.vcf.gz" &&
+    [ -f "clinvar_$CLINVAR_VERSION.vcf" ] &&
+    mv "clinvar_$CLINVAR_VERSION.vcf" /oncoreport/databases/clinvar_hg19.vcf
 ) || exit 116
 
 (
@@ -166,8 +172,8 @@ remove_debian_system_maint_password
 rm -rf /oncoreport/tmp
 
 # Apply PHP configuration fixes
-sed -i 's/post_max_size \= .M/post_max_size \= 200G/g' /etc/php/*/apache2/php.ini
-sed -i 's/upload_max_filesize \= .M/upload_max_filesize \= 200G/g' /etc/php/*/apache2/php.ini
+sed -i 's/post_max_size \= .M/post_max_size \= 1G/g' /etc/php/*/apache2/php.ini
+sed -i 's/upload_max_filesize \= .M/upload_max_filesize \= 1G/g' /etc/php/*/apache2/php.ini
 sed -i "s/;date.timezone =/date.timezone = Europe\/London/g" /etc/php/*/apache2/php.ini
 sed -i "s/;date.timezone =/date.timezone = Europe\/London/g" /etc/php/*/cli/php.ini
 sed -i "s/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=staff/" /etc/apache2/envvars
