@@ -37,7 +37,11 @@ class PatientController extends Controller
         $this->tokenAuthorize($request, 'read', 'viewAny', Patient::class);
 
         return PatientResource::collection(
-            $requestService->handle($request, Patient::with(['primaryDisease']))
+            $requestService->handle($request, Patient::with(['primaryDisease']), searchableFields: [
+                'code',
+                'first_name',
+                'last_name',
+            ])
         );
     }
 

@@ -29,7 +29,11 @@ class JobsCollectionService
                     if ($request->has('patient') && ($id = (int)$request->input('patient'))) {
                         $builder->where('patient_id', $id);
                     }
-                }
+                },
+                searchableFields: [
+                    'sample_code',
+                    'name',
+                ]
             )
         );
     }
