@@ -296,8 +296,10 @@ if [ -z "$bamt" ] && [ -z "$vcf" ]; then
   java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_TUMOR/aligned.sam" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
 elif [ -n "$bamt" ]; then
   FASTQ1_NAME=$(basename "${bamt%.*}")
+  echo "Validating BAM"
+  java -jar "$PICARD_PATH" ValidateSamFile I="$bamt" MODE=SUMMARY
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to add read groups" 104
 fi
 
 if [ -z "$vcf" ]; then
@@ -356,20 +358,23 @@ if [ -n "$normal1" ]; then
 fi
 
 if [ -z "$bamn" ] && [ -z "$vcf" ]; then
-  echo "AddingRead Group"
+  echo "Adding Read Group"
   java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_NORMAL/aligned.sam" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
 elif [ -n "$bamn" ]; then
   NORMAL1_NAME=$(basename "${bamn%.*}")
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
+  echo "Validating BAM"
+  java -jar "$PICARD_PATH" ValidateSamFile I="$bamn" MODE=SUMMARY
+  echo "Adding Read Group"
+  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to add read groups" 111
 fi
 
 if [ -z "$vcf" ]; then
   echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/annotated.bam" O="$PATH_BAM_SORT_NORMAL/sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 112
+  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/annotated.bam" O="$PATH_BAM_SORT_NORMAL/sorted.bam" SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to sort" 112
   echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/sorted.bam" O="$PATH_BAM_ORD_NORMAL/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 113
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/sorted.bam" O="$PATH_BAM_ORD_NORMAL/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to reorder" 113
   echo "Duplicates Removal"
-  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/marked.txt" || exit_abnormal_code "Unable to remove duplicates" 114
+  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/marked.txt" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to remove duplicates" 114
 fi
 
 # VCF ANALYSIS
@@ -378,7 +383,7 @@ if [ -z "$vcf" ]; then
   echo "Variant Calling"
   java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_MARK_DUP_TUMOR/nodup.bam" -tumor "$FASTQ1_NAME" -I "$PATH_MARK_DUP_NORMAL/nodup.bam" -normal "$NORMAL1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 115
   echo "Variant Filtering"
-  java -jar "$GATK_PATH" FilterMutectCalls -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" || exit_abnormal_code "Unable to filter variants" 116
+  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" || exit_abnormal_code "Unable to filter variants" 116
   echo "PASS Selection"
   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
 else
