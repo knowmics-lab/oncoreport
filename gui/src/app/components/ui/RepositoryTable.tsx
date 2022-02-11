@@ -50,6 +50,7 @@ export interface TableProps<E extends EntityObject> {
   autoRefresh?: boolean;
   autoRefreshWhen?: (data: E[]) => boolean;
   autoRefreshTime?: number;
+  globalSearch?: boolean;
 }
 
 type SortingSpec = SimpleMapType<SortingDirection>;
@@ -76,18 +77,23 @@ export default function RepositoryTable<E extends EntityObject>({
   autoRefresh,
   autoRefreshWhen,
   autoRefreshTime = 30000,
+  globalSearch = false,
 }: TableProps<E>) {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [sorting, setSorting] = useState<SortingSpec>({});
+  const [search, setSearch] = useState<string>('');
   const [, forceRender] = useForceRerender();
 
   const callbackMemoized = useMemo(() => {
     return (builder: QueryBuilderInterface<E>) => {
       let finalBuilder = builder;
       if (queryBuilderCallback) finalBuilder = queryBuilderCallback(builder);
+      if (search && search.trim().length > 0) {
+        finalBuilder.search(search);
+      }
       return finalBuilder.orderByAll(sorting).paginate(rowsPerPage);
     };
-  }, [queryBuilderCallback, rowsPerPage, sorting]);
+  }, [queryBuilderCallback, rowsPerPage, search, sorting]);
 
   const [loading, data, forceRefresh] = useRepositoryQuery(
     repositoryToken,
@@ -177,6 +183,11 @@ export default function RepositoryTable<E extends EntityObject>({
       handleSelectAll={handleSelectAll}
       collapsible={collapsible}
       collapsibleContent={collapsibleContent}
+      globalSearch={globalSearch}
+      onGlobalSearch={(v) => {
+        setSearch(v);
+        forceRefresh();
+      }}
     />
   );
 }

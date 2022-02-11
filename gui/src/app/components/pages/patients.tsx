@@ -17,6 +17,7 @@ export default function Patients() {
     <RepositoryTable
       repositoryToken={PatientRepository}
       title="Patients"
+      globalSearch
       columns={[
         {
           dataField: 'first_name',
@@ -84,13 +85,15 @@ export default function Patients() {
           color: 'secondary',
           icon: 'fas fa-trash',
           tooltip: 'Delete',
-          onClick: (_e, data) => {
+          onClick: (_e, data, setLoading) => {
             runAsync(async (manager) => {
+              if (setLoading) setLoading(true);
               await data.delete();
               manager.pushSimple(
                 'Patient deleted!',
                 TypeOfNotification.success
               );
+              if (setLoading) setLoading(false);
             });
           },
         },

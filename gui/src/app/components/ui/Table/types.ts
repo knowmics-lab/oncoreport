@@ -30,7 +30,8 @@ export type TableState = {
 
 export type RowActionFunction<E extends EntityObject> = (
   data: E,
-  size: 'small' | 'medium'
+  size: 'small' | 'medium',
+  setLoading?: (isLoading: boolean) => void
 ) => ReactNodeArray | ReactNode;
 
 export type RowActionObject<E extends EntityObject> = {
@@ -39,7 +40,11 @@ export type RowActionObject<E extends EntityObject> = {
   size?: 'small' | 'medium';
   disabled?: boolean | ((data: E) => boolean);
   color?: PropTypes.Color;
-  onClick?: (e: MouseEvent<HTMLButtonElement>, data: E) => void;
+  onClick?: (
+    e: MouseEvent<HTMLButtonElement>,
+    data: E,
+    setLoading?: (isLoading: boolean) => void
+  ) => void;
   tooltip?: string;
 };
 
@@ -55,7 +60,8 @@ export enum Alignment {
 
 export type ToolbarActionFunction<E extends EntityObject> = (
   state: TableState,
-  data?: E[]
+  data?: E[],
+  setLoading?: (isLoading: boolean) => void
 ) => ReactNodeArray | ReactNode;
 
 export type ToolbarActionCustom<E extends EntityObject> = {
@@ -71,7 +77,12 @@ export type ToolbarActionButton<E extends EntityObject> = {
   icon: string | (() => ReactNode);
   disabled?: boolean | ((state: TableState, data?: E[]) => boolean);
   color?: PropTypes.Color;
-  onClick?: (e: MouseEvent, state: TableState, data?: E[]) => void;
+  onClick?: (
+    e: MouseEvent,
+    state: TableState,
+    data?: E[],
+    setLoading?: (isLoading: boolean) => void
+  ) => void;
   tooltip?: string;
 };
 

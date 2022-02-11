@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -17,6 +17,26 @@ import TableToolbar from './Table/Toolbar';
 import { EntityObject } from '../../../apiConnector/interfaces/entity';
 import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 import { SortingDirection } from '../../../apiConnector';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      padding: 16,
+    },
+    container: {
+      // maxHeight: 440
+    },
+    stickyStyle: {
+      backgroundColor: theme.palette.background.default,
+    },
+    loading: {
+      width: '100%',
+      '& > * + *': {
+        marginTop: theme.spacing(2),
+      },
+    },
+  })
+);
 
 type ContainerProps = React.PropsWithChildren<{
   wrapped: boolean;
@@ -58,27 +78,9 @@ export interface TableProps<E extends EntityObject> {
   handleSelectAll?: () => void;
   collapsible?: boolean;
   collapsibleContent?: (row: E) => React.ReactNode;
+  globalSearch?: boolean;
+  onGlobalSearch?: (value: string) => void;
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      padding: 16,
-    },
-    container: {
-      // maxHeight: 440
-    },
-    stickyStyle: {
-      backgroundColor: theme.palette.background.default,
-    },
-    loading: {
-      width: '100%',
-      '& > * + *': {
-        marginTop: theme.spacing(2),
-      },
-    },
-  })
-);
 
 export default function RemoteTable<E extends EntityObject>({
   title,
@@ -104,11 +106,15 @@ export default function RemoteTable<E extends EntityObject>({
   handleSelectAll,
   collapsible,
   collapsibleContent,
+  globalSearch,
+  onGlobalSearch,
 }: TableProps<E>) {
   const classes = useStyles();
   const single = !!hasCheckbox && !handleSelectAll;
   const selectedAny = !single && selectedItems && selectedItems.length > 0;
   const selectedAll = !single && selectedItems?.length === totalRows;
+  const isGlobalSearchEnabled = !!(globalSearch && onGlobalSearch);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!data && !fetching) onPageRequest(1);
@@ -151,8 +157,11 @@ export default function RemoteTable<E extends EntityObject>({
           actions={finalToolbar}
           state={{ currentPage, rowsPerPage, totalRows, isLoading }}
           data={data}
+          globalSearch={isGlobalSearchEnabled}
+          onSearch={isGlobalSearchEnabled ? onGlobalSearch : undefined}
+          setLoading={setLoading}
         />
-        {isLoading && (
+        {(loading || isLoading) && (
           <div className={classes.loading}>
             <LinearProgress />
           </div>
@@ -188,6 +197,7 @@ export default function RemoteTable<E extends EntityObject>({
               selectedItems={selectedItems}
               collapsible={collapsible}
               collapsibleContent={collapsibleContent}
+              setLoading={setLoading}
             />
           )}
         </Table>
@@ -218,4 +228,6 @@ RemoteTable.defaultProps = {
   handleSelectAll: undefined,
   collapsible: false,
   collapsibleContent: undefined,
+  globalSearch: false,
+  onGlobalSearch: undefined,
 };

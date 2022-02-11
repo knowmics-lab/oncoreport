@@ -53,6 +53,9 @@ export default function useRepositoryQuery<E extends EntityObject>(
         setData(o.clone().removeObserver(this));
         setLoading(false);
       },
+      deleted() {
+        setData(undefined);
+      },
     };
     if (data) data.observe(observer);
     return () => {

@@ -4,13 +4,9 @@
     <option name="frameworkFound" value="true" />
     <option name="generationStringSettings">
       <map>
+        <entry key="createEloquentScope:namespace" value="Models\Scopes" />
         <entry key="createModel:namespace" value="Models" />
       </map>
-    </option>
-    <option name="helperCode">
-      <LaravelHelperCodeSettings>
-        <option name="modelsCreateHighOrderCollectionProxies" value="true" />
-      </LaravelHelperCodeSettings>
     </option>
     <option name="userClassName" value="App\Models\User" />
   </component>

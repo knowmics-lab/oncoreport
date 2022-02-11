@@ -95,4 +95,6 @@ export interface ResultSetObserver<R> {
   changingPage?(o: R, newPage: number): void;
 
   changedPage?(o: R): void;
+
+  deleted?(o: R): void;
 }

@@ -332,6 +332,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     'normalBamOutputFile' => $this->getFilePathsForOutput(
                         $outputRelative . '/mark_dup_normal/nodup.bam'
                     ),
+                    'vcfRAWCallFile'      => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
                     'vcfOutputFile'       => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
                     'vcfPASSOutputFile'   => $this->getFilePathsForOutput(
                         $outputRelative . '/pass_filtered/variants.vcf'

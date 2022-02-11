@@ -290,7 +290,8 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 [
                     'type'              => Utils::TUMOR_ONLY_TYPE,
                     'bamOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/bam_ordered/ordered.bam'),
-                    'vcfOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
+                    'vcfRAWCallFile'    => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
+                    'vcfOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
                     'vcfPASSOutputFile' => $this->getFilePathsForOutput($outputRelative . '/pass_final/variants.vcf'),
                     'textOutputFiles'   => $this->getFilePathsForOutput($outputRelative . '/report/intermediate.zip'),
                     'reportOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/report/index.html'),

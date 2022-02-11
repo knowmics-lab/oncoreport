@@ -2,7 +2,6 @@
 import QueryResponse from '../interfaces/queryResponse';
 import { PartialObject } from '../interfaces/common';
 import { PaginationMetadata } from '../interfaces/paginationMetadata';
-import { ignorePromise } from '../utils';
 import {
   EntityObject,
   EntityObserver,
@@ -22,7 +21,7 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
 
   protected entityObserver: EntityObserver<E> = {
     updated: () => this.refreshed(),
-    deleted: () => ignorePromise(this.refresh()),
+    deleted: () => this.deleted(),
   };
 
   protected adapter: Adapter<E>;
@@ -263,6 +262,13 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
     this.observers.forEach((ref) => {
       const o = ref.deref();
       if (o && o.refreshed) o.refreshed(this);
+    });
+  }
+
+  protected deleted(): void {
+    this.observers.forEach((ref) => {
+      const o = ref.deref();
+      if (o && o.deleted) o.deleted(this);
     });
   }
 

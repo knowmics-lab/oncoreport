@@ -25,7 +25,8 @@ function Cell<E extends EntityObject>(
   row: E,
   keyBase: string,
   actions: RowActionType<E>[],
-  size: 'small' | 'medium'
+  size: 'small' | 'medium',
+  setLoading?: (isLoading: boolean) => void
 ) {
   if (column !== 'actions') {
     const value = row[column.dataField];
@@ -40,7 +41,12 @@ function Cell<E extends EntityObject>(
   }
   return (
     <TableCell key={`${keyBase}-actions`} align="center">
-      <RowActions actions={actions} data={row} size={size} />
+      <RowActions
+        actions={actions}
+        data={row}
+        size={size}
+        setLoading={setLoading}
+      />
     </TableCell>
   );
 }
@@ -86,6 +92,7 @@ type RowProps<E extends EntityObject> = {
   handleSelect?: (id: E['id']) => void;
   collapsible?: boolean;
   collapsibleContent?: (row: E) => React.ReactNode;
+  setLoading?: (isLoading: boolean) => void;
 };
 
 function Row<E extends EntityObject>({
@@ -98,6 +105,7 @@ function Row<E extends EntityObject>({
   handleSelect,
   collapsible,
   collapsibleContent,
+  setLoading,
 }: RowProps<E>) {
   const classes = useRowStyles();
   const { id } = row;
@@ -135,7 +143,9 @@ function Row<E extends EntityObject>({
             <Checkbox checked={isSelected(id)} />
           </TableCell>
         )}
-        {columns.map((column) => Cell(column, row, `row-${id}`, actions, size))}
+        {columns.map((column) =>
+          Cell(column, row, `row-${id}`, actions, size, setLoading)
+        )}
       </TableRow>
       {isCollapsible && (
         <TableRow>
@@ -158,6 +168,7 @@ Row.defaultProps = {
   handleSelect: undefined,
   collapsible: false,
   collapsibleContent: undefined,
+  setLoading: undefined,
 };
 
 type Props<E extends EntityObject> = {
@@ -170,6 +181,7 @@ type Props<E extends EntityObject> = {
   handleSelect?: (id: E['id']) => void;
   collapsible?: boolean;
   collapsibleContent?: (row: E) => React.ReactNode;
+  setLoading?: (loading: boolean) => void;
 };
 
 export default function Body<E extends EntityObject>({
@@ -182,6 +194,7 @@ export default function Body<E extends EntityObject>({
   handleSelect,
   collapsible,
   collapsibleContent,
+  setLoading,
 }: Props<E>) {
   const isSelected = useCallback(
     (id: E['id']) =>
@@ -203,6 +216,7 @@ export default function Body<E extends EntityObject>({
             handleSelect={handleSelect}
             collapsible={collapsible}
             collapsibleContent={collapsibleContent}
+            setLoading={setLoading}
           />
         ))}
       {data.length === 0 && (
@@ -223,4 +237,5 @@ Body.defaultProps = {
   handleSelect: undefined,
   collapsible: false,
   collapsibleContent: undefined,
+  setLoading: undefined,
 };

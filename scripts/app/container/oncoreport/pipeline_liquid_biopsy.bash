@@ -381,7 +381,6 @@ echo "Removing folders"
   rm -r "$PATH_BAM_ANNO" &&
   rm -r "$PATH_BAM_SORT" &&
   rm -r "$PATH_VCF_TO_CONVERT" &&
-  rm -r "$PATH_VCF_FILTERED" &&
   rm -r "$PATH_VCF_DP" &&
   rm -r "$PATH_VCF_IN_SN" &&
   rm -r "$PATH_VCF_AF" &&

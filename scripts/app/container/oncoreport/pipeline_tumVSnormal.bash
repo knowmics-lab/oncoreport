@@ -418,7 +418,6 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$i
   rm -r "$PATH_BAM_ORD_NORMAL" &&
   rm -r "$PATH_TRIM_TUMOR" &&
   rm -r "$PATH_BAM_ORD_TUMOR" &&
-  rm -r "$PATH_VCF_MUT" &&
   rm -r "$PATH_CONVERTED" &&
   chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
 

@@ -124,10 +124,12 @@ export default function JobsTableByPatient({
         color: 'secondary',
         icon: 'fas fa-trash',
         tooltip: 'Delete',
-        onClick(_e, job) {
+        onClick(_e, job, setLoading) {
           runAsync(async (manager) => {
+            if (setLoading) setLoading(true);
             await job.delete();
             manager.pushSimple('Job deleted!', TypeOfNotification.success);
+            if (setLoading) setLoading(false);
           });
         },
       },

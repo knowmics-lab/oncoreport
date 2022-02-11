@@ -8,6 +8,7 @@ export type Props<E extends EntityObject> = {
   action: RowActionType<E>;
   data: E;
   size: 'small' | 'medium';
+  setLoading?: (isLoading: boolean) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -19,9 +20,10 @@ export default function RowAction<E extends EntityObject>({
   action,
   data,
   size,
+  setLoading,
 }: Props<E>) {
   if (typeof action === 'function') {
-    return <>{action(data, size)}</>;
+    return <>{action(data, size, setLoading)}</>;
   }
   const shown = isF(action.shown) ? action.shown(data) : action.shown;
   if (!shown) return null;
@@ -40,7 +42,7 @@ export default function RowAction<E extends EntityObject>({
       color={color}
       disabled={disabled}
       onClick={(event) =>
-        action.onClick ? action.onClick(event, data) : undefined
+        action.onClick ? action.onClick(event, data, setLoading) : undefined
       }
       title={action.tooltip}
     >
@@ -48,3 +50,7 @@ export default function RowAction<E extends EntityObject>({
     </IconButton>
   );
 }
+
+RowAction.defaultProps = {
+  setLoading: undefined,
+};

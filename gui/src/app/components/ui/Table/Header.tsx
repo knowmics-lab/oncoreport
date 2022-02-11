@@ -50,7 +50,7 @@ export default function Header<E extends EntityObject>({
 }: Props<E>) {
   const classes = useStyles();
   const sf = (column: NormalColumn<E>): keyof E =>
-    column.sortingField || column.dataField;
+    (column.sortingField || column.dataField) as unknown as keyof E;
   const makeChangeHandler =
     (column: keyof E) =>
     (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {

@@ -2,9 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/interfaces/entity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/apiConnector/queryBuilder/resultSet.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/jobs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/patients.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/pages/tables/jobsTableByPatient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/pages/tables/jobsTableByPatient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RemoteTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/RepositoryTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Body.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowAction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/RowActions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Toolbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/Toolbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/ToolbarAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/ToolbarAction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/components/ui/Table/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/src/app/hooks/useRepositoryQuery.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/laravel-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -410,6 +428,8 @@
       <workItem from="1643922023567" duration="518000" />
       <workItem from="1643954683294" duration="836000" />
       <workItem from="1643989712330" duration="4833000" />
+      <workItem from="1644433842364" duration="33000" />
+      <workItem from="1644604448011" duration="1850000" />
     </task>
     <servers />
   </component>

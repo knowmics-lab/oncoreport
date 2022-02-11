@@ -8,6 +8,7 @@ export type Props<E extends EntityObject> = {
   action: ToolbarActionType<E>;
   state: TableState;
   data: E[] | undefined;
+  setLoading?: (loading: boolean) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -19,10 +20,11 @@ export default function ToolbarAction<E extends EntityObject>({
   action,
   state,
   data,
+  setLoading = undefined,
 }: Props<E>) {
   if (action.custom) {
     if (action.action && isF(action.action)) {
-      return <>action.action(state)</>;
+      return <>{action.action(state, data, setLoading)}</>;
     }
     return null;
   }
@@ -43,7 +45,9 @@ export default function ToolbarAction<E extends EntityObject>({
       color={color}
       disabled={disabled}
       onClick={(event) =>
-        action.onClick ? action.onClick(event, state, data) : undefined
+        action.onClick
+          ? action.onClick(event, state, data, setLoading)
+          : undefined
       }
       title={action.tooltip}
     >
