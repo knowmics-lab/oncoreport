@@ -31,8 +31,8 @@ RUN /usr/bin/apt update --fix-missing && \
 
 # Install common packages
 RUN /usr/bin/apt update --fix-missing && \
-    /usr/bin/apt install -y wget unzip bowtie2 perl python3-pip curl tar samtools bedtools unixodbc \
-                            openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata \
+    /usr/bin/apt install -y wget unzip bwa perl python3-pip curl tar samtools bedtools unixodbc \
+                            openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata cmake \
                             libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
                             python3-setuptools git apache2 php-xdebug composer php-cli jq \
                             libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd libfontconfig1-dev \
@@ -51,6 +51,10 @@ RUN apt-get update && \
 RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR_VERSION}.tar.gz | tar xvz && \
     cd supervisor-${SUPERVISOR_VERSION}/ && \
     python3 setup.py install
+
+RUN mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
+    git clone https://github.com/linsalrob/fastq-pair.git && \
+    cd fastq-pair/ && mkdir build && cd build && cmake .. && make && make install && cd "$PW" && rm -r /oncoreport/tmp/
 
 # Enable mod_rewrite in apache
 RUN a2enmod rewrite

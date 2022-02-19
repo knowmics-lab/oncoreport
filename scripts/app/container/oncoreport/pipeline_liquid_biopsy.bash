@@ -245,22 +245,6 @@ if [ -n "$ubam" ]; then
   fi
 fi
 
-#if [ -n "$fastq1" ]; then
-#
-#  if [ "${FQ1: -3}" == ".gz" ]; then
-#    echo "Fastq extraction"
-#    gunzip "$fastq1"
-#  fi
-#fi
-#
-#if [ -n "$fastq2" ]; then
-#
-#  if [ "${FQ2: -3}" == ".gz" ]; then
-#    echo "Fastq extraction"
-#    gunzip "$fastq2"
-#  fi
-#fi
-
 echo "Starting the analysis"
 
 if [ -n "$fastq1" ] && [ -z "$fastq2" ]; then
@@ -278,7 +262,7 @@ if [ -n "$fastq1" ] && [ -z "$fastq2" ]; then
   fi
   trim_galore -j "$RT" -o "$PATH_TRIM/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 101
   echo "Alignment"
-  bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/$index" -U "$PATH_TRIM/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM/aligned.sam" || exit_abnormal_code "Unable to align input file" 102
+  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM/${FASTQ1_NAME}_trimmed.fq" | samtools view -1 - > "$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
 elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   FQ2=$(basename "$fastq2")
@@ -298,32 +282,52 @@ elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
     RT=$threads
   fi
   trim_galore -j "$RT" --paired --dont_gzip -o "$PATH_TRIM/" "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 101
+  echo "Running fastq-pair"
+  FILE1="$PATH_TRIM/${FASTQ1_NAME}_val_1.fq"
+  FILE2="$PATH_TRIM/${FASTQ2_NAME}_val_2.fq"
+  fastq_pair "$FILE1" "$FILE2" || exit_abnormal_code "Unable to perform reads pairing" 102
+  O_FILE1="$PATH_TRIM/${FASTQ1_NAME}_val_1.fq.paired.fq"
+  O_FILE2="$PATH_TRIM/${FASTQ2_NAME}_val_2.fq.paired.fq"
+  if [ ! -f "$O_FILE1" ] || [ ! -f "$O_FILE2" ]; then
+    exit_abnormal_code "Unable to perform reads pairing" 102
+  fi
   echo "Alignment"
-  bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/$index" -1 "$PATH_TRIM/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM/aligned.sam" || exit_abnormal_code "Unable to align input file" 102
+  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - > "$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
 fi
 
 if [ -z "$bam" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM/aligned.sam" O="$PATH_BAM_ANNO/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read group" 103
+  samtools sort -@ "$threads" "$PATH_SAM/aligned.bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
 elif [ -n "$bam" ]; then
   FASTQ1_NAME=$(basename "${bam%.*}")
   echo "Validating BAM"
   java -jar "$PICARD_PATH" ValidateSamFile I="$bam" MODE=SUMMARY
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bam" O="$PATH_BAM_ANNO/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to add read group" 103
+  samtools sort -@ "$threads" "$bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
 fi
 
 if [ -n "$fastq1" ] || [ -n "$bam" ]; then
   echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO/annotated.bam" O="$PATH_BAM_SORT/sorted.bam" SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to sort" 104
+  java -jar "$GATK_PATH" SortSam --INPUT "$PATH_BAM_ANNO/annotated.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
+    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT | \
+    java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT/sorted.bam" \
+    --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 105
+  echo "Recalibrating Quality Scores"
+  java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT/sorted.bam" \
+    --use-original-qualities -O "$PATH_BAM_SORT/recal_data.csv" \
+    --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal_code "Unable to compute recalibration data" 106
+  java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT/sorted.bam" \
+    -O "$PATH_BAM_SORT/recal.bam" -bqsr "$PATH_BAM_SORT/recal_data.csv" --static-quantized-quals 10 \
+    --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
+    --create-output-bam-md5 --use-original-qualities || exit_abnormal_code "Unable to apply base quality recalibration" 107
   echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT/sorted.bam" O="$PATH_BAM_ORD/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to reorder" 105
+  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT/recal.bam" O="$PATH_BAM_ORD/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to reorder" 108
   echo "Variant Calling"
-  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 106
+  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 109
   echo "Variant Filtration"
-  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" || exit_abnormal_code "Unable to filter variants" 107
+  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_FILTERED/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 110
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 108
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 111
 fi
 
 if [ -n "$vcf" ]; then
@@ -331,49 +335,49 @@ if [ -n "$vcf" ]; then
   if [ "${VCF_NAME: -17}" != ".varianttable.txt" ]; then
     FASTQ1_NAME=$(basename "${vcf%.*}")
     echo "DP Filtering"
-    java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 109
+    java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
   fi
 else
   echo "DP Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_PASS/variants.vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 110
+  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_PASS/variants.vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
 fi
 
 #VARIANTTABLE format
 if [ -n "$vcf" ] && [ "${vcf: -17}" == ".varianttable.txt" ]; then
   FASTQ1_NAME=$(basename "$vcf" ".varianttable.txt")
   type=illumina
-  Rscript "$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R" "$depth" "$AF" "$vcf" "$FASTQ1_NAME" "$PATH_PROJECT" || exit_abnormal_code "Unable to process Illumina VariantTable" 111
+  Rscript "$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R" "$depth" "$AF" "$vcf" "$FASTQ1_NAME" "$PATH_PROJECT" || exit_abnormal_code "Unable to process Illumina VariantTable" 113
 else
   echo "Splitting indel and snp"
-  java -jar "$PICARD_PATH" SplitVcfs I="$PATH_VCF_DP/variants.vcf" SNP_OUTPUT="$PATH_VCF_IN_SN/variants.SNP.vcf" INDEL_OUTPUT="$PATH_VCF_IN_SN/variants.INDEL.vcf" STRICT=false || exit_abnormal_code "Unable to split INDELs and SNPs" 112
+  java -jar "$PICARD_PATH" SplitVcfs I="$PATH_VCF_DP/variants.vcf" SNP_OUTPUT="$PATH_VCF_IN_SN/variants.SNP.vcf" INDEL_OUTPUT="$PATH_VCF_IN_SN/variants.INDEL.vcf" STRICT=false || exit_abnormal_code "Unable to split INDELs and SNPs" 114
   echo "AF Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_IN_SN/variants.SNP.vcf" -O "$PATH_VCF_AF/variants.vcf" --genotype-filter-name "Germline" --genotype-filter-expression "$AF" || exit_abnormal_code "Unable to filter SNPs by AF" 113
+  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_IN_SN/variants.SNP.vcf" -O "$PATH_VCF_AF/variants.vcf" --genotype-filter-name "Germline" --genotype-filter-expression "$AF" || exit_abnormal_code "Unable to filter SNPs by AF" 115
   echo "Merge indel and snp"
-  java -jar "$PICARD_PATH" MergeVcfs I="$PATH_VCF_IN_SN/variants.INDEL.vcf" I="$PATH_VCF_AF/variants.vcf" O="$PATH_VCF_MERGE/variants.vcf" || exit_abnormal_code "Unable to merge filtered SNPs with INDELs" 114
+  java -jar "$PICARD_PATH" MergeVcfs I="$PATH_VCF_IN_SN/variants.INDEL.vcf" I="$PATH_VCF_AF/variants.vcf" O="$PATH_VCF_MERGE/variants.vcf" || exit_abnormal_code "Unable to merge filtered SNPs with INDELs" 116
   echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_MERGE/variants.vcf" >"$PATH_VCF_PASS_AF/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 115
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_MERGE/variants.vcf" >"$PATH_VCF_PASS_AF/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
   echo "Germline"
-  grep Germline "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Germline.vcf" || exit_abnormal_code "Unable to grep Germline variants" 116
+  grep Germline "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Germline.vcf" || exit_abnormal_code "Unable to grep Germline variants" 118
   echo "Somatic"
-  grep Germline -v "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" || exit_abnormal_code "Unable to grep Somatic variants" 117
+  grep Germline -v "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" || exit_abnormal_code "Unable to grep Somatic variants" 119
   echo "Annotation"
   { sed -i '/#CHROM/,$!d' "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" &&
     sed -i '/chr/,$!d' "$PATH_VCF_TO_CONVERT/variants_Germline.vcf" &&
     sed -i '/chr/,$!d' "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" &&
     cut -f1,2,4,5 "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" >"$PATH_CONVERTED/variants_Somatic.txt" &&
     cut -f1,2,4,5 "$PATH_VCF_TO_CONVERT/variants_Germline.vcf" >"$PATH_CONVERTED/variants_Germline.txt"; } ||
-    exit_abnormal_code "Unable to prepare variants for annotation" 118
+    exit_abnormal_code "Unable to prepare variants for annotation" 120
   type=biopsy
 fi
 
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
-  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 120
-php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 123
+  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 121
+php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 122
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$id" -g "$gender" -a "$age" -t "$tumor" \
   -f "$FASTQ1_NAME" -p "$PATH_PROJECT" -d "$ONCOREPORT_DATABASES_PATH" -A "$type" -C "$city" -P "$phone" \
-  -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$depth" -F "$AF" || exit_abnormal_code "Unable to create report" 121
+  -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$depth" -F "$AF" || exit_abnormal_code "Unable to create report" 123
 
 echo "Removing folders"
 { rm -r "$PATH_TRIM" &&
@@ -385,6 +389,6 @@ echo "Removing folders"
   rm -r "$PATH_VCF_IN_SN" &&
   rm -r "$PATH_VCF_AF" &&
   rm -r "$PATH_VCF_MERGE" &&
-  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 122
+  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 124
 
 echo "Done"
