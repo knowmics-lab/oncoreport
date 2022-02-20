@@ -54,7 +54,7 @@ export default function useRepositoryQuery<E extends EntityObject>(
         setLoading(false);
       },
       deleted() {
-        setData(undefined);
+        setTimeout(() => setData(undefined), 100);
       },
     };
     if (data) data.observe(observer);

@@ -19,6 +19,7 @@ usage() {
   [-fastq2/-fq2 second fastq sample]
   [-ubam/-ub ubam sample]
   [-paired/-pr must be yes if ubam paired sample is loaded otherwise, if ubam is not paired, it must be no]
+  [-no_downsample disable reads down-sampling in Mutect2]
   [-bam/-b bam or sam sample]
   [-vcf/-v vcf sample]" 1>&2
 }
@@ -39,6 +40,7 @@ exit_abnormal() {
   exit 1
 }
 
+DOWNSAMPLE=1
 while [ -n "$1" ]; do
   case "$1" in
   -fastq1 | -fq1)
@@ -165,6 +167,10 @@ while [ -n "$1" ]; do
     fi
     shift
     ;;
+  -no_downsample)
+    DOWNSAMPLE=0
+    echo "Downsampling is disabled"
+    ;;
   *)
     exit_abnormal_usage "Error: invalid parameter \"$1\"."
     shift
@@ -262,7 +268,7 @@ if [ -n "$fastq1" ] && [ -z "$fastq2" ]; then
   fi
   trim_galore -j "$RT" -o "$PATH_TRIM/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 101
   echo "Alignment"
-  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM/${FASTQ1_NAME}_trimmed.fq" | samtools view -1 - > "$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
+  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM/${FASTQ1_NAME}_trimmed.fq" | samtools view -1 - >"$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
 elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
   FQ1=$(basename "$fastq1")
   FQ2=$(basename "$fastq2")
@@ -292,7 +298,7 @@ elif [ -n "$fastq1" ] && [ -n "$fastq2" ]; then
     exit_abnormal_code "Unable to perform reads pairing" 102
   fi
   echo "Alignment"
-  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - > "$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
+  bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - >"$PATH_SAM/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
 fi
 
 if [ -z "$bam" ] && [ -z "$vcf" ]; then
@@ -309,9 +315,9 @@ fi
 if [ -n "$fastq1" ] || [ -n "$bam" ]; then
   echo "Sorting"
   java -jar "$GATK_PATH" SortSam --INPUT "$PATH_BAM_ANNO/annotated.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
-    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT | \
+    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
     java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT/sorted.bam" \
-    --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 105
+      --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 105
   echo "Recalibrating Quality Scores"
   java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT/sorted.bam" \
     --use-original-qualities -O "$PATH_BAM_SORT/recal_data.csv" \
@@ -323,9 +329,16 @@ if [ -n "$fastq1" ] || [ -n "$bam" ]; then
   echo "Reordering"
   java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT/recal.bam" O="$PATH_BAM_ORD/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to reorder" 108
   echo "Variant Calling"
-  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 109
+  if [ "$DOWNSAMPLE" == "1" ]; then
+    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" \
+    -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" || exit_abnormal_code "Unable to call variants" 109
+  else
+    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" \
+    -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" --max-suspicious-reads-per-alignment-start 0 \
+    --max-reads-per-alignment-start 0 || exit_abnormal_code "Unable to call variants" 109
+  fi
   echo "Variant Filtration"
-  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_FILTERED/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 110
+  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_MUT/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 110
   echo "PASS Selection"
   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 111
 fi

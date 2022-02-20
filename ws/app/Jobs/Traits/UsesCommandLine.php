@@ -19,7 +19,7 @@ trait UsesCommandLine
 
     protected function optionalParameter(string $name, mixed $value): self
     {
-        if ($value) {
+        if (!empty($value)) {
             $this->parameters($name, $value);
         }
 
@@ -36,6 +36,15 @@ trait UsesCommandLine
     protected function booleanParameter(string $name, bool $value, string $true = 'yes', string $false = 'no'): self
     {
         return $this->parameters($name, $value ? $true : $false);
+    }
+
+    protected function flagParameter(string $name, bool $enabled = true): self
+    {
+        if ($enabled) {
+            $this->parameters($name);
+        }
+
+        return $this;
     }
 
     protected function command(): array

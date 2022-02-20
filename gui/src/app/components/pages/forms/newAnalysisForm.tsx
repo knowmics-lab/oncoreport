@@ -106,6 +106,7 @@ type LocalData = {
     comparison: Comparison;
     value: number;
   };
+  downsampling?: boolean;
   firstFile?: File;
   secondFile?: File;
   thirdFile?: File;
@@ -209,6 +210,7 @@ function Step1({ values }: Step1Prop) {
         )}
       </Typography>
       <SwitchField label="Are reads paired-end?" name="paired" />
+      <SwitchField label="Enable Mutect2 downsampling?" name="downsampling" />
       <SelectField
         label="Analysis Type"
         name="genome"
@@ -572,6 +574,7 @@ export default function NewAnalysisForm() {
       genome: Genome.hg38,
       alleleFractionFilter: { comparison: Comparison.gt, value: 0.3 },
       depthFilter: { comparison: Comparison.lt, value: 0 },
+      downsampling: false,
       firstFile: undefined,
       secondFile: undefined,
       thirdFile: undefined,
@@ -612,6 +615,7 @@ export default function NewAnalysisForm() {
                   paired: d.paired,
                   genome: d.genome,
                   threads: d.threads,
+                  downsampling: d.downsampling,
                 };
                 const toUpload = handleFileUpload(d, parameters);
                 if (type === JobTypes.tumorOnly) {
@@ -673,6 +677,7 @@ export default function NewAnalysisForm() {
                     ['sample_code', 'name', 'type', 'inputType', 'threads'],
                     [
                       'paired',
+                      'downsampling',
                       'genome',
                       'depthFilter.comparison',
                       'depthFilter.value',

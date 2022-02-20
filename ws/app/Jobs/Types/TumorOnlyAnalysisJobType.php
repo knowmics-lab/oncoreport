@@ -38,6 +38,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             'vcf'                  => 'A VCF filename for a custom analysis (Required if no FASTQ, uBAM, or BAM files are used)',
             'genome'               => 'The genome version (hg19 or hg38; OPTIONAL; default: hg19)',
             'threads'              => 'The number of threads to use for the analysis (OPTIONAL; default: 1)',
+            'downsampling'         => 'Enable or disable Mutect2 downsampling of the reads (OPTIONAL; default: false)',
             'depthFilter'          => [
                 'comparison' => 'The type of comparison to be done for the sequencing depth filter (One of: lt, lte, gt, gte; OPTIONAL; default: lt)',
                 'value'      => 'The value that will be used to filter the sequencing depth (OPTIONAL; default 0)',
@@ -124,6 +125,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             'depthFilter.comparison'          => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
             'depthFilter.value'               => ['filled', 'numeric'],
             'alleleFractionFilter'            => ['filled', 'array'],
+            'downsampling'                    => ['filled', 'boolean'],
             'alleleFractionFilter.comparison' => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
             'alleleFractionFilter.value'      => ['filled', 'numeric'],
         ];
@@ -161,6 +163,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $bam = $this->model->getParameter('bam');
             $vcf = $this->model->getParameter('vcf');
             $genome = $this->model->getParameter('genome', Utils::VALID_GENOMES[0]);
+            $downsampling = (bool)$this->model->getParameter('downsampling', false);
             $threads = $this->model->getParameter('threads', 1);
             $depthFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
                 'depthFilter.comparison',
@@ -211,7 +214,8 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             );
             $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
                  ->optionalParameter('-c', $patient->city)
-                 ->optionalParameter('-ph', $patient->telephone);
+                 ->optionalParameter('-ph', $patient->telephone)
+                 ->flagParameter('-no_downsample', !$downsampling);
             if ($this->fileExists($vcf)) {
                 $this->parameters('-v', $vcf);
             } elseif ($this->fileExists($bam)) {

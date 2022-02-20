@@ -30,22 +30,23 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
     public static function parametersSpec(): array
     {
         return [
-            'paired'  => 'A boolean value indicating whether the input if paired-end or not (OPTIONAL; default: FALSE)',
-            'tumor'   => [
+            'paired'       => 'A boolean value indicating whether the input if paired-end or not (OPTIONAL; default: FALSE)',
+            'tumor'        => [
                 'fastq1' => 'The first FASTQ filename for the tumor sample (Required if no uBAM, BAM, or VCF files are used)',
                 'fastq2' => 'The second FASTQ filename for the tumor sample (Required if the input is paired-end and no uBAM, BAM, or VCF files are used)',
                 'ubam'   => 'The uBAM filename for the tumor sample (Required if no FASTQ, BAM, or VCF files are used)',
                 'bam'    => 'The BAM filename for the tumor sample (Required if no FASTQ, uBAM, or VCF files are used)',
             ],
-            'normal'  => [
+            'normal'       => [
                 'fastq1' => 'The first FASTQ filename for the normal sample (Required if no uBAM, BAM, or VCF files are used)',
                 'fastq2' => 'The second FASTQ filename for the normal sample (Required if the input is paired-end and no uBAM, BAM, or VCF files are used)',
                 'ubam'   => 'The uBAM filename for the normal sample (Required if no FASTQ, BAM, or VCF files are used)',
                 'bam'    => 'The BAM filename for the normal sample (Required if no FASTQ, uBAM, or VCF files are used)',
             ],
-            'vcf'     => 'A VCF filename for a custom tumor-vs-normal analysis (Required if no FASTQ, uBAM, or BAM files are used)',
-            'genome'  => 'The genome version (hg19 or hg38; OPTIONAL; default: hg19)',
-            'threads' => 'The number of threads to use for the analysis (OPTIONAL; default: 1)',
+            'vcf'          => 'A VCF filename for a custom tumor-vs-normal analysis (Required if no FASTQ, uBAM, or BAM files are used)',
+            'genome'       => 'The genome version (hg19 or hg38; OPTIONAL; default: hg19)',
+            'threads'      => 'The number of threads to use for the analysis (OPTIONAL; default: 1)',
+            'downsampling' => 'Enable or disable Mutect2 downsampling of the reads (OPTIONAL; default: false)',
         ];
     }
 
@@ -150,6 +151,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             ],
             'genome'        => ['filled', Rule::in(Utils::VALID_GENOMES)],
             'threads'       => ['filled', 'integer'],
+            'downsampling'  => ['filled', 'boolean'],
         ];
     }
 
@@ -190,6 +192,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             $vcf = $this->model->getParameter('vcf');
             $genome = $this->model->getParameter('genome', Utils::VALID_GENOMES[0]);
             $threads = $this->model->getParameter('threads', 1);
+            $downsampling = (bool)$this->model->getParameter('downsampling', false);
             [$outputRelative, $outputAbsolute,] = $this->getJobFilePaths('output_');
             throw_if(
                 !file_exists($outputAbsolute) && !mkdir($outputAbsolute, 0777, true) && !is_dir($outputAbsolute),
@@ -223,7 +226,8 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             );
             $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
                  ->optionalParameter('-c', $patient->city)
-                 ->optionalParameter('-ph', $patient->telephone);
+                 ->optionalParameter('-ph', $patient->telephone)
+                 ->flagParameter('-no_downsample', !$downsampling);
             if ($this->fileExists($vcf)) {
                 $this->parameters('-v', $vcf);
             } elseif ($this->fileExists($tumorBam) && $this->fileExists($normalBam)) {

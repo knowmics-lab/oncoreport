@@ -22,6 +22,7 @@ usage() {
   [-ubamt/-ubt ubam tumor sample]
   [-ubamn/-ubn ubam normal sample]
   [-paired/-pr must be yes if ubam paired sample is loaded otherwise, if ubam is not paired, it must be no]
+  [-no_downsample disable reads down-sampling in Mutect2]
   [-bamt/-bt bam or sam tumor sample]
   [-bamn/-bn bam or sam normal sample]
   [-vcf/-v vcf sample]" 1>&2
@@ -44,6 +45,7 @@ exit_abnormal() {
   exit 1
 }
 
+DOWNSAMPLE=1
 while [ -n "$1" ]; do
   case "$1" in
   -fastq1 | -fq1)
@@ -176,6 +178,10 @@ while [ -n "$1" ]; do
     fi
     shift
     ;;
+  -no_downsample)
+    DOWNSAMPLE=0
+    echo "Downsampling is disabled"
+    ;;
   *)
     exit_abnormal_usage "Error: invalid parameter \"$1\"."
     shift
@@ -276,7 +282,7 @@ if [ -n "$fastq1" ]; then
     echo "Tumor sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 102
     echo "Tumor sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" -S "$PATH_SAM_TUMOR/aligned.sam" || exit_abnormal_code "Unable to align input file" 103
+    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" | samtools view -1 - >"$PATH_SAM_TUMOR/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
   else
     echo "Tumor FASTQ file is paired."
     FQ2=$(basename "$fastq2")
@@ -286,29 +292,62 @@ if [ -n "$fastq1" ]; then
     fi
     echo "Tumor sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip --paired "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 102
+    echo "Running fastq-pair on tumor sample"
+    FILE1="$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq"
+    FILE2="$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq"
+    fastq_pair "$FILE1" "$FILE2" || exit_abnormal_code "Unable to perform reads pairing" 102
+    O_FILE1="$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq.paired.fq"
+    O_FILE2="$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq.paired.fq"
+    if [ ! -f "$O_FILE1" ] || [ ! -f "$O_FILE2" ]; then
+      exit_abnormal_code "Unable to perform reads pairing" 102
+    fi
     echo "Tumor sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq" -2 "$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq" -S "$PATH_SAM_TUMOR/aligned.sam" || exit_abnormal_code "Unable to align input file" 103
+    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - >"$PATH_SAM_TUMOR/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
   fi
 fi
 
 if [ -z "$bamt" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_TUMOR/aligned.sam" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" || exit_abnormal_code "Unable to add read groups" 104
+  samtools sort -@ "$threads" "$PATH_SAM_TUMOR/aligned.bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_TUMOR/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
 elif [ -n "$bamt" ]; then
   FASTQ1_NAME=$(basename "${bamt%.*}")
   echo "Validating BAM"
   java -jar "$PICARD_PATH" ValidateSamFile I="$bamt" MODE=SUMMARY
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamt" O="$PATH_BAM_ANNO_TUMOR/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$FASTQ1_NAME" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to add read groups" 104
+  samtools sort -@ "$threads" "$bamt" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_TUMOR/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
 fi
 
 if [ -z "$vcf" ]; then
-  echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_TUMOR/annotated.bam" O="$PATH_BAM_SORT_TUMOR/sorted.bam" SORT_ORDER=coordinate || exit_abnormal_code "Unable to sort" 105
-  echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_TUMOR/sorted.bam" O="$PATH_BAM_ORD_TUMOR/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true || exit_abnormal_code "Unable to reorder" 106
   echo "Duplicates Removal"
-  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_TUMOR/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_TUMOR/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_TUMOR/marked.txt" || exit_abnormal_code "Unable to remove duplicates" 107
+  if ((threads > 1)); then
+    # --remove-all-duplicates true
+    java -jar "$GATK_PATH" MarkDuplicatesSpark --input "$PATH_BAM_ANNO_TUMOR/annotated.bam" \
+      --output "$PATH_MARK_DUP_TUMOR/nodup.bam" -M "$PATH_MARK_DUP_TUMOR/marked.txt" \
+      --read-validation-stringency SILENT --optical-duplicate-pixel-distance 2500 \
+      --spark-master "local[$threads]" || exit_abnormal_code "Unable to remove duplicates" 107
+  else
+    #--REMOVE_DUPLICATES true
+    java -jar "$GATK_PATH" MarkDuplicates --INPUT "$PATH_BAM_ANNO_TUMOR/annotated.bam" \
+      --OUTPUT "$PATH_MARK_DUP_TUMOR/nodup.bam" -M "$PATH_MARK_DUP_TUMOR/marked.txt" --VALIDATION_STRINGENCY SILENT \
+      --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 --ASSUME_SORT_ORDER "queryname" --CREATE_INDEX true || exit_abnormal_code "Unable to remove duplicates" 107
+  fi
+  echo "Sorting"
+  java -jar "$GATK_PATH" SortSam --INPUT "$PATH_MARK_DUP_TUMOR/nodup.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
+    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
+    java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT_TUMOR/sorted.bam" \
+      --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 105
+  echo "Recalibrating Quality Scores"
+  java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_TUMOR/sorted.bam" \
+    --use-original-qualities -O "$PATH_BAM_SORT_TUMOR/recal_data.csv" \
+    --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal_code "Unable to compute recalibration data" 191
+  java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_TUMOR/sorted.bam" \
+    -O "$PATH_BAM_SORT_TUMOR/recal.bam" -bqsr "$PATH_BAM_SORT_TUMOR/recal_data.csv" --static-quantized-quals 10 \
+    --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
+    --create-output-bam-md5 --use-original-qualities || exit_abnormal_code "Unable to apply base quality recalibration" 192
+  echo "Reordering"
+  java -jar "$GATK_PATH" ReorderSam -I "$PATH_BAM_SORT_TUMOR/recal.bam" -O "$PATH_BAM_ORD_TUMOR/ordered.bam" \
+    -R "$ONCOREPORT_INDEXES_PATH/${index}.dict" -S true -U true --CREATE_INDEX true \
+    --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to reorder" 106
 fi
 
 #NORMAL ANALYSIS
@@ -342,7 +381,7 @@ if [ -n "$normal1" ]; then
     echo "Normal sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip "$normal1" || exit_abnormal_code "Unable to trim input file" 109
     echo "Normal sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -U "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" -S "$PATH_SAM_NORMAL/aligned.sam" || exit_abnormal_code "Unable to align input file" 110
+    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" | samtools view -1 - >"$PATH_SAM_NORMAL/aligned.bam" || exit_abnormal_code "Unable to align input file" 110
   else
     echo "Normal FASTQ file is paired."
     NM2=$(basename "$normal2")
@@ -352,38 +391,80 @@ if [ -n "$normal1" ]; then
     fi
     echo "Normal sample trimming"
     trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip --paired "$normal1" "$normal2" || exit_abnormal_code "Unable to trim input file" 109
+    echo "Running fastq-pair on normal sample"
+    FILE1="$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq"
+    FILE2="$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq"
+    fastq_pair "$FILE1" "$FILE2" || exit_abnormal_code "Unable to perform reads pairing" 109
+    O_FILE1="$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq.paired.fq"
+    O_FILE2="$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq.paired.fq"
+    if [ ! -f "$O_FILE1" ] || [ ! -f "$O_FILE2" ]; then
+      exit_abnormal_code "Unable to perform reads pairing" 109
+    fi
     echo "Normal sample alignment"
-    bowtie2 -p "$threads" -x "$ONCOREPORT_INDEXES_PATH/${index}" -1 "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq" -2 "$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq" -S "$PATH_SAM_NORMAL/aligned.sam" || exit_abnormal_code "Unable to align input file" 110
+    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - >"$PATH_SAM_NORMAL/aligned.bam" || exit_abnormal_code "Unable to align input file" 110
   fi
 fi
 
 if [ -z "$bamn" ] && [ -z "$vcf" ]; then
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$PATH_SAM_NORMAL/aligned.sam" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" || exit_abnormal_code "Unable to add read groups" 111
+  samtools sort -@ "$threads" "$PATH_SAM_NORMAL/aligned.bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_NORMAL/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$NORMAL1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 111
 elif [ -n "$bamn" ]; then
   NORMAL1_NAME=$(basename "${bamn%.*}")
   echo "Validating BAM"
   java -jar "$PICARD_PATH" ValidateSamFile I="$bamn" MODE=SUMMARY
   echo "Adding Read Group"
-  java -jar "$PICARD_PATH" AddOrReplaceReadGroups I="$bamn" O="$PATH_BAM_ANNO_NORMAL/annotated.bam" RGID=0 RGLB=lib1 RGPL=illumina RGPU=SN166 RGSM="$NORMAL1_NAME" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to add read groups" 111
+  samtools sort -@ "$threads" "$bamn" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_NORMAL/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$NORMAL1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 111
 fi
 
 if [ -z "$vcf" ]; then
-  echo "Sorting"
-  java -jar "$PICARD_PATH" SortSam I="$PATH_BAM_ANNO_NORMAL/annotated.bam" O="$PATH_BAM_SORT_NORMAL/sorted.bam" SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to sort" 112
-  echo "Reordering"
-  java -jar "$PICARD_PATH" ReorderSam I="$PATH_BAM_SORT_NORMAL/sorted.bam" O="$PATH_BAM_ORD_NORMAL/ordered.bam" SEQUENCE_DICTIONARY="$ONCOREPORT_INDEXES_PATH/${index}.dict" CREATE_INDEX=true ALLOW_INCOMPLETE_DICT_CONCORDANCE=true VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to reorder" 113
   echo "Duplicates Removal"
-  java -jar "$PICARD_PATH" MarkDuplicates I="$PATH_BAM_ORD_NORMAL/ordered.bam" REMOVE_DUPLICATES=TRUE O="$PATH_MARK_DUP_NORMAL/nodup.bam" CREATE_INDEX=TRUE M="$PATH_MARK_DUP_NORMAL/marked.txt" VALIDATION_STRINGENCY=SILENT || exit_abnormal_code "Unable to remove duplicates" 114
+  if ((threads > 1)); then
+    # --remove-all-duplicates true
+    java -jar "$GATK_PATH" MarkDuplicatesSpark --input "$PATH_BAM_ANNO_NORMAL/annotated.bam" \
+      --output "$PATH_MARK_DUP_NORMAL/nodup.bam" -M "$PATH_MARK_DUP_NORMAL/marked.txt" \
+      --read-validation-stringency SILENT --optical-duplicate-pixel-distance 2500 \
+      --spark-master "local[$threads]" || exit_abnormal_code "Unable to remove duplicates" 114
+  else
+    # --REMOVE_DUPLICATES true
+    java -jar "$GATK_PATH" MarkDuplicates --INPUT "$PATH_BAM_ANNO_NORMAL/annotated.bam" \
+      --OUTPUT "$PATH_MARK_DUP_NORMAL/nodup.bam" -M "$PATH_MARK_DUP_NORMAL/marked.txt" --VALIDATION_STRINGENCY SILENT \
+      --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 --ASSUME_SORT_ORDER "queryname" --CREATE_INDEX true || exit_abnormal_code "Unable to remove duplicates" 114
+  fi
+  echo "Sorting"
+  java -jar "$GATK_PATH" SortSam --INPUT "$PATH_MARK_DUP_NORMAL/nodup.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
+    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
+    java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT_NORMAL/sorted.bam" \
+      --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 112
+  echo "Recalibrating Quality Scores"
+  java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_NORMAL/sorted.bam" \
+    --use-original-qualities -O "$PATH_BAM_SORT_NORMAL/recal_data.csv" \
+    --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal_code "Unable to compute recalibration data" 193
+  java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_NORMAL/sorted.bam" \
+    -O "$PATH_BAM_SORT_NORMAL/recal.bam" -bqsr "$PATH_BAM_SORT_NORMAL/recal_data.csv" --static-quantized-quals 10 \
+    --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
+    --create-output-bam-md5 --use-original-qualities || exit_abnormal_code "Unable to apply base quality recalibration" 193
+  echo "Reordering"
+  java -jar "$GATK_PATH" ReorderSam -I "$PATH_BAM_SORT_NORMAL/recal.bam" -O "$PATH_BAM_ORD_NORMAL/ordered.bam" \
+    -R "$ONCOREPORT_INDEXES_PATH/${index}.dict" -S true -U true --CREATE_INDEX true \
+    --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to reorder" 113
 fi
 
 # VCF ANALYSIS
 
 if [ -z "$vcf" ]; then
   echo "Variant Calling"
-  java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_MARK_DUP_TUMOR/nodup.bam" -tumor "$FASTQ1_NAME" -I "$PATH_MARK_DUP_NORMAL/nodup.bam" -normal "$NORMAL1_NAME" -O "$PATH_VCF_MUT/variants.vcf" -mbq 25 || exit_abnormal_code "Unable to call variants" 115
+  if [ "$DOWNSAMPLE" == "1" ]; then
+    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD_TUMOR/ordered.bam" \
+      -tumor "$FASTQ1_NAME" -I "$PATH_BAM_ORD_NORMAL/ordered.bam" -normal "$NORMAL1_NAME" \
+      -O "$PATH_VCF_MUT/variants.vcf" || exit_abnormal_code "Unable to call variants" 115
+  else
+    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD_TUMOR/ordered.bam" \
+      -tumor "$FASTQ1_NAME" -I "$PATH_BAM_ORD_NORMAL/ordered.bam" -normal "$NORMAL1_NAME" \
+      -O "$PATH_VCF_MUT/variants.vcf" --max-reads-per-alignment-start 0 || exit_abnormal_code "Unable to call variants" 115
+  fi
   echo "Variant Filtering"
-  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" || exit_abnormal_code "Unable to filter variants" 116
+  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" \
+    -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_MUT/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 116
   echo "PASS Selection"
   awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
 else
