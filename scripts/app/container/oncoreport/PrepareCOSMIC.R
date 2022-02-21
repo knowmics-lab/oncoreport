@@ -12,7 +12,7 @@ genome <- args[2]
 #COSMIC
 
 cat("Setup COSMIC database...\n")
-a <- fread(paste0(cosmic.path, "/CosmicResistanceMutations_", genome, ".txt"))
+a <- fread(paste0(cosmic.path, "/CosmicResistanceMutations_", genome, ".txt.gz"))
 b <- fread(paste0(cosmic.path, "/CosmicCodMutDef_", genome, ".txt"))
 a$`Gene Name` <- gsub("_ENST.*", "", a$`Gene Name`)
 colnames(a)[8] <- "ID"

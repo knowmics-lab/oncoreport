@@ -55,18 +55,20 @@ echo " - Downloading hg19 Coding Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh37/cosmic/v92/VCF/CosmicCodingMuts.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz"
 echo " - Downloading hg19 Resistance Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh37/cosmic/v92/CosmicResistanceMutations.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg19.txt.gz"
-echo " - Extracting archives..."
-gunzip "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg19.txt.gz" || exit_abnormal "Unable to extract resistance mutations" false 108
-gunzip "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" || exit_abnormal "Unable to extract coding mutations" false 109
-cut -f1,2,3,4,5 "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf" >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg19.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+echo " - Pre-processing archives..."
+zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" | cut -f1,2,3,4,5 >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg19.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+
+# echo "Rscript \"$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R\" \"$ONCOREPORT_COSMIC_PATH\" \"hg19\""
+# exit_abnormal "OK" false 0
+
 echo " - Downloading hg38 Coding Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v92/VCF/CosmicCodingMuts.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz"
 echo " - Downloading hg38 Resistance Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v92/CosmicResistanceMutations.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg38.txt.gz"
-echo " - Extracting archives..."
-gunzip "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg38.txt.gz" || exit_abnormal "Unable to extract resistance mutations" false 108
-gunzip "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz" || exit_abnormal "Unable to extract coding mutations" false 109
-cut -f1,2,3,4,5 "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf" >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg38.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+echo " - Pre-processing archives..."
+zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz" | cut -f1,2,3,4,5 >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg38.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+
+
 echo " - Processing hg19 database..."
 Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
 echo " - Processing hg38 database..."
@@ -74,3 +76,5 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg3
 cd "$OLD_PWD" || exit 113
 touch "$ONCOREPORT_COSMIC_PATH/completed"
 echo "Done!"
+
+Rscript "/oncoreport/scripts/PrepareCOSMIC.R" "/oncoreport/ws/storage/app/cosmic" "hg19"

@@ -5,10 +5,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$SCRIPT_DIR/path.bash"
 
 cleanup() {
-  [ -f "$ONCOREPORT_INDEXES_PATH/hg19.zip" ] && rm "$ONCOREPORT_INDEXES_PATH/hg19.zip"
-  [ -f "$ONCOREPORT_INDEXES_PATH/hg19.fa.gz" ] && rm "$ONCOREPORT_INDEXES_PATH/hg19.fa.gz"
-  [ -f "$ONCOREPORT_INDEXES_PATH/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz" ] && rm "$ONCOREPORT_INDEXES_PATH/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz"
-  [ -f "$ONCOREPORT_INDEXES_PATH/hg38.fa.gz" ] && rm "$ONCOREPORT_INDEXES_PATH/hg38.fa.gz"
+  [ -f "$ONCOREPORT_INDEXES_PATH/hg19.tar.bz2" ] && rm "$ONCOREPORT_INDEXES_PATH/hg19.tar.bz2"
+  [ -f "$ONCOREPORT_INDEXES_PATH/hg38.tar.bz2" ] && rm "$ONCOREPORT_INDEXES_PATH/hg38.tar.bz2"
 }
 
 exit_abnormal() {
@@ -18,34 +16,29 @@ exit_abnormal() {
 
 echo "Creating index directory"
 [ ! -d "$ONCOREPORT_INDEXES_PATH" ] && mkdir -p "$ONCOREPORT_INDEXES_PATH"
-
 OLD_PWD=$(pwd)
 cd "$ONCOREPORT_INDEXES_PATH" || exit 101
 cleanup
-echo "Downloading hg19 bowtie index..."
-wget --progress=bar:force:noscroll "https://genome-idx.s3.amazonaws.com/bt/hg19.zip" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download index" 102
-unzip "$ONCOREPORT_INDEXES_PATH/hg19.zip" || exit_abnormal "Unable to extract index" 103
-echo "Downloading hg19 sequence..."
-wget --progress=bar:force:noscroll "http://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download sequence" 104
-gunzip "$ONCOREPORT_INDEXES_PATH/hg19.fa.gz" || exit_abnormal "Unable to extract sequence" 105
-echo "Building hg19 sequence dictionary..."
-java -jar "$PICARD_PATH" CreateSequenceDictionary REFERENCE="$ONCOREPORT_INDEXES_PATH/hg19.fa" OUTPUT="$ONCOREPORT_INDEXES_PATH/hg19.dict" || exit_abnormal "Unable to build dictionary" 106
-echo "Building hg19 sequence samtools index..."
-samtools faidx "$ONCOREPORT_INDEXES_PATH/hg19.fa" || exit_abnormal "Unable to build index" 107
-echo "Downloading hg38 bowtie index..."
-# TODO https://genome-idx.s3.amazonaws.com/bt/GRCh38_noalt_as.zip
-wget --progress=bar:force:noscroll "ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_genbank/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38/seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download index" 102
-tar -zxvf "$ONCOREPORT_INDEXES_PATH/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index.tar.gz" || exit_abnormal "Unable to extract index" 103
-echo "Downloading hg38 sequence..."
-wget --progress=bar:force:noscroll http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download sequence" 104
-gunzip "$ONCOREPORT_INDEXES_PATH/hg38.fa.gz" || exit_abnormal "Unable to extract sequence" 105
-echo "Renaming files..."
-rename -d 's/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index/hg38/g' "$ONCOREPORT_INDEXES_PATH"/* || exit_abnormal "Unable to rename files" 108
-echo "Building hg38 sequence dictionary..."
-java -jar "$PICARD_PATH" CreateSequenceDictionary REFERENCE="$ONCOREPORT_INDEXES_PATH/hg38.fa" OUTPUT="$ONCOREPORT_INDEXES_PATH/hg38.dict" || exit_abnormal "Unable to build dictionary" 106
-echo "Building hg38 sequence samtools index..."
-samtools faidx "$ONCOREPORT_INDEXES_PATH/hg38.fa" || exit_abnormal "Unable to build index" 107
+echo "Downloading hg19 genome package..."
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/indexes/hg19.tar.bz2" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download hg19 package" 102
+tar -jxvf hg19.tar.bz2 || exit_abnormal "Unable to extract index" 103
+echo "Downloading hg38 genome package..."
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/indexes/hg38.tar.bz2" -P "$ONCOREPORT_INDEXES_PATH" || exit_abnormal "Unable to download hg38 package" 102
+tar -jxvf hg38.tar.bz2 || exit_abnormal "Unable to extract index" 103
+echo "Creating base recalibration directory"
+[ ! -d "$ONCOREPORT_RECALIBRATION_PATH" ] && mkdir -p "$ONCOREPORT_RECALIBRATION_PATH"
+cd "$ONCOREPORT_RECALIBRATION_PATH" || exit 101
+echo "Downloading hg19 recalibration package..."
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/base_recalibration/hg19.vcf.gz" -P "$ONCOREPORT_RECALIBRATION_PATH" || exit_abnormal "Unable to download hg19 package" 104
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/base_recalibration/hg19.vcf.gz.tbi" -P "$ONCOREPORT_RECALIBRATION_PATH" || exit_abnormal "Unable to download hg19 package index" 105
+echo "Downloading hg38 recalibration package..."
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/base_recalibration/hg38.vcf.gz" -P "$ONCOREPORT_RECALIBRATION_PATH" || exit_abnormal "Unable to download hg38 package" 104
+wget --progress=bar:force:noscroll "https://oncoreport.s3.eu-central-1.amazonaws.com/base_recalibration/hg38.vcf.gz.tbi" -P "$ONCOREPORT_RECALIBRATION_PATH" || exit_abnormal "Unable to download hg38 package index" 105
 echo "Cleaning up..."
 cleanup
+cd "$OLD_PWD" || exit 106
+chown -R www-data:staff "$ONCOREPORT_INDEXES_PATH"
+chmod -R 777 "$ONCOREPORT_INDEXES_PATH"
+chown -R www-data:staff "$ONCOREPORT_RECALIBRATION_PATH"
+chmod -R 777 "$ONCOREPORT_RECALIBRATION_PATH"
 touch "$ONCOREPORT_INDEXES_PATH/completed"
-cd "$OLD_PWD" || exit 102
