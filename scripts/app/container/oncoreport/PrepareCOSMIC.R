@@ -36,15 +36,24 @@ cosm$Start <- gsub("\\..*", "", a)
 cosm$`Genome Coordinates` <- NULL
 write.table(cosm, paste0(cosmic.path, "/cosmic_database_", genome, ".txt"), sep = "\t",
             quote = FALSE, row.names = FALSE, col.names = TRUE, na = "NA")
+rm(a,b,cosm)
 
 cat("Setup COSMIC All Variants database...\n")
 a <- na.omit(fread(paste0(cosmic.path, "/CosmicVariantsRaw_", genome, ".tsv.gz")))
-colnames(a) <- c("GeneName", "Mutation", "Chromosome", "Start", "Stop", "Effect", "PMID")
+colnames(a) <- c("ID", "GeneName", "Mutation", "Chromosome", "Start", "Stop", "Effect", "PMID")
+b <- fread(paste0(cosmic.path, "/CosmicCodMutDef_", genome, ".txt"))
+colnames(b) <- c("Chromosome", "Start", "ID", "Ref_base", "Alt_base")
+b <- b[,c("ID", "Ref_base", "Alt_base")]
 a <- a %>% 
-  group_by(GeneName, Mutation, Chromosome, Start, Stop) %>% 
-  summarise(Effect=paste0(unique(Effect), collapse=", "), PMID=paste0(unique(PMID), collapse=", "))
-a$Chromosome <- paste0("chr", a$Chromosome)
-write.table(a, paste0(cosmic.path, "/cosmic_variants_", genome, ".txt"), sep = "\t",
+  group_by(ID, GeneName, Mutation, Chromosome, Start, Stop) %>% 
+  summarise(Effect=paste0(unique(Effect), collapse=", "), PMID=paste0(unique(PMID), collapse=", ")) %>%
+  inner_join(b, by = "ID") %>%
+  ungroup() %>%
+  select(Chromosome, Start, Stop, Ref_base, Alt_base, GeneName, Mutation, Effect, PMID) %>%
+  filter(Effect %in% c("PATHOGENIC", "NEUTRAL")) %>%
+  arrange(Chromosome, Start, Stop) %>%
+  mutate(Chromosome=paste0("chr", Chromosome))
+write.table(a, paste0(cosmic.path, "/cosmic_all_variants_database_", genome, ".txt"), sep = "\t",
             quote = FALSE, row.names = FALSE, col.names = TRUE, na = "NA")
 
 

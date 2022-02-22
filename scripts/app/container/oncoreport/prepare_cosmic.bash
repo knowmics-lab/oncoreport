@@ -22,15 +22,27 @@ while getopts u:p: flag; do
   esac
 done
 
-if [[ -z "$COSMIC_USERNAME" ]]; then
-  exit_abnormal "COSMIC username is required!" true 102
+if [ ! -f "$ONCOREPORT_COSMIC_PATH/.env" ]; then
+  if [[ -z "$COSMIC_USERNAME" ]]; then
+    exit_abnormal "COSMIC username is required!" true 102
+  fi
+
+  if [[ -z "$COSMIC_PASSWORD" ]]; then
+    exit_abnormal "COSMIC password is required!" true 103
+  fi
 fi
 
-if [[ -z "$COSMIC_PASSWORD" ]]; then
-  exit_abnormal "COSMIC password is required!" true 103
+COSMIC_TOKEN=""
+if [ -f "$ONCOREPORT_COSMIC_PATH/.env" ] && [[ -n "$COSMIC_USERNAME" ]] && [[ -n "$COSMIC_PASSWORD" ]]; then
+  COSMIC_TOKEN=$(cat "$ONCOREPORT_COSMIC_PATH/.env")
+else
+  COSMIC_TOKEN=$(echo "${COSMIC_USERNAME}:${COSMIC_PASSWORD}" | base64)
+  echo "$COSMIC_TOKEN" > "$ONCOREPORT_COSMIC_PATH/.env"
 fi
 
-COSMIC_TOKEN=$(echo "${COSMIC_USERNAME}:${COSMIC_PASSWORD}" | base64)
+if [ -n "$COSMIC_TOKEN" ]; then
+  exit_abnormal "COSMIC token is empty!" true 103
+fi
 
 cosmic_download() {
   TMP_OUT=$(curl -H "Authorization: Basic ${COSMIC_TOKEN}" "$1")
@@ -60,23 +72,22 @@ cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh37/cosmic/
 echo " - Downloading hg19 COSMIC Mutation Data (Genome Screens)..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh37/cosmic/v95/CosmicGenomeScreensMutantExport.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg19.tsv.gz"
 echo " - Pre-processing archives..."
-zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" | cut -f1,2,3,4,5 >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg19.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" | cut -f1,2,3,4,5 | grep -v '^#' | sort | uniq >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg19.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
 
 [ -f "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz" ] && rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz"
 [ -f "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz" ] && rm "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_hg19.tsv.gz" | cut -f 1,17,21,26,29,32 |
   awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="")' |
-  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $1,$3,x[1],y[1],y[2],$5,$6 }' |
+  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $2,$1,$3,x[1],y[1],y[2],$5,$6 }' |
   sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg19.tsv.gz" | cut -f 1,18,21,26,28,31 |
   awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="")' |
-  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $1,$3,x[1],y[1],y[2],$5,$6 }' |
+  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $2,$1,$3,x[1],y[1],y[2],$5,$6 }' |
   sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz" | sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_hg19.tsv.gz"
-rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz"
 
 echo " - Downloading hg38 Coding Mutations..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v95/VCF/CosmicCodingMuts.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz"
@@ -87,23 +98,22 @@ cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/
 echo " - Downloading hg38 COSMIC Mutation Data (Genome Screens)..."
 cosmic_download "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v95/CosmicGenomeScreensMutantExport.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg38.tsv.gz"
 echo " - Pre-processing archives..."
-zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz" | cut -f1,2,3,4,5 >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg38.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
+zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz" | cut -f1,2,3,4,5 | grep -v '^#' | sort | uniq >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg38.txt" || exit_abnormal "Unable to prepare coding mutations" false 110
 
 [ -f "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz" ] && rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz"
 [ -f "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz" ] && rm "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_hg38.tsv.gz" | cut -f 1,17,21,26,29,32 |
   awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="")' |
-  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $1,$3,x[1],y[1],y[2],$5,$6 }' |
+  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $2,$1,$3,x[1],y[1],y[2],$5,$6 }' |
   sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg38.tsv.gz" | cut -f 1,18,21,26,28,31 |
   awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="")' |
-  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $1,$3,x[1],y[1],y[2],$5,$6 }' |
+  awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); split($4, x, ":"); split(x[2], y, "-"); print $2,$1,$3,x[1],y[1],y[2],$5,$6 }' |
   sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz"
 
 zcat "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz" | sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_hg38.tsv.gz"
-rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz"
 
 echo " - Processing hg19 database..."
 Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
@@ -113,3 +123,10 @@ cd "$OLD_PWD" || exit 113
 rm "$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_hg38.tsv.gz"
 touch "$ONCOREPORT_COSMIC_PATH/completed"
 echo "Done!"
+
+rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz"
+rm "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg19.tsv.gz"
+rm "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg19.txt.gz"
+rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg38.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg38.tsv.gz"
+rm "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_hg38.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg38.tsv.gz"
+rm "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg38.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg38.txt.gz"

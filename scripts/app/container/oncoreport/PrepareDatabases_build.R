@@ -172,11 +172,11 @@ cat(" - RefSeq database...\n")
 ref <- read.csv(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"), sep = "\t", header = FALSE)
 names(ref) <- c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
                 "exonCount", "exonStarts", "exonEnds", "score", "Gene")
-ref <- ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd", "exonCount",
-               "score", "Gene", "exonStarts", "exonEnds")]
-t1 <- strsplit(as.character(ref$exonEnds), ",", fixed = T)
-t2 <- strsplit(as.character(ref$exonStarts), ",", fixed = T)
-ref <- cbind(ref[rep(1:nrow(ref), lengths(t1)), 1:11], exonEnds = unlist(t1), exonStarts = unlist(t2))
+ref <- unique(ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
+               "score", "Gene")])
+# t1 <- strsplit(as.character(ref$exonEnds), ",", fixed = T)
+# t2 <- strsplit(as.character(ref$exonStarts), ",", fixed = T)
+# ref <- cbind(ref[rep(1:nrow(ref), lengths(t1)), 1:11], exonEnds = unlist(t1), exonStarts = unlist(t2))
 write.table(ref, paste0(database.path, "/refgene_database_", genome, ".txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))

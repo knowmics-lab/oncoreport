@@ -139,6 +139,16 @@ cosmic <- join.and.write(
   check.for.type = (pipeline.type == "tumnorm")
 );
 
+join.and.write(
+  variants = pat,
+  db = "cosmic_all_variants_database",
+  selected.columns = NULL,
+  output.file = paste0(project.path, "/txt/", sample.name, "_cosmic_all_variants.txt"),
+  genome = genome,
+  db.path = cosmic.path,
+  check.for.type = (pipeline.type == "tumnorm")
+);
+
 #Merge with PharmGKB
 cat("Annotating with PharmGKB...\n")
 pharm <- join.and.write(
@@ -159,11 +169,11 @@ cat("Annotating with RefGene...\n")
 if (nrow(pat) > 0) {
   data <- fread(paste0(database.path, "/refgene_database_", genome, ".txt"), quote = "")
   tmp.pat <- pat
-  tmp.pat$exonStarts <- tmp.pat$Stop
-  tmp.pat$exonEnds   <- tmp.pat$Stop
+  tmp.pat$txStart <- tmp.pat$Stop
+  tmp.pat$txEnd   <- tmp.pat$Stop
   data <- genome_left_join(
     tmp.pat, data,
-    by = c("Chromosome", "exonStarts", "exonEnds")
+    by = c("Chromosome", "txStart", "txEnd")
   )
   if (pipeline.type == "tumnorm") {
     data$Type <- rep("NA", nrow(data))
