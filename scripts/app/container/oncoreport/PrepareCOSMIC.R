@@ -11,7 +11,7 @@ genome <- args[2]
 
 #COSMIC
 
-cat("Setup COSMIC database...\n")
+cat("Setup COSMIC Resistance Mutations database...\n")
 a <- fread(paste0(cosmic.path, "/CosmicResistanceMutations_", genome, ".txt.gz"))
 b <- fread(paste0(cosmic.path, "/CosmicCodMutDef_", genome, ".txt"))
 a$`Gene Name` <- gsub("_ENST.*", "", a$`Gene Name`)
@@ -36,3 +36,15 @@ cosm$Start <- gsub("\\..*", "", a)
 cosm$`Genome Coordinates` <- NULL
 write.table(cosm, paste0(cosmic.path, "/cosmic_database_", genome, ".txt"), sep = "\t",
             quote = FALSE, row.names = FALSE, col.names = TRUE, na = "NA")
+
+cat("Setup COSMIC All Variants database...\n")
+a <- na.omit(fread(paste0(cosmic.path, "/CosmicVariantsRaw_", genome, ".tsv.gz")))
+colnames(a) <- c("GeneName", "Mutation", "Chromosome", "Start", "Stop", "Effect", "PMID")
+a <- a %>% 
+  group_by(GeneName, Mutation, Chromosome, Start, Stop) %>% 
+  summarise(Effect=paste0(unique(Effect), collapse=", "), PMID=paste0(unique(PMID), collapse=", "))
+a$Chromosome <- paste0("chr", a$Chromosome)
+write.table(a, paste0(cosmic.path, "/cosmic_variants_", genome, ".txt"), sep = "\t",
+            quote = FALSE, row.names = FALSE, col.names = TRUE, na = "NA")
+
+
