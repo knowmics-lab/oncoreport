@@ -42,14 +42,14 @@ cat("Setup COSMIC All Variants database...\n")
 a <- na.omit(fread(paste0(cosmic.path, "/CosmicVariantsRaw_", genome, ".tsv.gz")))
 colnames(a) <- c("ID", "GeneName", "Mutation", "Chromosome", "Start", "Stop", "Effect", "PMID")
 b <- fread(paste0(cosmic.path, "/CosmicCodMutDef_", genome, ".txt"))
-colnames(b) <- c("Chromosome", "Start", "ID", "Ref_base", "Alt_base")
-b <- b[,c("ID", "Ref_base", "Alt_base")]
+colnames(b) <- c("Chromosome", "Start", "ID", "Ref_base", "Var_base")
+b <- b[,c("ID", "Ref_base", "Var_base")]
 a <- a %>% 
   group_by(ID, GeneName, Mutation, Chromosome, Start, Stop) %>% 
   summarise(Effect=paste0(unique(Effect), collapse=", "), PMID=paste0(unique(PMID), collapse=", ")) %>%
   inner_join(b, by = "ID") %>%
   ungroup() %>%
-  select(Chromosome, Start, Stop, Ref_base, Alt_base, GeneName, Mutation, Effect, PMID) %>%
+  select(Chromosome, Start, Stop, Ref_base, Var_base, GeneName, Mutation, Effect, PMID) %>%
   filter(Effect %in% c("PATHOGENIC", "NEUTRAL")) %>%
   arrange(Chromosome, Start, Stop) %>%
   mutate(Chromosome=paste0("chr", Chromosome))

@@ -139,14 +139,15 @@ cosmic <- join.and.write(
   check.for.type = (pipeline.type == "tumnorm")
 );
 
-join.and.write(
+f <- join.and.write(
   variants = pat,
   db = "cosmic_all_variants_database",
   selected.columns = NULL,
   output.file = paste0(project.path, "/txt/", sample.name, "_cosmic_all_variants.txt"),
   genome = genome,
   db.path = cosmic.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  check.for.type = (pipeline.type == "tumnorm"),
+  check.alt.base = TRUE
 );
 
 #Merge with PharmGKB

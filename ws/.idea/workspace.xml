@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../cloud/kubernetes/scalable-instance/Untitled-1.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/hg19/dbNSFP/prova" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/databases/hg38/dbNSFP/prova" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/PrepareCOSMIC.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/PrepareCOSMIC.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -426,7 +428,7 @@
       <workItem from="1645471712185" duration="6585000" />
       <workItem from="1645516518294" duration="6589000" />
       <workItem from="1645526628797" duration="439000" />
-      <workItem from="1645532202604" duration="648000" />
+      <workItem from="1645532202604" duration="3706000" />
     </task>
     <servers />
   </component>
