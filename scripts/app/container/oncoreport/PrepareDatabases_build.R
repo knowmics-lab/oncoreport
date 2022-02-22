@@ -78,49 +78,13 @@ names(cgi) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene", "
                 "Clinical_significance", "Drug", "Evidence_level", "Disease",
                 "PMID", "Evidence_statement", "Citation")
 cgi$Database <- "Cancer Genome Interpreter"
-tmp <- apply(cgi, 2, function(col)
-{
-  lapply(col, function(str)
-  {
-    x <- paste0(str, ";;")
-    x <- unlist(strsplit(x, ";;", fixed = T))
-    x
-  })
-})
-lengths <- unlist(lapply(tmp[["PMID"]], length))
-tmp3 <- lapply(tmp, function(col)
-{
-  unlist(sapply(1:length(lengths), function(i)
-  {
-    rep(col[[i]], lengths[i] / length(col[[i]]))
-  }))
-})
-cgi <- data.frame(tmp3)
+cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug, 
+                     Evidence_level, Disease, PMID, Evidence_statement, Citation, sep=";;")
 cgi$PMID <- gsub(";", ",,", cgi$PMID)
-tmp <- apply(cgi, 2, function(col)
-{
-  lapply(col, function(str)
-  {
-    x <- paste0(str, ",,")
-    x <- unlist(strsplit(x, ",,", fixed = T))
-    x
-  })
-})
-lengths <- unlist(lapply(tmp[["PMID"]], length))
-tmp3 <- lapply(tmp, function(col)
-{
-  unlist(sapply(1:length(lengths), function(i)
-  {
-    rep(col[[i]], lengths[i] / length(col[[i]]))
-  }))
-})
-cgi <- data.frame(tmp3)
-tmp <- strsplit(as.character(cgi$Disease), ";", fixed = T)
-cgi <- cbind(cgi[rep(1:nrow(cgi), lengths(tmp)), -which(names(cgi) == "Disease")],
-             Disease = unlist(tmp))
-tmp <- strsplit(as.character(cgi$PMID), ",", fixed = T)
-cgi <- cbind(cgi[rep(1:nrow(cgi), lengths(tmp)), -which(names(cgi) == "PMID")],
-             PMID = unlist(tmp))
+cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug, 
+                     Evidence_level, Disease, PMID, Evidence_statement, Citation, sep=",,")
+cgi <- separate_rows(cgi, Disease, sep=";")
+cgi <- separate_rows(cgi, PMID, sep=",")
 cgi <- cgi[grep("PMID:", cgi$PMID),]
 cgi$PMID <- gsub(cgi$PMID, pattern = "PMID:", replace = "")
 cgi$Variant <- gsub(".*:(.*)", "\\1", cgi$Variant)
@@ -172,11 +136,8 @@ cat(" - RefSeq database...\n")
 ref <- read.csv(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"), sep = "\t", header = FALSE)
 names(ref) <- c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
                 "exonCount", "exonStarts", "exonEnds", "score", "Gene")
-ref <- unique(ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
-               "score", "Gene")])
-# t1 <- strsplit(as.character(ref$exonEnds), ",", fixed = T)
-# t2 <- strsplit(as.character(ref$exonStarts), ",", fixed = T)
-# ref <- cbind(ref[rep(1:nrow(ref), lengths(t1)), 1:11], exonEnds = unlist(t1), exonStarts = unlist(t2))
+ref <- unique(ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", 
+                      "cdsEnd", "score", "Gene")])
 write.table(ref, paste0(database.path, "/refgene_database_", genome, ".txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))
