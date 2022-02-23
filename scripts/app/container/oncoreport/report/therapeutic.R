@@ -81,8 +81,10 @@ if (nrow(primary.annotations) > 0) {
     names(es) <- c("#", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance", "Evidence Level", "Type", 
                    "Details", "Trials", "Evidence_statement", "References", "Score", "AIFA", "EMA", "FDA", 
                    "Publication year", "id")
+    color_column <- 12
     if (tumor_type == "tumnorm") {
       es$Type <- NULL
+      color_column <- 11
     }
     last_evidence <<- nrow(es)
     if (nrow(es) == 0) return (NULL)
@@ -91,7 +93,7 @@ if (nrow(primary.annotations) > 0) {
     es <- es[,-which(colnames(es) %in% c("Evidence_statement", "id"))]
     table <- kable(es, "html", escape = FALSE) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
-      column_spec(11, bold = T, color = "black", background = assigned.colors)
+      column_spec(color_column, bold = T, color = "black", background = assigned.colors)
     genes <- unique(es$Gene)
     if (length(genes) > 1) {
       for (g in genes) {
