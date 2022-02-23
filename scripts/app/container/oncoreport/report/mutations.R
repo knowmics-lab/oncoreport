@@ -28,7 +28,7 @@ mutations_data$Stop <- format(mutations_data$Stop, digits=0, big.mark=",", scien
 names(mutations_data)[1:8] <- c("Gene", "Chromosome", "Position", "Ref. Base", "Var. Base", "Change Type", 
                                 "Clinical Significance (Clinvar)", "Clinical Significance (COSMIC)")
 rows_to_remove <- is.na(mutations_data$Gene) | trimws(mutations_data$Gene) == ""
-mutations_data <- mutations_data[!rows_to_remove,]
+mutations_data <- unique(mutations_data[!rows_to_remove,])
 rownames(mutations_data) <- NULL
 if (nrow(mutations_data) > 0) {
   table <- kable(mutations_data, "html", escape = FALSE) %>%
