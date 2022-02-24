@@ -26,7 +26,7 @@ if (tumor_type == "tumnorm") {
 }
 mutations_data$Stop <- format(mutations_data$Stop, digits=0, big.mark=",", scientific = FALSE)
 names(mutations_data)[1:8] <- c("Gene", "Chromosome", "Position", "Ref. Base", "Var. Base", "Change Type", 
-                                "Clinical Significance (Clinvar)", "Clinical Significance (COSMIC)")
+                                "Clinical Significance (Clinvar)", "Clinical Significance (COSMIC)*")
 rows_to_remove <- is.na(mutations_data$Gene) | trimws(mutations_data$Gene) == ""
 mutations_data <- unique(mutations_data[!rows_to_remove,])
 rownames(mutations_data) <- NULL
