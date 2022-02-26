@@ -144,7 +144,7 @@ list.trials.urls <- function(x, type) {
   return(link_cli[unname(y[link_cli$Clinical_trial]),])
 }
 
-join.and.write <- function(variants, db, selected.columns = NULL, output.file, genome, db.path, check.for.type, check.alt.base = FALSE) {
+join.and.write <- function(variants, db, selected.columns = NULL, output.file, genome, db.path, check.for.type = FALSE, check.alt.base = FALSE) {
   data <- fread(paste0(db.path, "/", db, "_", genome, ".txt", quote = ""))
   if (check.alt.base && any(colnames(cosmic) == "Alt_base")) {
     colnames(data)[colnames(data) == "Alt_base"] <- "Var_base"

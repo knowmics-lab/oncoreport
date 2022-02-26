@@ -11,7 +11,7 @@ usage() {
   [-city/-c where patient lives] [-phone/-ph telephone number of the patient]
   [-tumor/-t patient tumor, you must choose a type of tumor from disease_list.txt]
   [-stage/-sg stage of the tumor]
-  [-project_path/-pp project_path path]
+  [-project_path/-pp project_path path] [-depth/-dp analysis depth ]
   [-threads/-th number of bowtie2 threads, leave 1 if you are uncertain]
   [-genome/-gn genome version: hg19 or hg38]
   [-drug_path/-d_path file path where patient drugs are listed (.txt, one drug per row)]
@@ -181,6 +181,11 @@ while [ -n "$1" ]; do
   -no_downsample)
     DOWNSAMPLE=0
     echo "Downsampling is disabled"
+    ;;
+  -depth | -dp)
+    depth="$2"
+    echo "The value provided for filter-expression of DP is $depth"
+    shift
     ;;
   *)
     exit_abnormal_usage "Error: invalid parameter \"$1\"."
@@ -473,16 +478,11 @@ else
 fi
 
 type=tumnorm
-{ sed -i '/#CHROM/,$!d' "$PATH_VCF_PASS/variants.vcf" &&
-  sed -i '/chr/,$!d' "$PATH_VCF_PASS/variants.vcf" &&
-  cut -f1,2,4,5 "$PATH_VCF_PASS/variants.vcf" >"$PATH_CONVERTED/variants.txt"; } ||
-  exit_abnormal_code "Unable to prepare variants for annotation" 119
-
-[[ ! -s "$PATH_CONVERTED/variants.txt" ]] && exit_abnormal_code "Unable to continue since no variants have been found!" 200
-
+echo "Pre-processing VCF files"
+Rscript "$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R" -i "$PATH_VCF_PASS/variants.vcf" -o "$PATH_TXT/variants.txt" -d "$depth" || exit_abnormal_code "Unable to pre-process variants" 119
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
-  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 120
+  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" || exit_abnormal_code "Unable to prepare report input files" 120
 php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 123
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$id" -g "$gender" -a "$age" -t "$tumor" \

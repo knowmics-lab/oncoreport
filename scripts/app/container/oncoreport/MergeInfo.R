@@ -16,8 +16,7 @@ option_list <- list(
   make_option(c("-c", "--cosmic"), type="character", default=NULL, help="cosmic folder", metavar="character"),
   make_option(c("-p", "--project"), type="character", default=NULL, help="project folder", metavar="character"),
   make_option(c("-s", "--sample"), type="character", default=NULL, help="sample name", metavar="character"),
-  make_option(c("-t", "--tumor"), type="character", default=NULL, help="patient tumor", metavar="character"),
-  make_option(c("-a", "--pipeline"), type="character", default=NULL, help="pipeline type (biopsy or tumnorm)", metavar="character")
+  make_option(c("-t", "--tumor"), type="character", default=NULL, help="patient tumor", metavar="character")
 );
 
 opt_parser <- OptionParser(option_list=option_list)
@@ -39,10 +38,6 @@ if (is.null(opt$project) || !dir.exists(opt$project)) {
   print_help(opt_parser)
   stop("Project folder does not exist", call.=FALSE)
 }
-if (is.null(opt$pipeline) || !(opt$pipeline %in% c("biopsy", "tumnorm"))) {
-  print_help(opt_parser)
-  stop("Invalid pipeline type", call.=FALSE)
-}
 if (is.null(opt$sample) || is.null(opt$tumor)) {
   print_help(opt_parser)
   stop("All parameters are required", call.=FALSE)
@@ -54,7 +49,6 @@ cosmic.path <- opt$cosmic
 project.path <- opt$project
 sample.name <- opt$sample
 leading.disease <- opt$tumor
-pipeline.type <- opt$pipeline
 
 thisFile <- function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
@@ -71,32 +65,13 @@ thisFile <- function() {
 
 source(file.path(dirname(thisFile()), "Functions.R"))
 
-#Merge germline and somatic mutations into a unique file for liquid biopsy
-if (pipeline.type == "biopsy") {
-  germ <- suppressWarnings(fread(paste0(project.path, "/converted/variants_Germline.txt")))
-  som  <- suppressWarnings(fread(paste0(project.path, "/converted/variants_Somatic.txt")))
-  if (nrow(germ) == 0) germ <- data.frame(matrix(nrow = 0, ncol = 4))
-  if (nrow(som)  == 0) som  <- data.frame(matrix(nrow = 0, ncol = 4))
-  names(germ) <- c("Chromosome", "Stop", "Ref_base", "Var_base")
-  names(som)  <- c("Chromosome", "Stop", "Ref_base", "Var_base")
-  germ$Type <- rep("Germline", nrow(germ))
-  som$Type  <- rep("Somatic", nrow(som))
-  res <- rbind(som, germ)
-  write.table(res, paste0(project.path, "/converted/variants.txt"),
-              quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-  # unlink(paste0(project.path, "/converted/variants_Germline.txt"))
-  # unlink(paste0(project.path, "/converted/variants_Somatic.txt"))
-}
-
-#Read patient info
-pat <- fread(paste0(project.path, "/converted/variants.txt"))
-colnames(pat)[1] <- "Chromosome"
-colnames(pat)[2] <- "Stop"
-colnames(pat)[3] <- "Ref_base"
-colnames(pat)[4] <- "Var_base"
-pat$Chromosome <- as.character(pat$Chromosome)
-pat$Ref_base   <- as.character(pat$Ref_base)
-pat$Var_base   <- as.character(pat$Var_base)
+variants <- suppressWarnings(fread(paste0(project.path, "/txt/variants.txt")))
+variants$Chromosome <- as.character(variants$Chromosome)
+variants$Ref_base   <- as.character(variants$Ref_base)
+variants$Var_base   <- as.character(variants$Var_base)
+pat <- variants %>% select(
+  Chromosome, Stop, Ref_base, Var_base, Type
+)
 
 ## Merge with CIVIC
 cat("Annotating with CIVIC...\n")
@@ -110,21 +85,19 @@ civic <- join.and.write(
                        "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_civic.txt"),
   genome = genome,
-  db.path = database.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  db.path = database.path
 );
 
 ## Merge with Clinvar
 cat("Annotating with Clinvar...\n")
 d <- join.and.write(
-  variants = pat,
+  variants = variants,
   db = "clinvar_database",
   selected.columns = c("Chromosome", "Stop", "Ref_base", "Var_base", "Change_type",
-                       "Clinical_significance", "Type"),
+                       "Clinical_significance", "AF", "DP", "GT", "VT", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_clinvar.txt"),
   genome = genome,
-  db.path = database.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  db.path = database.path
 );
 
 #Merge with COSMIC
@@ -135,18 +108,16 @@ cosmic <- join.and.write(
   selected.columns = NULL,
   output.file = paste0(project.path, "/txt/", sample.name, "_cosmic.txt"),
   genome = genome,
-  db.path = cosmic.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  db.path = cosmic.path
 );
 
 f <- join.and.write(
-  variants = pat,
+  variants = variants,
   db = "cosmic_all_variants_database",
   selected.columns = NULL,
   output.file = paste0(project.path, "/txt/", sample.name, "_cosmic_all_variants.txt"),
   genome = genome,
   db.path = cosmic.path,
-  check.for.type = (pipeline.type == "tumnorm"),
   check.alt.base = TRUE
 );
 
@@ -161,8 +132,7 @@ pharm <- join.and.write(
                        "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
   genome = genome,
-  db.path = database.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  db.path = database.path
 );
 
 #Merge with RefGene
@@ -176,9 +146,6 @@ if (nrow(pat) > 0) {
     tmp.pat, data,
     by = c("Chromosome", "txStart", "txEnd")
   )
-  if (pipeline.type == "tumnorm") {
-    data$Type <- rep("NA", nrow(data))
-  }
   data <- data[, c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
   colnames(data)[1] <- "Chromosome"
   data <- unique(data)
@@ -201,8 +168,7 @@ cgi <- join.and.write(
                        "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
   output.file = paste0(project.path, "/txt/", sample.name, "_cgi.txt"),
   genome = genome,
-  db.path = database.path,
-  check.for.type = (pipeline.type == "tumnorm")
+  db.path = database.path
 );
 
 #Merge CIVIC and CGI info

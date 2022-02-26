@@ -47,6 +47,10 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             'genome'       => 'The genome version (hg19 or hg38; OPTIONAL; default: hg19)',
             'threads'      => 'The number of threads to use for the analysis (OPTIONAL; default: 1)',
             'downsampling' => 'Enable or disable Mutect2 downsampling of the reads (OPTIONAL; default: false)',
+            'depthFilter'  => [
+                'comparison' => 'The type of comparison to be done for the sequencing depth filter (One of: lt, lte, gt, gte; OPTIONAL; default: lt)',
+                'value'      => 'The value that will be used to filter the sequencing depth (OPTIONAL; default 0)',
+            ],
         ];
     }
 
@@ -94,13 +98,13 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
         $parameters = (array)$request->get('parameters', []);
 
         return [
-            'paired'        => ['filled', 'boolean'],
-            'tumor'         => ['filled', 'array'],
-            'tumor.fastq1'  => [
+            'paired'                 => ['filled', 'boolean'],
+            'tumor'                  => ['filled', 'array'],
+            'tumor.fastq1'           => [
                 'nullable',
                 'required_without_all:parameters.tumor.ubam,parameters.tumor.bam,parameters.vcf',
             ],
-            'tumor.fastq2'  => [
+            'tumor.fastq2'           => [
                 'nullable',
                 Rule::requiredIf(
                     static function () use ($parameters) {
@@ -110,21 +114,21 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     }
                 ),
             ],
-            'tumor.ubam'    => [
+            'tumor.ubam'             => [
                 'nullable',
                 'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.vcf',
             ],
-            'tumor.bam'     => [
+            'tumor.bam'              => [
                 'nullable',
                 'required_without_all:parameters.tumor.fastq1,parameters.tumor.ubam,parameters.vcf',
             ],
-            'normal'        => ['filled', 'array'],
-            'normal.fastq1' => [
+            'normal'                 => ['filled', 'array'],
+            'normal.fastq1'          => [
                 'nullable',
                 'required_with:parameters.tumor.fastq1',
                 'required_without_all:parameters.normal.ubam,parameters.normal.bam,parameters.vcf',
             ],
-            'normal.fastq2' => [
+            'normal.fastq2'          => [
                 'nullable',
                 'required_with:tumor.fastq2',
                 Rule::requiredIf(
@@ -135,23 +139,26 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     }
                 ),
             ],
-            'normal.ubam'   => [
+            'normal.ubam'            => [
                 'nullable',
                 'required_with:parameters.tumor.ubam',
                 'required_without_all:parameters.normal.fastq1,parameters.normal.bam,parameters.vcf',
             ],
-            'normal.bam'    => [
+            'normal.bam'             => [
                 'nullable',
                 'required_with:parameters.tumor.bam',
                 'required_without_all:parameters.normal.fastq1,parameters.normal.ubam,parameters.vcf',
             ],
-            'vcf'           => [
+            'vcf'                    => [
                 'nullable',
                 'required_without_all:parameters.tumor.fastq1,parameters.tumor.bam,parameters.tumor.ubam,parameters.normal.fastq1,parameters.normal.bam,parameters.normal.ubam',
             ],
-            'genome'        => ['filled', Rule::in(Utils::VALID_GENOMES)],
-            'threads'       => ['filled', 'integer'],
-            'downsampling'  => ['filled', 'boolean'],
+            'genome'                 => ['filled', Rule::in(Utils::VALID_GENOMES)],
+            'threads'                => ['filled', 'integer'],
+            'downsampling'           => ['filled', 'boolean'],
+            'depthFilter'            => ['filled', 'array'],
+            'depthFilter.comparison' => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
+            'depthFilter.value'      => ['filled', 'numeric'],
         ];
     }
 
@@ -194,6 +201,12 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
             $threads = $this->model->getParameter('threads', 1);
             $downsampling = (bool)$this->model->getParameter('downsampling', false);
             [$outputRelative, $outputAbsolute,] = $this->getJobFilePaths('output_');
+            $depthFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
+                'depthFilter.comparison',
+                'gt'
+            )];
+            $depthFilterValue = (double)$this->model->getParameter('depthFilter.value', 0);
+            $depthFilter = sprintf("%s%.4f", $depthFilterOperator, $depthFilterValue);
             throw_if(
                 !file_exists($outputAbsolute) && !mkdir($outputAbsolute, 0777, true) && !is_dir($outputAbsolute),
                 ProcessingJobException::class,
@@ -222,7 +235,9 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                 '-gn',
                 $genome,
                 '-d_path',
-                $drugsListFile
+                $drugsListFile,
+                '-dp',
+                $depthFilter,
             );
             $this->optionalParameter('-sg', $patient->primaryDisease->stage_string)
                  ->optionalParameter('-c', $patient->city)

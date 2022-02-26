@@ -2,18 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,25 +42,25 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/app/Providers/AppServiceProvider.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/resources/views/esmo/index.blade.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Http/Requests/Api/Job/StoreJobRequest.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/routes/api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/path.bash" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/Jobs/Types/Factory.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/resources/views/esmo/index.blade.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_indexes.bash" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Console/Commands/EsmoParser.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../scripts/app/container/scripts/setup.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/prepare_cosmic.bash" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Console/Commands/MatchEsmo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../scripts/app/container/oncoreport/path.bash" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/Http/Controllers/Api/JobController.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -438,6 +436,9 @@
       <workItem from="1645532202604" duration="3706000" />
       <workItem from="1645569886534" duration="81000" />
       <workItem from="1645699562731" duration="887000" />
+      <workItem from="1645822649624" duration="624000" />
+      <workItem from="1645864137859" duration="13673000" />
+      <workItem from="1645916027974" duration="164000" />
     </task>
     <servers />
   </component>

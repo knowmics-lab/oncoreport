@@ -31,20 +31,24 @@ RUN /usr/bin/apt update --fix-missing && \
 
 # Install common packages
 RUN /usr/bin/apt update --fix-missing && \
-    /usr/bin/apt install -y wget unzip bwa perl python3-pip curl tar samtools bedtools unixodbc \
-                            openjdk-8-jdk ant r-base-dev libssl-dev libxml2-dev grep tzdata cmake \
-                            libcurl4-openssl-dev rename apt-utils nano libyaml-dev beanstalkd \
-                            python3-setuptools git apache2 php-xdebug composer php-cli jq \
-                            libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd libfontconfig1-dev \
-                            php-xml php-mbstring zip php-zip php-curl php-intl pigz unixodbc-dev && \
+    /usr/bin/apt install -y wget unzip bwa perl python3-pip curl tar samtools bedtools unixodbc tabix bcftools \
+                            openjdk-8-jdk ant r-base grep tzdata cmake rename apt-utils nano beanstalkd \
+                            python3-setuptools git apache2 php-xdebug composer php-cli jq python \
+                            libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
+                            php-xml php-mbstring zip php-zip php-curl php-intl pigz && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
-    update-java-alternatives -s "java-1.8.0-openjdk-amd64"
+    update-java-alternatives -s "java-1.8.0-openjdk-amd64" && \
+    apt autoclean && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Fix certificate issues
 RUN apt-get update && \
     apt-get install ca-certificates-java && \
-    apt-get clean && \
+    apt autoclean && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
     update-ca-certificates -f;
 
 # Install supervisor 4
@@ -52,9 +56,16 @@ RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR
     cd supervisor-${SUPERVISOR_VERSION}/ && \
     python3 setup.py install
 
+# Install fastq pair
 RUN mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
     git clone https://github.com/linsalrob/fastq-pair.git && \
     cd fastq-pair/ && mkdir build && cd build && cmake .. && make && make install && cd "$PW" && rm -r /oncoreport/tmp/
+
+# Install lofreq
+RUN apt update && apt install libtool libgsl-dev && mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
+    git clone https://github.com/CSB5/lofreq.git && cd lofreq && ./bootstrap && ./configure && make && make install && \
+    cd "$PW" && rm -r /oncoreport/tmp/ && apt remove libgsl-dev libtool && apt-get clean && apt autoclean && \
+    apt clean && rm -rf /var/lib/apt/lists/*
 
 # Enable mod_rewrite in apache
 RUN a2enmod rewrite
@@ -88,7 +99,12 @@ COPY ws.tgz                                         /ws.tgz
 RUN chmod 755 /usr/local/bin/*.sh
 
 # Install R packages
-RUN /usr/bin/Rscript /usr/local/bin/installPackages.R
+RUN apt update && \
+    apt install libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 && \
+    apt install r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    /usr/bin/Rscript /usr/local/bin/installPackages.R && \
+    apt remove r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    apt autoclean && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Complete the setup
 RUN --mount=type=secret,id=drugbank /usr/local/bin/setup.sh

@@ -121,11 +121,11 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             ],
             'genome'                          => ['filled', Rule::in(Utils::VALID_GENOMES)],
             'threads'                         => ['filled', 'integer'],
+            'downsampling'                    => ['filled', 'boolean'],
             'depthFilter'                     => ['filled', 'array'],
             'depthFilter.comparison'          => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
             'depthFilter.value'               => ['filled', 'numeric'],
             'alleleFractionFilter'            => ['filled', 'array'],
-            'downsampling'                    => ['filled', 'boolean'],
             'alleleFractionFilter.comparison' => ['filled', Rule::in(array_keys(Utils::VALID_FILTER_OPERATORS))],
             'alleleFractionFilter.value'      => ['filled', 'numeric'],
         ];
@@ -167,7 +167,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             $threads = $this->model->getParameter('threads', 1);
             $depthFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
                 'depthFilter.comparison',
-                'lt'
+                'gt'
             )];
             $depthFilterValue = (double)$this->model->getParameter('depthFilter.value', 0);
             $alleleFractionFilterOperator = Utils::VALID_FILTER_OPERATORS[$this->model->getParameter(
@@ -181,8 +181,8 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                 ProcessingJobException::class,
                 sprintf('Directory "%s" was not created', $outputAbsolute)
             );
-            $depthFilter = sprintf("DP%s%.2f", $depthFilterOperator, $depthFilterValue);
-            $alleleFractionFilter = sprintf("AF%s%.2f", $alleleFractionFilterOperator, $alleleFractionFilterValue);
+            $depthFilter = sprintf("%s%.4f", $depthFilterOperator, $depthFilterValue);
+            $alleleFractionFilter = sprintf("%s%.4f", $alleleFractionFilterOperator, $alleleFractionFilterValue);
             $drugsListFile = $this->createDrugsFile();
             $this->initCommand(
                 'bash',
@@ -296,7 +296,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                     'bamOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/bam_ordered/ordered.bam'),
                     'vcfRAWCallFile'    => $this->getFilePathsForOutput($outputRelative . '/mutect/variants.vcf'),
                     'vcfOutputFile'     => $this->getFilePathsForOutput($outputRelative . '/filtered/variants.vcf'),
-                    'vcfPASSOutputFile' => $this->getFilePathsForOutput($outputRelative . '/pass_final/variants.vcf'),
+                    'vcfPASSOutputFile' => $this->getFilePathsForOutput($outputRelative . '/pass_filtered/variants.vcf'),
                     'textOutputFiles'   => $this->getFilePathsForOutput($outputRelative . '/report/intermediate.zip'),
                     'reportOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/report/index.html'),
                     'reportZipFile'     => $this->getFilePathsForOutput($outputRelative . '/report.zip'),

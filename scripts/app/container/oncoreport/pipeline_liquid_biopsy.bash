@@ -331,11 +331,11 @@ if [ -n "$fastq1" ] || [ -n "$bam" ]; then
   echo "Variant Calling"
   if [ "$DOWNSAMPLE" == "1" ]; then
     java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" \
-    -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" || exit_abnormal_code "Unable to call variants" 109
+      -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" || exit_abnormal_code "Unable to call variants" 109
   else
     java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD/ordered.bam" \
-    -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" --max-suspicious-reads-per-alignment-start 0 \
-    --max-reads-per-alignment-start 0 || exit_abnormal_code "Unable to call variants" 109
+      -tumor "$FASTQ1_NAME" -O "$PATH_VCF_MUT/variants.vcf" --max-suspicious-reads-per-alignment-start 0 \
+      --max-reads-per-alignment-start 0 || exit_abnormal_code "Unable to call variants" 109
   fi
   echo "Variant Filtration"
   java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_MUT/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 110
@@ -347,45 +347,27 @@ if [ -n "$vcf" ]; then
   VCF_NAME=$(basename "$vcf")
   if [ "${VCF_NAME: -17}" != ".varianttable.txt" ]; then
     FASTQ1_NAME=$(basename "${vcf%.*}")
-    echo "DP Filtering"
-    java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
+    cp "$vcf" "$PATH_VCF_PASS/variants.vcf"
+    #    echo "DP Filtering"
+    #    java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
   fi
-else
-  echo "DP Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_PASS/variants.vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
+#else
+##  echo "DP Filtering"
+##  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_PASS/variants.vcf" -O "$PATH_VCF_DP/variants.vcf" --filter-name "LowDP" --filter-expression "$depth" || exit_abnormal_code "Unable to filter by DP" 112
 fi
 
-#VARIANTTABLE format
+type="biopsy"
+echo "Pre-processing variants"
 if [ -n "$vcf" ] && [ "${vcf: -17}" == ".varianttable.txt" ]; then
   FASTQ1_NAME=$(basename "$vcf" ".varianttable.txt")
-  type=illumina
   Rscript "$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R" "$depth" "$AF" "$vcf" "$FASTQ1_NAME" "$PATH_PROJECT" || exit_abnormal_code "Unable to process Illumina VariantTable" 113
 else
-  echo "Splitting indel and snp"
-  java -jar "$PICARD_PATH" SplitVcfs I="$PATH_VCF_DP/variants.vcf" SNP_OUTPUT="$PATH_VCF_IN_SN/variants.SNP.vcf" INDEL_OUTPUT="$PATH_VCF_IN_SN/variants.INDEL.vcf" STRICT=false || exit_abnormal_code "Unable to split INDELs and SNPs" 114
-  echo "AF Filtering"
-  java -jar "$GATK_PATH" VariantFiltration -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_IN_SN/variants.SNP.vcf" -O "$PATH_VCF_AF/variants.vcf" --genotype-filter-name "Germline" --genotype-filter-expression "$AF" || exit_abnormal_code "Unable to filter SNPs by AF" 115
-  echo "Merge indel and snp"
-  java -jar "$PICARD_PATH" MergeVcfs I="$PATH_VCF_IN_SN/variants.INDEL.vcf" I="$PATH_VCF_AF/variants.vcf" O="$PATH_VCF_MERGE/variants.vcf" || exit_abnormal_code "Unable to merge filtered SNPs with INDELs" 116
-  echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_MERGE/variants.vcf" >"$PATH_VCF_PASS_AF/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
-  echo "Germline"
-  grep Germline "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Germline.vcf" || exit_abnormal_code "Unable to grep Germline variants" 118
-  echo "Somatic"
-  grep Germline -v "$PATH_VCF_PASS_AF/variants.vcf" >"$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" || exit_abnormal_code "Unable to grep Somatic variants" 119
-  echo "Annotation"
-  { sed -i '/#CHROM/,$!d' "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" &&
-    sed -i '/chr/,$!d' "$PATH_VCF_TO_CONVERT/variants_Germline.vcf" &&
-    sed -i '/chr/,$!d' "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" &&
-    cut -f1,2,4,5 "$PATH_VCF_TO_CONVERT/variants_Somatic.vcf" >"$PATH_CONVERTED/variants_Somatic.txt" &&
-    cut -f1,2,4,5 "$PATH_VCF_TO_CONVERT/variants_Germline.vcf" >"$PATH_CONVERTED/variants_Germline.txt"; } ||
-    exit_abnormal_code "Unable to prepare variants for annotation" 120
-  type=biopsy
+  Rscript "$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R" -i "$PATH_VCF_PASS/variants.vcf" -o "$PATH_TXT/variants.txt" -d "$depth" -a "$AF" || exit_abnormal_code "Unable to pre-process variants" 114
 fi
 
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$index" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
-  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" -a "$type" || exit_abnormal_code "Unable to prepare report input files" 121
+  -p "$PATH_PROJECT" -s "$FASTQ1_NAME" -t "$tumor" || exit_abnormal_code "Unable to prepare report input files" 121
 php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$tumor" "$PATH_PROJECT" || exit_abnormal_code "Unable to prepare ESMO guidelines" 122
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$id" -g "$gender" -a "$age" -t "$tumor" \
@@ -393,15 +375,15 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$i
   -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$depth" -F "$AF" || exit_abnormal_code "Unable to create report" 123
 
 echo "Removing folders"
-{ rm -r "$PATH_TRIM" &&
-  rm -r "$PATH_SAM" &&
-  rm -r "$PATH_BAM_ANNO" &&
-  rm -r "$PATH_BAM_SORT" &&
-  rm -r "$PATH_VCF_TO_CONVERT" &&
-  rm -r "$PATH_VCF_DP" &&
-  rm -r "$PATH_VCF_IN_SN" &&
-  rm -r "$PATH_VCF_AF" &&
-  rm -r "$PATH_VCF_MERGE" &&
-  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 124
+#{ rm -r "$PATH_TRIM" &&
+#  rm -r "$PATH_SAM" &&
+#  rm -r "$PATH_BAM_ANNO" &&
+#  rm -r "$PATH_BAM_SORT" &&
+#  rm -r "$PATH_VCF_TO_CONVERT" &&
+#  rm -r "$PATH_VCF_DP" &&
+#  rm -r "$PATH_VCF_IN_SN" &&
+#  rm -r "$PATH_VCF_AF" &&
+#  rm -r "$PATH_VCF_MERGE" &&
+#  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 124
 
 echo "Done"
