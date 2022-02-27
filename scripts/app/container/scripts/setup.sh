@@ -54,6 +54,15 @@ apt remove -y pandoc
     dpkg -i pandoc.deb
 ) || exit 108
 
+VARSCAN_VERSION="2.4.4"
+(
+  cd /oncoreport/tmp/ &&
+    wget "https://github.com/dkoboldt/varscan/raw/master/VarScan.v${VARSCAN_VERSION}.jar" &&
+    mv "VarScan.v${VARSCAN_VERSION}.jar" /usr/local/bin/varscan.jar &&
+    chmod +x /usr/local/bin/varscan.jar
+) || exit 140
+
+
 # Install cython and Crossmap
 pip3 install cython || exit 109
 pip3 install CrossMap || exit 110

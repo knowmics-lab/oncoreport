@@ -1,5 +1,6 @@
 export PICARD_PATH="/usr/local/bin/picard.jar"
 export GATK_PATH="/usr/local/bin/gatk-package-local.jar"
+export VARSCAN_PATH="/usr/local/bin/varscan.jar"
 export ONCOREPORT_SCRIPT_PATH="/oncoreport/scripts"
 export ONCOREPORT_DATABASES_PATH="/oncoreport/databases"
 export ONCOREPORT_RECALIBRATION_PATH="/oncoreport/ws/storage/app/base_recalibration"
