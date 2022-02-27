@@ -2,16 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/call_lofreq.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/call_mutect.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/call_varscan.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/get_name.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/merge_calls.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/preprocess_alignment.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/trim_and_align.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/Functions.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/MergeInfo.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_liquid_biopsy.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline_tumVSnormal.bash" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/report/mutations.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/installPackages.R" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,7 +230,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="INHERIT" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
@@ -238,11 +238,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/resources/views/livewire/admin/setup" />
       <recent name="$PROJECT_DIR$/app/Http/Livewire/Admin/Setup" />
       <recent name="$PROJECT_DIR$/../scripts/app/container/conf" />
-      <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../scripts/app/container/html_source/report" />
@@ -439,6 +439,7 @@
       <workItem from="1645822649624" duration="624000" />
       <workItem from="1645864137859" duration="13673000" />
       <workItem from="1645916027974" duration="164000" />
+      <workItem from="1645945210924" duration="20769000" />
     </task>
     <servers />
   </component>

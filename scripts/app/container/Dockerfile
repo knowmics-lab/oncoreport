@@ -62,9 +62,9 @@ RUN mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
     cd fastq-pair/ && mkdir build && cd build && cmake .. && make && make install && cd "$PW" && rm -r /oncoreport/tmp/
 
 # Install lofreq
-RUN apt update && apt install -y libtool libgsl-dev && mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
+RUN apt update && apt install -y libtool libgsl-dev libhts-dev && mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
     git clone https://github.com/CSB5/lofreq.git && cd lofreq && ./bootstrap && ./configure && make && make install && \
-    cd "$PW" && rm -r /oncoreport/tmp/ && apt remove -y libgsl-dev libtool && apt-get clean && apt autoclean && \
+    cd "$PW" && rm -r /oncoreport/tmp/ && apt remove -y libgsl-dev libtool libhts-dev && apt-get clean && apt autoclean && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
 # Enable mod_rewrite in apache
