@@ -62,9 +62,9 @@ RUN mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
     cd fastq-pair/ && mkdir build && cd build && cmake .. && make && make install && cd "$PW" && rm -r /oncoreport/tmp/
 
 # Install lofreq
-RUN apt update && apt install libtool libgsl-dev && mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
+RUN apt update && apt install -y libtool libgsl-dev && mkdir -p /oncoreport/tmp/ && PW=$(pwd) && cd /oncoreport/tmp/ && \
     git clone https://github.com/CSB5/lofreq.git && cd lofreq && ./bootstrap && ./configure && make && make install && \
-    cd "$PW" && rm -r /oncoreport/tmp/ && apt remove libgsl-dev libtool && apt-get clean && apt autoclean && \
+    cd "$PW" && rm -r /oncoreport/tmp/ && apt remove -y libgsl-dev libtool && apt-get clean && apt autoclean && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
 # Enable mod_rewrite in apache
@@ -100,10 +100,10 @@ RUN chmod 755 /usr/local/bin/*.sh
 
 # Install R packages
 RUN apt update && \
-    apt install libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 && \
-    apt install r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    apt install -y libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 && \
+    apt install -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
     /usr/bin/Rscript /usr/local/bin/installPackages.R && \
-    apt remove r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
     apt autoclean && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Complete the setup
