@@ -61,6 +61,5 @@ fi
 echo "Selecting PASS variants"
 OUT=$(mktemp)
 awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$RAW_VARIANTS_FILE" >"$OUT" || exit_abnormal "Unable to select PASS variants" false 111
-java -jar "$PICARD_PATH" RenameSampleInVcf INPUT="$OUT" OUTPUT="$PASS_VARIANTS_FILE" \
-  NEW_SAMPLE_NAME="$TUMOR_GROUP_NAME" VALIDATION_STRINGENCY="SILENT" || exit_abnormal "Unable to select PASS variants" false 111
+java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$PASS_VARIANTS_FILE" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to select PASS variants" false 112
 rm "$OUT"
