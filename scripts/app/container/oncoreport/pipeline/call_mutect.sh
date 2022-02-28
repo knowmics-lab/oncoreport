@@ -65,3 +65,8 @@ java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${INDEX}.f
   -O "$FILTERED_VARIANTS_FILE" --stats "${RAW_VARIANTS_FILE}.stats" || exit_abnormal "Unable to filter variants" false 110
 echo "Selecting PASS variants"
 awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$FILTERED_VARIANTS_FILE" >"$PASS_VARIANTS_FILE" || exit_abnormal "Unable to select PASS variants" false 111
+
+if [ -n "$NORMAL_BAM_FILE" ]; then
+  (mv "$PASS_VARIANTS_FILE" "${PASS_VARIANTS_FILE}.orig.vcf" &&
+    python3 "$ONCOREPORT_SCRIPT_PATH/pipeline/grep_sample.py" "${PASS_VARIANTS_FILE}.orig.vcf" "$PASS_VARIANTS_FILE" "$TUMOR_GROUP_NAME") || exit_abnormal "Unable to select tumor sample from output VCF file" false 112
+fi
