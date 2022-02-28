@@ -240,14 +240,13 @@ echo "Removing old folders"
 if [ -n "$ubam" ]; then
   UB=$(basename "${ubam%.*}")
   PATH_FASTQ="$PATH_PROJECT/fastq"
-  mkdir "$PATH_FASTQ"
+  [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"
+  fastq1="$PATH_FASTQ/${UB}_1.fq"
   if [[ "$paired" == "yes" ]]; then
-    bamToFastq -i "$ubam" -fq "$PATH_FASTQ/${UB}.fq" -fq2 "$PATH_FASTQ/${UB}_2.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
-    fastq1=$PATH_FASTQ/${UB}.fq
-    fastq2=$PATH_FASTQ/${UB}_2.fq
-  elif [[ "$paired" == "no" ]]; then
-    bamToFastq -i "$ubam" -fq "$PATH_FASTQ/${UB}.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
-    fastq1="$PATH_FASTQ/${UB}.fq"
+    fastq2="$PATH_FASTQ/${UB}_2.fq"
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$ubam" -1 "$fastq1" -2 "$fastq2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
+  else
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$ubam" -1 "$fastq1" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
   fi
 fi
 
@@ -289,10 +288,8 @@ if [ -n "$ALIGNED_FILE" ]; then
   VAR_INPUTS+=( "-i" "$PATH_VCF_PASS/variants_varscan.vcf" )
 
   echo "Concatenating calls"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VCF_PASS/variants.vcf" "${VAR_INPUTS[@]}"
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VCF_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 106
 fi
-
-exit
 
 if [ -n "$vcf" ]; then
   VCF_NAME=$(basename "$vcf")

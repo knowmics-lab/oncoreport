@@ -256,225 +256,107 @@ echo "Creating temp folders"
 [[ ! -d $PATH_REFERENCE ]] && mkdir "$PATH_REFERENCE"
 [[ ! -d $PATH_OUTPUT ]] && mkdir "$PATH_OUTPUT"
 
+echo "Starting the analysis"
+
+echo "Analyzing TUMOR sample"
+
 #TUMOR ANALYSIS
 if [ -n "$ubamt" ]; then
+  echo "Converting uBAM to FASTQ"
   UB=$(basename "${ubamt%.*}")
   PATH_FASTQ="$PATH_PROJECT/fastq"
-  [[ ! -d "$PATH_FASTQ" ]] && mkdir "$PATH_FASTQ"
+  [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"
+  fastq1="$PATH_FASTQ/${UB}_1.fq"
   if [[ "$paired" == "yes" ]]; then
-    bamToFastq -i "$ubamt" -fq "$PATH_FASTQ/${UB}_1.fq" -fq2 "$PATH_FASTQ/${UB}_2.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
-    fastq1="$PATH_FASTQ/${UB}_1.fq"
     fastq2="$PATH_FASTQ/${UB}_2.fq"
-  elif [[ "$paired" == "no" ]]; then
-    bamToFastq -i "$ubamt" -fq "$PATH_FASTQ/${UB}.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
-    fastq1="$PATH_FASTQ/${UB}.fq"
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$ubamt" -1 "$fastq1" -2 "$fastq2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
+  else
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$ubamt" -1 "$fastq1" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 101
   fi
 fi
 
 if [ -n "$fastq1" ]; then
-  FQ1=$(basename "$fastq1")
-  FASTQ1_NAME=$(basename "${FQ1%.*}")
-  if [ "${FQ1: -3}" == ".gz" ]; then
-    FASTQ1_NAME=$(basename "${FASTQ1_NAME%.*}")
+  FASTQ1_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$fastq1")
+  if [ -n "$fastq2" ]; then
+    FASTQ2_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$fastq2")
   fi
-  if ((threads > 7)); then
-    RT=6
-  else
-    RT=$threads
-  fi
-  if [ -z "$fastq2" ]; then
-    echo "Tumor FASTQ file is not paired."
-    echo "Tumor sample trimming"
-    trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip "$fastq1" || exit_abnormal_code "Unable to trim input file" 102
-    echo "Tumor sample alignment"
-    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM_TUMOR/${FASTQ1_NAME}_trimmed.fq" | samtools view -1 - >"$PATH_SAM_TUMOR/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
-  else
-    echo "Tumor FASTQ file is paired."
-    FQ2=$(basename "$fastq2")
-    FASTQ2_NAME=$(basename "${FQ2%.*}")
-    if [ "${FQ2: -3}" == ".gz" ]; then
-      FASTQ2_NAME=$(basename "${FASTQ2_NAME%.*}")
-    fi
-    echo "Tumor sample trimming"
-    trim_galore -j "$RT" -o "$PATH_TRIM_TUMOR/" --dont_gzip --paired "$fastq1" "$fastq2" || exit_abnormal_code "Unable to trim input file" 102
-    echo "Running fastq-pair on tumor sample"
-    FILE1="$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq"
-    FILE2="$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq"
-    fastq_pair "$FILE1" "$FILE2" || exit_abnormal_code "Unable to perform reads pairing" 102
-    O_FILE1="$PATH_TRIM_TUMOR/${FASTQ1_NAME}_val_1.fq.paired.fq"
-    O_FILE2="$PATH_TRIM_TUMOR/${FASTQ2_NAME}_val_2.fq.paired.fq"
-    if [ ! -f "$O_FILE1" ] || [ ! -f "$O_FILE2" ]; then
-      exit_abnormal_code "Unable to perform reads pairing" 102
-    fi
-    echo "Tumor sample alignment"
-    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - >"$PATH_SAM_TUMOR/aligned.bam" || exit_abnormal_code "Unable to align input file" 103
-  fi
+  ALIGNED_TUMOR_FILE="$PATH_SAM_TUMOR/aligned.bam"
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$fastq1" -2 "$fastq2" -i "$index" -t "$threads" \
+    -r "$PATH_TRIM_TUMOR" -o "$ALIGNED_TUMOR_FILE" || exit_abnormal_code "Unable to perform alignment of tumor sample" 102
 fi
 
-if [ -z "$bamt" ] && [ -z "$vcf" ]; then
-  echo "Adding Read Group"
-  samtools sort -@ "$threads" "$PATH_SAM_TUMOR/aligned.bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_TUMOR/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
-elif [ -n "$bamt" ]; then
+if [ -n "$bamt" ]; then
+  ALIGNED_TUMOR_FILE="$bamt"
   FASTQ1_NAME=$(basename "${bamt%.*}")
-  echo "Validating BAM"
-  java -jar "$PICARD_PATH" ValidateSamFile I="$bamt" MODE=SUMMARY
-  echo "Adding Read Group"
-  samtools sort -@ "$threads" "$bamt" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_TUMOR/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$FASTQ1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 104
 fi
 
-if [ -z "$vcf" ]; then
-  echo "Duplicates Removal"
-  if ((threads > 1)); then
-    # --remove-all-duplicates true
-    java -jar "$GATK_PATH" MarkDuplicatesSpark --input "$PATH_BAM_ANNO_TUMOR/annotated.bam" \
-      --output "$PATH_MARK_DUP_TUMOR/nodup.bam" -M "$PATH_MARK_DUP_TUMOR/marked.txt" \
-      --read-validation-stringency SILENT --optical-duplicate-pixel-distance 2500 \
-      --spark-master "local[$threads]" || exit_abnormal_code "Unable to remove duplicates" 107
-  else
-    #--REMOVE_DUPLICATES true
-    java -jar "$GATK_PATH" MarkDuplicates --INPUT "$PATH_BAM_ANNO_TUMOR/annotated.bam" \
-      --OUTPUT "$PATH_MARK_DUP_TUMOR/nodup.bam" -M "$PATH_MARK_DUP_TUMOR/marked.txt" --VALIDATION_STRINGENCY SILENT \
-      --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 --ASSUME_SORT_ORDER "queryname" --CREATE_INDEX true || exit_abnormal_code "Unable to remove duplicates" 107
-  fi
-  echo "Sorting"
-  java -jar "$GATK_PATH" SortSam --INPUT "$PATH_MARK_DUP_TUMOR/nodup.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
-    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
-    java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT_TUMOR/sorted.bam" \
-      --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 105
-  echo "Recalibrating Quality Scores"
-  java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_TUMOR/sorted.bam" \
-    --use-original-qualities -O "$PATH_BAM_SORT_TUMOR/recal_data.csv" \
-    --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal_code "Unable to compute recalibration data" 191
-  java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_TUMOR/sorted.bam" \
-    -O "$PATH_BAM_SORT_TUMOR/recal.bam" -bqsr "$PATH_BAM_SORT_TUMOR/recal_data.csv" --static-quantized-quals 10 \
-    --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
-    --create-output-bam-md5 --use-original-qualities || exit_abnormal_code "Unable to apply base quality recalibration" 192
-  echo "Reordering"
-  java -jar "$GATK_PATH" ReorderSam -I "$PATH_BAM_SORT_TUMOR/recal.bam" -O "$PATH_BAM_ORD_TUMOR/ordered.bam" \
-    -R "$ONCOREPORT_INDEXES_PATH/${index}.dict" -S true -U true --CREATE_INDEX true \
-    --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to reorder" 106
+if [ -n "$ALIGNED_TUMOR_FILE" ]; then
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/preprocess_alignment.sh" -g "$FASTQ1_NAME" -t "$threads" -i "$index" \
+    -b "$ALIGNED_TUMOR_FILE" -a "$PATH_BAM_ANNO_TUMOR/annotated.bam" -s "$PATH_BAM_SORT_TUMOR/sorted.bam" \
+    -d "$PATH_MARK_DUP_TUMOR/nodup.bam" -m "$PATH_MARK_DUP_TUMOR/marked.txt" \
+    -r "$PATH_BAM_SORT_TUMOR/recal_data.csv" -R "$PATH_BAM_SORT_TUMOR/recal.bam" -o "$PATH_BAM_ORD_TUMOR/ordered.bam" || exit_abnormal_code "Unable to pre-process aligned BAM" 103
 fi
 
+echo "Analyzing NORMAL sample"
 #NORMAL ANALYSIS
 if [ -n "$ubamn" ]; then
+  echo "Converting uBAM to FASTQ"
   UBN=$(basename "${ubamn%.*}")
-  PATH_NORMAL="$PATH_PROJECT/normal"
-  [[ ! -d "$PATH_NORMAL" ]] && mkdir "$PATH_NORMAL"
+  PATH_FASTQ_NORMAL="$PATH_PROJECT/fastq/normal"
+  [ ! -d "$PATH_FASTQ_NORMAL" ] && mkdir -p "$PATH_FASTQ_NORMAL"
+  normal1="$PATH_FASTQ_NORMAL/${UBN}_1.fq"
   if [[ "$paired" == "yes" ]]; then
-    bamToFastq -i "$ubamn" -fq "$PATH_NORMAL/${UBN}_1.fq" -fq2 "$PATH_NORMAL/${UBN}_2.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 108
-    normal1="$PATH_NORMAL/${UBN}_1.fq"
-    normal2="$PATH_NORMAL/${UBN}_2.fq"
-  elif [[ "$paired" == "no" ]]; then
-    bamToFastq -i "$ubamn" -fq "$PATH_NORMAL/${UBN}.fq" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 108
-    normal1="$PATH_NORMAL/${UBN}.fq"
+    normal2="$PATH_FASTQ_NORMAL/${UBN}_2.fq"
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$ubamn" -1 "$normal1" -2 "$normal2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 104
+  else
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$ubamn" -1 "$normal1" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 104
   fi
 fi
 
 if [ -n "$normal1" ]; then
-  NM1=$(basename "$normal1")
-  NORMAL1_NAME=$(basename "${NM1%.*}")
-  if [ "${NM1: -3}" == ".gz" ]; then
-    NORMAL1_NAME=$(basename "${NORMAL1_NAME%.*}")
+  NORMAL1_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$normal1")
+  if [ -n "$normal2" ]; then
+    NORMAL2_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$normal2")
   fi
-  if ((threads > 7)); then
-    RT=6
-  else
-    RT=$threads
-  fi
-  if [ -z "$normal2" ]; then
-    echo "Normal FASTQ file is not paired."
-    echo "Normal sample trimming"
-    trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip "$normal1" || exit_abnormal_code "Unable to trim input file" 109
-    echo "Normal sample alignment"
-    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/$index.fa" "$PATH_TRIM_NORMAL/${NORMAL1_NAME}_trimmed.fq" | samtools view -1 - >"$PATH_SAM_NORMAL/aligned.bam" || exit_abnormal_code "Unable to align input file" 110
-  else
-    echo "Normal FASTQ file is paired."
-    NM2=$(basename "$normal2")
-    NORMAL2_NAME=$(basename "${NM2%.*}")
-    if [ "${NM2: -3}" == ".gz" ]; then
-      NORMAL2_NAME=$(basename "${NORMAL2_NAME%.*}")
-    fi
-    echo "Normal sample trimming"
-    trim_galore -j "$RT" -o "$PATH_TRIM_NORMAL/" --dont_gzip --paired "$normal1" "$normal2" || exit_abnormal_code "Unable to trim input file" 109
-    echo "Running fastq-pair on normal sample"
-    FILE1="$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq"
-    FILE2="$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq"
-    fastq_pair "$FILE1" "$FILE2" || exit_abnormal_code "Unable to perform reads pairing" 109
-    O_FILE1="$PATH_TRIM_NORMAL/${NORMAL1_NAME}_val_1.fq.paired.fq"
-    O_FILE2="$PATH_TRIM_NORMAL/${NORMAL2_NAME}_val_2.fq.paired.fq"
-    if [ ! -f "$O_FILE1" ] || [ ! -f "$O_FILE2" ]; then
-      exit_abnormal_code "Unable to perform reads pairing" 109
-    fi
-    echo "Normal sample alignment"
-    bwa mem -M -t "$threads" "$ONCOREPORT_INDEXES_PATH/${index}.fa" "$O_FILE1" "$O_FILE2" | samtools view -1 - >"$PATH_SAM_NORMAL/aligned.bam" || exit_abnormal_code "Unable to align input file" 110
-  fi
+  ALIGNED_NORMAL_FILE="$PATH_SAM_NORMAL/aligned.bam"
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$normal1" -2 "$normal2" -i "$index" -t "$threads" \
+    -r "$PATH_TRIM_NORMAL" -o "$ALIGNED_NORMAL_FILE" || exit_abnormal_code "Unable to perform alignment of tumor sample" 105
 fi
 
-if [ -z "$bamn" ] && [ -z "$vcf" ]; then
-  echo "Adding Read Group"
-  samtools sort -@ "$threads" "$PATH_SAM_NORMAL/aligned.bam" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_NORMAL/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$NORMAL1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 111
-elif [ -n "$bamn" ]; then
+if [ -n "$bamn" ]; then
+  ALIGNED_NORMAL_FILE="$bamn"
   NORMAL1_NAME=$(basename "${bamn%.*}")
-  echo "Validating BAM"
-  java -jar "$PICARD_PATH" ValidateSamFile I="$bamn" MODE=SUMMARY
-  echo "Adding Read Group"
-  samtools sort -@ "$threads" "$bamn" -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$PATH_BAM_ANNO_NORMAL/annotated.bam" --RGID 0 --RGLB lib1 --RGPL "illumina" --RGPU "SN166" --RGSM "$NORMAL1_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to add read group" 111
+fi
+
+if [ -n "$ALIGNED_NORMAL_FILE" ]; then
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/preprocess_alignment.sh" -g "$NORMAL1_NAME" -t "$threads" -i "$index" \
+    -b "$ALIGNED_NORMAL_FILE" -a "$PATH_BAM_ANNO_NORMAL/annotated.bam" -s "$PATH_BAM_SORT_NORMAL/sorted.bam" \
+    -d "$PATH_MARK_DUP_NORMAL/nodup.bam" -m "$PATH_MARK_DUP_NORMAL/marked.txt" \
+    -r "$PATH_BAM_SORT_NORMAL/recal_data.csv" -R "$PATH_BAM_SORT_NORMAL/recal.bam" -o "$PATH_BAM_ORD_NORMAL/ordered.bam" || exit_abnormal_code "Unable to pre-process aligned BAM" 106
 fi
 
 if [ -z "$vcf" ]; then
-  echo "Duplicates Removal"
-  if ((threads > 1)); then
-    # --remove-all-duplicates true
-    java -jar "$GATK_PATH" MarkDuplicatesSpark --input "$PATH_BAM_ANNO_NORMAL/annotated.bam" \
-      --output "$PATH_MARK_DUP_NORMAL/nodup.bam" -M "$PATH_MARK_DUP_NORMAL/marked.txt" \
-      --read-validation-stringency SILENT --optical-duplicate-pixel-distance 2500 \
-      --spark-master "local[$threads]" || exit_abnormal_code "Unable to remove duplicates" 114
-  else
-    # --REMOVE_DUPLICATES true
-    java -jar "$GATK_PATH" MarkDuplicates --INPUT "$PATH_BAM_ANNO_NORMAL/annotated.bam" \
-      --OUTPUT "$PATH_MARK_DUP_NORMAL/nodup.bam" -M "$PATH_MARK_DUP_NORMAL/marked.txt" --VALIDATION_STRINGENCY SILENT \
-      --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 --ASSUME_SORT_ORDER "queryname" --CREATE_INDEX true || exit_abnormal_code "Unable to remove duplicates" 114
-  fi
-  echo "Sorting"
-  java -jar "$GATK_PATH" SortSam --INPUT "$PATH_MARK_DUP_NORMAL/nodup.bam" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
-    --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
-    java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$PATH_BAM_SORT_NORMAL/sorted.bam" \
-      --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal_code "Unable to sort" 112
-  echo "Recalibrating Quality Scores"
-  java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_NORMAL/sorted.bam" \
-    --use-original-qualities -O "$PATH_BAM_SORT_NORMAL/recal_data.csv" \
-    --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal_code "Unable to compute recalibration data" 193
-  java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_SORT_NORMAL/sorted.bam" \
-    -O "$PATH_BAM_SORT_NORMAL/recal.bam" -bqsr "$PATH_BAM_SORT_NORMAL/recal_data.csv" --static-quantized-quals 10 \
-    --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
-    --create-output-bam-md5 --use-original-qualities || exit_abnormal_code "Unable to apply base quality recalibration" 193
-  echo "Reordering"
-  java -jar "$GATK_PATH" ReorderSam -I "$PATH_BAM_SORT_NORMAL/recal.bam" -O "$PATH_BAM_ORD_NORMAL/ordered.bam" \
-    -R "$ONCOREPORT_INDEXES_PATH/${index}.dict" -S true -U true --CREATE_INDEX true \
-    --VALIDATION_STRINGENCY SILENT || exit_abnormal_code "Unable to reorder" 113
-fi
+  VAR_INPUTS=()
 
-# VCF ANALYSIS
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_mutect.sh" -i "$index" -t "$PATH_BAM_ORD_TUMOR/ordered.bam" \
+    -T "$FASTQ1_NAME" -n "$PATH_BAM_ORD_NORMAL/ordered.bam" -N "$NORMAL1_NAME" \
+    -v "$PATH_VCF_MUT/variants_mutect.vcf" -f "$PATH_VCF_FILTERED/variants_mutect.vcf" \
+    -p "$PATH_VCF_PASS/variants_mutect.vcf" -d "$DOWNSAMPLE" || exit_abnormal_code "Unable to call variants with Mutect2" 107
+  VAR_INPUTS+=( "-i" "$PATH_VCF_PASS/variants_mutect.vcf" )
 
-if [ -z "$vcf" ]; then
-  echo "Variant Calling"
-  if [ "$DOWNSAMPLE" == "1" ]; then
-    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD_TUMOR/ordered.bam" \
-      -tumor "$FASTQ1_NAME" -I "$PATH_BAM_ORD_NORMAL/ordered.bam" -normal "$NORMAL1_NAME" \
-      -O "$PATH_VCF_MUT/variants.vcf" || exit_abnormal_code "Unable to call variants" 115
-  else
-    java -jar "$GATK_PATH" Mutect2 -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$PATH_BAM_ORD_TUMOR/ordered.bam" \
-      -tumor "$FASTQ1_NAME" -I "$PATH_BAM_ORD_NORMAL/ordered.bam" -normal "$NORMAL1_NAME" \
-      -O "$PATH_VCF_MUT/variants.vcf" --max-reads-per-alignment-start 0 || exit_abnormal_code "Unable to call variants" 115
-  fi
-  echo "Variant Filtering"
-  java -jar "$GATK_PATH" FilterMutectCalls -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -V "$PATH_VCF_MUT/variants.vcf" \
-    -O "$PATH_VCF_FILTERED/variants.vcf" --stats "$PATH_VCF_MUT/variants.vcf.stats" || exit_abnormal_code "Unable to filter variants" 116
-  echo "PASS Selection"
-  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$PATH_VCF_FILTERED/variants.vcf" >"$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to select PASS variants" 117
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_lofreq.sh" -@ "$threads" -i "$index" -t "$PATH_BAM_ORD_TUMOR/ordered.bam" \
+    -T "$FASTQ1_NAME" -n "$PATH_BAM_ORD_NORMAL/ordered.bam" -v "$PATH_VCF_MUT/variants_lofreq.vcf" -p "$PATH_VCF_PASS/variants_lofreq.vcf" || exit_abnormal_code "Unable to call variants with LoFreq" 108
+  VAR_INPUTS+=( "-i" "$PATH_VCF_PASS/variants_lofreq.vcf" )
+
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_varscan.sh" -i "$index" -t "$PATH_BAM_ANNO_TUMOR/annotated.bam" \
+    -T "$FASTQ1_NAME" -n "$PATH_BAM_ANNO_NORMAL/annotated.bam" -v "$PATH_VCF_MUT/variants_varscan.vcf" -p "$PATH_VCF_PASS/variants_varscan.vcf" || exit_abnormal_code "Unable to call variants with VarScan" 109
+  VAR_INPUTS+=( "-i" "$PATH_VCF_PASS/variants_varscan.vcf" )
+
+  echo "Concatenating calls"
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VCF_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 110
 else
   FASTQ1_NAME=$(basename "$vcf" ".vcf")
-  cp "$vcf" "$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to copy VCF file" 118
+  cp "$vcf" "$PATH_VCF_PASS/variants.vcf" || exit_abnormal_code "Unable to copy VCF file" 111
 fi
 
 type=tumnorm
