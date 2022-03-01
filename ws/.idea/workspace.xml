@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/grep_sample.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/call_mutect.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/call_mutect.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/merge_calls.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/oncoreport/pipeline/merge_calls.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -435,6 +434,7 @@
       <workItem from="1645945210924" duration="20769000" />
       <workItem from="1646034644251" duration="8147000" />
       <workItem from="1646068077955" duration="9886000" />
+      <workItem from="1646113423100" duration="930000" />
     </task>
     <servers />
   </component>

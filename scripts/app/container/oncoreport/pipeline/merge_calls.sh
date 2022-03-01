@@ -34,12 +34,12 @@ fi
 INPUTS_COMPRESSED=()
 for ((i = 0; i < INPUTS_COUNT; i++)); do
   IF="${INPUTS[i]}"
-  bgzip -c "$IF" >"$IF.gz" || exit_abnormal "Failed to compress $IF" true 103
-  bcftools index "$IF.gz" || exit_abnormal "Failed to index $IF.gz" true 104
+  bgzip -c "$IF" >"$IF.gz" || exit_abnormal "Failed to compress $IF" false 103
+  bcftools index "$IF.gz" || exit_abnormal "Failed to index $IF.gz" false 104
   INPUTS_COMPRESSED+=("$IF.gz")
 done
 
-bcftools concat -a -D -O v -o "$OUTPUT" "${INPUTS_COMPRESSED[@]%.vcf}" || exit_abnormal "Failed to concatenate" true 105
+bcftools concat -a -D -O v -o "$OUTPUT" "${INPUTS_COMPRESSED[@]%.vcf}" || exit_abnormal "Failed to concatenate" false 105
 
 for ((i = 0; i < INPUTS_COUNT; i++)); do
   IF="${INPUTS_COMPRESSED[i]}"
