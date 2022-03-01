@@ -68,10 +68,10 @@ if (nrow(offlabel.annotations) > 0) {
                  "Type", "Details", "Trials", "Evidence_statement", "References", "Score", "AIFA", "EMA", "FDA", 
                  "Publication year", "id")
   color_column <- 12
-  if (tumor_type == "tumnorm") {
-    es$Type <- NULL
-    color_column <- 11
-  }
+  # if (tumor_type == "tumnorm") {
+  #   es$Type <- NULL
+  #   color_column <- 11
+  # }
   last_evidence <<- nrow(es)
   if (nrow(es) == 0) return (NULL)
   if (is.null(sorted_evidences)) sorted_evidences <<- es

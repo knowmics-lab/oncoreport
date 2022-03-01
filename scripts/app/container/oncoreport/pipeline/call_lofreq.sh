@@ -46,13 +46,18 @@ else
   echo "Performing tumor-vs-normal analysis"
   TMPDIR=$(mktemp -d)
   mkdir -p "$TMPDIR"
-  lofreq somatic --threads "$THREADS" -t "$TUMOR_BAM_FILE" -n "$NORMAL_BAM_FILE" -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" -o "$TMPDIR/out_" || exit_abnormal "Unable to call variants" false 107
-  [ ! -f "$TMPDIR/out_somatic_final.snvs.vcf.gz" ] && exit_abnormal "Unable to find variants file" false 108
-  bcftools view -Ov -o "$RAW_VARIANTS_FILE" "$TMPDIR/out_somatic_final.snvs.vcf.gz" || exit_abnormal "Unable to convert SNV file" false 109
+  lofreq somatic --threads "$THREADS" -t "$TUMOR_BAM_FILE" -n "$NORMAL_BAM_FILE" -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" \
+    --call-indels -o "$TMPDIR/out_" || exit_abnormal "Unable to call variants" false 107
+  [ ! -f "$TMPDIR/out_somatic_final.snvs.vcf.gz" ] && exit_abnormal "Unable to find SNV file" false 108
+  [ ! -f "$TMPDIR/out_somatic_final.indels.vcf.gz" ] && exit_abnormal "Unable to find INDELS file" false 109
+  bcftools concat -Ov "$TMPDIR/out_somatic_final.snvs.vcf.gz" "$TMPDIR/out_somatic_final.indels.vcf.gz" \
+    -o "$RAW_VARIANTS_FILE" || exit_abnormal "Unable to concatenate SNV and INDEL files" false 110
   rm -r "$TMPDIR"
 fi
 echo "Selecting PASS variants"
-OUT=$(mktemp)
+OUT=$(mktemp --suffix=".vcf")
+OUT1=$(mktemp --suffix=".vcf")
 awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$RAW_VARIANTS_FILE" >"$OUT" || exit_abnormal "Unable to select PASS variants" false 110
-java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$PASS_VARIANTS_FILE" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to select PASS variants" false 111
-rm "$OUT"
+java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$OUT1" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to rename sample in VCF file" false 112
+java -jar "$GATK_PATH" FixVcfHeader -I "$OUT1" -O "$PASS_VARIANTS_FILE" || exit_abnormal "Unable to fix final VCF file" false 113
+rm "$OUT" "$OUT1"
