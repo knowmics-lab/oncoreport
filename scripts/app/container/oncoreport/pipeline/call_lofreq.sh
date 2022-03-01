@@ -38,28 +38,21 @@ if [ -z "$NORMAL_BAM_FILE" ]; then
   echo "Performing tumor-only analysis"
   if ((THREADS > 1)); then
     lofreq call-parallel --pp-threads "$THREADS" --call-indels -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" \
-      -o "$RAW_VARIANTS_FILE" "$TUMOR_BAM_FILE" || exit_abnormal "Unable to call variants" true 107
+      -o "$RAW_VARIANTS_FILE" "$TUMOR_BAM_FILE" || exit_abnormal "Unable to call variants" false 107
   else
-    lofreq call -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" --call-indels -o "$RAW_VARIANTS_FILE" "$TUMOR_BAM_FILE" || exit_abnormal "Unable to call variants" true 107
+    lofreq call -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" --call-indels -o "$RAW_VARIANTS_FILE" "$TUMOR_BAM_FILE" || exit_abnormal "Unable to call variants" false 107
   fi
 else
   echo "Performing tumor-vs-normal analysis"
-
   TMPDIR=$(mktemp -d)
   mkdir -p "$TMPDIR"
-  lofreq somatic --threads 12 -t "$TUMOR_BAM_FILE" -n "$NORMAL_BAM_FILE" -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" \
-    --call-indels -o "$TMPDIR/out_" || exit_abnormal "Unable to call variants" true 107
-
-  [ ! -f "$TMPDIR/out_somatic_final.snvs.vcf.gz" ] && exit_abnormal "Unable to find SNV file" true 108
-  [ ! -f "$TMPDIR/out_somatic_final.indels.vcf.gz" ] && exit_abnormal "Unable to find INDELS file" true 109
-
-  bcftools concat -a -D "$TMPDIR/out_somatic_final.snvs.vcf.gz" "$TMPDIR/out_somatic_final.indels.vcf.gz" -O v \
-    -o "$RAW_VARIANTS_FILE" || exit_abnormal "Unable to concatenate SNV and INDEL files" true 110
-
+  lofreq somatic --threads "$THREADS" -t "$TUMOR_BAM_FILE" -n "$NORMAL_BAM_FILE" -f "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" -o "$TMPDIR/out_" || exit_abnormal "Unable to call variants" false 107
+  [ ! -f "$TMPDIR/out_somatic_final.snvs.vcf.gz" ] && exit_abnormal "Unable to find variants file" false 108
+  bcftools view -Ov -o "$RAW_VARIANTS_FILE" "$TMPDIR/out_somatic_final.snvs.vcf.gz" || exit_abnormal "Unable to convert SNV file" false 109
   rm -r "$TMPDIR"
 fi
 echo "Selecting PASS variants"
 OUT=$(mktemp)
-awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$RAW_VARIANTS_FILE" >"$OUT" || exit_abnormal "Unable to select PASS variants" false 111
-java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$PASS_VARIANTS_FILE" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to select PASS variants" false 112
+awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$RAW_VARIANTS_FILE" >"$OUT" || exit_abnormal "Unable to select PASS variants" false 110
+java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$PASS_VARIANTS_FILE" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to select PASS variants" false 111
 rm "$OUT"
