@@ -320,15 +320,15 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$name" -s "$surname" -c "$i
   -T "$stage" -D "$drug_path" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$depth" -F "$AF" || exit_abnormal_code "Unable to create report" 123
 
 echo "Removing folders"
-#{ rm -r "$PATH_TRIM" &&
-#  rm -r "$PATH_SAM" &&
-#  rm -r "$PATH_BAM_ANNO" &&
-#  rm -r "$PATH_BAM_SORT" &&
-#  rm -r "$PATH_VCF_TO_CONVERT" &&
-#  rm -r "$PATH_VCF_DP" &&
-#  rm -r "$PATH_VCF_IN_SN" &&
-#  rm -r "$PATH_VCF_AF" &&
-#  rm -r "$PATH_VCF_MERGE" &&
-#  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 124
+{ rm -r "$PATH_TRIM" &&
+  rm -r "$PATH_SAM" &&
+  rm -r "$PATH_BAM_ANNO" &&
+  rm -r "$PATH_BAM_SORT" &&
+  rm -r "$PATH_VCF_TO_CONVERT" &&
+  rm -r "$PATH_VCF_DP" &&
+  rm -r "$PATH_VCF_IN_SN" &&
+  rm -r "$PATH_VCF_AF" &&
+  rm -r "$PATH_VCF_MERGE" &&
+  chmod -R 777 "$PATH_PROJECT"; } || exit_abnormal_code "Unable to clean up folders" 124
 
 echo "Done"
