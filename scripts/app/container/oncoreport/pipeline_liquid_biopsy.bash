@@ -72,15 +72,9 @@ while getopts t:1:2:P:C:i:n:s:g:d:D:a:c:l:S:T:G:E:A:M:L:V:p flag; do
   2) INPUT_FILE_2="${OPTARG}" ;;
   P) PROJECT_DIR="${OPTARG}" ;;
   C)
-    if [[ "${OPTARG}" == "mutect" ]]; then
-      MUTECT_ENABLE=true
-    elif [[ "${OPTARG}" == "lofreq" ]]; then
-      LOFREQ_ENABLE=true
-    elif [[ "${OPTARG}" == "varscan" ]]; then
-      VARSCAN_ENABLE=true
-    else
-      exit_abnormal_usage "Invalid caller: ${OPTARG}"
-    fi
+    [[ "${OPTARG}" == "mutect" ]] && MUTECT_ENABLE=true
+    [[ "${OPTARG}" == "lofreq" ]] && LOFREQ_ENABLE=true
+    [[ "${OPTARG}" == "varscan" ]] && VARSCAN_ENABLE=true
     ;;
   i) PATIENT_ID="${OPTARG}" ;;
   n) PATIENT_NAME="${OPTARG}" ;;
@@ -103,6 +97,8 @@ while getopts t:1:2:P:C:i:n:s:g:d:D:a:c:l:S:T:G:E:A:M:L:V:p flag; do
   esac
 done
 
+[[ "$INPUT_TYPE" != "vcf" ]] && [[ "$MUTECT_ENABLE" == "false" ]] && [[ "$LOFREQ_ENABLE" == "false" ]] &&
+  [[ "$VARSCAN_ENABLE" == "false" ]] && exit_abnormal_usage "Error: you must enable a variant caller when input type is '$INPUT_TYPE'."
 [[ "$INPUT_TYPE" != "fastq" ]] && [[ "$INPUT_TYPE" != "bam" ]] && [[ "$INPUT_TYPE" != "vcf" ]] && [[ "$INPUT_TYPE" != "ubam" ]] && exit_abnormal_usage "Error: input must be one of 'fastq', 'bam', 'vcf', 'ubam'."
 [ -z "$INPUT_FILE_1" ] || [ ! -f "$INPUT_FILE_1" ] && exit_abnormal_usage "Error: input file 1 is required."
 [[ "$PATIENT_SEX" != "m" ]] && [[ "$PATIENT_SEX" != "f" ]] && exit_abnormal_usage "Error: sex must be either 'm' or 'f'."
@@ -214,18 +210,14 @@ if [[ "$INPUT_TYPE" == "bam" ]]; then
   RAW_VARIANTS=true
 fi
 
-[[ "$INPUT_TYPE" == "vcf" ]] && exit_abnormal_code "Input is not a VCF file. This should never happen!!" 107
+[[ "$INPUT_TYPE" != "vcf" ]] && exit_abnormal_code "Input is not a VCF file. This should never happen!!" 107
 FILE_1_NAME=$(basename "$FILE_1_NAME" ".varianttable")
 TYPE="biopsy"
 
 echo "Pre-processing variants"
-if [[ "${INPUT_FILE_1: -17}" == ".varianttable.txt" ]]; then
-  Rscript "$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R" "$DEPTH_FILTER" "$AF_FILTER" "$INPUT_FILE_1" \
-    "$FILE_1_NAME" "$PROJECT_DIR" || exit_abnormal_code "Unable to process Illumina VariantTable" 107
-else
-  Rscript "$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R" -i "$INPUT_FILE_1" -o "$PATH_TXT/variants.txt" -d "$DEPTH_FILTER" \
-    -a "$AF_FILTER" || exit_abnormal_code "Unable to pre-process variants" 108
-fi
+PROCESSING_SCRIPT="$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R"
+[[ "${INPUT_FILE_1: -17}" == ".varianttable.txt" ]] && PROCESSING_SCRIPT="$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R"
+Rscript "$PROCESSING_SCRIPT" -i "$INPUT_FILE_1" -o "$PATH_TXT/variants.txt" -d "$DEPTH_FILTER" -a "$AF_FILTER" || exit_abnormal_code "Unable to pre-process variants" 108
 
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$GENOME" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
