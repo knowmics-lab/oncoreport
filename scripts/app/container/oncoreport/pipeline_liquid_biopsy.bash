@@ -97,12 +97,12 @@ while getopts t:1:2:P:C:i:n:s:g:d:D:a:c:l:S:T:G:E:A:M:L:V:p flag; do
   esac
 done
 
+[[ "$INPUT_TYPE" != "fastq" ]] && [[ "$INPUT_TYPE" != "bam" ]] && [[ "$INPUT_TYPE" != "vcf" ]] && [[ "$INPUT_TYPE" != "ubam" ]] && exit_abnormal_usage "Error: input type must be one of 'fastq', 'bam', 'vcf', 'ubam'."
 [[ "$INPUT_TYPE" != "vcf" ]] && [[ "$MUTECT_ENABLE" == "false" ]] && [[ "$LOFREQ_ENABLE" == "false" ]] &&
   [[ "$VARSCAN_ENABLE" == "false" ]] && exit_abnormal_usage "Error: you must enable a variant caller when input type is '$INPUT_TYPE'."
-[[ "$INPUT_TYPE" != "fastq" ]] && [[ "$INPUT_TYPE" != "bam" ]] && [[ "$INPUT_TYPE" != "vcf" ]] && [[ "$INPUT_TYPE" != "ubam" ]] && exit_abnormal_usage "Error: input must be one of 'fastq', 'bam', 'vcf', 'ubam'."
-[ -z "$INPUT_FILE_1" ] || [ ! -f "$INPUT_FILE_1" ] && exit_abnormal_usage "Error: input file 1 is required."
-[[ "$PATIENT_SEX" != "m" ]] && [[ "$PATIENT_SEX" != "f" ]] && exit_abnormal_usage "Error: sex must be either 'm' or 'f'."
+{ [ -z "$INPUT_FILE_1" ] || [ ! -f "$INPUT_FILE_1" ]; } && exit_abnormal_usage "Error: input file 1 is required."
 [[ "$INPUT_TYPE" == "fastq" ]] && [[ "$PAIRED" == "true" ]] && { [ -z "$INPUT_FILE_2" ] || [ ! -f "$INPUT_FILE_2" ]; } && exit_abnormal_usage "Error: input file 2 is required."
+[[ "$PATIENT_SEX" != "m" ]] && [[ "$PATIENT_SEX" != "f" ]] && exit_abnormal_usage "Error: sex must be either 'm' or 'f'."
 [[ "$GENOME" != "hg19" ]] && [[ "$GENOME" != "hg38" ]] && exit_abnormal_usage "Error: genome must be either 'hg19' or 'hg38'."
 [ -z "$PROJECT_DIR" ] && exit_abnormal_usage "Error: project directory is required."
 [ -z "$PATIENT_ID" ] && exit_abnormal_usage "Error: patient id is required."
@@ -156,7 +156,7 @@ if [[ "$INPUT_TYPE" == "ubam" ]]; then
   UBAM_FILE="$INPUT_FILE_1"
   { [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"; } || exit_abnormal_code "Unable to create FASTQ directory" 100
   INPUT_FILE_1="$PATH_FASTQ/${UB}_1.fq"
-  if [[ "$PAIRED" == "yes" ]]; then
+  if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${UB}_2.fq"
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
   else
@@ -165,7 +165,7 @@ if [[ "$INPUT_TYPE" == "ubam" ]]; then
   INPUT_TYPE="fastq"
 fi
 
-echo "Starting the analysis"
+echo "Starting analysis"
 FILE_1_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_1")
 if [[ "$INPUT_TYPE" == "fastq" ]]; then
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
