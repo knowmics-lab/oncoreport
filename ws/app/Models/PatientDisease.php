@@ -50,13 +50,13 @@ class PatientDisease extends Model
     {
         $stage = "";
         if ($this->T) {
-            $stage .= 't' . $this->T;
+            $stage .= 'T: ' . $this->T;
         }
         if ($this->N) {
-            $stage .= 'n' . $this->N;
+            $stage .= 'N: ' . $this->N;
         }
         if ($this->M) {
-            $stage .= 'm' . $this->M;
+            $stage .= 'M: ' . $this->M;
         }
 
         return $stage;

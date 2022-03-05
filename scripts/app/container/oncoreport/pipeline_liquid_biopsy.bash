@@ -158,9 +158,9 @@ if [[ "$INPUT_TYPE" == "ubam" ]]; then
   INPUT_FILE_1="$PATH_FASTQ/${UB}_1.fq"
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 102
   else
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 100
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert uBAM to FASTQ" 102
   fi
   INPUT_TYPE="fastq"
 fi
@@ -169,7 +169,7 @@ echo "Starting analysis"
 FILE_1_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_1")
 if [[ "$INPUT_TYPE" == "fastq" ]]; then
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
-    -t "$THREADS" -r "$PATH_TRIM" -o "$PATH_PREPROCESS/aligned_raw.bam" || exit_abnormal_code "Unable to perform alignment of tumor sample" 101
+    -t "$THREADS" -r "$PATH_TRIM" -o "$PATH_PREPROCESS/aligned_raw.bam" || exit_abnormal_code "Unable to perform alignment of tumor sample" 103
   INPUT_FILE_1="$PATH_PREPROCESS/aligned_raw.bam"
   INPUT_TYPE="bam"
 fi
@@ -179,56 +179,56 @@ if [[ "$INPUT_TYPE" == "bam" ]]; then
 
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/preprocess_alignment.sh" -g "$FILE_1_NAME" -t "$THREADS" -i "$GENOME" \
     -b "$INPUT_FILE_1" -a "$PATH_PREPROCESS/annotated.bam" -s "$PATH_PREPROCESS/sorted.bam" \
-    -r "$PATH_PREPROCESS/recal_data.csv" -R "$PATH_PREPROCESS/recal.bam" -o "$PATH_PREPROCESS/ordered.bam" || exit_abnormal_code "Unable to pre-process aligned BAM" 102
+    -r "$PATH_PREPROCESS/recal_data.csv" -R "$PATH_PREPROCESS/recal.bam" -o "$PATH_PREPROCESS/ordered.bam" || exit_abnormal_code "Unable to pre-process aligned BAM" 104
 
   VAR_INPUTS=()
 
   if [[ "$MUTECT_ENABLE" == "true" ]]; then
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_mutect.sh" -i "$GENOME" -t "$PATH_PREPROCESS/ordered.bam" \
       -T "$FILE_1_NAME" -v "$PATH_VARIANTS_RAW/variants_mutect.vcf" -f "$PATH_VARIANTS_RAW/variants_mutect_with_filter.vcf" \
-      -p "$PATH_VARIANTS_PASS/variants_mutect.vcf" "${MUTECT_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with Mutect2" 103
+      -p "$PATH_VARIANTS_PASS/variants_mutect.vcf" "${MUTECT_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with Mutect2" 105
     VAR_INPUTS+=("-i" "$PATH_VARIANTS_PASS/variants_mutect.vcf")
   fi
 
   if [[ "$LOFREQ_ENABLE" == "true" ]]; then
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_lofreq.sh" -@ "$THREADS" -i "$GENOME" -t "$PATH_PREPROCESS/ordered.bam" \
-      -T "$FILE_1_NAME" -v "$PATH_VARIANTS_RAW/variants_lofreq.vcf" -p "$PATH_VARIANTS_PASS/variants_lofreq.vcf" "${LOFREQ_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with LoFreq" 104
+      -T "$FILE_1_NAME" -v "$PATH_VARIANTS_RAW/variants_lofreq.vcf" -p "$PATH_VARIANTS_PASS/variants_lofreq.vcf" "${LOFREQ_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with LoFreq" 106
     VAR_INPUTS+=("-i" "$PATH_VARIANTS_PASS/variants_lofreq.vcf")
   fi
 
   if [[ "$VARSCAN_ENABLE" == "true" ]]; then
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_varscan.sh" -i "$GENOME" -t "$PATH_PREPROCESS/annotated.bam" \
-      -T "$FILE_1_NAME" -v "$PATH_VARIANTS_RAW/variants_varscan.vcf" -p "$PATH_VARIANTS_PASS/variants_varscan.vcf" "${VARSCAN_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with VarScan" 105
+      -T "$FILE_1_NAME" -v "$PATH_VARIANTS_RAW/variants_varscan.vcf" -p "$PATH_VARIANTS_PASS/variants_varscan.vcf" "${VARSCAN_OPTIONS[@]}" || exit_abnormal_code "Unable to call variants with VarScan" 107
     VAR_INPUTS+=("-i" "$PATH_VARIANTS_PASS/variants_varscan.vcf")
   fi
 
   echo "Concatenating calls"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VARIANTS_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 106
+  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VARIANTS_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 108
 
   INPUT_FILE_1="$PATH_VARIANTS_PASS/variants.vcf"
   INPUT_TYPE="vcf"
   RAW_VARIANTS=true
 fi
 
-[[ "$INPUT_TYPE" != "vcf" ]] && exit_abnormal_code "Input is not a VCF file. This should never happen!!" 107
+[[ "$INPUT_TYPE" != "vcf" ]] && exit_abnormal_code "Input is not a VCF file. This should never happen!!" 109
 FILE_1_NAME=$(basename "$FILE_1_NAME" ".varianttable")
 TYPE="biopsy"
 
 echo "Pre-processing variants"
 PROCESSING_SCRIPT="$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R"
 [[ "${INPUT_FILE_1: -17}" == ".varianttable.txt" ]] && PROCESSING_SCRIPT="$ONCOREPORT_SCRIPT_PATH/ProcessVariantTable.R"
-Rscript "$PROCESSING_SCRIPT" -i "$INPUT_FILE_1" -o "$PATH_TXT/variants.txt" -d "$DEPTH_FILTER" -a "$AF_FILTER" || exit_abnormal_code "Unable to pre-process variants" 108
+Rscript "$PROCESSING_SCRIPT" -i "$INPUT_FILE_1" -o "$PATH_TXT/variants.txt" -d "$DEPTH_FILTER" -a "$AF_FILTER" || exit_abnormal_code "Unable to pre-process variants" 110
 
 echo "Annotation of VCF files"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$GENOME" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
-  -p "$PROJECT_DIR" -s "$FILE_1_NAME" -t "$PATIENT_TUMOR" || exit_abnormal_code "Unable to prepare report input files" 109
-php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$PATIENT_TUMOR" "$PROJECT_DIR" || exit_abnormal_code "Unable to prepare ESMO guidelines" 110
+  -p "$PROJECT_DIR" -s "$FILE_1_NAME" -t "$PATIENT_TUMOR" || exit_abnormal_code "Unable to prepare report input files" 111
+php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$PATIENT_TUMOR" "$PROJECT_DIR" || exit_abnormal_code "Unable to prepare ESMO guidelines" 112
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$PATIENT_NAME" -s "$PATIENT_SURNAME" -c "$PATIENT_ID" \
   -g "$PATIENT_SEX" -a "$PATIENT_AGE" -t "$PATIENT_TUMOR" -f "$FILE_1_NAME" -p "$PROJECT_DIR" \
   -d "$ONCOREPORT_DATABASES_PATH" -A "$TYPE" -C "$PATIENT_CITY" -P "$PATIENT_TELEPHONE" \
   -T "$PATIENT_STAGE" -D "$PATIENT_DRUGS" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$DEPTH_FILTER" \
-  -F "$AF_FILTER" || exit_abnormal_code "Unable to create report" 111
+  -F "$AF_FILTER" || exit_abnormal_code "Unable to create report" 113
 
 echo "Archiving results"
 [[ "$RAW_VARIANTS" == "true" ]] && tar -zcf "$PROJECT_DIR/variants_raw.tgz" "$PATH_VARIANTS_RAW"
@@ -240,6 +240,6 @@ echo "Removing folders"
 { rm -r "$PATH_TRIM" &&
   rm -r "$PATH_VARIANTS_RAW" &&
   rm -r "$PATH_VARIANTS_PASS" &&
-  chmod -R 777 "$PROJECT_DIR"; } || exit_abnormal_code "Unable to clean up folders" 112
+  chmod -R 777 "$PROJECT_DIR"; } || exit_abnormal_code "Unable to clean up folders" 114
 
 echo "Done"

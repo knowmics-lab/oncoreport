@@ -14,6 +14,7 @@ exit_abnormal() {
   exit "$3"
 }
 
+DOWNSAMPLE=0
 while getopts @:i:t:T:n:N:v:f:p:d: flag; do
   case "${flag}" in
   i) INDEX="${OPTARG}" ;;
