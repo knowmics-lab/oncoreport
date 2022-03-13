@@ -14,11 +14,15 @@ type SaveMenuProps = {
 const resultsMenuItems: [string, string][] = [
   ['reportZipFile', 'Report Archive'],
   ['textOutputFiles', 'RAW Annotated Output Archive'],
-  ['vcfPASSOutputFile', 'VCF Output File (Passed Variants only)'],
-  ['vcfOutputFile', 'VCF Output File'],
-  ['bamOutputFile', 'Aligned BAM File'],
-  ['tumorBamOutputFile', 'Aligned Tumor Sample BAM File'],
-  ['normalBamOutputFile', 'Aligned Normal Sample BAM File'],
+  ['variantsFINALOutputFile', 'VCF file used for the annotation'],
+  ['variantsPASSOutputFile', 'Archive with filtered variants'],
+  ['variantsRAWCallFile', 'Archive with RAW call outputs'],
+  ['bamRawFile', 'RAW Tumor BAM File'],
+  ['bamFinalFile', 'Tumor BAM File sorted and recalibrated'],
+  ['tumorBamRawFile', 'RAW Tumor Sample BAM File'],
+  ['normalBamRawFile', 'RAW Normal Sample BAM File'],
+  ['tumorBamFinalFile', 'Tumor Sample BAM File sorted and recalibrated'],
+  ['normalBamFinalFile', 'Normal Sample BAM File sorted and recalibrated'],
 ];
 
 export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
