@@ -327,25 +327,15 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             return false;
         }
         $paired = (bool)$this->model->getParameter('paired', false);
-        if ($this->validateFileParameter('vcf')) {
-            return true;
+        if (!$this->validateFileParameter('file1')) {
+            return false;
         }
-        if ($this->validateFileParameter('bam')) {
-            return true;
-        }
-        if ($this->validateFileParameter('ubam')) {
-            return true;
-        }
-        if ($this->validateFileParameter('fastq1')) {
-            if (!$paired) {
-                return true;
-            }
-            if ($this->validateFileParameter('fastq2')) {
-                return true;
-            }
+        if ($paired && $this->model->getParameter('type', 'fastq') === 'fastq' &&
+            !$this->validateFileParameter('file2')) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     /**

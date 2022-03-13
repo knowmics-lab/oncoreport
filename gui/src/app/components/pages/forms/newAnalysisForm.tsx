@@ -106,7 +106,11 @@ type LocalData = {
     comparison: Comparison;
     value: number;
   };
+  enableMutect?: boolean;
+  enableLoFreq?: boolean;
+  enableVarScan?: boolean;
   downsampling?: boolean;
+  allVariants?: boolean;
   firstFile?: File;
   secondFile?: File;
   thirdFile?: File;
@@ -186,7 +190,7 @@ type Step1Prop = {
 
 function Step1({ values }: Step1Prop) {
   const classes = useStyles();
-  const { type } = values;
+  const { type, enableMutect, enableVarScan, allVariants } = values;
 
   return (
     <>
@@ -210,7 +214,6 @@ function Step1({ values }: Step1Prop) {
         )}
       </Typography>
       <SwitchField label="Are reads paired-end?" name="paired" />
-      <SwitchField label="Enable Mutect2 downsampling?" name="downsampling" />
       <SelectField
         label="Analysis Type"
         name="genome"
@@ -220,6 +223,83 @@ function Step1({ values }: Step1Prop) {
         }}
         required
       />
+      <FormGroup row className={classes.formControl}>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="baseline"
+          spacing={1}
+        >
+          <Grid item xs={6}>
+            <SwitchField label="Enable Mutect2?" name="enableMutect" />
+          </Grid>
+          <Grid item xs={6}>
+            {enableMutect && (
+              <SwitchField label="Enable downsampling?" name="downsampling" />
+            )}
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="baseline"
+          spacing={1}
+        >
+          <Grid item xs={6}>
+            <SwitchField label="Enable LoFreq?" name="enableLoFreq" />
+          </Grid>
+          <Grid item xs={6} />
+        </Grid>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="baseline"
+          spacing={1}
+        >
+          <Grid item xs={6}>
+            <SwitchField label="Enable VarScan?" name="enableVarScan" />
+          </Grid>
+          <Grid item xs={6}>
+            {enableVarScan && (
+              <SwitchField
+                label={
+                  allVariants
+                    ? 'Switch to high-confidence variants'
+                    : 'Switch to all variants'
+                }
+                name="allVariants"
+              />
+            )}
+          </Grid>
+        </Grid>
+      </FormGroup>
+      {type === JobTypes.tumorNormal && (
+        <>
+          <FormGroup row className={classes.formControl}>
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="baseline"
+              spacing={1}
+            >
+              <Grid item xs={4}>
+                <SelectField
+                  label="Depth filter"
+                  name="depthFilter.comparison"
+                  options={ComparisonMap}
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <TextField
+                  label="Value"
+                  name="depthFilter.value"
+                  type="number"
+                />
+              </Grid>
+            </Grid>
+          </FormGroup>
+        </>
+      )}
       {type === JobTypes.tumorOnly && (
         <>
           <FormGroup row className={classes.formControl}>
@@ -415,13 +495,9 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
     threads: Yup.number().defined().min(1).max(cores),
     paired: Yup.boolean().defined(),
     genome: Yup.mixed().oneOf([Genome.hg19, Genome.hg38]).defined(),
-    depthFilter: Yup.mixed().when('type', {
-      is: JobTypes.tumorOnly,
-      then: Yup.object().shape({
-        comparison: Yup.mixed().oneOf(Object.keys(ComparisonMap)).required(),
-        value: Yup.number().required(),
-      }),
-      otherwise: Yup.object().notRequired(),
+    depthFilter: Yup.object().shape({
+      comparison: Yup.mixed().oneOf(Object.keys(ComparisonMap)).required(),
+      value: Yup.number().required(),
     }),
     alleleFractionFilter: Yup.mixed().when('type', {
       is: JobTypes.tumorOnly,
@@ -462,85 +538,33 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
 function handleFileUpload(d: LocalData, parameters: JobConfig) {
   const toUpload: File[] = [];
   const { inputType, type, paired } = d;
-  switch (inputType) {
-    case 'vcf':
-      if (!d.firstFile) throw new Error('Input file missing');
-      parameters.vcf = d.firstFile.name;
-      toUpload.push(d.firstFile);
-      break;
-    case 'bam':
-      if (!d.firstFile) throw new Error('Input file missing');
-      toUpload.push(d.firstFile);
-      if (type === JobTypes.tumorOnly) {
-        parameters.bam = d.firstFile.name;
-      } else {
-        parameters.tumor = {
-          bam: d.firstFile.name,
-        };
-        if (!d.thirdFile) throw new Error('Normal input file missing');
-        parameters.normal = {
-          bam: d.thirdFile.name,
-        };
-        toUpload.push(d.thirdFile);
-      }
-      break;
-    case 'ubam':
-      if (!d.firstFile) throw new Error('Input file missing');
-      toUpload.push(d.firstFile);
-      if (type === JobTypes.tumorOnly) {
-        parameters.ubam = d.firstFile.name;
-      } else {
-        parameters.tumor = {
-          ubam: d.firstFile.name,
-        };
-        if (!d.thirdFile) throw new Error('Normal input file missing');
-        parameters.normal = {
-          ubam: d.thirdFile.name,
-        };
-        toUpload.push(d.thirdFile);
-      }
-      break;
-    case 'fastq':
-      if (!d.firstFile) throw new Error('Input file missing');
-      toUpload.push(d.firstFile);
-      if (type === JobTypes.tumorOnly) {
-        parameters.fastq1 = d.firstFile.name;
-        if (paired) {
-          if (!d.secondFile) throw new Error('Second input file missing');
-          parameters.fastq2 = d.secondFile.name;
-          toUpload.push(d.secondFile);
-        }
-      } else {
-        if (!d.thirdFile) throw new Error('Normal input file missing');
-        toUpload.push(d.thirdFile);
-        if (paired) {
-          if (!d.secondFile) throw new Error('Second input file missing');
-          if (!d.fourthFile)
-            throw new Error('Second normal input file missing');
-          parameters.tumor = {
-            fastq1: d.firstFile.name,
-            fastq2: d.secondFile.name,
-          };
-          parameters.normal = {
-            fastq1: d.thirdFile.name,
-            fastq2: d.fourthFile.name,
-          };
-          toUpload.push(d.secondFile);
-          toUpload.push(d.fourthFile);
-        } else {
-          parameters.tumor = {
-            fastq1: d.firstFile.name,
-          };
-          parameters.normal = {
-            fastq1: d.thirdFile.name,
-          };
-        }
-      }
-      break;
-    default:
-      throw new Error('Unknown error');
+  if (!d.firstFile) throw new Error('First tumor input file missing');
+  parameters.file1 = d.firstFile.name;
+  toUpload.push(d.firstFile);
+  if (inputType === 'fastq' && paired) {
+    if (!d.secondFile) throw new Error('Second tumor input file missing');
+    parameters.file2 = d.secondFile.name;
+    toUpload.push(d.secondFile);
+  }
+  if (type === JobTypes.tumorNormal && inputType !== 'vcf') {
+    if (!d.thirdFile) throw new Error('First normal input file missing');
+    parameters.file3 = d.thirdFile.name;
+    toUpload.push(d.thirdFile);
+    if (paired) {
+      if (!d.fourthFile) throw new Error('Second normal input file missing');
+      parameters.file4 = d.fourthFile.name;
+      toUpload.push(d.fourthFile);
+    }
   }
   return toUpload;
+}
+
+function getCallers(d: LocalData): string[] {
+  let callers = ['mutect', 'lofreq', 'varscan'];
+  if (!d.enableMutect) callers = callers.filter((c) => c !== 'mutect');
+  if (!d.enableLoFreq) callers = callers.filter((c) => c !== 'lofreq');
+  if (!d.enableVarScan) callers = callers.filter((c) => c !== 'varscan');
+  return callers;
 }
 
 export default function NewAnalysisForm() {
@@ -573,8 +597,12 @@ export default function NewAnalysisForm() {
       type: JobTypes.tumorOnly,
       genome: Genome.hg38,
       alleleFractionFilter: { comparison: Comparison.gt, value: 0.3 },
-      depthFilter: { comparison: Comparison.lt, value: 0 },
+      depthFilter: { comparison: Comparison.gt, value: 0 },
+      enableMutect: true,
+      enableLoFreq: true,
+      enableVarScan: true,
       downsampling: false,
+      allVariants: false,
       firstFile: undefined,
       secondFile: undefined,
       thirdFile: undefined,
@@ -610,19 +638,24 @@ export default function NewAnalysisForm() {
             onSubmit={async (d) => {
               try {
                 setSubmitting(true);
-                const { type } = d;
+                const { type, inputType, allVariants, downsampling } = d;
                 const parameters: JobConfig = {
                   paired: d.paired,
+                  type: inputType,
                   genome: d.genome,
                   threads: d.threads,
-                  downsampling: d.downsampling,
+                  callers: getCallers(d),
+                  enable_options: {
+                    mutect_downsampling: downsampling,
+                    varscan_all_variants: allVariants,
+                  },
+                  depthFilter: {
+                    comparison: `${d.depthFilter.comparison}`,
+                    value: d.depthFilter.value,
+                  },
                 };
                 const toUpload = handleFileUpload(d, parameters);
                 if (type === JobTypes.tumorOnly) {
-                  parameters.depthFilter = {
-                    comparison: `${d.depthFilter.comparison}`,
-                    value: d.depthFilter.value,
-                  };
                   parameters.alleleFractionFilter = {
                     comparison: `${d.alleleFractionFilter.comparison}`,
                     value: d.alleleFractionFilter.value,
@@ -677,7 +710,11 @@ export default function NewAnalysisForm() {
                     ['sample_code', 'name', 'type', 'inputType', 'threads'],
                     [
                       'paired',
+                      'enableMutect',
+                      'enableLoFreq',
+                      'enableVarScan',
                       'downsampling',
+                      'allVariants',
                       'genome',
                       'depthFilter.comparison',
                       'depthFilter.value',
