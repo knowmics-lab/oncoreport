@@ -76,4 +76,17 @@ trait UsesCommandLine
         return $this->command;
     }
 
+    protected static function commandStringToArray(string $command): array
+    {
+        return array_filter(
+            array_map(static fn($x) => trim($x), str_getcsv(string: $command, separator: ' ')),
+            static fn($x) => !empty($x)
+        );
+    }
+
+    protected static function flattenCommandArray(array $command): array
+    {
+        return collect($command)->flatMap(fn($x) => static::commandStringToArray($x))->toArray();
+    }
+
 }

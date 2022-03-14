@@ -46,6 +46,9 @@ if (!("AF" %in% colnames(merged))) {
 if (!("gt_FREQ" %in% colnames(merged))) {
   merged$gt_FREQ <- NA
 }
+if (!("gt_AF" %in% colnames(merged))) {
+  merged$gt_AF <- NA
+}
 if (!("DP" %in% colnames(merged))) {
   merged$DP <- NA
 }

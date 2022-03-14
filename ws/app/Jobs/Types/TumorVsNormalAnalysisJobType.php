@@ -243,7 +243,7 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                  ->flagParameter('-p', $paired)
                  ->conditionalParameter('-2', $file2, $paired)
                  ->conditionalParameter('-3', $file3, $type !== 'vcf')
-                 ->conditionalParameter('-4', $file4, $type === 'bam' && $paired)
+                 ->conditionalParameter('-4', $file4, $type === 'fastq' && $paired)
                  ->optionalParameter('-S', $patient->primaryDisease->stage_string)
                  ->optionalParameter('-c', $patient->city)
                  ->optionalParameter('-l', $patient->telephone)

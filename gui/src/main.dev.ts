@@ -1,4 +1,5 @@
 /* eslint global-require: off, no-console: off */
+// noinspection ES6MissingAwait
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -29,42 +30,45 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const isDevelopment =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isProduction = process.env.NODE_ENV === 'production';
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (isDevelopment) {
   require('electron-debug')();
 }
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
-  // const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  try {
-    await installer.default(
+  return installer
+    .default(
       extensions.map((name) => installer[name]),
-      true
-    );
-  } catch (e) {
-    console.log(e);
-  }
+      forceDownload
+    )
+    .catch(console.log);
 };
 
 const createWindow = async () => {
+  if (isDevelopment) {
+    await installExtensions();
+  }
   const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources');
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../assets');
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
   };
+
+  console.log(RESOURCES_PATH);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -74,26 +78,13 @@ const createWindow = async () => {
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true,
-      contextIsolation: false
-    }
-  });
-
-  mainWindow.webContents.on('did-frame-finish-load', async () => {
-    if (process.env.NODE_ENV === 'development') {
-      if (
-        process.env.NODE_ENV === 'development' ||
-        process.env.DEBUG_PROD === 'true'
-      ) {
-        await installExtensions();
-      }
-    }
+      contextIsolation: false,
+    },
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
