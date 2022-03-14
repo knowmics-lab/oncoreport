@@ -95,7 +95,7 @@ if (!is.null(af.filter)) {
 merged <- merged %>%
   filter(DPFilt) %>%
   mutate(
-    Type = ifelse(!useFT | is.na(FT) | FT != "Germline", ifelse(AFFilt, "Germline", "Somatic"), FT)
+    Type = ifelse(!useFT | is.na(FT) | FT != "Germline", ifelse(!is.na(AFFilt) & AFFilt, "Germline", "Somatic"), FT)
   ) %>%
   select(
     Chromosome = CHROM, Stop = POS, Ref_base = REF, Var_base = ALT, AF, DP, GT, VT, Type

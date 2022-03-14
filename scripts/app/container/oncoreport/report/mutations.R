@@ -25,6 +25,7 @@ mutations_data$Type <- factor(mutations_data$Type, levels = c("Somatic", "Germli
 mutations_data <- mutations_data[order(mutations_data$Type, mutations_data$Gene, mutations_data$Stop),]
 mutations_data$Stop <- format(mutations_data$Stop, digits=0, big.mark=",", scientific = FALSE)
 mutations_data$AF   <- sprintf("%1.2f%%", 100*as.numeric(mutations_data$AF))
+mutations_data$AF[mutations_data$AF == "NA%"] <- " "
 mutations_data$DP   <- format(mutations_data$DP, digits=0, big.mark=",", scientific = FALSE)
 names(mutations_data) <- c("Gene", "Chromosome", "Position", "Ref. Base", "Var. Base", "Change Type", 
                            "Clinical Significance (Clinvar)", "Clinical Significance (COSMIC)*",
