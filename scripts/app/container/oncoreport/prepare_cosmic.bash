@@ -22,6 +22,8 @@ while getopts u:p: flag; do
   esac
 done
 
+[ ! -d "$ONCOREPORT_COSMIC_PATH" ] && mkdir -p "$ONCOREPORT_COSMIC_PATH"
+
 if [ ! -f "$ONCOREPORT_COSMIC_PATH/.env" ]; then
   if [[ -z "$COSMIC_USERNAME" ]]; then
     exit_abnormal "COSMIC username is required!" true 102
@@ -33,14 +35,14 @@ if [ ! -f "$ONCOREPORT_COSMIC_PATH/.env" ]; then
 fi
 
 COSMIC_TOKEN=""
-if [ -f "$ONCOREPORT_COSMIC_PATH/.env" ] && [[ -n "$COSMIC_USERNAME" ]] && [[ -n "$COSMIC_PASSWORD" ]]; then
+if [ -f "$ONCOREPORT_COSMIC_PATH/.env" ] && [[ -z "$COSMIC_USERNAME" ]] && [[ -z "$COSMIC_PASSWORD" ]]; then
   COSMIC_TOKEN=$(cat "$ONCOREPORT_COSMIC_PATH/.env")
 else
   COSMIC_TOKEN=$(echo "${COSMIC_USERNAME}:${COSMIC_PASSWORD}" | base64)
   echo "$COSMIC_TOKEN" > "$ONCOREPORT_COSMIC_PATH/.env"
 fi
 
-if [ -n "$COSMIC_TOKEN" ]; then
+if [ -z "$COSMIC_TOKEN" ]; then
   exit_abnormal "COSMIC token is empty!" true 103
 fi
 
@@ -54,11 +56,8 @@ cosmic_download() {
     exit_abnormal "$MESSAGE" false 105
   fi
   URL="$(echo "$TMP_OUT" | jq -M -r ".url" --)"
-  curl -o "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
+  wget --progress=bar:force:noscroll --tries=0 -O "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
 }
-
-echo "Creating COSMIC directory"
-[ ! -d "$ONCOREPORT_COSMIC_PATH" ] && mkdir -p "$ONCOREPORT_COSMIC_PATH"
 
 OLD_PWD=$(pwd)
 cd "$ONCOREPORT_COSMIC_PATH" || exit 107
