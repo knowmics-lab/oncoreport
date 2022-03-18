@@ -69,6 +69,7 @@ const createWindow = async () => {
   };
 
   console.log(RESOURCES_PATH);
+  console.log(getAssetPath('icon.png'));
 
   mainWindow = new BrowserWindow({
     show: false,
