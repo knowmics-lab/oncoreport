@@ -9,7 +9,7 @@
         </h2>
     </x-slot>
 
-    @if (is_null($setupJob))
+    @if (is_null($setupJob) && !$jobError)
         <form wire:submit.prevent="submit">
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -33,16 +33,6 @@
                             </div>
                         </div>
                         <div class="flex items-center justify-end px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            @if ($jobError)
-                                <div x-data="{ shown: false, timeout: null }"
-                                     x-init="clearTimeout(timeout); shown = true; timeout = setTimeout(() => { shown = false }, 2000);"
-                                     x-show.transition.opacity.out.duration.1500ms="shown"
-                                     style="display: none;"
-                                     class="text-sm mr-3 text-red-600">
-                                    {{ __('An error occurred. Please try again!') }}
-                                </div>
-                            @endif
-
                             <x-jet-button wire:loading.attr="disabled">
                                 <i class="fas fa-save"></i>&nbsp;Run Setup
                             </x-jet-button>
@@ -51,7 +41,34 @@
                 </div>
             </div>
         </form>
-    @else
+    @elseif ($jobError)
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-2xl rounded-lg">
+                    <div class="p-6 sm:px-20 bg-gray-800 border-b border-gray-200">
+                        <div class="flex items-center justify-end px-4 py-3 bg-gray-800 text-right sm:px-6">
+                            <x-jet-button wire:loading.attr="disabled" wire:click.prevent="back"
+                                          class="bg-red-600">
+                                <i class="fas fa-arrow-left"></i>&nbsp;Go Back
+                            </x-jet-button>
+                        </div>
+                        <div class="mt-4 mb-4 relative">
+                            <div class="w-100 h-auto rounded-lg overflow-auto">
+                                <pre class="py-4 px-4 mt-1 text-white text-xl">{{ $errorLog }}</pre>
+                            </div>
+                        </div>
+                        <a id="bottom-pre"></a>
+                        <div class="flex items-center justify-end px-4 py-3 bg-gray-800 text-right sm:px-6">
+                            <x-jet-button wire:loading.attr="disabled" wire:click.prevent="back"
+                                          class="bg-red-600">
+                                <i class="fas fa-arrow-left"></i>&nbsp;Go Back
+                            </x-jet-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @elseif (!is_null($setupJob))
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-2xl rounded-lg">

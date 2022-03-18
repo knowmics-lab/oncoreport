@@ -21,6 +21,7 @@ class Run extends Component
     public string $cosmicUsername = '';
     public string $cosmicPassword = '';
     public bool $jobError = false;
+    public string $errorLog = '';
     public ?Job $setupJob = null;
 
     /**
@@ -81,7 +82,17 @@ class Run extends Component
                              ->first();
         if (is_null($this->setupJob)) {
             $this->jobError = true;
+            $this->errorLog = Job::where('job_type', 'setup_job_type')
+                                 ->where('status', Constants::FAILED)
+                                 ->first()->log;
         }
+    }
+
+    public function back(): mixed
+    {
+        $this->setupJob = null;
+        $this->jobError = false;
+        $this->errorLog = '';
     }
 
     public function done(): mixed
