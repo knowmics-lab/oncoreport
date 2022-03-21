@@ -238,8 +238,10 @@ if (nrow(tot) != 0) {
                  "Evidence_type", "Evidence_level", "Evidence_direction", "Clinical_significance",
                  "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome",
                  "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved", "Score")]
+  def <- assign.colors(def)
 } else {
   def$Score <- rep(0, nrow(def))
+  def$Color <- rep("#FFFFFF", nrow(def))
 }
 write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")

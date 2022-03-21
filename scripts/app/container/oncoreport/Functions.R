@@ -34,7 +34,7 @@ leading.urls <- function(x, leading.disease, dis, project.path, sample.name) {
   x$Drug_interaction_type <- gsub(" ", "", x$Drug_interaction_type)
   x$Evidence_type <- factor(
     x$Evidence_type,
-    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive")
+    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive", "Oncogenic", "Functional")
   )
   x$Evidence_level <- factor(
     x$Evidence_level,
@@ -60,7 +60,7 @@ off.urls <- function(x, leading.disease, dis, project.path, sample.name) {
   x$Drug <- as.character(x$Drug, levels = (x$Drug))
   x$Evidence_type <- factor(
     x$Evidence_type,
-    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive")
+    levels = c("Diagnostic", "Prognostic", "Predisposing", "Predictive", "Oncogenic", "Functional")
   )
   x$Evidence_level <- factor(
     x$Evidence_level,
@@ -154,9 +154,42 @@ join.and.write <- function(variants, db, selected.columns = NULL, output.file, g
     data$Type <- rep("NA", nrow(data))
   }
   if (!is.null(selected.columns)) {
-    data <- data.frame(data)[,selected.columns,drop=FALSE]
+    data <- data.frame(data)[, selected.columns, drop = FALSE]
   }
   write.table(data, output.file, quote = FALSE, row.names = FALSE,
               na = "NA", sep = "\t")
-  return (data.frame(data))
+  return(data.frame(data))
+}
+
+get.color <- function(x, start, end) {
+  cl <- colorRamp(c(start, end))(x)
+  return(rgb(cl[, 1], cl[, 2], cl[, 3], maxColorValue = 255))
+}
+
+make.color.gradient <- function(values, start.color, end.color, default.color = end.color) {
+  if (length(values) == 1) {
+    return(colorRampPalette(default.color)(1))
+  }
+  r <- range(values)
+  return(get.color((values - r[1]) / (r[2] - r[1]), start.color, end.color))
+}
+
+assign.colors <- function(df) {
+  green <- df$Evidence_type %in% c("Predictive", "Prognostic") &
+    df$Clinical_significance %in% c("Sensitivity/Response", "Responsive", "Better Outcome")
+  orange <- df$Evidence_type == "Diagnostic" | (df$Evidence_type == "Predictive" & df$Clinical_significance %in% "Reduced Sensitivity")
+  red <- df$Evidence_type %in% c("Predictive", "Prognostic") &
+    df$Clinical_significance %in% c("Resistance", "Adverse Response", "Resistant", "Increased Toxicity",
+                                    "No Responsive", "Poor Outcome")
+  df$Color <- "#FFFFFF"
+  if (length(which(green)) > 0) {
+    df$Color[green] <- make.color.gradient(df$Score[green], "white", "green")
+  }
+  if (length(which(orange)) > 0) {
+    df$Color[orange] <- make.color.gradient(df$Score[orange], "white", "orange")
+  }
+  if (length(which(red)) > 0) {
+    df$Color[red] <- make.color.gradient(df$Score[red], "red", "white", "red")
+  }
+  return(df)
 }
