@@ -15,11 +15,7 @@ all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive
                             colClasses = "character", stringsAsFactors = FALSE)
 all.annotations <- diseases_db_simple %>% inner_join(all.annotations, by = "Disease")
 all.annotations[is.na(all.annotations)] <- " "
-if (nrow(all.annotations) > 0) {
-  all.annotations$id <- 1:nrow(all.annotations)
-} else {
-  all.annotations$id <- numeric(0)
-}
+all.annotations$id <- seq_len(nrow(all.annotations))
 
 .variables.to.keep <- c(ls(), "recommended_drugs")
 primary.annotations <- build.primary.annotations(all.annotations, pt_tumor)
@@ -54,13 +50,9 @@ if (nrow(primary.annotations) > 0) {
   }))
   last_evidence <- 0
   template.env$therapeutic_indications$summary <- suppressMessages(lapply(evidence.groups, function(eg) {
-    es <- eg[,c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type", 
+    es <- eg[,c("Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", "Type",
                 "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id"), drop = F]
-    if (nrow(es) > 0) {
-      es$Evidence <- 1:nrow(es)
-    } else {
-      es$Evidence <- numeric(0)
-    }
+    es$Evidence <- seq_len(nrow(es))
     es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '">+</a>]')
     es$Details[!complete.cases(es[, c("Evidence_statement", "Reference"), drop = FALSE]) | trimws(es$Evidence_statement) == ""] <- ""
     es$Evidence <- paste0('<a id="evi-', es$id, '"></a>', es$Evidence + last_evidence)
@@ -70,22 +62,13 @@ if (nrow(primary.annotations) > 0) {
     es$Drug <- gsub(",", ", ", es$Drug, fixed = T)
     es <- es[, c("Evidence", "Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", 
                  "Type", "Details", "Trials", "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id")]
-    colfunc  <- colorRampPalette(c("green", "yellow", "red"))
     es$Score <- as.numeric(es$Score)
+    assigned.colors <- assign.colors(es)
     es$Score <- round(es$Score, digits = 2)
-    scores        <- es$Score
-    sorted.scores <- sort(scores, decreasing = TRUE)
-    unique.scores <- unique(sorted.scores)
-    scores.colors <- setNames(colfunc(length(unique.scores)), as.character(unique.scores))
-    assigned.colors <- unname(scores.colors[as.character(scores)])
-    names(es) <- c("#", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance", "Evidence Level", "Type", 
+    names(es) <- c("#", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance", "Evidence Level", "Type",
                    "Details", "Trials", "Evidence_statement", "References", "Score", "AIFA", "EMA", "FDA", 
                    "Publication year", "id")
     color_column <- 12
-    # if (tumor_type == "tumnorm") {
-    #   es$Type <- NULL
-    #   color_column <- 11
-    # }
     last_evidence <<- nrow(es)
     if (nrow(es) == 0) return (NULL)
     if (is.null(sorted_evidences)) sorted_evidences <<- es

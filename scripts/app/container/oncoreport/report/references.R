@@ -88,7 +88,7 @@ if (nrow(data) > 0) {
 
 #####################################################################################################################
 data <- read.csv(paste0(path_project, "/txt/reference/", pt_fastq, "_cosmic.txt"), sep = "\t", 
-                 colClasses = "character", stringsAsFactors = FALSE);
+                 colClasses = "character", stringsAsFactors = FALSE)
 if (nrow(data) > 0) {
   template.env$references$cosmic <- create.table(
     data %>%

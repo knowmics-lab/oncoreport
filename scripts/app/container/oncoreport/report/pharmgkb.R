@@ -29,7 +29,7 @@ if (nrow(pharmgkb_annot) > 0) {
     pharmgkb_annot$Reference, '">', pharmgkb_annot$Reference, 
     '</a>'
   )
-  pharmgkb_annot$id <- 1:nrow(pharmgkb_annot)
+  pharmgkb_annot$id <- seq_len(nrow(pharmgkb_annot))
   is.not.empty <- function (x) (x != "")
   pharmgkb_annot <- pharmgkb_annot %>% 
     group_by(Variant, Drug, Clinical_significance, Type, Gene) %>%
@@ -43,12 +43,12 @@ if (nrow(pharmgkb_annot) > 0) {
                                        pharmgkb_mutations$id, '">+</a>]')
   empty <- !complete.cases(pharmgkb_references) | trimws(pharmgkb_references$Evidence_statement) == "" | 
     trimws(pharmgkb_references$Evidence_statement) == "<ul><li></li></ul>"
-  pharmgkb_references$Evidence <- 1:nrow(pharmgkb_references)
+  pharmgkb_references$Evidence <- seq_len(nrow(pharmgkb_references))
   if (length(which(empty)) > 0) {
     pharmgkb_mutations$Details[empty] <- ""
     pharmgkb_references               <- pharmgkb_references[!empty,,drop=FALSE]
   }
-  pharmgkb_mutations$Evidence <- paste0('<a id="mut-', pharmgkb_mutations$id, '"></a>', 1:nrow(pharmgkb_mutations))
+  pharmgkb_mutations$Evidence <- paste0('<a id="mut-', pharmgkb_mutations$id, '"></a>', seq_len(nrow(pharmgkb_mutations)))
   pharmgkb_mutations$Drug <- gsub(",", ", ", pharmgkb_mutations$Drug, fixed = TRUE)
   pharmgkb_mutations <- pharmgkb_mutations[, c("Evidence", "Gene", "Variant", "Drug", "Clinical_significance", "Type", 
                                                "Details", "Reference")]

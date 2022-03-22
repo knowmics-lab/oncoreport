@@ -110,7 +110,7 @@ list.pubmed.urls <- function(x, type) {
   link_pmid$URL <- paste0("https://www.ncbi.nlm.nih.gov/pubmed/", link_pmid$PMID)
   list.urls <- unique(link_pmid$URL)
   y <- setNames(sapply(list.urls, url.exists), list.urls)
-  r <- setNames(1:length(list.urls), list.urls)
+  r <- setNames(seq_along(list.urls), list.urls)
   link_pmid <- link_pmid[unname(y[link_pmid$URL]),]
   link_pmid$Reference <- unname(r[link_pmid$URL])
   return(link_pmid)
@@ -159,37 +159,4 @@ join.and.write <- function(variants, db, selected.columns = NULL, output.file, g
   write.table(data, output.file, quote = FALSE, row.names = FALSE,
               na = "NA", sep = "\t")
   return(data.frame(data))
-}
-
-get.color <- function(x, start, end) {
-  cl <- colorRamp(c(start, end))(x)
-  return(rgb(cl[, 1], cl[, 2], cl[, 3], maxColorValue = 255))
-}
-
-make.color.gradient <- function(values, start.color, end.color, default.color = end.color) {
-  if (length(values) == 1) {
-    return(colorRampPalette(default.color)(1))
-  }
-  r <- range(values)
-  return(get.color((values - r[1]) / (r[2] - r[1]), start.color, end.color))
-}
-
-assign.colors <- function(df) {
-  green <- df$Evidence_type %in% c("Predictive", "Prognostic") &
-    df$Clinical_significance %in% c("Sensitivity/Response", "Responsive", "Better Outcome")
-  orange <- df$Evidence_type == "Diagnostic" | (df$Evidence_type == "Predictive" & df$Clinical_significance %in% "Reduced Sensitivity")
-  red <- df$Evidence_type %in% c("Predictive", "Prognostic") &
-    df$Clinical_significance %in% c("Resistance", "Adverse Response", "Resistant", "Increased Toxicity",
-                                    "No Responsive", "Poor Outcome")
-  df$Color <- "#FFFFFF"
-  if (length(which(green)) > 0) {
-    df$Color[green] <- make.color.gradient(df$Score[green], "white", "green")
-  }
-  if (length(which(orange)) > 0) {
-    df$Color[orange] <- make.color.gradient(df$Score[orange], "white", "orange")
-  }
-  if (length(which(red)) > 0) {
-    df$Color[red] <- make.color.gradient(df$Score[red], "red", "white", "red")
-  }
-  return(df)
 }

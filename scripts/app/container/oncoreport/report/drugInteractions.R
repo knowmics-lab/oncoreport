@@ -44,17 +44,13 @@ colnames(primary_interactions) <- c("Drug", "Interacts with", "Effect")
 colnames(other_interactions)   <- c("Drug", "Interacts with", "Effect")
 
 #####################################################################################################################
-if (nrow(primary_interactions) > 0) {
-  rownames(primary_interactions) <- 1:nrow(primary_interactions)
-}
+rownames(primary_interactions) <- seq_len(nrow(primary_interactions))
 suppressWarnings({
   table <- datatable(primary_interactions, width = "100%")
   htmlwidgets::saveWidget(table, paste0(report_output_dir, "primary_drugs_interactions.html"))
 })
 
-if (nrow(other_interactions) > 0) {
-  rownames(other_interactions) <- 1:nrow(other_interactions)
-}
+rownames(other_interactions) <- seq_len(nrow(other_interactions))
 suppressWarnings({
   table <- datatable(other_interactions, width = "100%")
   htmlwidgets::saveWidget(table, paste0(report_output_dir, "other_primary_interactions.html"))
@@ -76,9 +72,7 @@ complete_interactions <- interactions_db[interactions_db$Drug2_code %in% all_dru
             Effect=Effect[1])
 complete_interactions   <- as.data.frame(unique(complete_interactions %>% select(Drug2_name, Drug1_name, Effect)))
 colnames(complete_interactions) <- c("Drug", "Interacts with", "Effect")
-if (nrow(complete_interactions) > 0) {
-  rownames(complete_interactions) <- 1:nrow(complete_interactions)
-}
+rownames(complete_interactions) <- seq_len(nrow(complete_interactions))
 suppressWarnings({
   table <- datatable(complete_interactions, width = "100%")
   htmlwidgets::saveWidget(table, paste0(report_output_dir, "all_drugs_interactions.html"))

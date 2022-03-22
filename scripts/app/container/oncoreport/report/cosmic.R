@@ -25,7 +25,7 @@ cosmic_data <- cosmic_data_orig %>%
   group_by(Gene, Variant, Drug, Primary.Tissue) %>%
   summarise(Reference = paste(Reference, collapse=","))
 if (nrow(cosmic_data) > 0) {
-  cosmic_data$Number <- 1:nrow(cosmic_data)
+  cosmic_data$Number <- seq_len(nrow(cosmic_data))
   cosmic_data <- cosmic_data[, c("Number", "Gene", "Variant", "Drug", "Primary.Tissue", "Reference")]
   names(cosmic_data) <- c("#", "Gene", "Variant", "Drug", "Primary Tissue", "References")
   table <- kable(cosmic_data, "html", escape = FALSE) %>% 

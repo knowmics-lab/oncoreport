@@ -138,3 +138,42 @@ build.primary.annotations <- function (all.annotations, pt_tumor) (
 build.other.annotations <- function (all.annotations, pt_tumor) (
   prepare.annotation(all.annotations, pt_tumor, get.raw.other.annotations, "off")
 )
+
+get.color <- function(x, start, end) {
+  cl <- colorRamp(c(start, end))(x)
+  return(rgb(cl[, 1], cl[, 2], cl[, 3], maxColorValue = 255))
+}
+
+make.color.gradient <- function(values, start.color, end.color, default.color = end.color) {
+  if (length(values) == 1) {
+    return(colorRampPalette(default.color)(1))
+  }
+  r <- range(values)
+  if (r[1] == r[2]) {
+    v.norm <- rep(1.0, length(values))
+  } else {
+    v.norm <- (values - r[1]) / (r[2] - r[1])
+  }
+  v.norm[is.na(v.norm)] <- 0
+  return(get.color(v.norm, start.color, end.color))
+}
+
+assign.colors <- function(df) {
+  green <- df$Evidence_type %in% c("Predictive", "Prognostic") &
+    df$Clinical_significance %in% c("Sensitivity/Response", "Responsive", "Better Outcome")
+  orange <- df$Evidence_type == "Diagnostic" | (df$Evidence_type == "Predictive" & df$Clinical_significance %in% "Reduced Sensitivity")
+  red <- df$Evidence_type %in% c("Predictive", "Prognostic") &
+    df$Clinical_significance %in% c("Resistance", "Adverse Response", "Resistant", "Increased Toxicity",
+                                    "No Responsive", "Poor Outcome")
+  color <- rep("#FFFFFF", nrow(df))
+  if (length(which(green)) > 0) {
+    color[green] <- make.color.gradient(df$Score[green], "#E6FFE6", "green")
+  }
+  if (length(which(orange)) > 0) {
+    color[orange] <- make.color.gradient(df$Score[orange], "#FFF6E6", "orange")
+  }
+  if (length(which(red)) > 0) {
+    color[red] <- make.color.gradient(df$Score[red], "#FFE6E6", "red")
+  }
+  return(color)
+}

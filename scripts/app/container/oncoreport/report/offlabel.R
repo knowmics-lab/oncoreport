@@ -46,7 +46,7 @@ if (nrow(offlabel.annotations) > 0) {
   es <- e.annotations[,c("Disease", "Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", 
                          "Evidence_level", "Type", "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", 
                          "year", "id"), drop = F]
-  es$Evidence <- 1:nrow(es)
+  es$Evidence <- seq_len(nrow(es))
   es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '">+</a>]')
   es$Details[!complete.cases(es[, c("Evidence_statement", "Reference"), drop = FALSE]) | trimws(es$Evidence_statement) == ""] <- ""
   es$Evidence <- paste0('<a id="evi-', es$id, '"></a>', es$Evidence + last_evidence)
@@ -56,22 +56,13 @@ if (nrow(offlabel.annotations) > 0) {
   es$Drug <- gsub(",", ", ", es$Drug, fixed = T)
   es <- es[, c("Evidence", "Disease", "Gene", "Variant", "Drug", "Evidence_type", "Clinical_significance", "Evidence_level", 
                "Type", "Details", "Trials", "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA", "year", "id")]
-  colfunc  <- colorRampPalette(c("green", "yellow", "red"))
   es$Score <- as.numeric(es$Score)
+  assigned.colors <- assign.colors(es)
   es$Score <- round(es$Score, digits = 2)
-  scores        <- es$Score
-  sorted.scores <- sort(scores, decreasing = TRUE)
-  unique.scores <- unique(sorted.scores)
-  scores.colors <- setNames(colfunc(length(unique.scores)), as.character(unique.scores))
-  assigned.colors <- unname(scores.colors[as.character(scores)])
-  names(es) <- c("#", "Disease", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance", "Evidence Level", 
+  names(es) <- c("#", "Disease", "Gene", "Variant", "Drug", "Evidence Type", "Clinical Significance", "Evidence Level",
                  "Type", "Details", "Trials", "Evidence_statement", "References", "Score", "AIFA", "EMA", "FDA", 
                  "Publication year", "id")
-  color_column <- 12
-  # if (tumor_type == "tumnorm") {
-  #   es$Type <- NULL
-  #   color_column <- 11
-  # }
+  color_column <- 13
   last_evidence <<- nrow(es)
   if (nrow(es) == 0) return (NULL)
   if (is.null(sorted_evidences)) sorted_evidences <<- es

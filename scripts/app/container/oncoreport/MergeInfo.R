@@ -17,7 +17,7 @@ option_list <- list(
   make_option(c("-p", "--project"), type="character", default=NULL, help="project folder", metavar="character"),
   make_option(c("-s", "--sample"), type="character", default=NULL, help="sample name", metavar="character"),
   make_option(c("-t", "--tumor"), type="character", default=NULL, help="patient tumor", metavar="character")
-);
+)
 
 opt_parser <- OptionParser(option_list=option_list)
 opt        <- parse_args(opt_parser)
@@ -86,7 +86,7 @@ civic <- join.and.write(
   output.file = paste0(project.path, "/txt/", sample.name, "_civic.txt"),
   genome = genome,
   db.path = database.path
-);
+)
 
 ## Merge with Clinvar
 cat("Annotating with Clinvar...\n")
@@ -98,7 +98,7 @@ d <- join.and.write(
   output.file = paste0(project.path, "/txt/", sample.name, "_clinvar.txt"),
   genome = genome,
   db.path = database.path
-);
+)
 
 #Merge with COSMIC
 cat("Annotating with COSMIC...\n")
@@ -109,7 +109,7 @@ cosmic <- join.and.write(
   output.file = paste0(project.path, "/txt/", sample.name, "_cosmic.txt"),
   genome = genome,
   db.path = cosmic.path
-);
+)
 
 f <- join.and.write(
   variants = variants,
@@ -119,7 +119,7 @@ f <- join.and.write(
   genome = genome,
   db.path = cosmic.path,
   check.alt.base = TRUE
-);
+)
 
 #Merge with PharmGKB
 cat("Annotating with PharmGKB...\n")
@@ -133,7 +133,7 @@ pharm <- join.and.write(
   output.file = paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
   genome = genome,
   db.path = database.path
-);
+)
 
 #Merge with RefGene
 cat("Annotating with RefGene...\n")
@@ -169,7 +169,7 @@ cgi <- join.and.write(
   output.file = paste0(project.path, "/txt/", sample.name, "_cgi.txt"),
   genome = genome,
   db.path = database.path
-);
+)
 
 #Merge CIVIC and CGI info
 cat("Combining CIVIC and CGI...\n")
@@ -238,10 +238,8 @@ if (nrow(tot) != 0) {
                  "Evidence_type", "Evidence_level", "Evidence_direction", "Clinical_significance",
                  "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome",
                  "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved", "Score")]
-  def <- assign.colors(def)
 } else {
   def$Score <- rep(0, nrow(def))
-  def$Color <- rep("#FFFFFF", nrow(def))
 }
 write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
