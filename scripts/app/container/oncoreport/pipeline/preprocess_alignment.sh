@@ -31,7 +31,7 @@ while getopts g:t:i:b:a:d:m:s:r:R:o: flag; do
   esac
 done
 
-[ -z "$bam" ]   && exit_abnormal "BAM file is required" true 102
+[ -z "$bam" ] && exit_abnormal "BAM file is required" true 102
 [ ! -f "$bam" ] && exit_abnormal "BAM file does not exist" true 103
 
 echo "Validating BAM"
@@ -59,15 +59,16 @@ echo "Sorting"
 java -jar "$GATK_PATH" SortSam --INPUT "$NEXT_FILE" --OUTPUT /dev/stdout --SORT_ORDER "coordinate" \
   --CREATE_INDEX false --CREATE_MD5_FILE false --VALIDATION_STRINGENCY SILENT |
   java -jar "$GATK_PATH" SetNmMdAndUqTags --INPUT /dev/stdin --OUTPUT "$sorted_bam" \
-    --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" || exit_abnormal "Unable to sort" false 106
+    --CREATE_INDEX true --REFERENCE_SEQUENCE "$ONCOREPORT_INDEXES_PATH/${index}.fa" \
+    --VALIDATION_STRINGENCY SILENT || exit_abnormal "Unable to sort" false 106
 
 echo "Recalibrating Quality Scores"
 java -jar "$GATK_PATH" BaseRecalibrator -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$sorted_bam" \
-  --use-original-qualities -O "$recalibration_data_file" \
+  --use-original-qualities -O "$recalibration_data_file" -VS SILENT \
   --known-sites "$ONCOREPORT_RECALIBRATION_PATH/${index}.vcf.gz" || exit_abnormal "Unable to compute recalibration data" false 107
 java -jar "$GATK_PATH" ApplyBQSR -R "$ONCOREPORT_INDEXES_PATH/${index}.fa" -I "$sorted_bam" \
   -O "$recalibrated_bam" -bqsr "$recalibration_data_file" --static-quantized-quals 10 \
-  --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record \
+  --static-quantized-quals 20 --static-quantized-quals 30 --add-output-sam-program-record -VS SILENT \
   --create-output-bam-md5 --use-original-qualities || exit_abnormal "Unable to apply base quality recalibration" false 108
 
 echo "Reordering"
