@@ -308,11 +308,9 @@ function CallersSelector({ values }: Step1Prop) {
           <Grid item xs={6}>
             {enableVarScan && (
               <SwitchField
-                label={
-                  allVariants
-                    ? 'Switch to high-confidence variants'
-                    : 'Switch to all variants'
-                }
+                label={`Use all variants? ${
+                  allVariants ? 'Yes' : 'High-confidence only'
+                }`}
                 name="allVariants"
               />
             )}
