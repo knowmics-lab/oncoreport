@@ -16,12 +16,10 @@ create_data_dir() {
   fi
   chmod -R 0777 ${MYSQL_DATA_DIR}
   chown -R ${MYSQL_USER}:${MYSQL_GROUP} ${MYSQL_DATA_DIR}
-  chmod 600 "${MYSQL_CONF_DIR}/mysql.cnf"
-  chmod 600 "${MYSQL_CONF_DIR}/my.cnf"
-  chmod 600 "${MYSQL_CONF_DIR}/conf.d"
-  chmod 600 "${MYSQL_CONF_DIR}/conf.d/*"
-  chmod 600 "${MYSQL_CONF_DIR}/mysql.conf.d"
-  chmod 600 "${MYSQL_CONF_DIR}/mysql.conf.d/*"
+  [ -f "${MYSQL_CONF_DIR}/mysql.cnf" ]    && chmod 600 "${MYSQL_CONF_DIR}/mysql.cnf"
+  [ -f "${MYSQL_CONF_DIR}/my.cnf" ]       && chmod 600 "${MYSQL_CONF_DIR}/my.cnf"
+  [ -d "${MYSQL_CONF_DIR}/conf.d" ]       && chmod -R 600 "${MYSQL_CONF_DIR}/conf.d"
+  [ -d "${MYSQL_CONF_DIR}/mysql.conf.d" ] && chmod -R 600 "${MYSQL_CONF_DIR}/mysql.conf.d"
 }
 
 create_run_dir() {
