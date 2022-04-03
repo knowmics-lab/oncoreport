@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../cloud/kubernetes/scalable-instance/Untitled-1.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/scripts/bootstrap.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/assets/js/searchable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/cosmic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugdrug.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/drugfood.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/esmoguide.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/mutations.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/offlabel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/pharmgkb.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/reference.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/app/container/html_source/report/therapeutic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/blade.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/blade.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -458,6 +467,12 @@
       <workItem from="1647887221659" duration="3216000" />
       <workItem from="1647935856570" duration="7352000" />
       <workItem from="1648048744673" duration="389000" />
+      <workItem from="1648049249975" duration="144000" />
+      <workItem from="1648060178501" duration="3000" />
+      <workItem from="1648318557287" duration="5000" />
+      <workItem from="1648999776852" duration="2069000" />
+      <workItem from="1649002252923" duration="6000" />
+      <workItem from="1649009691256" duration="4212000" />
     </task>
     <servers />
   </component>

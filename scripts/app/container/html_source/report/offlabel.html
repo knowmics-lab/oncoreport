@@ -131,13 +131,26 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active p-3" id="variants-summary" role="tabpanel"
                          aria-labelledby="variants-summary-tab">
-                        <div class="table-responsive">
+                        <div class="table-responsive" data-search-table-container>
+                            <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
+                                <div class="position-relative">
+                                    <span class="position-absolute" style="top: 0.50rem; left: 1rem;">
+                                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                             aria-label="Search">
+                                            <use xlink:href="#search-icon"/>
+                                        </svg>
+                                    </span>
+                                    <input class="form-control w-100" style="padding-left: 2.75rem;"
+                                           placeholder="Enter a text to search the table..."
+                                           aria-label="Enter a text to search the table" data-search-input>
+                                </div>
+                            </div>
                             <%
-                                if (!is.null(offlabel$summary)) {
-                                    cat(offlabel$summary)
-                                } else {
-                                    cat("<h5>No data available.</h5>")
-                                }
+                            if (!is.null(offlabel$summary)) {
+                            cat(offlabel$summary)
+                            } else {
+                            cat("<h5>No data available.</h5>")
+                            }
                             %>
                         </div>
                     </div>
@@ -145,11 +158,11 @@
                          aria-labelledby="clinical-evidence-tab">
                         <div class="table-responsive">
                             <%
-                                if (!is.null(offlabel$evidences)) {
-                                    cat(offlabel$evidences)
-                                } else {
-                                    cat("<h5>No data available.</h5>")
-                                }
+                            if (!is.null(offlabel$evidences)) {
+                            cat(offlabel$evidences)
+                            } else {
+                            cat("<h5>No data available.</h5>")
+                            }
                             %>
                         </div>
                     </div>
@@ -157,11 +170,11 @@
                          aria-labelledby="variant-details-tab">
                         <div class="table-responsive">
                             <%
-                                if (!is.null(offlabel$details)) {
-                                    cat(offlabel$details)
-                                } else {
-                                    cat("<h5>No data available.</h5>")
-                                }
+                            if (!is.null(offlabel$details)) {
+                            cat(offlabel$details)
+                            } else {
+                            cat("<h5>No data available.</h5>")
+                            }
                             %>
                         </div>
                     </div>
@@ -184,7 +197,8 @@
                 <div class="col-12">
                     <small class="d-block mb-3 text-muted">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-inline mb-2" role="img"
+                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-inline mb-2"
+                             role="img"
                              viewBox="0 0 24 24"><title>Product</title>
                             <g transform="translate(-82.78836,-130.00338)">
                                 <path
@@ -275,5 +289,6 @@
                 });
             })();
         </script>
+        <script src="assets/js/searchable.js"></script>
     </body>
 </html>
