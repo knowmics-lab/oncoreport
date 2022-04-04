@@ -147,18 +147,18 @@
                                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
                                      aria-labelledby="panelsStayOpen-headingOne">
                                     <div class="accordion-body">
-                                        <div class="table-responsive" data-search-table-container-clinical>
-                                            <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
-                                                <div class="position-relative">
+                                        <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
+                                            <div class="position-relative">
                                                     <span class="position-absolute" style="top: 0.50rem; left: 1rem;">
                                                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Search">
                                                             <use xlink:href="#search-icon"/>
                                                         </svg>
                                                     </span>
-                                                    <input class="form-control w-100" style="padding-left: 2.75rem;" placeholder="Enter a text to search the table..."
-                                                           aria-label="Enter a text to search the table" data-search-input-clinical>
-                                                </div>
+                                                <input class="form-control w-100" style="padding-left: 2.75rem;" placeholder="Enter a text to search the table..."
+                                                       aria-label="Enter a text to search the table" data-search-input-clinical>
                                             </div>
+                                        </div>
+                                        <div class="table-responsive" data-search-table-container-clinical>
                                             <%
                                                 if (!is.null(therapeutic_indications$summary$clinical.impact)) {
                                                     cat(therapeutic_indications$summary$clinical.impact)
@@ -181,18 +181,18 @@
                                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
                                      aria-labelledby="panelsStayOpen-headingTwo">
                                     <div class="accordion-body">
-                                        <div class="table-responsive" data-search-table-container-others>
-                                            <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
-                                                <div class="position-relative">
+                                        <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
+                                            <div class="position-relative">
                                                     <span class="position-absolute" style="top: 0.50rem; left: 1rem;">
                                                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Search">
                                                             <use xlink:href="#search-icon"/>
                                                         </svg>
                                                     </span>
-                                                    <input class="form-control w-100" style="padding-left: 2.75rem;" placeholder="Enter a text to search the table..."
-                                                           aria-label="Enter a text to search the table" data-search-input-others>
-                                                </div>
+                                                <input class="form-control w-100" style="padding-left: 2.75rem;" placeholder="Enter a text to search the table..."
+                                                       aria-label="Enter a text to search the table" data-search-input-others>
                                             </div>
+                                        </div>
+                                        <div class="table-responsive" data-search-table-container-others>
                                             <%
                                                 if (!is.null(therapeutic_indications$summary$others)) {
                                                     cat(therapeutic_indications$summary$others)
