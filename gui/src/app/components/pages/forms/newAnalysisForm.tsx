@@ -500,45 +500,62 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
   const cores = capabilities?.availableCores ?? 1;
   return Yup.object().shape({
     sample_code: Yup.string()
-      .defined()
-      .max(255)
+      .defined('Sample code is required')
+      .max(255, 'Sample code is too long')
       .matches(/^[A-Za-z0-9_]+$/, {
         message: 'The field must contain only letters, numbers, and dashes.',
       }),
-    name: Yup.string().defined().max(255),
+    name: Yup.string()
+      .defined('Analysis name is required')
+      .max(255, 'Analysis name is too long'),
     type: Yup.mixed()
-      .oneOf([JobTypes.tumorOnly, JobTypes.tumorNormal])
-      .defined(),
+      .oneOf(
+        [JobTypes.tumorOnly, JobTypes.tumorNormal],
+        'Invalid analysis type'
+      )
+      .defined('Analysis type is required'),
     inputType: Yup.mixed()
-      .oneOf(Object.keys(Utils.supportedAnalysisFileTypes()))
-      .defined(),
-    threads: Yup.number().defined().min(1).max(cores),
-    paired: Yup.boolean().defined(),
-    genome: Yup.mixed().oneOf([Genome.hg19, Genome.hg38]).defined(),
+      .oneOf(
+        Object.keys(Utils.supportedAnalysisFileTypes()),
+        'Invalid input type'
+      )
+      .defined('Input type is required'),
+    threads: Yup.number()
+      .defined('Number of threads is required')
+      .min(1, 'Number of threads is too low')
+      .max(cores, `Maximum number of threads is ${cores}`),
+    paired: Yup.boolean().defined('Paired/single is required'),
+    genome: Yup.mixed()
+      .oneOf([Genome.hg19, Genome.hg38], 'Invalid genome')
+      .defined('Genome is required'),
     depthFilter: Yup.object().shape({
-      comparison: Yup.mixed().oneOf(Object.keys(ComparisonMap)).required(),
-      value: Yup.number().required(),
+      comparison: Yup.mixed()
+        .oneOf(Object.keys(ComparisonMap), 'Invalid comparison')
+        .required('Comparison is required'),
+      value: Yup.number().required('Value is required'),
     }),
     alleleFractionFilter: Yup.mixed().when('type', {
       is: JobTypes.tumorOnly,
       then: Yup.object().shape({
-        comparison: Yup.mixed().oneOf(Object.keys(ComparisonMap)).required(),
-        value: Yup.number().required(),
+        comparison: Yup.mixed()
+          .oneOf(Object.keys(ComparisonMap), 'Invalid comparison')
+          .required('Comparison is required'),
+        value: Yup.number().required('Value is required'),
       }),
       otherwise: Yup.object().notRequired(),
     }),
-    firstFile: Yup.object().required(),
+    firstFile: Yup.object().required('Tumor first file is required'),
     secondFile: Yup.mixed().when(['inputType', 'paired'], {
       is: (inputType: string, paired: boolean) =>
         paired && !['vcf', 'bam', 'ubam'].includes(inputType),
-      then: Yup.object().required(),
+      then: Yup.object().required('Tumor second file is required'),
       otherwise: Yup.object().notRequired(),
     }),
     thirdFile: Yup.mixed().when(['type', 'inputType'], {
       is: (type: JobTypes, inputType: string) => {
         return type === JobTypes.tumorNormal && inputType !== 'vcf';
       },
-      then: Yup.object().required(),
+      then: Yup.object().required('Normal first file is required'),
       otherwise: Yup.object().notRequired(),
     }),
     fourthFile: Yup.mixed().when(['type', 'inputType', 'paired'], {
@@ -549,7 +566,7 @@ function useValidationSchema(capabilities: Capabilities | undefined) {
           !['vcf', 'bam', 'ubam'].includes(inputType)
         );
       },
-      then: Yup.object().required(),
+      then: Yup.object().required('Normal second file is required'),
       otherwise: Yup.object().notRequired(),
     }),
   });

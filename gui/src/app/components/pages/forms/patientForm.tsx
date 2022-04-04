@@ -59,24 +59,44 @@ const useStyles = makeStyles((theme) =>
 function useValidationSchema() {
   return Yup.object().shape({
     code: Yup.string()
-      .defined()
-      .max(255)
+      .defined('Patient code is required')
+      .max(255, 'Patient code is too long')
       .matches(/^[A-Za-z0-9_]+$/, {
         message: 'The field must contain only letters, numbers, and dashes.',
       }),
-    first_name: Yup.string().defined().max(255),
-    last_name: Yup.string().defined().max(255),
-    age: Yup.number().min(0).max(100),
+    first_name: Yup.string()
+      .defined('First name is required')
+      .max(255, 'First name is too long'),
+    last_name: Yup.string()
+      .defined('First name is required')
+      .max(255, 'First name is too long'),
+    age: Yup.number()
+      .typeError('The age must be a number')
+      .min(0, 'Age is too low')
+      .max(100, 'Age is too high'),
     gender: Yup.mixed()
-      .oneOf([Gender.m, Gender.f] as Gender[])
-      .defined(),
-    email: Yup.string().notRequired().nullable().max(255).email(),
-    fiscal_number: Yup.string().notRequired().nullable().max(255),
-    telephone: Yup.string().notRequired().nullable().max(255),
-    city: Yup.string().notRequired().nullable().max(255),
+      .oneOf([Gender.m, Gender.f] as Gender[], 'Gender is invalid')
+      .defined('Gender is required'),
+    email: Yup.string()
+      .required('The email is required')
+      .nullable()
+      .max(255, 'Email is too long')
+      .email('Invalid email address'),
+    fiscal_number: Yup.string()
+      .notRequired()
+      .nullable()
+      .max(255, 'Fiscal Number is too long'),
+    telephone: Yup.string()
+      .notRequired()
+      .nullable()
+      .max(255, 'Telephone is too long'),
+    city: Yup.string().notRequired().nullable().max(255, 'City is too long'),
     diagnosis_date: Yup.date().notRequired(),
-    primary_disease: Yup.object().shape({
-      disease: Yup.object().defined(),
+    primary_disease: Yup.object({
+      disease: Yup.object()
+        .typeError('A valid disease is required')
+        .defined('The disease is required')
+        .required('The disease is required'),
       type: Yup.mixed()
         .oneOf([TumorTypes.primary, TumorTypes.secondary] as TumorTypes[])
         .notRequired()
@@ -84,7 +104,9 @@ function useValidationSchema() {
       T: Yup.number().min(0).max(4).notRequired().nullable(),
       M: Yup.number().min(0).max(4).notRequired().nullable(),
       N: Yup.number().min(0).max(4).notRequired().nullable(),
-    }),
+    })
+      .typeError('Please select a valid disease')
+      .required('The disease is required'),
   });
 }
 
@@ -218,10 +240,15 @@ export default function PatientForm() {
                       tumor: true,
                     }}
                     getOptionSelected={(option, value) => {
+                      if (!option || !value) {
+                        return false;
+                      }
                       return option.id === value.id;
                     }}
                     getOptionLabel={(option) =>
-                      option ? option.name : 'Select a disease'
+                      option
+                        ? option.name
+                        : 'Type something or Select a disease'
                     }
                   />
                 </Grid>
