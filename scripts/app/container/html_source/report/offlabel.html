@@ -144,38 +144,44 @@
                                        aria-label="Enter a text to search the table" data-search-input>
                             </div>
                         </div>
-                        <div class="table-responsive" data-search-table-container>
-                            <%
-                            if (!is.null(offlabel$summary)) {
-                            cat(offlabel$summary)
-                            } else {
-                            cat("<h5>No data available.</h5>")
-                            }
-                            %>
+                        <div class="table-responsive-container">
+                            <div class="table-responsive" data-search-table-container>
+                                <%
+                                if (!is.null(offlabel$summary)) {
+                                cat(offlabel$summary)
+                                } else {
+                                cat("<h5>No data available.</h5>")
+                                }
+                                %>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade p-3" id="clinical-evidence" role="tabpanel"
                          aria-labelledby="clinical-evidence-tab">
-                        <div class="table-responsive">
-                            <%
-                            if (!is.null(offlabel$evidences)) {
-                            cat(offlabel$evidences)
-                            } else {
-                            cat("<h5>No data available.</h5>")
-                            }
-                            %>
+                        <div class="table-responsive-container">
+                            <div class="table-responsive">
+                                <%
+                                if (!is.null(offlabel$evidences)) {
+                                cat(offlabel$evidences)
+                                } else {
+                                cat("<h5>No data available.</h5>")
+                                }
+                                %>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade p-3" id="variant-details" role="tabpanel"
                          aria-labelledby="variant-details-tab">
-                        <div class="table-responsive">
-                            <%
-                            if (!is.null(offlabel$details)) {
-                            cat(offlabel$details)
-                            } else {
-                            cat("<h5>No data available.</h5>")
-                            }
-                            %>
+                        <div class="table-responsive-container">
+                            <div class="table-responsive">
+                                <%
+                                if (!is.null(offlabel$details)) {
+                                cat(offlabel$details)
+                                } else {
+                                cat("<h5>No data available.</h5>")
+                                }
+                                %>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -290,5 +296,6 @@
             })();
         </script>
         <script src="assets/js/searchable.js"></script>
+        <script src="assets/js/scroll.js"></script>
     </body>
 </html>

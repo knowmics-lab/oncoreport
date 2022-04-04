@@ -119,14 +119,16 @@
                                aria-label="Enter a text to search the table" data-search-input>
                     </div>
                 </div>
-                <div class="table-responsive" data-search-table-container>
-                    <%
-                        if (!is.null(mutations_data)) {
-                            cat(mutations_data)
-                        } else {
-                            cat("<h5>No data available.</h5>")
-                        }
-                    %>
+                <div class="table-responsive-container">
+                    <div class="table-responsive" data-search-table-container>
+                        <%
+                            if (!is.null(mutations_data)) {
+                                cat(mutations_data)
+                            } else {
+                                cat("<h5>No data available.</h5>")
+                            }
+                        %>
+                    </div>
                 </div>
 
                 <div class="alert alert-warning d-flex align-items-center mb-2" role="alert">
@@ -179,5 +181,6 @@
 
         <script src="assets/js/bootstrap.bundle.min.js"></script>
         <script src="assets/js/searchable.js"></script>
+        <script src="assets/js/scroll.js"></script>
     </body>
 </html>

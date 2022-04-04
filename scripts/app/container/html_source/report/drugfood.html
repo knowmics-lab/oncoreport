@@ -125,14 +125,16 @@
                                    aria-label="Enter a text to search the table" data-search-input>
                         </div>
                     </div>
-                    <div class="table-responsive" data-search-table-container>
-                        <%
-                            if (!is.null(drug_food_interactions)) {
-                                cat(drug_food_interactions)
-                            } else {
-                                cat("<h5>No data available.</h5>")
-                            }
-                        %>
+                    <div class="table-responsive-container">
+                        <div class="table-responsive" data-search-table-container>
+                            <%
+                                if (!is.null(drug_food_interactions)) {
+                                    cat(drug_food_interactions)
+                                } else {
+                                    cat("<h5>No data available.</h5>")
+                                }
+                            %>
+                        </div>
                     </div>
                 </div>
                 <div class="alert alert-warning d-flex align-items-center" role="alert">
@@ -169,9 +171,9 @@
                 </div>
             </div>
         </footer>
-
-
+        
         <script src="assets/js/bootstrap.bundle.min.js"></script>
         <script src="assets/js/searchable.js"></script>
+        <script src="assets/js/scroll.js"></script>
     </body>
 </html>
