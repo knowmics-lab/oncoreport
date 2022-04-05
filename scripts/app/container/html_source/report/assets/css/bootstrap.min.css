@@ -16,7 +16,7 @@
 }
 
 .table-responsive-container.with-scroll::before {
-    content: "\2190";
+    content: "";
     display: flex;
     justify-content: flex-start;
     padding-top: 1rem;
@@ -37,7 +37,7 @@
 }
 
 .table-responsive-container.with-scroll::after {
-    content: "\2192";
+    content: "";
     display: flex;
     justify-content: flex-end;
     padding-top: 1rem;
@@ -57,17 +57,41 @@
     transition: opacity 250ms ease-in-out;
 }
 
-/*.table-responsive-container.with-scroll>.table-responsive::before {*/
-/*    content: "\2192";*/
-/*    padding-top: 1rem;*/
-/*    padding-inline-end: .25rem;*/
-/*    font-size: 2rem;*/
-/*    font-weight: 600;*/
-/*    z-index: 9999999;*/
-/*    opacity: var(--end-opacity, 0);*/
-/*    transition: opacity 250ms ease-in-out;*/
-/*    position: fixed;*/
-/*    color: var(--bs-primary);*/
-/*    top: calc(100px + 10rem);*/
-/*    right: 0;*/
-/*}*/
+.table-responsive-container.with-scroll > .table-scroll-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    position: sticky;
+    top: calc((var(--header-size, 67) * 1px) + 2rem);
+    z-index: 3;
+    height: 4rem;
+    margin-bottom: -4rem;
+}
+
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-start,
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-end {
+    outline: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    z-index: 4;
+    color: var(--bs-gray-700);
+    transition: opacity 250ms ease-in-out;
+}
+
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-start:hover ,
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-end:hover {
+    color: var(--bs-gray-900);
+}
+
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-start {
+    opacity: var(--start-opacity, 0);
+}
+.table-responsive-container.with-scroll > .table-scroll-indicator > .scroll-indicator-end {
+    opacity: var(--end-opacity, 0);
+}

@@ -112,21 +112,8 @@
 
                 <div class="pb-5">
                     <h1 class="mt-0">Drug-Food Interactions</h1>
-                    <div class="mb-2 d-flex flex-row-reverse justify-content-between align-items-center">
-                        <div class="position-relative">
-                                <span class="position-absolute" style="top: 0.50rem; left: 1rem;">
-                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
-                                         aria-label="Search">
-                                        <use xlink:href="#search-icon"/>
-                                    </svg>
-                                </span>
-                            <input class="form-control w-100" style="padding-left: 2.75rem;"
-                                   placeholder="Enter a text to search the table..."
-                                   aria-label="Enter a text to search the table" data-search-input>
-                        </div>
-                    </div>
                     <div class="table-responsive-container">
-                        <div class="table-responsive" data-search-table-container>
+                        <div class="table-responsive" data-searchable>
                             <%
                                 if (!is.null(drug_food_interactions)) {
                                     cat(drug_food_interactions)
