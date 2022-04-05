@@ -52,14 +52,14 @@ initialize_mysql_database() {
 }
 
 initialize_directories() {
-  chown -R www-data:staff "/oncoreport/ws"
+  chown -R www-data:staff "/oncoreport/ws" &
   if [ ! -d "/oncoreport/ws/storage/app/public/jobs" ]; then
     mkdir -p "/oncoreport/ws/storage/app/public/jobs" && chmod -R 777 "/oncoreport/ws/storage/app"
   fi
   if [ ! -d "/oncoreport/ws/storage/app/tus_cache" ]; then
     mkdir -p "/oncoreport/ws/storage/app/tus_cache" && chmod -R 777 "/oncoreport/ws/storage/app"
   fi
-  chmod -R 777 "/oncoreport/ws/storage/"
+  chmod -R 777 "/oncoreport/ws/storage/" &
   if [ -f /var/run/apache2/apache2.pid ]; then
     rm -f /var/run/apache2/apache2.pid
   fi
