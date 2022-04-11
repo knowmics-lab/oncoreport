@@ -190,8 +190,7 @@ echo "Removing old folders"
 
 echo "Starting analysis"
 
-if [[ "$INPUT_TYPE" == "ubam" ]]; then
-  echo "Converting uBAM to FASTQ"
+if [[ "$INPUT_TYPE" == "ubam" ]] || [[ "$INPUT_TYPE" == "bam" ]]; then
   { [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"; } || exit_abnormal_code "Unable to create FASTQ directory" 100
   TUMOR_UB=$(basename "${INPUT_FILE_1%.*}")
   NORMAL_UB=$(basename "${INPUT_FILE_3%.*}")
