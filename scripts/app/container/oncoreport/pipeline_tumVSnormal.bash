@@ -55,6 +55,7 @@ exit_abnormal() {
 }
 
 PAIRED=false
+REALIGN_BAM=false
 THREADS=1
 GENOME="hg19"
 DEPTH_FILTER=">0.0"
@@ -190,7 +191,13 @@ echo "Removing old folders"
 
 echo "Starting analysis"
 
-if [[ "$INPUT_TYPE" == "ubam" ]] || [[ "$INPUT_TYPE" == "bam" ]]; then
+if [[ "$INPUT_TYPE" == "bam" ]] && ! java -jar "$GATK_PATH" ValidateSamFile -I "$INPUT_FILE_1" \
+  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY; then
+  echo "Warning: An invalid BAM file has been detected performing realignment"
+  REALIGN_BAM=true
+fi
+
+if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALIGN_BAM" == "true" ]]; }; then
   { [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"; } || exit_abnormal_code "Unable to create FASTQ directory" 100
   TUMOR_UB=$(basename "${INPUT_FILE_1%.*}")
   NORMAL_UB=$(basename "${INPUT_FILE_3%.*}")
@@ -201,8 +208,8 @@ if [[ "$INPUT_TYPE" == "ubam" ]] || [[ "$INPUT_TYPE" == "bam" ]]; then
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${TUMOR_UB}_2.fq"
     INPUT_FILE_4="$PATH_FASTQ/${NORMAL_UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -s -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -s -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
   else
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103

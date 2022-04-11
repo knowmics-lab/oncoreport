@@ -54,6 +54,7 @@ exit_abnormal() {
 }
 
 PAIRED=false
+REALIGN_BAM=false
 THREADS=1
 GENOME="hg19"
 DEPTH_FILTER=">0.0"
@@ -180,14 +181,20 @@ echo "Removing old folders"
   mkdir -p "$PATH_REFERENCE" &&
   mkdir -p "$PATH_OUTPUT"; } || exit_abnormal_code "Unable to create working directories" 101
 
-if [[ "$INPUT_TYPE" == "ubam" ]] || [[ "$INPUT_TYPE" == "bam" ]]; then
+if [[ "$INPUT_TYPE" == "bam" ]] && ! java -jar "$GATK_PATH" ValidateSamFile -I "$INPUT_FILE_1" \
+  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY; then
+  echo "Warning: An invalid BAM file has been detected performing realignment"
+  REALIGN_BAM=true
+fi
+
+if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALIGN_BAM" == "true" ]]; }; then
   UB=$(basename "${INPUT_FILE_1%.*}")
   UBAM_FILE="$INPUT_FILE_1"
   { [ ! -d "$PATH_FASTQ" ] && mkdir "$PATH_FASTQ"; } || exit_abnormal_code "Unable to create FASTQ directory" 100
   INPUT_FILE_1="$PATH_FASTQ/${UB}_1.fq"
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -s -t "$THREADS" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
   else
     bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
   fi
