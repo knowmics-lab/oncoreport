@@ -191,10 +191,12 @@ echo "Removing old folders"
 
 echo "Starting analysis"
 
+DO_TRIM=true
 if [[ "$INPUT_TYPE" == "bam" ]] && ! java -jar "$GATK_PATH" ValidateSamFile -I "$INPUT_FILE_1" \
-  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY; then
+  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY --VALIDATION_STRINGENCY SILENT; then
   echo "Warning: An invalid BAM file has been detected performing realignment"
   REALIGN_BAM=true
+  DO_TRIM=false
 fi
 
 if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALIGN_BAM" == "true" ]]; }; then
@@ -208,11 +210,11 @@ if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALI
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${TUMOR_UB}_2.fq"
     INPUT_FILE_4="$PATH_FASTQ/${NORMAL_UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -s -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -s -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
   else
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
   fi
   INPUT_TYPE="fastq"
 fi
@@ -223,10 +225,10 @@ TUMOR_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_1")
 if [[ "$INPUT_TYPE" == "fastq" ]]; then
   echo "Aligning TUMOR sample"
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
-    -t "$THREADS" -r "$PATH_TRIM_TUMOR" -o "$PATH_PREPROCESS/tumor_aligned_raw.bam" || exit_abnormal_code "Unable to perform alignment of tumor sample" 104
+    -t "$THREADS" -r "$PATH_TRIM_TUMOR" -o "$PATH_PREPROCESS/tumor_aligned_raw.bam" -n "$DO_TRIM" || exit_abnormal_code "Unable to perform alignment of tumor sample" 104
   echo "Aligning NORMAL sample"
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" -i "$GENOME" \
-    -t "$THREADS" -r "$PATH_TRIM_NORMAL" -o "$PATH_PREPROCESS/normal_aligned_raw.bam" || exit_abnormal_code "Unable to perform alignment of normal sample" 105
+    -t "$THREADS" -r "$PATH_TRIM_NORMAL" -o "$PATH_PREPROCESS/normal_aligned_raw.bam" -n "$DO_TRIM" || exit_abnormal_code "Unable to perform alignment of normal sample" 105
   INPUT_FILE_1="$PATH_PREPROCESS/tumor_aligned_raw.bam"
   INPUT_FILE_3="$PATH_PREPROCESS/normal_aligned_raw.bam"
   INPUT_TYPE="bam"

@@ -181,10 +181,12 @@ echo "Removing old folders"
   mkdir -p "$PATH_REFERENCE" &&
   mkdir -p "$PATH_OUTPUT"; } || exit_abnormal_code "Unable to create working directories" 101
 
+DO_TRIM=true
 if [[ "$INPUT_TYPE" == "bam" ]] && ! java -jar "$GATK_PATH" ValidateSamFile -I "$INPUT_FILE_1" \
-  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY; then
+  -R "$ONCOREPORT_INDEXES_PATH/${GENOME}.fa" -M SUMMARY --VALIDATION_STRINGENCY SILENT; then
   echo "Warning: An invalid BAM file has been detected performing realignment"
   REALIGN_BAM=true
+  DO_TRIM=false
 fi
 
 if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALIGN_BAM" == "true" ]]; }; then
@@ -194,9 +196,9 @@ if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALI
   INPUT_FILE_1="$PATH_FASTQ/${UB}_1.fq"
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -s -t "$THREADS" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -p -i "$UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
   else
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -i "$UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
+    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -i "$UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert BAM to FASTQ" 102
   fi
   INPUT_TYPE="fastq"
 fi
@@ -205,7 +207,7 @@ echo "Starting analysis"
 FILE_1_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_1")
 if [[ "$INPUT_TYPE" == "fastq" ]]; then
   bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
-    -t "$THREADS" -r "$PATH_TRIM" -o "$PATH_PREPROCESS/aligned_raw.bam" || exit_abnormal_code "Unable to perform alignment of tumor sample" 103
+    -t "$THREADS" -r "$PATH_TRIM" -o "$PATH_PREPROCESS/aligned_raw.bam" -n "$DO_TRIM" || exit_abnormal_code "Unable to perform alignment of tumor sample" 103
   INPUT_FILE_1="$PATH_PREPROCESS/aligned_raw.bam"
   INPUT_TYPE="bam"
 fi
