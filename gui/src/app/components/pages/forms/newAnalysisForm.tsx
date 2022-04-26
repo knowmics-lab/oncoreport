@@ -432,6 +432,15 @@ function Step2({ values, uploadState, setFieldValue }: Step2Prop) {
             />
             <ErrorMessage name="firstFile" component={CustomErrorMessage} />
           </Grid>
+          {isVcf && (
+            <Grid item xs={12}>
+              <Typography>
+                <b>Note:</b> The VCF file will be filtered using the
+                &quot;FILTER&quot; column to keep PASS variants. If no PASS
+                variants are found, this job will fail.
+              </Typography>
+            </Grid>
+          )}
           {multipleFiles && !isVcf && (
             <Grid item xs={5}>
               <FileSelector

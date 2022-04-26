@@ -55,6 +55,7 @@ exit_abnormal() {
 
 PAIRED=false
 REALIGN_BAM=false
+PROCESS_VCF=false
 THREADS=1
 GENOME="hg19"
 DEPTH_FILTER=">0.0"
@@ -123,6 +124,7 @@ fi
 MAX_PROC=$(nproc)
 ((THREADS <= 0)) && exit_abnormal_usage "Error: Threads must be greater than zero."
 ((THREADS > MAX_PROC)) && exit_abnormal_usage "Error: Thread number is greater than the maximum value ($MAX_PROC)."
+[[ "$INPUT_TYPE" == "vcf" ]] && PROCESS_VCF=true
 
 echo "==============================================================================================="
 echo "Input Parameters"
@@ -251,6 +253,14 @@ fi
 [[ "$INPUT_TYPE" != "vcf" ]] && exit_abnormal_code "Input is not a VCF file. This should never happen!!" 109
 FILE_1_NAME=$(basename "$FILE_1_NAME" ".varianttable")
 TYPE="biopsy"
+
+if [[ "$PROCESS_VCF" == "true" ]] && [[ "${INPUT_FILE_1: -17}" != ".varianttable.txt" ]]; then
+  echo "Filtering user variants"
+  awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$INPUT_FILE_1" >"$PATH_VARIANTS_PASS/variants.vcf" || exit_abnormal_code "Unable to filter variants" 115
+  INPUT_FILE_1="$PATH_VARIANTS_PASS/variants.vcf"
+  COUNT_VARIANTS=$(grep -c -v '^#' "$INPUT_FILE_1")
+  ((COUNT_VARIANTS <= 0)) && exit_abnormal_code "Error: No PASS variants found after filtering." 116
+fi
 
 echo "Pre-processing variants"
 PROCESSING_SCRIPT="$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R"

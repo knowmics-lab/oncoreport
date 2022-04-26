@@ -278,6 +278,8 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                     115 => 'Unable to prepare ESMO guidelines',
                     116 => 'Unable to create report',
                     117 => 'Unable to clean up folders',
+                    118 => 'Unable to filter variants',
+                    119 => 'No PASS variants were found',
                 ]
             );
             throw_unless(

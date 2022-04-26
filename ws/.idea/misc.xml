@@ -13,6 +13,11 @@
       </map>
     </option>
   </component>
+  <component name="SwUserDefinedSpecifications">
+    <option name="specTypeByUrl">
+      <map />
+    </option>
+  </component>
   <component name="WebPackConfiguration">
     <option name="mode" value="DISABLED" />
   </component>
