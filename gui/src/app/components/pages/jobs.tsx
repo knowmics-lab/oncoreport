@@ -1,6 +1,6 @@
 // noinspection SuspiciousTypeOfGuard
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { JobEntity, JobRepository, Settings, Utils } from '../../../api';
 import { Alignment, RowActionType } from '../ui/Table/types';
 import { runAsync } from '../utils';
@@ -12,7 +12,7 @@ import {
 } from '../../../interfaces';
 import SaveResultsMenu from '../ui/saveResultsMenu';
 import LogsDialog from '../ui/LogsDialog';
-import RepositoryTable from '../ui/RepositoryTable';
+import RepositoryTable, { RepositoryTableRef } from '../ui/RepositoryTable';
 import useArray from '../../hooks/useArray';
 import { ResultSet } from '../../../apiConnector';
 
@@ -25,6 +25,7 @@ export default function Jobs() {
   const [selectedJob, setSelectedJob] = useState<JobEntity | undefined>();
   const [logsOpen, setLogsOpen] = useState(false);
   const settings = useService(Settings);
+  const tableRef = useRef<RepositoryTableRef>();
 
   const actions: RowActionType<JobEntity>[] = useMemo(() => {
     const js = (j: JobEntity) => !j.isNew && submittingJobs.includes(j.id);
@@ -116,6 +117,7 @@ export default function Jobs() {
     <>
       <RepositoryTable
         repositoryToken={JobRepository}
+        tableRef={tableRef}
         title="Jobs"
         toolbar={[
           {
