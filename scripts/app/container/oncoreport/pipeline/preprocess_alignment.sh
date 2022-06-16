@@ -37,7 +37,10 @@ done
 echo "Validating BAM"
 java -jar "$PICARD_PATH" ValidateSamFile I="$bam" MODE=SUMMARY
 echo "Adding Read Group"
-samtools sort -@ "$threads" "$bam" -T /tmp/ -o /dev/stdout | java -jar "$GATK_PATH" AddOrReplaceReadGroups -I /dev/stdin -O "$annotated_bam" --RGID 0 --RGLB lib1 --RGPL "oncoreport" --RGPU "onco" --RGSM "$GROUP_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal "Unable to add read group" false 104
+samtools sort -@ "$threads" "$bam" -o "${bam}.temp_sorted.bam"
+java -jar "$GATK_PATH" AddOrReplaceReadGroups -I "${bam}.temp_sorted.bam" -O "$annotated_bam" --RGID 0 --RGLB lib1 \
+  --RGPL "oncoreport" --RGPU "onco" --RGSM "$GROUP_NAME" --VALIDATION_STRINGENCY SILENT || exit_abnormal "Unable to add read group" false 104
+[ -f "${bam}.temp_sorted.bam" ] && rm "${bam}.temp_sorted.bam"
 
 NEXT_FILE="$annotated_bam"
 if [ -n "$no_duplicates_bam" ]; then
