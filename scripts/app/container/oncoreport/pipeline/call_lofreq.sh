@@ -59,6 +59,7 @@ OUT=$(mktemp --suffix=".vcf")
 OUT1=$(mktemp --suffix=".vcf")
 awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' "$RAW_VARIANTS_FILE" >"$OUT" || exit_abnormal "Unable to select PASS variants" false 110
 java -jar "$GATK_PATH" RenameSampleInVcf -I "$OUT" -O "$OUT1" --NEW_SAMPLE_NAME "$TUMOR_GROUP_NAME" --VALIDATION_STRINGENCY "SILENT" || exit_abnormal "Unable to rename sample in VCF file" false 112
-java -jar "$GATK_PATH" FixVcfHeader -I "$OUT1" -O "$PASS_VARIANTS_FILE".gz || exit_abnormal "Unable to fix final VCF file" false 113
-gzip -d "$PASS_VARIANTS_FILE".gz
+java -jar "$GATK_PATH" FixVcfHeader -R "$ONCOREPORT_INDEXES_PATH/${INDEX}.fa" -I "$OUT1" -O "${PASS_VARIANTS_FILE}.gz" || exit_abnormal "Unable to fix final VCF file" false 113
+gzip -d "${PASS_VARIANTS_FILE}.gz"
+[ ! -f "${PASS_VARIANTS_FILE}" ] && exit_abnormal "Unable to find final VCF file" false 114
 rm "$OUT" "$OUT1"
