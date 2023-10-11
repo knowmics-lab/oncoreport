@@ -1,0 +1,65 @@
+--------------------------------------------------------------------
+               The Oncoreport License, version 1.00
+Copyright (c) 2023 The Oncoreport Team. All rights reserved.
+--------------------------------------------------------------------
+
+Redistribution and use in source and binary forms, with or without
+modification, is permitted provided that the following conditions
+are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
+	 
+  3. Redistributions and use is source and binary forms for commercial
+     applications are not allowed without prior written permission. For
+     written permission, please contact alfredo.pulvirenti@unict.it.
+
+  4. The name "Oncoreport" must not be used to endorse or promote products
+     derived from this software without prior written permission. For
+     written permission, please contact alfredo.pulvirenti@unict.it.
+
+  5. Products derived from this software may not be called 
+     "Oncoreport", nor may "Oncoreport" appear in their name. You 
+     may not indicate that your software works in conjunction with 
+     Oncoreport.
+
+  6. The Oncoreport Team may publish revised and/or new versions of the
+     license from time to time. Each version will be given a
+     distinguishing version number.
+     Once covered code has been published under a particular version
+     of the license, you may always continue to use it under the terms
+     of that version. You may also choose to use such covered code
+     under the terms of any subsequent version of the license
+     published by the Oncoreport Team. No one other than the Oncoreport 
+     Team has the right to modify the terms applicable to covered code 
+     created under this License.
+
+  7. Redistributions of any form whatsoever must retain the following
+     acknowledgment:
+     "This product includes Oncoreport software, available from
+     <https://oncoreport.atlas.dmi.unict.it/>".
+
+THIS SOFTWARE IS PROVIDED BY THE ONCOREPORT TEAM ``AS IS'' AND
+ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE ONCOREPORT
+TEAM OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------
+
+This software consists of voluntary contributions made by many
+individuals on behalf of the Oncoreport Team.
+
+The Oncoreport Team can be contacted via Email at alfredo.pulvirenti@unict.it.
