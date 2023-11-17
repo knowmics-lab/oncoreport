@@ -67,7 +67,6 @@ For custom panel?
 The pipeline takes several inputs:
 -	fastq  
 -	bam
--	sam
 -	ubam
 -	vcf (it also possible to upload a varianttable sample in this section)
 **OncoReport** allows users to easily generate rich reports to support clinical interpretation of variants and their association to prognosis and therapy. 
