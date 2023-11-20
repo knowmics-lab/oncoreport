@@ -1,5 +1,8 @@
 #!/bin/bash
-SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_PATH="$(
+    cd "$(dirname "$0")" >/dev/null 2>&1
+    pwd -P
+)"
 CURR_DIR="$(pwd)"
 
 OUTPUT_DIR="$1"
@@ -21,14 +24,16 @@ pv *.chr*.gz | zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep 
     awk 'BEGIN{OFS=FS="\t"} {tmp=$1;$1=$3;$3=tmp;tmp=$2;$2=$4;$4=tmp;print}' >hg19.txt
 pv *.chr*.gz | zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
 
-# TODO: clean up columns, add header, etc.
-Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt"
+Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt" "$TEMP_DIR/headers.txt"
 
 mkdir -p "$TEMP_DIR/hg19"
 mkdir -p "$TEMP_DIR/hg38"
-# split into 50 files
-split -n 50 hg19.txt "$TEMP_DIR/hg19/hg19_"
-split -n 50 hg38.txt "$TEMP_DIR/hg38/hg38_"
+# split into 50 files without cutting lines
+split -n l/50 "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg19/hg19_"
+split -n l/50 "$TEMP_DIR/hg38.txt" "$TEMP_DIR/hg38/hg38_"
+# add the content of headers.txt to each file
+for f in "$TEMP_DIR/hg19/hg19_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
+for f in "$TEMP_DIR/hg38/hg38_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
 # gzip each file
 gzip "$TEMP_DIR/hg19/hg19_"*
 gzip "$TEMP_DIR/hg38/hg38_"*
