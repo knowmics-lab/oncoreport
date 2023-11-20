@@ -5,8 +5,16 @@ library(data.table)
 
 # get arguments
 args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 3) {
+  cat(
+    "Usage: clean_dbnsfp.R <hg19_dbnsfp_file>",
+    "<hg38_dbnsfp_file> <headers_file>\n"
+  )
+  quit(status = 1)
+}
 hg19 <- args[1]
 hg38 <- args[2]
+headers <- args[3]
 
 columns_before <- c(
   "Chr", "Start", "Ref", "Alt", "SIFT_pred", "LRT_pred",
@@ -19,7 +27,19 @@ columns_after <- c(
   "PROVEAN_pred", "MetaSVM_pred", "MetaLR_pred", "fathmm-MKL_coding_pred"
 )
 
-prepare_pred_column <- function(column) {
+priority_by_column <- list(
+  "SIFT_pred" = c("D", "T"),
+  "LRT_pred" = c("D", "N", "U"),
+  "MutationTaster_pred" = c("A", "D", "N", "P"),
+  "MutationAssessor_pred" = c("H", "M", "L", "N"),
+  "FATHMM_pred" = c("D", "T"),
+  "PROVEAN_pred" = c("D", "N"),
+  "MetaSVM_pred" = c("D", "T"),
+  "MetaLR_pred" = c("D", "T"),
+  "fathmm-MKL_coding_pred" = c("D", "N")
+)
+
+prepare_pred_column <- function(column, priority) {
   return(sapply(strsplit(column, ";", fixed = TRUE), function(x) {
     x <- unique(x[x != "."])
     if (length(x) == 0) {
@@ -27,7 +47,12 @@ prepare_pred_column <- function(column) {
     } else if (length(x) == 1) {
       return(x[1])
     } else {
-      return(paste(x, collapse = ";"))
+      for (p in priority) {
+        if (p %in% x) {
+          return(p)
+        }
+      }
+      return(x[1])
     }
   }))
 }
@@ -42,7 +67,7 @@ prepare_table <- function(tbl) {
   tbl$End <- tbl$Start + sapply(tbl$Ref, length) - 1
 
   for (c in grep("_pred", colnames(tbl), value = TRUE)) {
-    tbl[[c]] <- prepare_pred_column(tbl[[c]])
+    tbl[[c]] <- prepare_pred_column(tbl[[c]], priority_by_column[[c]])
   }
 
   tbl <- na.omit(tbl)
@@ -51,18 +76,35 @@ prepare_table <- function(tbl) {
 }
 
 # read hg19 and hg38 dbnsfp files with readr
+cat("Reading hg19 dbNSFP file...")
 dbnsfp_hg19 <- fread(hg19, sep = "\t", header = FALSE)
+cat("preparing...")
 dbnsfp_hg19 <- prepare_table(dbnsfp_hg19)
+cat("writing...")
 fwrite(dbnsfp_hg19,
   file = hg19, sep = "\t", quote = FALSE,
   row.names = FALSE, col.names = FALSE
 )
 rm(dbnsfp_hg19)
+cat("done\n")
 
+cat("Reading hg38 dbNSFP file...")
 dbnsfp_hg38 <- fread(hg38, sep = "\t", header = FALSE)
+cat("preparing...")
 dbnsfp_hg38 <- prepare_table(dbnsfp_hg38)
+cat("writing...")
 fwrite(dbnsfp_hg38,
   file = hg38, sep = "\t", quote = FALSE,
   row.names = FALSE, col.names = FALSE
 )
 rm(dbnsfp_hg38)
+cat("done\n")
+
+cat("Writing headers...")
+data <- data.frame(matrix(ncol = length(columns_after), nrow = 0))
+colnames(data) <- columns_after
+fwrite(as.data.table(data),
+  file = headers, sep = "\t", quote = FALSE,
+  row.names = FALSE, col.names = TRUE
+)
+cat("done\n")
