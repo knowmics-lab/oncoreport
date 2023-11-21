@@ -5,7 +5,7 @@ SCRIPT_PATH="$(
 )"
 CURR_DIR="$(pwd)"
 
-OUTPUT_DIR="$1"
+OUTPUT_DIR="$(realpath $1)"
 [[ -z "$OUTPUT_DIR" ]] && echo "Usage: $0 <output_dir>" && exit 1
 DBNSFP_URL="https://dbnsfp.s3.amazonaws.com/dbNSFP4.4a.zip"
 # if second argument is given, use it as the DBNSFP_URL
@@ -38,8 +38,10 @@ for f in "$TEMP_DIR/hg38/hg38_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" 
 gzip "$TEMP_DIR/hg19/hg19_"*
 gzip "$TEMP_DIR/hg38/hg38_"*
 # move to output directory
-mv "$TEMP_DIR/hg19" "$OUTPUT_DIR"
-mv "$TEMP_DIR/hg38" "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR/hg19/dbNSFP"
+mkdir -p "$OUTPUT_DIR/hg38/dbNSFP"
+mv "$TEMP_DIR/hg19/*" "$OUTPUT_DIR/hg19/dbNSFP/"
+mv "$TEMP_DIR/hg38/*" "$OUTPUT_DIR/hg38/dbNSFP/"
 # cleanup
 cd "$CURR_DIR"
 rm -rf "$TEMP_DIR"

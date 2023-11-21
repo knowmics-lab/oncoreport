@@ -15,6 +15,16 @@ if [ ! -f ws.tgz ]; then
   rm -rf repo/ || exit
 fi
 [[ ! -f ws.tgz ]] && echo "Archive not built!" && exit
+
+if [ ! -d "./databases/hg19" ] || [ ! -d "./databases/hg38" ]; then
+  rm -rf ./databases/hg19
+  rm -rf ./databases/hg38
+  bash ./scripts/build_dbnsfp.sh ./databases/
+fi
+
+[[ ! -d "./databases/hg19/dbNSFP" ]] && echo "hg19 dbNSFP database not built!" && exit
+[[ ! -d "./databases/hg38/dbNSFP" ]] && echo "hg38 dbNSFP database not built!" && exit
+
 echo "Enter your drugbank username:"
 read -r DRUGBANK_USERNAME
 echo "Enter your drugbank password:"

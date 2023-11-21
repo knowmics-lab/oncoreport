@@ -8,3 +8,7 @@ scripts/app/container/drugbank.xml
 scripts/app/container/databases/Disease.txt
 
 scripts/app/container/oncoreport/.Rhistory
+
+.DS_Store
+databases/hg19/dbNSFP
+databases/hg38/dbNSFP
