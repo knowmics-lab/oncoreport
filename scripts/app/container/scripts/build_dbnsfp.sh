@@ -13,6 +13,7 @@ DBNSFP_URL="https://dbnsfp.s3.amazonaws.com/dbNSFP4.4a.zip"
 # if third argument is given, use it as the temp directory otherwise use CURR_DIR/tmp
 TEMP_DIR="$3"
 [[ -z "$TEMP_DIR" ]] && TEMP_DIR="$CURR_DIR/tmp"
+TEMP_DIR="$(realpath $TEMP_DIR)"
 
 mkdir -p "$OUTPUT_DIR"
 mkdir -p "$TEMP_DIR"
