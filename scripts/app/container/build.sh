@@ -25,6 +25,15 @@ fi
 [[ ! -d "./databases/hg19/dbNSFP" ]] && echo "hg19 dbNSFP database not built!" && exit
 [[ ! -d "./databases/hg38/dbNSFP" ]] && echo "hg38 dbNSFP database not built!" && exit
 
+if [ ! -f "./databases/pharm_database_hg19.txt" ] || [ ! -d "./databases/pharm_database_hg38.txt" ]; then
+  rm -rf ./databases/pharm_database_hg19.txt
+  rm -rf ./databases/pharm_database_hg38.txt
+  bash ./scripts/build_pharmgkb.sh ./databases/
+fi
+
+[[ ! -f "./databases/pharm_database_hg19.txt" ]] && echo "hg19 PharmGKB database not built!" && exit
+[[ ! -f "./databases/pharm_database_hg38.txt" ]] && echo "hg38 PharmGKB database not built!" && exit
+
 echo "Enter your drugbank username:"
 read -r DRUGBANK_USERNAME
 echo "Enter your drugbank password:"
