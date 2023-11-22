@@ -38,11 +38,13 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
   cat(" - Processing", f, "...\n")
   dbsnp_data <- fread(f, sep = "\t", header = FALSE)
   colnames(dbsnp_data) <- c("ChrID", "Position", "ID", "REF", "Alt_base")
-  dbsnp_data <- dbsnp_data %>%
-    inner_join(chrs, by = "ChrID") %>%
-    inner_join(var_pheno_ann, by = "ID") %>%
-    tidyr::separate_rows(Alt_base, sep = ",") %>%
-    unique()
+  suppressWarnings({
+    dbsnp_data <- dbsnp_data %>%
+      inner_join(chrs, by = "ChrID") %>%
+      inner_join(var_pheno_ann, by = "ID") %>%
+      tidyr::separate_rows(Alt_base, sep = ",") %>%
+      unique()
+  })
   if (nrow(dbsnp_data) == 0) {
     return(NULL)
   }
@@ -67,7 +69,7 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
 cat("Merging data...")
 dbsnp_all_data <- dbsnp_all_data[sapply(dbsnp_all_data, is.null) == FALSE]
 pharmgkb_data <- na.omit(do.call(rbind, dbsnp_all_data))
-pharmgkb_data <- pharmgkb_data %>%
+pharmgkb_data <- unique(pharmgkb_data) %>%
   group_by(Chromosome, Start, Stop, REF, Alt_base, Gene) %>%
   summarize_all(function(x) (trimws(paste(x, collapse = ";;"))))
 cat("Saving data...")

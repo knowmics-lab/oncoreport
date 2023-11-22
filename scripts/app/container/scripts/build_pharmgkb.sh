@@ -36,7 +36,7 @@ cd "$TEMP_DIR"
 echo "Downloading PharmGKB variants"
 [ ! -f "$TEMP_DIR/variantAnnotations.zip" ] && wget "$PHARMGKB_VARIANTS_URL" -O "$TEMP_DIR/variantAnnotations.zip"
 echo "Extracting Annotations"
-unzip "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR"
+unzip -o "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR"
 
 echo "Processing genome hg19"
 [ ! -f "$TEMP_DIR/hg19_chrom.txt" ] && wget "$HG19_CHROM_URL" -O "$TEMP_DIR/hg19_chrom.txt"
@@ -63,4 +63,4 @@ echo "Done"
 
 # cleanup
 cd "$CURR_DIR"
-#rm -rf "$TEMP_DIR"
+rm -rf "$TEMP_DIR"

@@ -18,12 +18,12 @@ TEMP_DIR="$(realpath $TEMP_DIR)"
 mkdir -p "$OUTPUT_DIR"
 mkdir -p "$TEMP_DIR"
 cd "$TEMP_DIR"
-wget "$DBNSFP_URL" -O dbnsfp.zip
-unzip dbnsfp.zip
+[[ ! -f "$TEMP_DIR/dbnsfp.zip" ]] && wget "$DBNSFP_URL" -O "$TEMP_DIR/dbnsfp.zip"
+unzip -o "$TEMP_DIR/dbnsfp.zip"
 # extract only the columns we need
-pv *.chr*.gz | zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep -v '^ref' |
+pv "$TEMP_DIR/"*.chr*.gz | zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep -v '^ref' |
     awk 'BEGIN{OFS=FS="\t"} {tmp=$1;$1=$3;$3=tmp;tmp=$2;$2=$4;$4=tmp;print}' >hg19.txt
-pv *.chr*.gz | zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
+pv "$TEMP_DIR/"*.chr*.gz | zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
 
 Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt" "$TEMP_DIR/headers.txt"
 
@@ -41,8 +41,8 @@ gzip "$TEMP_DIR/hg38/hg38_"*
 # move to output directory
 mkdir -p "$OUTPUT_DIR/hg19/dbNSFP"
 mkdir -p "$OUTPUT_DIR/hg38/dbNSFP"
-mv "$TEMP_DIR/hg19/*" "$OUTPUT_DIR/hg19/dbNSFP/"
-mv "$TEMP_DIR/hg38/*" "$OUTPUT_DIR/hg38/dbNSFP/"
+mv "$TEMP_DIR/hg19/"* "$OUTPUT_DIR/hg19/dbNSFP/"
+mv "$TEMP_DIR/hg38/"* "$OUTPUT_DIR/hg38/dbNSFP/"
 # cleanup
 cd "$CURR_DIR"
 rm -rf "$TEMP_DIR"
