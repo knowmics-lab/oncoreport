@@ -39,7 +39,7 @@ echo "Extracting Annotations"
 unzip -o "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR"
 echo "Extracting version date"
 RELEASE_DATE=$(cat "$TEMP_DIR/"CREATED_*.txt | cut -d' ' -f 3 | tr -d '\r')
-echo -e "PharmGKB\t$RELEASE_DATE\t$RELEASE_DATE" >>"$OUTPUT_DIR/versions.txt"
+echo -e "PharmGKB\t$RELEASE_DATE\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
 
 echo "Processing genome hg19"
 [ ! -f "$TEMP_DIR/hg19_chrom.txt" ] && wget "$HG19_CHROM_URL" -O "$TEMP_DIR/hg19_chrom.txt"

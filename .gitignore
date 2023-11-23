@@ -14,3 +14,4 @@ databases/hg19/dbNSFP
 databases/hg38/dbNSFP
 databases/pharm_database_hg19.txt
 databases/pharm_database_hg38.txt
+databases/*

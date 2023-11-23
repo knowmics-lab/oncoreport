@@ -22,9 +22,8 @@ cd "$TEMP_DIR"
 unzip -o "$TEMP_DIR/dbnsfp.zip"
 # extract version number from README
 RELEASE_DATE=$(cat "$TEMP_DIR/"*.readme.txt | head -n 4 | tail -n 1 | sed -r 's/^[[:blank:]]//g' | tr -d '\r')
-VERSION_NUMBER=$(cat "$TEMP_DIR/"*.readme.txt | head -n 1 | cut -d' ' -f3 | tr -d '\r')
 # append version number to output file versions.txt in the output directory
-echo -e "dbNSFP\t$VERSION_NUMBER\t$RELEASE_DATE" >>"$OUTPUT_DIR/versions.txt"
+echo -e "dbNSFP\t$VERSION_NUMBER\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
 
 # extract only the columns we need
 pv "$TEMP_DIR/"*.chr*.gz | zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep -v '^ref' |
