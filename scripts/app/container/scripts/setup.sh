@@ -62,13 +62,15 @@ VARSCAN_VERSION="2.4.4"
     chmod +x /usr/local/bin/varscan.jar
 ) || exit 140
 
-
 # Install cython and Crossmap
 pip3 install cython || exit 109
 pip3 install CrossMap || exit 110
 pip3 install CrossMap --upgrade || exit 111
 
-# Copy databases
+# Download the latest version of the hg19 to hg38 chain file
+CHAIN_VERSION="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/ 2>/dev/null |
+  grep 'hg19ToHg38.over.chain.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
+echo -e "hg19 To hg38 Chain\t$CHAIN_VERSION\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
 cd /oncoreport/tmp/ || exit 99
 (
   wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz &&
@@ -76,21 +78,42 @@ cd /oncoreport/tmp/ || exit 99
     mv hg19ToHg38.over.chain.gz /oncoreport/databases
 ) || exit 112
 
+# Download nightly update of the CIVIC database
+echo -e "CIVIC\t$(date +%Y%m%d)\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
 (
   wget https://civicdb.org/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv &&
     [ -f nightly-ClinicalEvidenceSummaries.tsv ] &&
     mv nightly-ClinicalEvidenceSummaries.tsv /oncoreport/databases/civic.txt
 ) || exit 113
 
-CLINVAR_YEAR="2022"
-CLINVAR_VERSION="20220122"
+# Download the latest version of the ClinVar database for hg38 and hg19
+CLINVAR_VERSION="$(curl ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/ 2>/dev/null |
+  grep 'clinvar.vcf.gz' | head -n 1 | awk -F'->' '{print $2}' | cut -d'_' -f2 | cut -d'.' -f1)"
+echo -e "ClinVar\t$CLINVAR_VERSION\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
+
 (
-  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/$CLINVAR_YEAR/clinvar_$CLINVAR_VERSION.vcf.gz" &&
-    [ -f "clinvar_$CLINVAR_VERSION.vcf.gz" ] &&
-    gunzip "clinvar_$CLINVAR_VERSION.vcf.gz" &&
-    [ -f "clinvar_$CLINVAR_VERSION.vcf" ] &&
-    mv "clinvar_$CLINVAR_VERSION.vcf" /oncoreport/databases/clinvar_hg38.vcf
+  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz" &&
+    [ -f "clinvar.vcf.gz" ] &&
+    gunzip "clinvar.vcf.gz" &&
+    [ -f "clinvar.vcf" ] &&
+    mv "clinvar.vcf" /oncoreport/databases/clinvar_hg38.vcf
 ) || exit 114
+
+(
+  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz" &&
+    [ -f "clinvar.vcf.gz" ] &&
+    gunzip "clinvar.vcf.gz" &&
+    [ -f "clinvar.vcf" ] &&
+    mv "clinvar.vcf" /oncoreport/databases/clinvar_hg19.vcf
+) || exit 116
+
+# Download the latest version of the NCBI RefSeq database for hg38 and hg19
+HG38_DATE="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ 2>/dev/null |
+  grep 'ncbiRefSeq.txt.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
+HG19_DATE="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ 2>/dev/null |
+  grep 'ncbiRefSeq.txt.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
+echo -e "NCBI RefSeq hg38\t$HG38_DATE\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
+echo -e "NCBI RefSeq hg19\t$HG19_DATE\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
 
 (
   wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz &&
@@ -101,14 +124,6 @@ CLINVAR_VERSION="20220122"
 ) || exit 115
 
 (
-  wget "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/$CLINVAR_YEAR/clinvar_$CLINVAR_VERSION.vcf.gz" &&
-    [ -f "clinvar_$CLINVAR_VERSION.vcf.gz" ] &&
-    gunzip "clinvar_$CLINVAR_VERSION.vcf.gz" &&
-    [ -f "clinvar_$CLINVAR_VERSION.vcf" ] &&
-    mv "clinvar_$CLINVAR_VERSION.vcf" /oncoreport/databases/clinvar_hg19.vcf
-) || exit 116
-
-(
   wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeq.txt.gz &&
     [ -f ncbiRefSeq.txt.gz ] &&
     gunzip ncbiRefSeq.txt.gz &&
@@ -116,15 +131,12 @@ CLINVAR_VERSION="20220122"
     mv ncbiRefSeq.txt /oncoreport/databases/ncbiRefSeq_hg19.txt
 ) || exit 117
 
-#mv /Disease.txt /oncoreport/databases/ || exit 118
-#mv /disease_list.txt /oncoreport/databases/ || exit 119
-#mv /Drug_food.txt /oncoreport/databases/ || exit 120
-#mv /pharm_database_hg19.txt /oncoreport/databases/ || exit 121
-#mv /cgi_original_hg19.txt /oncoreport/databases/ || exit 122
-#mv /pharm_database_hg38.txt /oncoreport/databases/ || exit 123
-#mv /cgi_original_hg38.txt /oncoreport/databases/ || exit 124
-
 # Download drugbank.xml file
+DRUGBANK_VERSION="$(curl https://go.drugbank.com/releases/latest/release_notes 2>/dev/null |
+  grep 'DrugBank Release Notes &mdash;' | sed 's/<[^>]*>/ /g' | awk -F'&mdash;' '{print $2}' |
+  sed -e 's/^[[:space:]]*//' | cut -d' ' -f1)"
+echo -e "DrugBank\t$DRUGBANK_VERSION\t$(date +%Y-%m-%d)" >>"/oncoreport/databases/versions.txt"
+
 DRUGBANK_USERNAME="$(head -n 1 /run/secrets/drugbank)"
 DRUGBANK_PASSWORD="$(tail -n 1 /run/secrets/drugbank)"
 (
