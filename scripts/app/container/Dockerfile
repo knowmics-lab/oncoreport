@@ -38,7 +38,10 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
                    openjdk-8-jdk ant r-base grep tzdata cmake rename apt-utils nano beanstalkd \
                    python3-setuptools git apache2 php-xdebug composer php-cli jq python \
                    libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
-                   php-xml php-mbstring zip php-zip php-curl php-intl pigz ca-certificates-java && \
+                   php-xml php-mbstring zip php-zip php-curl php-intl pigz ca-certificates-java \
+                   libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
+                   r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev \
+                   unixodbc-dev && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     update-java-alternatives -s "java-1.8.0-openjdk-amd64" && \
@@ -75,8 +78,6 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     mv /support/ws.tgz /ws.tgz && \
     chmod 755 /usr/local/bin/*.sh && \
     rm -rf /support && \
-    apt install -y libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 && \
-    apt install -y r-base r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
     /usr/bin/Rscript /usr/local/bin/installPackages.R && \
     apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
     apt remove -y software-properties-common && \
