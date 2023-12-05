@@ -57,6 +57,7 @@ process_variants "$TEMP_DIR/dbsnp_hg19.vcf.gz" "$TEMP_DIR/dbsnp_hg19/variants_"
 echo " - Processing PharmGKB variants for hg19"
 Rscript "$SCRIPT_PATH/process_pharmgkb.R" "$TEMP_DIR/var_pheno_ann.tsv" \
         "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/dbsnp_hg19" "$OUTPUT_DIR/pharm_database_hg19.txt"
+rm -rf "$TEMP_DIR/dbsnp_hg19" "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/hg19_chrom.txt" "$TEMP_DIR/dbsnp_hg19.vcf.gz"
 
 echo "Processing genome hg38"
 [ ! -f "$TEMP_DIR/hg38_chrom.txt" ] && wget_progress "$HG38_CHROM_URL" "$TEMP_DIR/hg38_chrom.txt"
@@ -68,6 +69,7 @@ process_variants "$TEMP_DIR/dbsnp_hg38.vcf.gz" "$TEMP_DIR/dbsnp_hg38/variants_"
 echo " - Processing PharmGKB variants for hg38"
 Rscript "$SCRIPT_PATH/process_pharmgkb.R" "$TEMP_DIR/var_pheno_ann.tsv" \
         "$TEMP_DIR/hg38_chrnames.tsv" "$TEMP_DIR/dbsnp_hg38" "$OUTPUT_DIR/pharm_database_hg38.txt"
+rm -rf "$TEMP_DIR/dbsnp_hg38" "$TEMP_DIR/hg38_chrnames.tsv" "$TEMP_DIR/hg38_chrom.txt" "$TEMP_DIR/dbsnp_hg38.vcf.gz"
 echo "Done"
 
 # cleanup
