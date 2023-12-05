@@ -1,14 +1,14 @@
 FROM ubuntu:focal as prepare
-ARG BASE_PATH /support
-ARG ONCOREPORT_ORIGIN https://github.com/knowmics-lab/oncoreport.git 
-ARG ONCOREPORT_BRANCH master
-ARG DEBIAN_FRONTEND noninteractive
-ARG CONTAINER_TIMEZONE GMT
+ARG BASE_PATH="/support"
+ARG ONCOREPORT_ORIGIN="https://github.com/knowmics-lab/oncoreport.git"
+ARG ONCOREPORT_BRANCH="master"
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG CONTAINER_TIMEZONE="GMT"
 COPY . ${BASE_PATH}
-RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash /support/scripts/prepare.sh
+RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash ${BASE_PATH}/scripts/prepare.sh
 
 FROM ubuntu:focal as oncoreport
-ARG CONTAINER_TIMEZONE GMT
+ARG CONTAINER_TIMEZONE="GMT"
 ENV DOCKER_USER_ID 501
 ENV DOCKER_USER_GID 20
 ENV BOOT2DOCKER_ID 1000
