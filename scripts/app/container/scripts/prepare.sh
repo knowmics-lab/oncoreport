@@ -14,7 +14,6 @@ apt install -y wget unzip pv git perl curl tar unixodbc \
     libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
     r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev \
     libfontconfig1-dev unixodbc-dev
-/usr/bin/Rscript /usr/local/bin/installPackages.R
 Rscript -e 'install.packages("BiocManager")'
 Rscript -e 'BiocManager::install(c("data.table", "tidyr", "dplyr", "readr", "rvest", "data.table", "readxl", "fuzzyjoin", "webchem", "googleLanguageR", "dbparser"), ask = FALSE)'
 
