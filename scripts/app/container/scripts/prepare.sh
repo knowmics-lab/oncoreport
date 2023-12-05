@@ -15,7 +15,7 @@ apt install -y wget unzip pv git perl curl tar unixodbc \
     r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev \
     libfontconfig1-dev unixodbc-dev
 
-Rscript "$BASE_PATH/scripts/install_packages.R" "stage1"
+Rscript "$BASE_PATH/scripts/installPackages.R" "stage1"
 
 if [ ! -f "$BASE_PATH/ws.tgz" ]; then
     mkdir "$BASE_PATH/repo"
