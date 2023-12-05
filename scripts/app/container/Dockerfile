@@ -2,9 +2,12 @@ FROM ubuntu:focal as prepare
 COPY . /support
 ARG ONCOREPORT_ORIGIN https://github.com/knowmics-lab/oncoreport.git 
 ARG ONCOREPORT_BRANCH master
+ARG DEBIAN_FRONTEND noninteractive
+ARG CONTAINER_TIMEZONE GMT
 RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash /support/scripts/prepare.sh
 
 FROM ubuntu:focal as oncoreport
+ARG CONTAINER_TIMEZONE GMT
 ENV DOCKER_USER_ID 501
 ENV DOCKER_USER_GID 20
 ENV BOOT2DOCKER_ID 1000
@@ -12,13 +15,13 @@ ENV BOOT2DOCKER_GID 50
 ENV SUPERVISOR_VERSION 4.2.0
 ENV DEBUG false
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-
 ENV DEBIAN_FRONTEND noninteractive
 
 # Copy support files from previous build stage
 COPY --from=prepare /support /support
 
-RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone && \
+    usermod -u ${BOOT2DOCKER_ID} www-data && \
     usermod -G staff www-data && \
     useradd -r mysql && \
     usermod -G staff mysql && \

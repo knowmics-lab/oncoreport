@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 apt update --fix-missing
 apt install -y perl dialog software-properties-common
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
@@ -8,7 +9,6 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB
 add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
 apt update
 apt dist-upgrade -y
-export DEBIAN_FRONTEND=noninteractive
 apt install -y wget unzip pv git perl curl tar unixodbc \
     grep cmake apt-utils nano jq pwgen zip pigz libpcre16-3 \
     libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
