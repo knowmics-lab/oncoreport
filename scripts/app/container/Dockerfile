@@ -2,7 +2,7 @@ FROM ubuntu:focal as prepare
 COPY . /support
 ARG ONCOREPORT_ORIGIN https://github.com/knowmics-lab/oncoreport.git 
 ARG ONCOREPORT_BRANCH master
-RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate /support/scripts/prepare.sh
+RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash /support/scripts/prepare.sh
 
 FROM ubuntu:focal as oncoreport
 ENV DOCKER_USER_ID 501
