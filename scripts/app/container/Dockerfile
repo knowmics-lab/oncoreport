@@ -1,9 +1,10 @@
 FROM ubuntu:focal as prepare
-COPY . /support
+ARG BASE_PATH /support
 ARG ONCOREPORT_ORIGIN https://github.com/knowmics-lab/oncoreport.git 
 ARG ONCOREPORT_BRANCH master
 ARG DEBIAN_FRONTEND noninteractive
 ARG CONTAINER_TIMEZONE GMT
+COPY . ${BASE_PATH}
 RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash /support/scripts/prepare.sh
 
 FROM ubuntu:focal as oncoreport
