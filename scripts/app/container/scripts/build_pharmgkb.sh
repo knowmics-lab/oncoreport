@@ -13,14 +13,21 @@ HG19_CHROM_URL="$GENOME_BASE/GCF_000001405.25_GRCh37.p13/GCF_000001405.25_GRCh37
 HG38_CHROM_URL="$GENOME_BASE/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_assembly_report.txt"
 
 function process_chromosomes() {
-    grep -e '^[^#]' "$1" | awk 'BEGIN{OFS=FS="\t"} { print $7, $10 }' >"$2"
+    local assembly_report_file="$1"
+    local chrom_map_file="$2"
+    grep -e '^[^#]' "$assembly_report_file" | awk 'BEGIN{OFS=FS="\t"} { print $7, $10 }' >"$chrom_map_file"
 }
 
 function process_variants() {
-    pv "$1" | zcat | grep -v '^#' | cut -d$'\t' -f1-5 >"$1.tmp"
-    mkdir -p "$(dirname "$2")"
-    split -n l/100 "$1.tmp" "$2"
-    rm "$1.tmp"
+    local vcf_file="$1"
+    local output_prefix="$2"
+    local output_dir="$(dirname "$output_prefix")"
+    pv "$vcf_file" | zcat | grep -v '^#' | cut -d$'\t' -f1-5 >"$vcf_file.tmp"
+    rm "$vcf_file"
+    mkdir -p "$output_dir"
+    split -n l/100 "$vcf_file.tmp" "$output_prefix"
+    rm "$vcf_file.tmp"
+    gzip "$output_dir"/*
 }
 
 function wget_progress() {
@@ -57,7 +64,7 @@ process_variants "$TEMP_DIR/dbsnp_hg19.vcf.gz" "$TEMP_DIR/dbsnp_hg19/variants_"
 echo " - Processing PharmGKB variants for hg19"
 Rscript "$SCRIPT_PATH/process_pharmgkb.R" "$TEMP_DIR/var_pheno_ann.tsv" \
         "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/dbsnp_hg19" "$OUTPUT_DIR/pharm_database_hg19.txt"
-rm -rf "$TEMP_DIR/dbsnp_hg19" "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/hg19_chrom.txt" "$TEMP_DIR/dbsnp_hg19.vcf.gz"
+rm -rf "$TEMP_DIR/dbsnp_hg19" "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/hg19_chrom.txt"
 
 echo "Processing genome hg38"
 [ ! -f "$TEMP_DIR/hg38_chrom.txt" ] && wget_progress "$HG38_CHROM_URL" "$TEMP_DIR/hg38_chrom.txt"
@@ -69,7 +76,7 @@ process_variants "$TEMP_DIR/dbsnp_hg38.vcf.gz" "$TEMP_DIR/dbsnp_hg38/variants_"
 echo " - Processing PharmGKB variants for hg38"
 Rscript "$SCRIPT_PATH/process_pharmgkb.R" "$TEMP_DIR/var_pheno_ann.tsv" \
         "$TEMP_DIR/hg38_chrnames.tsv" "$TEMP_DIR/dbsnp_hg38" "$OUTPUT_DIR/pharm_database_hg38.txt"
-rm -rf "$TEMP_DIR/dbsnp_hg38" "$TEMP_DIR/hg38_chrnames.tsv" "$TEMP_DIR/hg38_chrom.txt" "$TEMP_DIR/dbsnp_hg38.vcf.gz"
+rm -rf "$TEMP_DIR/dbsnp_hg38" "$TEMP_DIR/hg38_chrnames.tsv" "$TEMP_DIR/hg38_chrom.txt"
 echo "Done"
 
 # cleanup
