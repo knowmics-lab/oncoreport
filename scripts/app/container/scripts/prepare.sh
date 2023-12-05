@@ -8,11 +8,12 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB
 add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
 apt update
 apt dist-upgrade -y
-DEBIAN_FRONTEND=noninteractive apt install -y \
-    wget unzip pv git perl curl tar unixodbc \
-    grep tzdata cmake apt-utils nano jq pwgen zip \
-    pigz libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
-    r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev
+export DEBIAN_FRONTEND=noninteractive
+apt install -y wget unzip pv git perl curl tar unixodbc \
+    grep cmake apt-utils nano jq pwgen zip pigz libpcre16-3 \
+    libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
+    r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev \
+    libfontconfig1-dev unixodbc-dev
 /usr/bin/Rscript /usr/local/bin/installPackages.R
 Rscript -e 'install.packages("BiocManager")'
 Rscript -e 'BiocManager::install(c("data.table", "tidyr", "dplyr", "readr", "rvest", "data.table", "readxl", "fuzzyjoin", "webchem", "googleLanguageR", "dbparser"), ask = FALSE)'
