@@ -1,9 +1,33 @@
-FROM ubuntu:focal as prepare
+FROM ubuntu:focal as stage1_base
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG CONTAINER_TIMEZONE="GMT"
+COPY scripts/installPackages.R /installPackages.R
+RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
+    echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
+    apt update --fix-missing && \
+    apt install -y perl dialog software-properties-common && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9 && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
+    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && \
+    apt update && \
+    apt dist-upgrade -y && \
+    apt install -y wget unzip pv git perl curl tar unixodbc \
+    grep cmake apt-utils nano jq pwgen zip pigz libpcre16-3 \
+    libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
+    r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev \
+    libfontconfig1-dev unixodbc-dev && \
+    Rscript "/installPackages.R" "stage1" && \
+    apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    apt remove -y software-properties-common && \
+    apt autoclean && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /installPackages.R
+
+FROM stage1_base as stage1
 ARG BASE_PATH="/support"
 ARG ONCOREPORT_ORIGIN="https://github.com/knowmics-lab/oncoreport.git"
 ARG ONCOREPORT_BRANCH="master"
-ARG DEBIAN_FRONTEND="noninteractive"
-ARG CONTAINER_TIMEZONE="GMT"
 COPY . ${BASE_PATH}
 RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash ${BASE_PATH}/scripts/prepare.sh
 
@@ -19,7 +43,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV DEBIAN_FRONTEND noninteractive
 
 # Copy support files from previous build stage
-COPY --from=prepare /support /support
+COPY --from=stage1 /support /support
 
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone && \
     usermod -u ${BOOT2DOCKER_ID} www-data && \
@@ -39,13 +63,13 @@ RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONT
     apt dist-upgrade -y && \
     apt update --fix-missing && \
     apt install -y wget unzip bwa perl python3-pip curl tar samtools bedtools unixodbc tabix bcftools \
-                   openjdk-8-jdk ant r-base grep tzdata cmake rename apt-utils nano beanstalkd \
-                   python3-setuptools git apache2 php-xdebug composer php-cli jq python \
-                   libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
-                   php-xml php-mbstring zip php-zip php-curl php-intl pigz ca-certificates-java \
-                   libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
-                   r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev \
-                   unixodbc-dev && \
+    openjdk-8-jdk ant r-base grep tzdata cmake rename apt-utils nano beanstalkd \
+    python3-setuptools git apache2 php-xdebug composer php-cli jq python \
+    libapache2-mod-php mysql-server php-mysql pwgen php-apcu php-gd \
+    php-xml php-mbstring zip php-zip php-curl php-intl pigz ca-certificates-java \
+    libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 libpcre32-3 libpcrecpp0v5 \
+    r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev \
+    unixodbc-dev && \
     apt autoremove -y && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     update-java-alternatives -s "java-1.8.0-openjdk-amd64" && \
