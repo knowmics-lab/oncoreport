@@ -5,6 +5,20 @@ SCRIPT_PATH="$(
 )"
 CURR_DIR="$(pwd)"
 
+function wget_progress() {
+    local url="$1"
+    local output="$2"
+    wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output"
+}
+
+function zip_file_list() {
+    unzip -l "$1" | awk -F" " '{print $4}' | grep -v "^$" | tail +3l
+}
+
+function zip_read_file() {
+    unzip -p "$1" $2
+}
+
 OUTPUT_DIR="$(realpath $1)"
 [[ -z "$OUTPUT_DIR" ]] && echo "Usage: $0 <output_dir>" && exit 1
 DBNSFP_URL="https://dbnsfp.s3.amazonaws.com/dbNSFP4.4a.zip"
@@ -18,17 +32,21 @@ TEMP_DIR="$(realpath $TEMP_DIR)"
 mkdir -p "$OUTPUT_DIR"
 mkdir -p "$TEMP_DIR"
 cd "$TEMP_DIR"
-[[ ! -f "$TEMP_DIR/dbnsfp.zip" ]] && wget "$DBNSFP_URL" -O "$TEMP_DIR/dbnsfp.zip"
-unzip -o "$TEMP_DIR/dbnsfp.zip"
+[[ ! -f "$TEMP_DIR/dbnsfp.zip" ]] && wget_progress "$DBNSFP_URL" "$TEMP_DIR/dbnsfp.zip"
+# Read file names from dbnsfp.zip without extracting
+README_FILE_NAME=$(zip_file_list "$TEMP_DIR/dbnsfp.zip" | grep 'readme.txt')
+CHROMOSOMES_FILE_NAMES=$(zip_file_list "$TEMP_DIR/dbnsfp.zip" | grep 'chr')
 # extract version number from README
-RELEASE_DATE=$(cat "$TEMP_DIR/"*.readme.txt | head -n 4 | tail -n 1 | sed -r 's/^[[:blank:]]//g' | tr -d '\r')
+RELEASE_DATE=$(zip_read_file "$TEMP_DIR/dbnsfp.zip" "$README_FILE_NAME" | head -n 4 | tail -n 1 | sed -r 's/^[[:blank:]]//g' | tr -d '\r')
 # append version number to output file versions.txt in the output directory
 echo -e "dbNSFP\t$VERSION_NUMBER\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
 
 # extract only the columns we need
-pv "$TEMP_DIR/"*.chr*.gz | zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep -v '^ref' |
+zip_read_file "$TEMP_DIR/dbnsfp.zip" $CHROMOSOMES_FILE_NAMES | pv |
+    zcat | cut -d$'\t' -f 3,4,8,9,40,52,56,61,64,67,72,75,138 | grep -v '^ref' |
     awk 'BEGIN{OFS=FS="\t"} {tmp=$1;$1=$3;$3=tmp;tmp=$2;$2=$4;$4=tmp;print}' >hg19.txt
-pv "$TEMP_DIR/"*.chr*.gz | zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
+zip_read_file "$TEMP_DIR/dbnsfp.zip" $CHROMOSOMES_FILE_NAMES | pv |
+    zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
 
 Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt" "$TEMP_DIR/headers.txt"
 
@@ -37,6 +55,9 @@ mkdir -p "$TEMP_DIR/hg38"
 # split into 50 files without cutting lines
 split -n l/50 "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg19/hg19_"
 split -n l/50 "$TEMP_DIR/hg38.txt" "$TEMP_DIR/hg38/hg38_"
+rm "$TEMP_DIR/hg19.txt"
+rm "$TEMP_DIR/hg38.txt"
+rm "$TEMP_DIR/dbnsfp.zip"
 # add the content of headers.txt to each file
 for f in "$TEMP_DIR/hg19/hg19_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
 for f in "$TEMP_DIR/hg38/hg38_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done

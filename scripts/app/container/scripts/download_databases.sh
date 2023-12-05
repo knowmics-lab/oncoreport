@@ -6,7 +6,7 @@ DATABASES_REPO_URL="https://github.com/knowmics-lab/oncoreport-data.git"
 DATABASES_PATH="$(realpath $1)"
 [[ -z "$DATABASES_PATH" ]] && echo "Usage: $0 <databases_path>" && exit 1
 
-mkdir -p "$DATABASES_PATH"
+[[ -d "$DATABASES_PATH" ]] && rm -rf "$DATABASES_PATH"
 cd "$DATABASES_PATH"
 git clone --depth=1 --branch=main "$DATABASES_REPO_URL" "$DATABASES_PATH"
 rm -rf "$DATABASES_PATH/.git"

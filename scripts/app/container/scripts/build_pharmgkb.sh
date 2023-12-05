@@ -23,6 +23,12 @@ function process_variants() {
     rm "$1.tmp"
 }
 
+function wget_progress() {
+    local url="$1"
+    local output="$2"
+    wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output"
+}
+
 OUTPUT_DIR="$(realpath $1)"
 [[ -z "$OUTPUT_DIR" ]] && echo "Usage: $0 <output_dir> [<temp_dir>]" && exit 1
 # if second argument is given, use it as the temp directory otherwise use CURR_DIR/tmp
@@ -34,7 +40,7 @@ mkdir -p "$OUTPUT_DIR"
 mkdir -p "$TEMP_DIR"
 cd "$TEMP_DIR"
 echo "Downloading PharmGKB variants"
-[ ! -f "$TEMP_DIR/variantAnnotations.zip" ] && wget "$PHARMGKB_VARIANTS_URL" -O "$TEMP_DIR/variantAnnotations.zip"
+[ ! -f "$TEMP_DIR/variantAnnotations.zip" ] && wget_progress "$PHARMGKB_VARIANTS_URL" "$TEMP_DIR/variantAnnotations.zip"
 echo "Extracting Annotations"
 unzip -o "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR"
 echo "Extracting version date"
@@ -42,8 +48,8 @@ RELEASE_DATE=$(cat "$TEMP_DIR/"CREATED_*.txt | cut -d' ' -f 3 | tr -d '\r')
 echo -e "PharmGKB\t$RELEASE_DATE\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
 
 echo "Processing genome hg19"
-[ ! -f "$TEMP_DIR/hg19_chrom.txt" ] && wget "$HG19_CHROM_URL" -O "$TEMP_DIR/hg19_chrom.txt"
-[ ! -f "$TEMP_DIR/dbsnp_hg19.vcf.gz" ] && wget "$DBSNP_HG19_URL" -O "$TEMP_DIR/dbsnp_hg19.vcf.gz"
+[ ! -f "$TEMP_DIR/hg19_chrom.txt" ] && wget_progress "$HG19_CHROM_URL" "$TEMP_DIR/hg19_chrom.txt"
+[ ! -f "$TEMP_DIR/dbsnp_hg19.vcf.gz" ] && wget_progress "$DBSNP_HG19_URL" "$TEMP_DIR/dbsnp_hg19.vcf.gz"
 echo " - Extracting chromosome names"
 process_chromosomes "$TEMP_DIR/hg19_chrom.txt" "$TEMP_DIR/hg19_chrnames.tsv"
 echo " - Extracting variants"
@@ -53,8 +59,8 @@ Rscript "$SCRIPT_PATH/process_pharmgkb.R" "$TEMP_DIR/var_pheno_ann.tsv" \
         "$TEMP_DIR/hg19_chrnames.tsv" "$TEMP_DIR/dbsnp_hg19" "$OUTPUT_DIR/pharm_database_hg19.txt"
 
 echo "Processing genome hg38"
-[ ! -f "$TEMP_DIR/hg38_chrom.txt" ] && wget "$HG38_CHROM_URL" -O "$TEMP_DIR/hg38_chrom.txt"
-[ ! -f "$TEMP_DIR/dbsnp_hg38.vcf.gz" ] && wget "$DBSNP_HG38_URL" -O "$TEMP_DIR/dbsnp_hg38.vcf.gz"
+[ ! -f "$TEMP_DIR/hg38_chrom.txt" ] && wget_progress "$HG38_CHROM_URL" "$TEMP_DIR/hg38_chrom.txt"
+[ ! -f "$TEMP_DIR/dbsnp_hg38.vcf.gz" ] && wget_progress "$DBSNP_HG38_URL" "$TEMP_DIR/dbsnp_hg38.vcf.gz"
 echo " - Extracting chromosome names"
 process_chromosomes "$TEMP_DIR/hg38_chrom.txt" "$TEMP_DIR/hg38_chrnames.tsv"
 echo " - Extracting variants"
