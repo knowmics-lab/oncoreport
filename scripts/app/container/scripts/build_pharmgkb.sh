@@ -22,12 +22,15 @@ function process_variants() {
     local vcf_file="$1"
     local output_prefix="$2"
     local output_dir="$(dirname "$output_prefix")"
-    pv "$vcf_file" | zcat | grep -v '^#' | cut -d$'\t' -f1-5 >"$vcf_file.tmp"
-    rm "$vcf_file"
     mkdir -p "$output_dir"
-    split -n l/100 "$vcf_file.tmp" "$output_prefix"
-    rm "$vcf_file.tmp"
+    pv "$vcf_file" | zcat | grep -v '^#' | cut -d$'\t' -f1-5 | split -l 10000000 - "$output_prefix"
+    rm "$vcf_file"
     gzip "$output_dir"/*
+    # rm "$vcf_file"
+    # mkdir -p "$output_dir"
+    # split -n l/100 "$vcf_file.tmp" "$output_prefix"
+    # rm "$vcf_file.tmp"
+    # gzip "$output_dir"/*
 }
 
 function wget_progress() {
