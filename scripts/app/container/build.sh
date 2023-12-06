@@ -28,13 +28,15 @@ echo "Building container ${CONTAINER_NAME}:${CONTAINER_VERSION}"
 
 [ -f "$SCRIPT_PATH/databases/cgi_original_hg19.txt" ] && rm "$SCRIPT_PATH/databases/*"
 
-echo "Enter your drugbank username:"
-read -r DRUGBANK_USERNAME
-echo "Enter your drugbank password:"
-read -r -s DRUGBANK_PASSWORD
-printf '%s\n%s\n' "$DRUGBANK_USERNAME" "$DRUGBANK_PASSWORD" >/tmp/secret_drugbank
+if [ ! -f "/tmp/secret_drugbank" ]; then
+  echo "Enter your drugbank username:"
+  read -r DRUGBANK_USERNAME
+  echo "Enter your drugbank password:"
+  read -r -s DRUGBANK_PASSWORD
+  printf '%s\n%s\n' "$DRUGBANK_USERNAME" "$DRUGBANK_PASSWORD" >/tmp/secret_drugbank
+fi
 
-DOCKER_BUILDKIT=1 docker build --no-cache \
+DOCKER_BUILDKIT=1 docker build \
   --build-arg="ONCOREPORT_BRANCH=${ONCOREPORT_BRANCH}" \
   --secret id=drugbank,src=/tmp/secret_drugbank \
   --secret id=gltranslate,src=$GLTRANSLATE_JSON_PATH \
