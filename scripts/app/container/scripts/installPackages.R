@@ -8,7 +8,7 @@ if (stage1) {
   BiocManager::install(c(
     "data.table", "tidyr", "dplyr", "readr", "rvest",
     "data.table", "readxl", "fuzzyjoin", "webchem",
-    "googleLanguageR", "dbparser"
+    "googleLanguageR", "dbparser", "R.utils"
   ), ask = FALSE)
 } else {
   BiocManager::install(c(
