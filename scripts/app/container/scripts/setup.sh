@@ -15,57 +15,52 @@ mv /html_source /oncoreport/html_source || exit 102
     ln -s /oncoreport/scripts/genkey.sh /genkey.sh
 ) || exit 103
 
-# Install other software
-pip3 install cutadapt || exit 104
+# # Install other software
+# pip3 install cutadapt || exit 104
 
-# Install trim_galore
-TRIM_GALORE_VERSION="0.6.7"
-(
-  cd /oncoreport/tmp/ &&
-    curl -fsSL "https://github.com/FelixKrueger/TrimGalore/archive/$TRIM_GALORE_VERSION.tar.gz" -o trim_galore.tar.gz &&
-    tar -zxvf trim_galore.tar.gz &&
-    cp "TrimGalore-$TRIM_GALORE_VERSION/trim_galore" /usr/local/bin/
-) || exit 105
+# # Install trim_galore
+# (
+#   cd /oncoreport/tmp/ &&
+#     curl -fsSL "https://github.com/FelixKrueger/TrimGalore/archive/$TRIM_GALORE_VERSION.tar.gz" -o trim_galore.tar.gz &&
+#     tar -zxvf trim_galore.tar.gz &&
+#     cp "TrimGalore-$TRIM_GALORE_VERSION/trim_galore" /usr/local/bin/
+# ) || exit 105
 
-# Install gatk
-GATK_VERSION="4.2.4.1"
-(
-  cd /oncoreport/tmp/ &&
-    wget "https://github.com/broadinstitute/gatk/releases/download/$GATK_VERSION/gatk-$GATK_VERSION.zip" &&
-    unzip "gatk-$GATK_VERSION.zip" &&
-    [ -d "gatk-$GATK_VERSION/" ] &&
-    mv "gatk-$GATK_VERSION/gatk-package-$GATK_VERSION-local.jar" "/usr/local/bin/gatk-package-local.jar"
-) || exit 106
+# # Install gatk
+# (
+#   cd /oncoreport/tmp/ &&
+#     wget "https://github.com/broadinstitute/gatk/releases/download/$GATK_VERSION/gatk-$GATK_VERSION.zip" &&
+#     unzip "gatk-$GATK_VERSION.zip" &&
+#     [ -d "gatk-$GATK_VERSION/" ] &&
+#     mv "gatk-$GATK_VERSION/gatk-package-$GATK_VERSION-local.jar" "/usr/local/bin/gatk-package-local.jar"
+# ) || exit 106
 
-# Install picard
-PICARD_VERSION="2.26.10"
-(
-  cd /oncoreport/tmp/ &&
-    wget "https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar" &&
-    mv picard.jar /usr/local/bin/
-) || exit 107
+# # Install picard
+# (
+#   cd /oncoreport/tmp/ &&
+#     wget "https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar" &&
+#     mv picard.jar /usr/local/bin/
+# ) || exit 107
 
-# Removes pandoc 1 and install pandoc 2
-PANDOC_VERSION="2.17.1.1"
-apt remove -y pandoc
-(
-  cd /oncoreport/tmp/ &&
-    curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-1-amd64.deb" -o pandoc.deb &&
-    dpkg -i pandoc.deb
-) || exit 108
+# # Removes pandoc 1 and install pandoc 2
+# apt remove -y pandoc
+# (
+#   cd /oncoreport/tmp/ &&
+#     curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-1-amd64.deb" -o pandoc.deb &&
+#     dpkg -i pandoc.deb
+# ) || exit 108
 
-VARSCAN_VERSION="2.4.4"
-(
-  cd /oncoreport/tmp/ &&
-    wget "https://github.com/dkoboldt/varscan/raw/master/VarScan.v${VARSCAN_VERSION}.jar" &&
-    mv "VarScan.v${VARSCAN_VERSION}.jar" /usr/local/bin/varscan.jar &&
-    chmod +x /usr/local/bin/varscan.jar
-) || exit 140
+# (
+#   cd /oncoreport/tmp/ &&
+#     wget "https://github.com/dkoboldt/varscan/raw/master/VarScan.v${VARSCAN_VERSION}.jar" &&
+#     mv "VarScan.v${VARSCAN_VERSION}.jar" /usr/local/bin/varscan.jar &&
+#     chmod +x /usr/local/bin/varscan.jar
+# ) || exit 140
 
-# Install cython and Crossmap
-pip3 install cython || exit 109
-pip3 install CrossMap || exit 110
-pip3 install CrossMap --upgrade || exit 111
+# # Install cython and Crossmap
+# pip3 install cython || exit 109
+# pip3 install CrossMap || exit 110
+# pip3 install CrossMap --upgrade || exit 111
 
 # # Download the latest version of the hg19 to hg38 chain file
 # CHAIN_VERSION="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/ 2>/dev/null |
