@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(dbparser)
 library(dplyr)
 
@@ -6,16 +7,16 @@ db_path <- cargs[1]
 setwd(db_path)
 read_drugbank_xml_db(file.path(db_path, "drugbank.xml"))
 
-cat("Preparing drug general informations\n")
-drug_info <- drug_general_information(
+cat("Preparing drug general information\n")
+drug_info           <- drug_general_information(
   save_table = FALSE,
   save_csv = FALSE,
   csv_path = ".",
   override_csv = FALSE,
   database_connection = NULL
 )
-class(drug_info) <- "data.frame"
-drug_info <- cbind(drug_info$primary_key, drug_info$name)
+class(drug_info)    <- "data.frame"
+drug_info           <- cbind(drug_info$primary_key, drug_info$name)
 colnames(drug_info) <- c("id", "name")
 
 # # Process synonyms

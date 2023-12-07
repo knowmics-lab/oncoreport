@@ -25,7 +25,7 @@ function process_variants() {
     mkdir -p "$output_dir"
     pv "$vcf_file" | zcat | grep -v '^#' | cut -d$'\t' -f1-5 | split -l 10000000 - "$output_prefix"
     rm "$vcf_file"
-    gzip "$output_dir"/*
+    # gzip "$output_dir"/*
     # rm "$vcf_file"
     # mkdir -p "$output_dir"
     # split -n l/100 "$vcf_file.tmp" "$output_prefix"

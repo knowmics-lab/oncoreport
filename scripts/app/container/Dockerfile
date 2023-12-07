@@ -1,15 +1,12 @@
-ARG UBUNTU_TAG="jammy"
-
-FROM ubuntu:${UBUNTU_TAG} as stage1_base
+FROM ubuntu:jammy as stage1_base
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG CONTAINER_TIMEZONE="GMT"
-COPY scripts/installPackages.R /installPackages.R
 RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
     echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
     apt update --fix-missing && \
-    apt install -y perl dialog software-properties-common && \
-    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
-    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu ${UBUNTU_TAG}-cran40/" && \
+    apt install -y perl dialog software-properties-common wget && \
+    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
+    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" && \
     add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
     apt update && \
     apt dist-upgrade -y && \

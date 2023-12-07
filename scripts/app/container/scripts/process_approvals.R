@@ -8,8 +8,8 @@ library(webchem)
 library(googleLanguageR)
 library(dbparser)
 
-args <- commandArgs(trailingOnly=TRUE)
-if (length(args) != 2) {
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) < 2) {
   cat(
     "Usage: process_approvals.R <drugbank_database_zip_file>",
     "<output_directory> [<google_translate_json_file>]\n"
@@ -34,14 +34,14 @@ if (!file.exists(drugbank_zip_path)) {
 cached_db_file <- paste0("drugbank_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_db_file)) {
-  
+  cat("Reading DrugBank database...\n")
   dvobj <- parseDrugBank(db_path            = drugbank_zip_path,
                          drug_options       = drug_node_options(),
                          parse_salts        = TRUE,
                          parse_products     = TRUE,
                          references_options = references_node_options(),
                          cett_options       = cett_nodes_options())
-  
+  cat("Processing vocabulary...\n")
   salts_ids      <- unique(dvobj$salts[,c("drugbank-id", "parent_key")])
   salts_names    <- unique(dvobj$salts[,c("name", "parent_key")])
   products_names <- unique(dvobj$products[,c("name", "parent_key")])
@@ -49,7 +49,7 @@ if (!file.exists(cached_db_file)) {
   synonyms       <- unique(dvobj$drugs$synonyms[,c("synonym", "drugbank-id")])
   general_names  <- unique(dvobj$drugs$general_information[,c("name", "primary_key")])
   general_ids    <- unique(dvobj$drugs$general_information[,c("primary_key", "primary_key")])
-  
+
   colnames(salts_ids)      <- c("synonym", "common_name")
   colnames(salts_names)    <- c("synonym", "common_name")
   colnames(products_names) <- c("synonym", "common_name")
@@ -57,22 +57,21 @@ if (!file.exists(cached_db_file)) {
   colnames(synonyms)       <- c("synonym", "common_name")
   colnames(general_names)  <- c("synonym", "common_name")
   colnames(general_ids)    <- c("synonym", "common_name")
-  
   drugbank_vocab_map       <- rbind(salts_ids, salts_names, products_names, 
                                     mixtures, synonyms, general_names, 
                                     general_ids) %>% unique()
   rm(salts_ids, salts_names, products_names, mixtures, synonyms, 
      general_names, general_ids)
-  
+  cat("Processing approvals...\n")
   drugbank_approvals <- dvobj$products %>% 
     dplyr::filter(approved == "true") %>% 
     dplyr::group_by(parent_key) %>% 
     dplyr::summarise(approved_by=paste(unique(unlist(strsplit(source, " "))), collapse = "/")) %>%
     unique()
-  
+  cat("Saving cached data...\n")
   save(dvobj, drugbank_vocab_map, drugbank_approvals, file = cached_db_file)
-  
 } else {
+  cat("Loading cached DrugBank data...\n")
   load(cached_db_file)
 }
 
@@ -185,7 +184,7 @@ if (!file.exists(cached_aifa_file)) {
     }
     return (NULL)
   })()
-  
+  cat("Downloading AIFA data...\n")
   aifa_files_by_class <- (function() {
     download_links          <- aifa %>% html_elements("a[title='Scarica']")
     download_link_labels    <- html_attr(download_links, "aria-label")
@@ -263,7 +262,7 @@ if (!file.exists(cached_aifa_file)) {
   aifa_data <- tmp_data[[1]]
   aifa_release_dates <- tmp_data[[2]]
   rm(tmp_data, aifa_release_date_a_h, aifa_files_by_class)
-  
+  cat("Matching AIFA data with DrugBank Vocabulary...\n")
   tmp               <- do_matches(
     aifa_data,
     c(do_exact_match, do_webchem_match, do_approx_match, do_translate_match),
@@ -272,6 +271,7 @@ if (!file.exists(cached_aifa_file)) {
   aifa_data_matched <- unique(do.call(rbind, tmp[[1]]))
   save(aifa_data, aifa_release_dates, aifa_data_matched, file = cached_aifa_file)
 } else {
+  cat("Loading cached AIFA data...\n")
   load(cached_aifa_file)
 }
 
@@ -280,6 +280,7 @@ if (!file.exists(cached_aifa_file)) {
 cached_ema_file <- paste0("ema_data_matched_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_ema_file)) {
+  cat("Downloading EMA data...\n")
   download.file(ema_url, "ema_medicines.xlsx")
   ema_data <- read_excel("ema_medicines.xlsx", skip = 8)
   ema_report_date <- read_excel("ema_medicines.xlsx", range = "D1", col_names = FALSE)
@@ -305,7 +306,7 @@ if (!file.exists(cached_ema_file)) {
   ema_data$Medicine.name    <- trimws(ema_data$Medicine.name)
   ema_data$Active.substance <- trimws(ema_data$Active.substance)
   ema_data$Medicine.name    <- gsub("\\s+\\(.*", "", ema_data$Medicine.name)
-  
+  cat("Matching EMA data with DrugBank Vocabulary...\n")
   tmp                    <- do_matches(
     ema_data,
     c(do_exact_match, do_webchem_match, do_approx_match),
@@ -320,6 +321,7 @@ if (!file.exists(cached_ema_file)) {
 
 ###############################################################################
 
+cat("Matching AIFA and EMA data with DrugBank Approvals...\n")
 aifa_drugs_approval <- data.frame(
   parent_key=unique(aifa_data_matched$common_name),
   aifa=TRUE
@@ -350,7 +352,7 @@ complete_approvals <- drugbank_approvals %>%
   dplyr::full_join(ema_drugs_approval) %>%
   dplyr::mutate(approvals = build_approval_string(approved_by, aifa, ema)) %>%
   dplyr::select(parent_key, approvals)
-
+cat("Saving results...\n")
 approved_drug_names <- complete_approvals %>% 
   dplyr::full_join(dvobj$drugs$general_information, by=c("parent_key"="primary_key")) %>%
   dplyr::select(name, approvals) %>%
@@ -389,3 +391,4 @@ if (file.exists(versions_path)) {
   df_version       <- rbind(v_data, df_version)
 }
 write_tsv(df_version, versions_path, col_names = FALSE)
+cat("Done!\n")
