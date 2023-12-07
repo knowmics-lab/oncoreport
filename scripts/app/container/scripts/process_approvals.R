@@ -78,7 +78,7 @@ if (!file.exists(cached_db_file)) {
 drugbank_vocab_map$key <- gsub("[^[:alnum:] ]|\\s+", "", tolower(drugbank_vocab_map$synonym))
 drugbank_vocab_map     <- na.omit(unique(drugbank_vocab_map[nchar(drugbank_vocab_map$key) > 2,]))
 
-ema_url <- "https://www.ema.europa.eu/sites/default/files/Medicines_output_european_public_assessment_reports.xlsx"
+ema_url <- "https://www.ema.europa.eu/system/files/documents/other/medicines_output_european_public_assessment_reports_en.xlsx"
 ema_columns <- c("Medicine.name", "Active.substance")
 
 to_key <- function(column)(gsub("[^[:alnum:] ]|\\s+", "", tolower(column)))
