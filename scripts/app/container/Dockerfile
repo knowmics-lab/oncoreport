@@ -1,4 +1,6 @@
-FROM ubuntu:jammy as stage1_base
+ARG UBUNTU_TAG="jammy"
+
+FROM ubuntu:${UBUNTU_TAG} as stage1_base
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG CONTAINER_TIMEZONE="GMT"
 COPY scripts/installPackages.R /installPackages.R
@@ -6,21 +8,24 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
     echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
     apt update --fix-missing && \
     apt install -y perl dialog software-properties-common && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9 && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
-    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/' && \
+    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
+    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu ${UBUNTU_TAG}-cran40/" && \
+    add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
     apt update && \
     apt dist-upgrade -y && \
     apt install -y wget unzip pv git curl tar unixodbc grep cmake apt-utils nano jq pwgen \
-                   zip pigz libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix2 \
-                   libpcre32-3 libpcrecpp0v5 r-base-dev libssl-dev libxml2-dev \
-                   libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
-    Rscript "/installPackages.R" "stage1" && \
-    apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+                   zip pigz libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix3 \
+                   libpcre32-3 libpcrecpp0v5 r-base r-cran-data.table r-cran-tidyr \
+                   r-cran-dplyr r-cran-readr r-cran-rvest r-cran-readxl r-cran-fuzzyjoin \
+                   r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils && \
     apt remove -y software-properties-common && \
     apt autoclean && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
+
+    #r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev
+    #apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
+    #Rscript "/installPackages.R" "stage1" && \
 
 FROM stage1_base as stage2_base
 ARG TRIM_GALORE_VERSION="0.6.10"
