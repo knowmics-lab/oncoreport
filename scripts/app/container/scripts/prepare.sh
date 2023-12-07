@@ -16,6 +16,8 @@ if [ ! -f "$BASE_PATH/ws.tgz" ]; then
     rm -rf "$BASE_PATH/repo"
 fi
 
+cd "$BASE_PATH"
+
 [[ ! -f "$BASE_PATH/ws.tgz" ]] && echo "Archive not built!" && exit 1
 
 echo "Downloading pre-buit databases"
