@@ -28,8 +28,6 @@ CONTAINER_BASE_PATH=${CONTAINER_BASE_PATH:-"/support"}
 
 echo "Building container ${CONTAINER_NAME}:${CONTAINER_VERSION}"
 
-[ -f "$SCRIPT_PATH/databases/cgi_original_hg19.txt" ] && rm "$SCRIPT_PATH/databases/*"
-
 if [ ! -f "/tmp/secret_drugbank" ]; then
   echo "Enter your drugbank username:"
   read -r DRUGBANK_USERNAME
