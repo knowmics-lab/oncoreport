@@ -38,9 +38,9 @@ echo "Downloading dbNSFP database"
 README_FILE_NAME=$(zip_file_list "$TEMP_DIR/dbnsfp.zip" | grep 'readme.txt')
 CHROMOSOMES_FILE_NAMES=$(zip_file_list "$TEMP_DIR/dbnsfp.zip" | grep 'chr')
 # extract version number from README
-RELEASE_DATE=$(zip_read_file "$TEMP_DIR/dbnsfp.zip" "$README_FILE_NAME" | head -n 4 | tail -n 1 | sed -r 's/^[[:blank:]]//g' | tr -d '\r')
+VERSION_NUMBER=$(zip_read_file "$TEMP_DIR/dbnsfp.zip" "$README_FILE_NAME" | head -n 1 | tr -d '\r\n' | cut -d' ' -f3)
 # append version number to output file versions.txt in the output directory
-echo -e "dbNSFP\t$RELEASE_DATE\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
+echo -e "dbNSFP\t${VERSION_NUMBER}\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
 
 # extract only the columns we need
 echo "Extracting hg19 columns from dbNSFP database"

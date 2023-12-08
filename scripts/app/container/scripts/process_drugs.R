@@ -31,6 +31,14 @@ if (!file.exists(drugbank_zip_path)) {
   quit(status = 2)
 }
 
+ema_url      <- "https://www.ema.europa.eu/system/files/documents/other/medicines_output_european_public_assessment_reports_en.xlsx"
+ema_columns  <- c("Medicine.name", "Active.substance")
+aifa_a_h_url <- "https://www.aifa.gov.it/liste-farmaci-a-h"
+aifa_base    <- "https://www.aifa.gov.it"
+aifa_cnn_url <- "https://www.aifa.gov.it/web/guest/liste-dei-farmaci"
+
+###############################################################################
+# DrugBank database
 cached_db_file <- paste0("drugbank_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_db_file)) {
@@ -49,7 +57,7 @@ if (!file.exists(cached_db_file)) {
   synonyms       <- unique(dvobj$drugs$synonyms[,c("synonym", "drugbank-id")])
   general_names  <- unique(dvobj$drugs$general_information[,c("name", "primary_key")])
   general_ids    <- unique(dvobj$drugs$general_information[,c("primary_key", "primary_key")])
-
+  
   colnames(salts_ids)      <- c("synonym", "common_name")
   colnames(salts_names)    <- c("synonym", "common_name")
   colnames(products_names) <- c("synonym", "common_name")
@@ -78,8 +86,8 @@ if (!file.exists(cached_db_file)) {
 drugbank_vocab_map$key <- gsub("[^[:alnum:] ]|\\s+", "", tolower(drugbank_vocab_map$synonym))
 drugbank_vocab_map     <- na.omit(unique(drugbank_vocab_map[nchar(drugbank_vocab_map$key) > 2,]))
 
-ema_url <- "https://www.ema.europa.eu/system/files/documents/other/medicines_output_european_public_assessment_reports_en.xlsx"
-ema_columns <- c("Medicine.name", "Active.substance")
+###############################################################################
+# Function definitions
 
 to_key <- function(column)(gsub("[^[:alnum:] ]|\\s+", "", tolower(column)))
 
@@ -89,7 +97,7 @@ do_exact_match <- function (df_data, field) {
   exact_matched    <- complete.cases(df_exact_match)
   df_no_match      <- df_exact_match[!exact_matched, c("Medicine.name", "Active.substance")]
   df_exact_match   <- unique(df_exact_match[exact_matched, c("Medicine.name", "Active.substance", "common_name")])
-
+  
   return(list(df_exact_match, df_no_match))
 }
 
@@ -101,7 +109,7 @@ do_approx_match <- function (df_data, field) {
   df_approx_match     <- unique(df_approx_match[approx_matched,c("Medicine.name","Active.substance","common_name", "distance")]) %>%
     dplyr::group_by(Medicine.name, Active.substance) %>%
     dplyr::summarise(common_name=common_name[which.min(distance)[1]])
-
+  
   return(list(df_approx_match, df_no_match))
 }
 
@@ -163,10 +171,13 @@ do_matches <- function (df_data, match_funs, fields) {
   return(list(df_data_matched, df_data_not_matched))
 }
 
+###############################################################################
+# AIFA data
+
 cached_aifa_file <- paste0("aifa_data_matched_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_aifa_file)) {
-  aifa    <- xml2::read_html("https://www.aifa.gov.it/liste-farmaci-a-h")
+  aifa    <- xml2::read_html(aifa_a_h_url)
   aifa_release_date_a_h   <- (function() {
     headers <- aifa %>% html_elements("h2.portlet-title-text") %>% html_text2()
     matches <- gregexpr("Liste(.*)\\s+(?<date>[0-9]{2,2}/[0-9]{2,2}/[0-9]{4,4})", text = headers, perl = TRUE)
@@ -195,7 +206,7 @@ if (!file.exists(cached_aifa_file)) {
     elements  <- sapply(matches, function(x)(any(x != -1))) & csv_files
     
     selected_labels <- download_link_labels[elements]
-    selected_addrs  <- paste0("https://www.aifa.gov.it", download_link_addresses[elements])
+    selected_addrs  <- paste0(aifa_base, download_link_addresses[elements])
     selected_captrs <- sapply(matches[elements], function(x)(attr(x, "capture.start")[1,"class"]))
     
     selected_classes <- sapply(1:length(selected_labels), 
@@ -211,7 +222,7 @@ if (!file.exists(cached_aifa_file)) {
   rm(aifa)
   
   tmp_data <- (function () {
-    aifa1 <- xml2::read_html("https://www.aifa.gov.it/web/guest/liste-dei-farmaci")
+    aifa1 <- xml2::read_html(aifa_cnn_url)
     download_links <- aifa1 %>% html_elements("a") %>% html_attr("href")
     download_link  <- grep("classe_Cnn", download_links, value = TRUE)
     capture <- gregexpr("(?<date>[0-9]{2,2}\\.[0-9]{2,2}\\.[0-9]{4,4})\\.csv$", download_link, perl = TRUE)[[1]]
@@ -219,7 +230,7 @@ if (!file.exists(cached_aifa_file)) {
     capture_length <- attr(capture, "capture.length")[, "date"]
     aifa_release_date_c <- gsub(".", "/", substr(download_link, capture_start, capture_start + capture_length - 1), fixed = TRUE)
     local_file <- c("C"="aifa_class_C.tsv")
-    download.file(paste0("https://www.aifa.gov.it", download_link), local_file)
+    download.file(paste0(aifa_base, download_link), local_file)
     aifa_release_dates_by_class <- 
       setNames(character(length(aifa_files_by_class) + 1), c(names(aifa_files_by_class), "C"))
     aifa_release_dates_by_class[names(aifa_files_by_class)] <- aifa_release_date_a_h
@@ -276,7 +287,7 @@ if (!file.exists(cached_aifa_file)) {
 }
 
 ###############################################################################
-
+# EMA data
 cached_ema_file <- paste0("ema_data_matched_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_ema_file)) {
@@ -320,7 +331,7 @@ if (!file.exists(cached_ema_file)) {
 }
 
 ###############################################################################
-
+# Build approval data
 cat("Matching AIFA and EMA data with DrugBank Approvals...\n")
 aifa_drugs_approval <- data.frame(
   parent_key=unique(aifa_data_matched$common_name),
@@ -352,7 +363,7 @@ complete_approvals <- drugbank_approvals %>%
   dplyr::full_join(ema_drugs_approval) %>%
   dplyr::mutate(approvals = build_approval_string(approved_by, aifa, ema)) %>%
   dplyr::select(parent_key, approvals)
-cat("Saving results...\n")
+cat("Saving approvals...\n")
 approved_drug_names <- complete_approvals %>% 
   dplyr::full_join(dvobj$drugs$general_information, by=c("parent_key"="primary_key")) %>%
   dplyr::select(name, approvals) %>%
@@ -362,17 +373,9 @@ colnames(approved_drug_names) <- c("Drug_name", "approved")
 write_tsv(approved_drug_names, file.path(output_directory, "Agency_approval.txt"), 
           col_names = TRUE, quote = "needed")
 
-atc_codes <- dvobj$drugs$atc_codes %>%
-  dplyr::full_join(dvobj$drugs$general_information, by=c("drugbank-id"="primary_key")) %>%
-  dplyr::select(atc_code, name)
-colnames(atc_codes) <- c("atc_code", "drug_name")
-write_tsv(atc_codes, file.path(output_directory, "atc_codes.txt"), 
-          col_names = TRUE, quote = "needed")
-
-unlink(cached_db_file)
-unlink(cached_aifa_file)
-unlink(cached_ema_file)
-
+###############################################################################
+# Build version data
+cat("Saving versions...\n")
 df_version <- data.frame(
   name = c("EMA", paste("AIFA Class", names(aifa_release_dates))),
   release = c(ema_report_date, unname(aifa_release_dates)),
@@ -385,10 +388,69 @@ if (file.exists(versions_path)) {
                        col_types = cols(X1 = col_character(), 
                                         X2 = col_character(), X3 = col_character()), 
                        trim_ws = TRUE)
-
+  
   colnames(v_data) <- c("name", "release", "date")
   class(v_data)    <- "data.frame"
   df_version       <- rbind(v_data, df_version)
 }
 write_tsv(df_version, versions_path, col_names = FALSE)
+
+###############################################################################
+# Build drug info
+cat("Preparing drug general information\n")
+drug_info           <- dvobj$drugs$general_information
+class(drug_info)    <- "data.frame"
+drug_info           <- as.data.frame(cbind(drug_info$primary_key, drug_info$name))
+colnames(drug_info) <- c("id", "name")
+atc_codes           <- dvobj$drugs$atc_codes
+drug_info           <- drug_info %>% 
+  dplyr::left_join(atc_codes, by=c("id" = "drugbank-id")) %>%
+  dplyr::select(id, name, atc_code) %>%
+  unique()
+
+write_csv(
+  drug_info,
+  file = file.path(output_directory, "drug_info.csv"),
+  quote = "needed"
+)
+
+###############################################################################
+# Build drug-drug interactions
+cat("Preparing drug-drug interactions\n")
+drug_info_unique  <- drug_info %>% dplyr::select("id", "name") %>% unique()
+drug_interactions <- dvobj$drugs$drug_interactions %>%
+  dplyr::inner_join(drug_info_unique, by=c("parent_key" = "id")) %>%
+  unique() %>%
+  na.omit()
+colnames(drug_interactions) <- c(
+  "Drug1_code", "Drug1_name", "Effect", "Drug2_code", "Drug2_name"
+)
+
+write_tsv(
+  drug_interactions,
+  file = file.path(output_directory, "drug_drug_interactions_light.txt"),
+  quote = "needed"
+)
+###############################################################################
+# Build drug-food interactions
+cat("Preparing drug-food interactions\n")
+# data for food interactions
+drug_food_info           <- dvobj$drugs$food_interactions
+colnames(drug_food_info) <- c("Food_interaction", "Drugbank_ID")
+food_interaction         <- drug_food_info %>% 
+  dplyr::inner_join(drug_info_unique, by = c("Drugbank_ID" = "id")) %>%
+  unique() %>%
+  na.omit() %>%
+  dplyr::select(Drugbank_ID, Drug=name, Food_interaction)
+
+write_csv(
+  food_interaction,
+  file = file.path(output_directory, "drugfood_database.csv"),
+  quote = "needed"
+)
+###############################################################################
+# Clean up
+unlink(cached_db_file)
+unlink(cached_aifa_file)
+unlink(cached_ema_file)
 cat("Done!\n")

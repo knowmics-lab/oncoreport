@@ -146,9 +146,6 @@ mv /html_source /oncoreport/html_source || exit 102
 # Build database files
 (
   cd /oncoreport/databases &&
-    Rscript /oncoreport/scripts/get_drug.R /oncoreport/databases &&
-    Rscript /oncoreport/scripts/CreateCivicBed.R /oncoreport/databases &&
-    CrossMap.py bed /oncoreport/databases/hg19ToHg38.over.chain.gz /oncoreport/databases/civic_bed.bed /oncoreport/databases/civic_bed_hg38.bed &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg19 &&
     Rscript /oncoreport/scripts/PrepareDatabases_build.R /oncoreport/databases hg38 &&
     Rscript /oncoreport/scripts/doi_parser.R -c /oncoreport/databases/civic.txt -g /oncoreport/databases/cgi_database_hg19.txt -d /oncoreport/databases/diseases_map.txt -o /oncoreport/databases/Disease.txt -p /oncoreport/databases/do_parents.tsv &&

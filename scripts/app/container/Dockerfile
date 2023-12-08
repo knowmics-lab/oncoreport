@@ -14,7 +14,8 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
                    zip pigz libpcre16-3 libpcre2-16-0 libpcre2-32-0 libpcre2-posix3 \
                    libpcre32-3 libpcrecpp0v5 r-base r-cran-data.table r-cran-tidyr \
                    r-cran-dplyr r-cran-readr r-cran-rvest r-cran-readxl r-cran-fuzzyjoin \
-                   r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils && \
+                   r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils \
+                   python3-pip python3-setuptools python && \
     apt remove -y software-properties-common && \
     apt autoclean && \
     apt clean && \
@@ -51,9 +52,9 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     add-apt-repository ppa:ondrej/php -y && \
     apt update && \
     apt dist-upgrade -y && \
-    apt install -y init bwa python3-pip samtools bedtools tabix bcftools openjdk-17-jdk \
-                   ant r-base-dev rename beanstalkd python3-setuptools apache2 php-xdebug \
-                   composer php-cli python libapache2-mod-php mysql-server php-mysql \
+    apt install -y init bwa samtools bedtools tabix bcftools openjdk-17-jdk \
+                   ant r-base-dev rename beanstalkd apache2 php-xdebug \
+                   composer php-cli libapache2-mod-php mysql-server php-mysql \
                    php-apcu php-gd php-xml php-mbstring php-zip php-curl php-intl \
                    ca-certificates-java libssl-dev libxml2-dev libcurl4-openssl-dev \
                    libyaml-dev libfontconfig1-dev unixodbc-dev && \
@@ -83,9 +84,6 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     wget "https://github.com/dkoboldt/varscan/raw/master/VarScan.v${VARSCAN_VERSION}.jar" && \
     mv "VarScan.v${VARSCAN_VERSION}.jar" /usr/local/bin/varscan.jar && \
     chmod +x /usr/local/bin/varscan.jar && \
-    pip3 install cython && \
-    pip3 install CrossMap && \
-    pip3 install CrossMap --upgrade && \
     cd "$PW" && rm -r /oncoreport/tmp/ && apt remove -y libgsl-dev libtool libhts-dev && \
     a2enmod rewrite && \
     export JAVA_HOME && \
