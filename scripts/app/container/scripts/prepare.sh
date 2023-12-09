@@ -38,7 +38,7 @@ if [ ! -d "$BASE_PATH/databases/hg19" ] || [ ! -d "$BASE_PATH/databases/hg38" ];
     [[ ! -d "$BASE_PATH/databases/hg38/dbNSFP" ]] && echo "hg38 dbNSFP database not built!" && exit 3
 fi
 
-if [ ! -f "$BASE_PATH/databases/pharm_database_hg19.txt" ] || [ ! -d "$BASE_PATH/databases/pharm_database_hg38.txt" ]; then
+if [ ! -f "$BASE_PATH/databases/pharm_database_hg19.txt" ] || [ ! -f "$BASE_PATH/databases/pharm_database_hg38.txt" ]; then
     rm -rf "$BASE_PATH/databases/pharm_database_hg19.txt"
     rm -rf "$BASE_PATH/databases/pharm_database_hg38.txt"
     echo "Building PharmGKB database"
