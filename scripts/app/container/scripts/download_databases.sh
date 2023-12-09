@@ -7,9 +7,8 @@ DATABASES_PATH="$(realpath $1)"
 
 if [[ -d "$DATABASES_PATH" ]] && [[ -f "$DATABASES_PATH/versions.txt" ]]; then
     echo "Databases already downloaded"
-    exit 0
+else
+    [[ -d "$DATABASES_PATH" ]] && rm -rf "$DATABASES_PATH"
+    git clone --depth=1 --branch=main "$DATABASES_REPO_URL" "$DATABASES_PATH"
+    rm -rf "$DATABASES_PATH/.git"
 fi
-
-[[ -d "$DATABASES_PATH" ]] && rm -rf "$DATABASES_PATH"
-git clone --depth=1 --branch=main "$DATABASES_REPO_URL" "$DATABASES_PATH"
-rm -rf "$DATABASES_PATH/.git"
