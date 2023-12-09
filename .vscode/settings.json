@@ -8,6 +8,7 @@
         "kable",
         "knitr",
         "optparse",
+        "pysam",
         "readr",
         "readxl",
         "rmarkdown",

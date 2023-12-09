@@ -15,7 +15,7 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
                    libpcre32-3 libpcrecpp0v5 r-base r-cran-data.table r-cran-tidyr \
                    r-cran-dplyr r-cran-readr r-cran-rvest r-cran-readxl r-cran-fuzzyjoin \
                    r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils \
-                   python3-pip python3-setuptools python && \
+                   python3-pip python3-setuptools python3 && \
     apt remove -y software-properties-common && \
     apt autoclean && \
     apt clean && \
