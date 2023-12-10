@@ -96,7 +96,7 @@ fi
 if [ ! -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" ]; then
     echo "Downloading hg38 to hg19 chain file"
     CHAIN_VERSION="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/ 2>/dev/null |
-        grep 'hg38ToHg19.over.chain.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
+        grep 'hg38ToHg19.over.chain.gz' | tail -n 1 | awk -F' ' '{FF=NF-2; print $FF}')"
     echo -e "hg38 To hg19 Chain\t$CHAIN_VERSION\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     download "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/hg38ToHg19.over.chain.gz" \
         "$BASE_PATH/databases/hg38ToHg19.over.chain.gz"
