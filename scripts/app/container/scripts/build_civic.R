@@ -11,13 +11,13 @@ if (!file.exists(database_path)) {
   stop("The path to the databases folder does not exist.")
 }
 
-clean_string <- function (x) {
-  x <- gsub(x, pattern = "â", replace = "-")
+clean_string <- function(x) {
+  x <- gsub(x, pattern = "\\u00E2", replace = "-")
   x <- gsub(x, pattern = "\\\\x2c", replace = ",")
   return(x)
 }
 
-clean_columns <- function (df, columns) {
+clean_columns <- function(df, columns) {
   for (c in columns) {
     df[[c]] <- clean_string(df[[c]])
   }

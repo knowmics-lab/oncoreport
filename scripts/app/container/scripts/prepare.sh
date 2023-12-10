@@ -126,8 +126,8 @@ if [ ! -f "$BASE_PATH/databases/civic_database_hg19.tsv" ] || [ ! -f "$BASE_PATH
     CrossMap.py bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg38_partial_1.bed" "$BASE_PATH/databases/civic_hg19_partial_2.bed"
     Rscript "$BASE_PATH/scripts/build_civic.R" "$BASE_PATH/databases"
-    [[ -f "$BASE_PATH/databases/civic_database_hg19.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial*"
-    [[ -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial*"
+    [[ -f "$BASE_PATH/databases/civic_database_hg19.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
+    [[ -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial"*
     [[ ! -f "$BASE_PATH/databases/civic_database_hg19.tsv" ]] && echo "Unable to build civic_database_hg19.tsv" && exit 10
     [[ ! -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]] && echo "Unable to build civic_database_hg38.tsv" && exit 11
     rm -rf "$BASE_PATH/databases/civic/"
