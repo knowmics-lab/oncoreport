@@ -104,8 +104,10 @@ numeric_chr[numeric_chr == "M"] <- 25
 numeric_chr <- as.numeric(numeric_chr)
 civic <- civic[order(numeric_chr, civic$start, civic$stop, civic$variant_id), ]
 civic$chromosome <- paste0("chr", civic$chromosome)
-civic_hg19 <- civic[civic$reference_build == "GRCh37", ]
-civic_hg38 <- civic[civic$reference_build == "GRCh38", ]
+civic_hg19 <- civic[civic$reference_build == "GRCh37", ] %>%
+  select(chromosome, start, stop, variant_id)
+civic_hg38 <- civic[civic$reference_build == "GRCh38", ] %>%
+  select(chromosome, start, stop, variant_id)
 write_tsv(
   x = civic_hg19,
   file = file.path(database_path, "civic_hg19_partial_1.bed"),
