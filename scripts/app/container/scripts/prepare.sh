@@ -40,13 +40,13 @@ else
     echo "dbNSFP database already built"
 fi
 
-if [ ! -f "$BASE_PATH/databases/pharm_database_hg19.txt" ] || [ ! -f "$BASE_PATH/databases/pharm_database_hg38.txt" ]; then
-    rm -rf "$BASE_PATH/databases/pharm_database_hg19.txt"
-    rm -rf "$BASE_PATH/databases/pharm_database_hg38.txt"
+if [ ! -f "$BASE_PATH/databases/pharm_database_hg19.rds" ] || [ ! -f "$BASE_PATH/databases/pharm_database_hg38.rds" ]; then
+    rm -rf "$BASE_PATH/databases/pharm_database_hg19.rds"
+    rm -rf "$BASE_PATH/databases/pharm_database_hg38.rds"
     echo "Building PharmGKB database"
     bash "$BASE_PATH/scripts/build_pharmgkb.sh" "$BASE_PATH/databases"
-    [[ ! -f "$BASE_PATH/databases/pharm_database_hg19.txt" ]] && echo "hg19 PharmGKB database not built!" && exit 4
-    [[ ! -f "$BASE_PATH/databases/pharm_database_hg38.txt" ]] && echo "hg38 PharmGKB database not built!" && exit 5
+    [[ ! -f "$BASE_PATH/databases/pharm_database_hg19.rds" ]] && echo "hg19 PharmGKB database not built!" && exit 4
+    [[ ! -f "$BASE_PATH/databases/pharm_database_hg38.rds" ]] && echo "hg38 PharmGKB database not built!" && exit 5
 else
     echo "PharmGKB database already built"
 fi
@@ -106,7 +106,7 @@ else
 fi
 
 # Download nightly update of the CIVIC database
-if [ ! -f "$BASE_PATH/databases/civic_database_hg19.tsv" ] || [ ! -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]; then
+if [ ! -f "$BASE_PATH/databases/civic_database_hg19.rds" ] || [ ! -f "$BASE_PATH/databases/civic_database_hg38.rds" ]; then
     echo "Downloading CIVIC database"
     echo -e "CIVIC\t$(date +%Y%m%d)\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     mkdir -p "$BASE_PATH/databases/civic"
@@ -126,10 +126,10 @@ if [ ! -f "$BASE_PATH/databases/civic_database_hg19.tsv" ] || [ ! -f "$BASE_PATH
     CrossMap.py bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg38_partial_1.bed" "$BASE_PATH/databases/civic_hg19_partial_2.bed"
     Rscript "$BASE_PATH/scripts/build_civic.R" "$BASE_PATH/databases"
-    [[ -f "$BASE_PATH/databases/civic_database_hg19.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
-    [[ -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial"*
-    [[ ! -f "$BASE_PATH/databases/civic_database_hg19.tsv" ]] && echo "Unable to build civic_database_hg19.tsv" && exit 10
-    [[ ! -f "$BASE_PATH/databases/civic_database_hg38.tsv" ]] && echo "Unable to build civic_database_hg38.tsv" && exit 11
+    [[ -f "$BASE_PATH/databases/civic_database_hg19.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
+    [[ -f "$BASE_PATH/databases/civic_database_hg38.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial"*
+    [[ ! -f "$BASE_PATH/databases/civic_database_hg19.rds" ]] && echo "Unable to build civic database hg19" && exit 10
+    [[ ! -f "$BASE_PATH/databases/civic_database_hg38.rds" ]] && echo "Unable to build civic database hg38" && exit 11
     rm -rf "$BASE_PATH/databases/civic/"
 else
     echo "CIVIC database already downloaded and processed"

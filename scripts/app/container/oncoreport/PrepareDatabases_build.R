@@ -14,63 +14,63 @@ cat("Preparing databases for", genome, "genome:\n")
 
 #CIVIC
 
-cat(" - CIVIC database...\n")
-civic <- read.csv(paste0(database.path, "/civic.txt"), sep = "\t", quote = "")
-df_total <- civic[!is.na(civic$start2), c("chromosome2", "start2", "stop2",
-                                          "reference_bases", "variant_bases", "gene", "variant", "disease", "drugs",
-                                          "drug_interaction_type", "evidence_type", "evidence_level", "evidence_direction",
-                                          "clinical_significance", "evidence_statement", "variant_summary",
-                                          "citation_id", "citation")]
-names(df_total)[names(df_total) == "chromosome2"] <- "chromosome"
-names(df_total)[names(df_total) == "start2"] <- "start"
-names(df_total)[names(df_total) == "stop2"] <- "stop"
-x <- civic[, c("chromosome", "start", "stop", "reference_bases", "variant_bases", "gene", "variant",
-               "disease", "drugs", "drug_interaction_type", "evidence_type", "evidence_level",
-               "evidence_direction", "clinical_significance", "evidence_statement", "variant_summary",
-               "citation_id", "citation")]
-civic <- do.call("rbind", list(x, df_total))
-civic <- civic[complete.cases(civic[, 1:5]),]
-civic <- unique(civic)
-names(civic) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene", "Variant",
-                  "Disease", "Drug", "Drug_interaction_type", "Evidence_type", "Evidence_level",
-                  "Evidence_direction", "Clinical_significance", "Evidence_statement", "Variant_summary",
-                  "PMID", "Citation")
-civic$Chromosome <- paste0("chr", civic$Chromosome)
-civic$Stop <- as.character(civic$Stop)
-civic$Database <- "Civic"
-civic$Evidence_statement <- gsub(civic$Evidence_statement, pattern = "â", replace = "-")
-civic$Evidence_statement <- gsub(civic$Evidence_statement, pattern = "\\\\x2c", replace = ",")
-civic$Evidence_level <- as.character(civic$Evidence_level)
-civic$Evidence_level[civic$Evidence_level == "A"] <- "Validated association"
-civic$Evidence_level[civic$Evidence_level == "B"] <- "Clinical evidence"
-civic$Evidence_level[civic$Evidence_level == "C"] <- "Case study"
-civic$Evidence_level[civic$Evidence_level == "D"] <- "Preclinical evidence"
-civic$Evidence_level[civic$Evidence_level == "E"] <- "Inferential association"
-civic$Drug <- gsub(civic$Drug, pattern = "\\\\x2c", replace = ",")
-civic$Citation <- gsub(civic$Citation, pattern = "\\\\x2c", replace = ",")
-civic$Variant_summary <- gsub(civic$Variant_summary, pattern = "\\\\x2c", replace = ",")
-if (genome == "hg38") {
-  civic1 <- civic
-  civic1$code <- rownames(civic1)
-  civic1$code <- as.integer(civic1$code)
-  civic2 <- read.csv(paste0(database.path, "/civic_bed_hg38.bed"), sep = "\t", header = FALSE, quote = "")
-  names(civic2) <- c("Chromosome", "Start", "Stop", "code")
-  civic1$Start <- NULL
-  civic1$Stop <- NULL
-  civic <- merge(civic1, civic2, by = c("code", "Chromosome"))
-  civic$code <- NULL
-  civic <- civic[, c(1, 18, 19, 2:17)]
-  unlink(paste0(database.path, "/civic_bed_hg38.txt"))
-}
-write.table(civic, file = paste0(database.path, "/civic_database_", genome, ".txt"), quote = FALSE,
-            row.names = FALSE, na = "NA", sep = "\t", col.names = T)
+# cat(" - CIVIC database...\n")
+# civic <- read.csv(paste0(database.path, "/civic.txt"), sep = "\t", quote = "")
+# df_total <- civic[!is.na(civic$start2), c("chromosome2", "start2", "stop2",
+#                                           "reference_bases", "variant_bases", "gene", "variant", "disease", "drugs",
+#                                           "drug_interaction_type", "evidence_type", "evidence_level", "evidence_direction",
+#                                           "clinical_significance", "evidence_statement", "variant_summary",
+#                                           "citation_id", "citation")]
+# names(df_total)[names(df_total) == "chromosome2"] <- "chromosome"
+# names(df_total)[names(df_total) == "start2"] <- "start"
+# names(df_total)[names(df_total) == "stop2"] <- "stop"
+# x <- civic[, c("chromosome", "start", "stop", "reference_bases", "variant_bases", "gene", "variant",
+#                "disease", "drugs", "drug_interaction_type", "evidence_type", "evidence_level",
+#                "evidence_direction", "clinical_significance", "evidence_statement", "variant_summary",
+#                "citation_id", "citation")]
+# civic <- do.call("rbind", list(x, df_total))
+# civic <- civic[complete.cases(civic[, 1:5]),]
+# civic <- unique(civic)
+# names(civic) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene", "Variant",
+#                   "Disease", "Drug", "Drug_interaction_type", "Evidence_type", "Evidence_level",
+#                   "Evidence_direction", "Clinical_significance", "Evidence_statement", "Variant_summary",
+#                   "PMID", "Citation")
+# civic$Chromosome <- paste0("chr", civic$Chromosome)
+# civic$Stop <- as.character(civic$Stop)
+# civic$Database <- "Civic"
+# civic$Evidence_statement <- gsub(civic$Evidence_statement, pattern = "â", replace = "-")
+# civic$Evidence_statement <- gsub(civic$Evidence_statement, pattern = "\\\\x2c", replace = ",")
+# civic$Evidence_level <- as.character(civic$Evidence_level)
+# civic$Evidence_level[civic$Evidence_level == "A"] <- "Validated association"
+# civic$Evidence_level[civic$Evidence_level == "B"] <- "Clinical evidence"
+# civic$Evidence_level[civic$Evidence_level == "C"] <- "Case study"
+# civic$Evidence_level[civic$Evidence_level == "D"] <- "Preclinical evidence"
+# civic$Evidence_level[civic$Evidence_level == "E"] <- "Inferential association"
+# civic$Drug <- gsub(civic$Drug, pattern = "\\\\x2c", replace = ",")
+# civic$Citation <- gsub(civic$Citation, pattern = "\\\\x2c", replace = ",")
+# civic$Variant_summary <- gsub(civic$Variant_summary, pattern = "\\\\x2c", replace = ",")
+# if (genome == "hg38") {
+#   civic1 <- civic
+#   civic1$code <- rownames(civic1)
+#   civic1$code <- as.integer(civic1$code)
+#   civic2 <- read.csv(paste0(database.path, "/civic_bed_hg38.bed"), sep = "\t", header = FALSE, quote = "")
+#   names(civic2) <- c("Chromosome", "Start", "Stop", "code")
+#   civic1$Start <- NULL
+#   civic1$Stop <- NULL
+#   civic <- merge(civic1, civic2, by = c("code", "Chromosome"))
+#   civic$code <- NULL
+#   civic <- civic[, c(1, 18, 19, 2:17)]
+#   unlink(paste0(database.path, "/civic_bed_hg38.txt"))
+# }
+# write.table(civic, file = paste0(database.path, "/civic_database_", genome, ".txt"), quote = FALSE,
+#             row.names = FALSE, na = "NA", sep = "\t", col.names = T)
 
 #################################################################################################
 
 #CGI
 
 cat(" - CGI database...\n")
-cgi <- read.csv(paste0(database.path, "/cgi_original_", genome, ".txt"), sep = "\t")
+cgi <- fread(paste0(database.path, "/cgi_original_", genome, ".txt"), sep = "\t")
 cgi <- cgi[, c("Chromosome", "start", "stop", "ref_base", "alt_base", "Gene", "individual_mutation",
                "Association", "Drug.full.name", "Evidence.level", "Primary.Tumor.type.full.name",
                "Source", "Abstract", "authors_journal_data")]
@@ -110,7 +110,7 @@ unlink(paste0(database.path, "/cgi_original_", genome, ".txt"))
 #Clinvar
 
 cat(" - Clinvar database...\n")
-cli <- fread(paste0(database.path, "/clinvar_", genome, ".vcf"), skip = 27)
+cli <- fread(paste0(database.path, "/clinvar_", genome, ".vcf"), skip = "#CHROM")
 cli <- cli[, c("#CHROM", "POS", "REF", "ALT", "INFO")]
 names(cli) <- c("Chromosome", "Stop", "Ref_base", "Var_base", "info")
 cli$Chromosome <- paste0("chr", cli$Chromosome)
@@ -146,32 +146,27 @@ unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))
 
 #PharmGKB
 
-cat(" - PharmGKB database...\n")
-pharm <- fread(paste0(database.path, "/pharm_database_", genome, ".txt"))
-if (genome == "hg19") {
-  names(pharm) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene",
-                    "Variant_summary", "Evidence_statement", "Evidence_level",
-                    "Clinical_significance", "PMID", "Drug", "PharmGKB_ID", "Variant")
-} else {
-  names(pharm) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene",
-                    "Variant_summary", "Evidence_statement", "Evidence_level",
-                    "Clinical_significance", "PMID", "Drug", "PharmGKB_ID", "Variant",
-                    "Chromosome.1")
-}
-pharm$Database <- "PharmGKB"
-pharm <- separate_rows(pharm, Variant_summary, Evidence_statement, Evidence_level, Clinical_significance, PMID, Drug,
-                       PharmGKB_ID, Variant, sep = ";;")
-pharm$Gene <- gsub("\\s+\\(.*\\)", "", pharm$Gene)
-pharm$Gene <- gsub(pharm$Gene, pattern = "*\\(.*?\\) *", replace = "")
-pharm$Drug <- gsub(pharm$Drug, pattern = "\\\\x2c", replace = ",")
-pharm$Drug <- gsub(pharm$Drug, pattern = "*\\(.*?\\) *", replace = "")
-pharm$Drug <- gsub("\\s+", "", gsub("^\\s+|\\s+$", "", pharm$Drug))
-pharm$Drug <- unname(sapply(pharm$Drug, function(x) (paste0(str_to_title(strsplit(x, ",")[[1]]), collapse = ","))))
-pharm$Variant_summary <- gsub(pharm$Variant_summary, pattern = "\\\\x2c", replace = ",")
-pharm$Clinical_significance <- gsub(pattern = " ", replace = "", pharm$Clinical_significance)
-pharm$Evidence_statement <- gsub(pharm$Evidence_statement, pattern = "\\\\x2c", replace = ",")
-pharm <- subset.data.frame(pharm, Evidence_level == "yes")
-write.table(pharm, paste0(database.path, "/pharm_database_", genome, ".txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
+# cat(" - PharmGKB database...\n")
+# pharm <- fread(paste0(database.path, "/pharm_database_", genome, ".txt"))
+# names(pharm) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene",
+#                   "Variant_summary", "Evidence_statement", "Evidence_level",
+#                   "Clinical_significance", "PMID", "Drug", "PharmGKB_ID", "Variant")
+# pharm$Database <- "PharmGKB"
+# pharm <- separate_rows(pharm, Variant_summary, Evidence_statement, Evidence_level, Clinical_significance, PMID, Drug,
+#                        PharmGKB_ID, Variant, sep = ";;")
+# pharm$Gene <- gsub("\\s+\\(.*\\)", "", pharm$Gene)
+# pharm$Gene <- gsub(pharm$Gene, pattern = "*\\(.*?\\) *", replace = "")
+# pharm$Drug <- gsub(pharm$Drug, pattern = "\\\\x2c", replace = ",")
+# pharm$Drug <- gsub(pharm$Drug, pattern = "*\\(.*?\\) *", replace = "")
+# pharm$Drug <- gsub("\\s+", " ", trimws(pharm$Drug))
+# pharm$Drug <- gsub(",\\s+", ",", pharm$Drug)
+# pharm$Drug <- gsub("(.+)\\s*/\\s*(.+)", "\\1,\\2", pharm$Drug)
+# pharm$Drug <- unname(sapply(pharm$Drug, function(x) (paste0(str_to_title(strsplit(x, ",")[[1]]), collapse = ","))))
+# pharm$Variant_summary <- gsub(pharm$Variant_summary, pattern = "\\\\x2c", replace = ",")
+# pharm$Clinical_significance <- gsub(pattern = " ", replace = "", pharm$Clinical_significance)
+# pharm$Evidence_statement <- gsub(pharm$Evidence_statement, pattern = "\\\\x2c", replace = ",")
+# pharm <- subset.data.frame(pharm, Evidence_level == "yes")
+# write.table(pharm, paste0(database.path, "/pharm_database_", genome, ".txt"),
+#             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
 
 #################################################################################

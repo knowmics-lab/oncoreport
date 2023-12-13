@@ -132,21 +132,24 @@ diseases <- unique(na.omit(rbind(
   setNames(hg38_complete[,c("disease_2", "doid_2")], c("disease", "doid"))
 )))
 
-write_tsv(
-  x = hg19_processed,
-  file = file.path(database_path, "civic_database_hg19.tsv"),
-  quote = "needed",
-  col_names = TRUE
-)
-write_tsv(
-  x = hg38_processed,
-  file = file.path(database_path, "civic_database_hg38.tsv"),
-  quote = "needed",
-  col_names = TRUE
-)
-write_tsv(
-  x = diseases,
-  file = file.path(database_path, "civic_diseases.tsv"),
-  quote = "needed",
-  col_names = TRUE
-)
+saveRDS(hg19_processed, file.path(database_path, "civic_database_hg19.rds"))
+saveRDS(hg38_processed, file.path(database_path, "civic_database_hg38.rds"))
+saveRDS(diseases, file.path(database_path, "civic_diseases.rds"))
+# write_tsv(
+#   x = hg19_processed,
+#   file = file.path(database_path, "civic_database_hg19.tsv"),
+#   quote = "needed",
+#   col_names = TRUE
+# )
+# write_tsv(
+#   x = hg38_processed,
+#   file = file.path(database_path, "civic_database_hg38.tsv"),
+#   quote = "needed",
+#   col_names = TRUE
+# )
+# write_tsv(
+#   x = diseases,
+#   file = file.path(database_path, "civic_diseases.tsv"),
+#   quote = "needed",
+#   col_names = TRUE
+# )

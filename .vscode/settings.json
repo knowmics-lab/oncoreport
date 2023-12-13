@@ -3,6 +3,7 @@
         "Bioc",
         "dbparser",
         "dplyr",
+        "drugbank",
         "filesstrings",
         "fuzzyjoin",
         "kable",

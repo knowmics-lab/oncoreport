@@ -72,9 +72,44 @@ pharmgkb_data <- na.omit(do.call(rbind, dbsnp_all_data))
 pharmgkb_data <- unique(pharmgkb_data) %>%
   group_by(Chromosome, Start, Stop, REF, Alt_base, Gene) %>%
   summarize_all(function(x) (trimws(paste(x, collapse = ";;"))))
-cat("Saving data...")
-fwrite(as.data.table(pharmgkb_data),
-  file = output_file, sep = "\t", quote = FALSE,
-  row.names = FALSE, col.names = TRUE
+
+names(pharmgkb_data) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base",
+                          "Gene", "Variant_summary", "Evidence_statement",
+                          "Evidence_level", "Clinical_significance", "PMID",
+                          "Drug", "PharmGKB_ID", "Variant")
+pharmgkb_data$Database <- "PharmGKB"
+pharmgkb_data <- separate_rows(pharm, Variant_summary, Evidence_statement,
+                               Evidence_level, Clinical_significance, PMID,
+                               Drug, PharmGKB_ID, Variant, sep = ";;")
+pharmgkb_data$Gene <- gsub("\\s+\\(.*\\)", "", pharmgkb_data$Gene)
+pharmgkb_data$Gene <- gsub(
+  pharmgkb_data$Gene, pattern = "*\\(.*?\\) *", replace = ""
 )
+pharmgkb_data$Drug <- gsub(
+  pharmgkb_data$Drug, pattern = "\\\\x2c", replace = ","
+)
+pharmgkb_data$Drug <- gsub(
+  pharmgkb_data$Drug, pattern = "*\\(.*?\\) *", replace = ""
+)
+pharmgkb_data$Drug <- gsub("\\s+", " ", trimws(pharmgkb_data$Drug))
+pharmgkb_data$Drug <- gsub(",\\s+", ",", pharmgkb_data$Drug)
+pharmgkb_data$Drug <- gsub("(.+)\\s*/\\s*(.+)", "\\1,\\2", pharmgkb_data$Drug)
+pharmgkb_data$Drug <- unname(
+  sapply(
+    pharmgkb_data$Drug, 
+    function(x) (paste0(str_to_title(strsplit(x, ",")[[1]]), collapse = ","))
+  )
+)
+pharmgkb_data$Variant_summary <- gsub(
+  pharmgkb_data$Variant_summary, pattern = "\\\\x2c", replace = ","
+)
+pharmgkb_data$Clinical_significance <- gsub(
+  pattern = " ", replace = "", pharmgkb_data$Clinical_significance
+)
+pharmgkb_data$Evidence_statement <- gsub(
+  pharmgkb_data$Evidence_statement, pattern = "\\\\x2c", replace = ","
+)
+pharmgkb_data <- subset.data.frame(pharmgkb_data, Evidence_level == "yes")
+cat("Saving data...")
+saveRDS(pharmgkb_data, file = output_file)
 cat("done\n")
