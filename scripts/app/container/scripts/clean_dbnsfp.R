@@ -8,13 +8,15 @@ args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 3) {
   cat(
     "Usage: clean_dbnsfp.R <hg19_dbnsfp_file>",
-    "<hg38_dbnsfp_file> <headers_file>\n"
+    "<hg38_dbnsfp_file> <output_dir>\n"
+    #"<hg38_dbnsfp_file> <headers_file>\n"
   )
   quit(status = 1)
 }
-hg19 <- args[1]
-hg38 <- args[2]
-headers <- args[3]
+hg19       <- args[1]
+hg38       <- args[2]
+output_dir <- args[3]
+#headers <- args[3]
 
 columns_before <- c(
   "Chr", "Start", "Ref", "Alt", "SIFT_pred", "LRT_pred",
@@ -81,12 +83,12 @@ dbnsfp_hg19 <- fread(hg19, sep = "\t", header = FALSE)
 cat("preparing...")
 dbnsfp_hg19 <- prepare_table(dbnsfp_hg19)
 cat("writing...")
-fwrite(dbnsfp_hg19,
-  file = hg19, sep = "\t", quote = FALSE,
-  row.names = FALSE, col.names = FALSE
-)
+# fwrite(dbnsfp_hg19,
+#   file = hg19, sep = "\t", quote = FALSE,
+#   row.names = FALSE, col.names = FALSE
+# )
 colnames(dbnsfp_hg19) <- columns_after
-saveRDS(dbnsfp_hg19, file = "/support/databases/hg19/dbNSFP.rds")
+saveRDS(dbnsfp_hg19, file = file.path(output_dir, "hg19", "dbNSFP.rds"))
 rm(dbnsfp_hg19)
 cat("done\n")
 
@@ -95,20 +97,20 @@ dbnsfp_hg38 <- fread(hg38, sep = "\t", header = FALSE)
 cat("preparing...")
 dbnsfp_hg38 <- prepare_table(dbnsfp_hg38)
 cat("writing...")
-fwrite(dbnsfp_hg38,
-  file = hg38, sep = "\t", quote = FALSE,
-  row.names = FALSE, col.names = FALSE
-)
+# fwrite(dbnsfp_hg38,
+#   file = hg38, sep = "\t", quote = FALSE,
+#   row.names = FALSE, col.names = FALSE
+# )
 colnames(dbnsfp_hg38) <- columns_after
-saveRDS(dbnsfp_hg38, file = "/support/databases/hg38/dbNSFP.rds")
+saveRDS(dbnsfp_hg38, file = file.path(output_dir, "hg38", "dbNSFP.rds"))
 rm(dbnsfp_hg38)
 cat("done\n")
 
-cat("Writing headers...")
-data <- data.frame(matrix(ncol = length(columns_after), nrow = 0))
-colnames(data) <- columns_after
-fwrite(as.data.table(data),
-  file = headers, sep = "\t", quote = FALSE,
-  row.names = FALSE, col.names = TRUE
-)
-cat("done\n")
+# cat("Writing headers...")
+# data <- data.frame(matrix(ncol = length(columns_after), nrow = 0))
+# colnames(data) <- columns_after
+# fwrite(as.data.table(data),
+#   file = headers, sep = "\t", quote = FALSE,
+#   row.names = FALSE, col.names = TRUE
+# )
+# cat("done\n")

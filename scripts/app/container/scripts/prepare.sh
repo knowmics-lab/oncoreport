@@ -29,13 +29,16 @@ cd "$BASE_PATH"
 echo "Downloading pre-buit databases"
 bash "$BASE_PATH/scripts/download_databases.sh" "$BASE_PATH/databases"
 
-if [ ! -d "$BASE_PATH/databases/hg19" ] || [ ! -d "$BASE_PATH/databases/hg38" ]; then
-    [[ -d "$BASE_PATH/databases/hg19" ]] && rm -rf "$BASE_PATH/databases/hg19"
-    [[ -d "$BASE_PATH/databases/hg38" ]] && rm -rf "$BASE_PATH/databases/hg38"
+[[ ! -d "$BASE_PATH/databases/hg19" ]] && mkdir -p "$BASE_PATH/databases/hg19"
+[[ ! -d "$BASE_PATH/databases/hg38" ]] && mkdir -p "$BASE_PATH/databases/hg38"
+
+if [ ! -f "$BASE_PATH/databases/hg19/dbNSFP.rds" ] || [ ! -f "$BASE_PATH/databases/hg38/dbNSFP.rds" ]; then
+    [[ -f "$BASE_PATH/databases/hg19/dbNSFP.rds" ]] && rm -f "$BASE_PATH/databases/hg19/dbNSFP.rds"
+    [[ -f "$BASE_PATH/databases/hg38/dbNSFP.rds" ]] && rm -f "$BASE_PATH/databases/hg38/dbNSFP.rds"
     echo "Building dbNSFP database"
     bash "$BASE_PATH/scripts/build_dbnsfp.sh" "$BASE_PATH/databases"
-    [[ ! -d "$BASE_PATH/databases/hg19/dbNSFP" ]] && echo "hg19 dbNSFP database not built!" && exit 2
-    [[ ! -d "$BASE_PATH/databases/hg38/dbNSFP" ]] && echo "hg38 dbNSFP database not built!" && exit 3
+    [[ ! -f "$BASE_PATH/databases/hg19/dbNSFP.rds" ]] && echo "hg19 dbNSFP database not built!" && exit 2
+    [[ ! -f "$BASE_PATH/databases/hg38/dbNSFP.rds" ]] && echo "hg38 dbNSFP database not built!" && exit 3
 else
     echo "dbNSFP database already built"
 fi

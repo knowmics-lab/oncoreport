@@ -51,31 +51,31 @@ echo "Extracting hg38 columns from dbNSFP database"
 zip_read_file "$TEMP_DIR/dbnsfp.zip" $CHROMOSOMES_FILE_NAMES | pv |
     zcat | cut -d$'\t' -f 1,2,3,4,40,52,56,61,64,67,72,75,138 | grep -v '^#chr' >hg38.txt
 echo "Processing hg19 and hg38 files"
-Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt" "$TEMP_DIR/headers.txt"
+Rscript "$SCRIPT_PATH/clean_dbnsfp.R" "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg38.txt" "$OUTPUT_DIR"
 
-mkdir -p "$TEMP_DIR/hg19"
-mkdir -p "$TEMP_DIR/hg38"
-# split into 50 files without cutting lines
-echo "Splitting hg19 and hg38 files"
-split -n l/50 "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg19/hg19_"
-split -n l/50 "$TEMP_DIR/hg38.txt" "$TEMP_DIR/hg38/hg38_"
-rm "$TEMP_DIR/hg19.txt"
-rm "$TEMP_DIR/hg38.txt"
-rm "$TEMP_DIR/dbnsfp.zip"
-# add the content of headers.txt to each file
-echo "Adding headers to hg19 and hg38 files"
-for f in "$TEMP_DIR/hg19/hg19_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
-for f in "$TEMP_DIR/hg38/hg38_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
-# gzip each file
-echo "Compressing hg19 and hg38 files"
-gzip "$TEMP_DIR/hg19/hg19_"*
-gzip "$TEMP_DIR/hg38/hg38_"*
-# move to output directory
-echo "Moving hg19 and hg38 files to output directory"
-mkdir -p "$OUTPUT_DIR/hg19/dbNSFP"
-mkdir -p "$OUTPUT_DIR/hg38/dbNSFP"
-mv "$TEMP_DIR/hg19/"* "$OUTPUT_DIR/hg19/dbNSFP/"
-mv "$TEMP_DIR/hg38/"* "$OUTPUT_DIR/hg38/dbNSFP/"
+# mkdir -p "$TEMP_DIR/hg19"
+# mkdir -p "$TEMP_DIR/hg38"
+# # split into 50 files without cutting lines
+# echo "Splitting hg19 and hg38 files"
+# split -n l/50 "$TEMP_DIR/hg19.txt" "$TEMP_DIR/hg19/hg19_"
+# split -n l/50 "$TEMP_DIR/hg38.txt" "$TEMP_DIR/hg38/hg38_"
+# rm "$TEMP_DIR/hg19.txt"
+# rm "$TEMP_DIR/hg38.txt"
+# rm "$TEMP_DIR/dbnsfp.zip"
+# # add the content of headers.txt to each file
+# echo "Adding headers to hg19 and hg38 files"
+# for f in "$TEMP_DIR/hg19/hg19_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
+# for f in "$TEMP_DIR/hg38/hg38_"*; do cat "$TEMP_DIR/headers.txt" "$f" >"$f.tmp" && mv "$f.tmp" "$f"; done
+# # gzip each file
+# echo "Compressing hg19 and hg38 files"
+# gzip "$TEMP_DIR/hg19/hg19_"*
+# gzip "$TEMP_DIR/hg38/hg38_"*
+# # move to output directory
+# echo "Moving hg19 and hg38 files to output directory"
+# mkdir -p "$OUTPUT_DIR/hg19/dbNSFP"
+# mkdir -p "$OUTPUT_DIR/hg38/dbNSFP"
+# mv "$TEMP_DIR/hg19/"* "$OUTPUT_DIR/hg19/dbNSFP/"
+# mv "$TEMP_DIR/hg38/"* "$OUTPUT_DIR/hg38/dbNSFP/"
 # cleanup
 cd "$CURR_DIR"
 rm -rf "$TEMP_DIR"
