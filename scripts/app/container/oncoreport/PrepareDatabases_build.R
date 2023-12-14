@@ -12,7 +12,7 @@ cat("Preparing databases for", genome, "genome:\n")
 
 #################################################################################################
 
-#CIVIC
+# CIVIC
 
 # cat(" - CIVIC database...\n")
 # civic <- read.csv(paste0(database.path, "/civic.txt"), sep = "\t", quote = "")
@@ -67,25 +67,33 @@ cat("Preparing databases for", genome, "genome:\n")
 
 #################################################################################################
 
-#CGI
+# CGI
 
 cat(" - CGI database...\n")
 cgi <- fread(paste0(database.path, "/cgi_original_", genome, ".txt"), sep = "\t")
-cgi <- cgi[, c("Chromosome", "start", "stop", "ref_base", "alt_base", "Gene", "individual_mutation",
-               "Association", "Drug.full.name", "Evidence.level", "Primary.Tumor.type.full.name",
-               "Source", "Abstract", "authors_journal_data")]
-names(cgi) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene", "Variant",
-                "Clinical_significance", "Drug", "Evidence_level", "Disease",
-                "PMID", "Evidence_statement", "Citation")
+cgi <- cgi[, c(
+    "Chromosome", "start", "stop", "ref_base", "alt_base", "Gene", "individual_mutation",
+    "Association", "Drug.full.name", "Evidence.level", "Primary.Tumor.type.full.name",
+    "Source", "Abstract", "authors_journal_data"
+)]
+names(cgi) <- c(
+    "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Gene", "Variant",
+    "Clinical_significance", "Drug", "Evidence_level", "Disease",
+    "PMID", "Evidence_statement", "Citation"
+)
 cgi$Database <- "Cancer Genome Interpreter"
-cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug, 
-                     Evidence_level, Disease, PMID, Evidence_statement, Citation, sep=";;")
+cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug,
+    Evidence_level, Disease, PMID, Evidence_statement, Citation,
+    sep = ";;"
+)
 cgi$PMID <- gsub(";", ",,", cgi$PMID)
-cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug, 
-                     Evidence_level, Disease, PMID, Evidence_statement, Citation, sep=",,")
-cgi <- separate_rows(cgi, Disease, sep=";")
-cgi <- separate_rows(cgi, PMID, sep=",")
-cgi <- cgi[grep("PMID:", cgi$PMID),]
+cgi <- separate_rows(cgi, Chromosome, Ref_base, Var_base, Gene, Variant, Clinical_significance, Drug,
+    Evidence_level, Disease, PMID, Evidence_statement, Citation,
+    sep = ",,"
+)
+cgi <- separate_rows(cgi, Disease, sep = ";")
+cgi <- separate_rows(cgi, PMID, sep = ",")
+cgi <- cgi[grep("PMID:", cgi$PMID), ]
 cgi$PMID <- gsub(cgi$PMID, pattern = "PMID:", replace = "")
 cgi$Variant <- gsub(".*:(.*)", "\\1", cgi$Variant)
 cgi$Drug <- gsub(cgi$Drug, pattern = " *\\[.*?\\] *", replace = "")
@@ -100,51 +108,53 @@ cgi$Drug_interaction_type[grep(" + ", cgi$Drug, fixed = T)] <- "Combination"
 cgi$Drug <- gsub(cgi$Drug, pattern = " + ", replace = ",", fixed = T)
 cgi$Variant_summary <- ""
 cgi <- cgi[, c(1:7, 14, 9, 18, 16, 10, 17, 8, 11, 19, 15, 12, 13)]
-write.table(cgi, file = paste0(database.path, "/cgi_database_", genome, ".txt"), quote = FALSE,
-            row.names = FALSE, na = "NA", sep = "\t", col.names = T)
+write.table(cgi,
+    file = paste0(database.path, "/cgi_database_", genome, ".txt"), quote = FALSE,
+    row.names = FALSE, na = "NA", sep = "\t", col.names = T
+)
 unlink(paste0(database.path, "/cgi_original_", genome, ".txt"))
 
 
 #################################################################################################
 
-#Clinvar
+# Clinvar
 
-cat(" - Clinvar database...\n")
-cli <- fread(paste0(database.path, "/clinvar_", genome, ".vcf"), skip = "#CHROM")
-cli <- cli[, c("#CHROM", "POS", "REF", "ALT", "INFO")]
-names(cli) <- c("Chromosome", "Stop", "Ref_base", "Var_base", "info")
-cli$Chromosome <- paste0("chr", cli$Chromosome)
-cli$Stop <- as.character(cli$Stop)
-cli$info1 <- sub(".*CLNSIG= *(.*?) *;CLNVC.*", "\\1", cli$info)
-names(cli)[6] <- "Clinical_significance"
-cli$Clinical_significance <- sub(";CLNSIGCONF.*", "\\1", cli$Clinical_significance)
-cli$info <- sub(".*\\| *(.*?) *;ORIGIN.*", "\\1", cli$info)
-names(cli)[5] <- "Change_type"
-cli$Change_type <- gsub("_variant", "", cli$Change_type, fixed = T)
-cli$Change_type <- str_to_title(cli$Change_type)
-cli$Clinical_significance <- gsub("_", " ", cli$Clinical_significance, fixed = T)
-cli$Clinical_significance <- str_to_title(cli$Clinical_significance)
-write.table(cli, file = paste0(database.path, "/clinvar_database_", genome, ".txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t", col.names = T)
-unlink(paste0(database.path, "/clinvar_", genome, ".vcf"))
+# cat(" - Clinvar database...\n")
+# cli <- fread(paste0(database.path, "/clinvar_", genome, ".vcf"), skip = "#CHROM")
+# cli <- cli[, c("#CHROM", "POS", "REF", "ALT", "INFO")]
+# names(cli) <- c("Chromosome", "Stop", "Ref_base", "Var_base", "info")
+# cli$Chromosome <- paste0("chr", cli$Chromosome)
+# cli$Stop <- as.character(cli$Stop)
+# cli$info1 <- sub(".*CLNSIG= *(.*?) *;CLNVC.*", "\\1", cli$info)
+# names(cli)[6] <- "Clinical_significance"
+# cli$Clinical_significance <- sub(";CLNSIGCONF.*", "\\1", cli$Clinical_significance)
+# cli$info <- sub(".*\\| *(.*?) *;ORIGIN.*", "\\1", cli$info)
+# names(cli)[5] <- "Change_type"
+# cli$Change_type <- gsub("_variant", "", cli$Change_type, fixed = T)
+# cli$Change_type <- str_to_title(cli$Change_type)
+# cli$Clinical_significance <- gsub("_", " ", cli$Clinical_significance, fixed = T)
+# cli$Clinical_significance <- str_to_title(cli$Clinical_significance)
+# write.table(cli, file = paste0(database.path, "/clinvar_database_", genome, ".txt"),
+#             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t", col.names = T)
+# unlink(paste0(database.path, "/clinvar_", genome, ".vcf"))
 
 ###############################################################################################
 
-#Refgene
+# Refgene
 
-cat(" - RefSeq database...\n")
-ref <- read.csv(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"), sep = "\t", header = FALSE)
-names(ref) <- c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
-                "exonCount", "exonStarts", "exonEnds", "score", "Gene")
-ref <- unique(ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", 
-                      "cdsEnd", "score", "Gene")])
-write.table(ref, paste0(database.path, "/refgene_database_", genome, ".txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))
+# cat(" - RefSeq database...\n")
+# ref <- read.csv(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"), sep = "\t", header = FALSE)
+# names(ref) <- c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart", "cdsEnd",
+#                 "exonCount", "exonStarts", "exonEnds", "score", "Gene")
+# ref <- unique(ref[, c("bin", "name", "Chromosome", "strand", "txStart", "txEnd", "cdsStart",
+#                       "cdsEnd", "score", "Gene")])
+# write.table(ref, paste0(database.path, "/refgene_database_", genome, ".txt"),
+#             quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
+# unlink(paste0(database.path, "/ncbiRefSeq_", genome, ".txt"))
 
 #################################################################################
 
-#PharmGKB
+# PharmGKB
 
 # cat(" - PharmGKB database...\n")
 # pharm <- fread(paste0(database.path, "/pharm_database_", genome, ".txt"))

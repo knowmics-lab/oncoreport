@@ -139,7 +139,7 @@ else
 fi
 
 # Download the latest version of the ClinVar database for hg38 and hg19
-if [ ! -f "$BASE_PATH/databases/hg19/clinvar.vcf" ] || [ ! -f "$BASE_PATH/databases/hg38/clinvar.vcf" ]; then
+if [ ! -f "$BASE_PATH/databases/hg19/clinvar_database.rds" ] || [ ! -f "$BASE_PATH/databases/hg38/clinvar_database.rds" ]; then
     echo "Downloading ClinVar database"
     CLINVAR_VERSION="$(curl ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/ 2>/dev/null |
         grep 'clinvar.vcf.gz' | head -n 1 | awk -F'->' '{print $2}' | cut -d'_' -f2 | cut -d'.' -f1)"
@@ -147,17 +147,21 @@ if [ ! -f "$BASE_PATH/databases/hg19/clinvar.vcf" ] || [ ! -f "$BASE_PATH/databa
     download "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz" \
         "/tmp/clinvar.vcf.gz"
     gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/hg38/clinvar.vcf"
-    [[ ! -f "$BASE_PATH/databases/clinvar_hg38.vcf" ]] && echo "Unable to download clinvar_hg38.vcf" && exit 9
+    [[ ! -f "$BASE_PATH/databases/hg38/clinvar.vcf" ]] && echo "Unable to download clinvar_hg38.vcf" && exit 9
     download "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz" \
         "/tmp/clinvar.vcf.gz"
     gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/hg19/clinvar.vcf"
-    [[ ! -f "$BASE_PATH/databases/clinvar_hg19.vcf" ]] && echo "Unable to download clinvar_hg19.vcf" && exit 10
+    [[ ! -f "$BASE_PATH/databases/hg19/clinvar.vcf" ]] && echo "Unable to download clinvar_hg19.vcf" && exit 10
+    Rscript "$BASE_PATH/scripts/process_clinvar.R" "$BASE_PATH/databases/hg19/clinvar.vcf" "$BASE_PATH/databases/hg19/clinvar_database.rds"
+    Rscript "$BASE_PATH/scripts/process_clinvar.R" "$BASE_PATH/databases/hg38/clinvar.vcf" "$BASE_PATH/databases/hg38/clinvar_database.rds"
+    [[ ! -f "$BASE_PATH/databases/hg19/clinvar_database.rds" ]] && echo "Unable to build clinvar database hg19" && exit 11
+    [[ ! -f "$BASE_PATH/databases/hg38/clinvar_database.rds" ]] && echo "Unable to build clinvar database hg38" && exit 12
 else
     echo "ClinVar database already downloaded"
 fi
 
 # Download the latest version of the NCBI RefSeq database for hg38 and hg19
-if [ ! -f "$BASE_PATH/databases/hg38/ncbiRefSeq.txt" ] || [ ! -f "$BASE_PATH/databases/hg19/ncbiRefSeq.txt" ]; then
+if [ ! -f "$BASE_PATH/databases/hg38/refgene_database.rds" ] || [ ! -f "$BASE_PATH/databases/hg19/refgene_database.rds" ]; then
     echo "Downloading NCBI RefSeq database"
     HG38_DATE="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ 2>/dev/null |
         grep 'ncbiRefSeq.txt.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
@@ -173,6 +177,14 @@ if [ ! -f "$BASE_PATH/databases/hg38/ncbiRefSeq.txt" ] || [ ! -f "$BASE_PATH/dat
         "$BASE_PATH/databases/hg19/ncbiRefSeq.txt.gz"
     gunzip "$BASE_PATH/databases/hg19/ncbiRefSeq.txt.gz"
     [[ ! -f "$BASE_PATH/databases/hg19/ncbiRefSeq.txt" ]] && echo "Unable to download ncbiRefSeq_hg19.txt" && exit 12
+    Rscript "$BASE_PATH/scripts/process_refgene.R" "$BASE_PATH/databases/hg19/ncbiRefSeq.txt" "$BASE_PATH/databases/hg19/refgene_database.rds"
+    Rscript "$BASE_PATH/scripts/process_refgene.R" "$BASE_PATH/databases/hg38/ncbiRefSeq.txt" "$BASE_PATH/databases/hg38/refgene_database.rds"
+    [[ ! -f "$BASE_PATH/databases/hg19/refgene_database.rds" ]] && echo "Unable to build refgene database hg19" && exit 13
+    [[ ! -f "$BASE_PATH/databases/hg38/refgene_database.rds" ]] && echo "Unable to build refgene database hg38" && exit 14
 else
     echo "NCBI RefSeq database already downloaded"
 fi
+
+[ -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz"
+[ -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz"
+[ -f "$BASE_PATH/databases/drugbank.xml" ] && rm -f "$BASE_PATH/databases/drugbank.xml"

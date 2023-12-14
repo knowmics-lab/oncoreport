@@ -98,7 +98,7 @@ pharmgkb_data$Drug <- gsub(",\\s+", ",", pharmgkb_data$Drug)
 pharmgkb_data$Drug <- gsub("(.+)\\s*/\\s*(.+)", "\\1,\\2", pharmgkb_data$Drug)
 pharmgkb_data$Drug <- unname(
   sapply(
-    pharmgkb_data$Drug, 
+    pharmgkb_data$Drug,
     function(x) (paste0(str_to_title(strsplit(x, ",")[[1]]), collapse = ","))
   )
 )
