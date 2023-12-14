@@ -40,13 +40,13 @@ else
     echo "dbNSFP database already built"
 fi
 
-if [ ! -f "$BASE_PATH/databases/pharm_database_hg19.rds" ] || [ ! -f "$BASE_PATH/databases/pharm_database_hg38.rds" ]; then
+if [ ! -f "$BASE_PATH/databases/hg19/pharm_database.rds" ] || [ ! -f "$BASE_PATH/databases/hg38/pharm_database.rds" ]; then
     rm -rf "$BASE_PATH/databases/pharm_database_hg19.rds"
     rm -rf "$BASE_PATH/databases/pharm_database_hg38.rds"
     echo "Building PharmGKB database"
     bash "$BASE_PATH/scripts/build_pharmgkb.sh" "$BASE_PATH/databases"
-    [[ ! -f "$BASE_PATH/databases/pharm_database_hg19.rds" ]] && echo "hg19 PharmGKB database not built!" && exit 4
-    [[ ! -f "$BASE_PATH/databases/pharm_database_hg38.rds" ]] && echo "hg38 PharmGKB database not built!" && exit 5
+    [[ ! -f "$BASE_PATH/databases/hg19/pharm_database.rds" ]] && echo "hg19 PharmGKB database not built!" && exit 4
+    [[ ! -f "$BASE_PATH/databases/hg38/pharm_database.rds" ]] && echo "hg38 PharmGKB database not built!" && exit 5
 else
     echo "PharmGKB database already built"
 fi
@@ -106,7 +106,7 @@ else
 fi
 
 # Download nightly update of the CIVIC database
-if [ ! -f "$BASE_PATH/databases/civic_database_hg19.rds" ] || [ ! -f "$BASE_PATH/databases/civic_database_hg38.rds" ]; then
+if [ ! -f "$BASE_PATH/databases/hg19/civic_database.rds" ] || [ ! -f "$BASE_PATH/databases/hg38/civic_database.rds" ]; then
     echo "Downloading CIVIC database"
     echo -e "CIVIC\t$(date +%Y%m%d)\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     mkdir -p "$BASE_PATH/databases/civic"
@@ -126,35 +126,35 @@ if [ ! -f "$BASE_PATH/databases/civic_database_hg19.rds" ] || [ ! -f "$BASE_PATH
     CrossMap.py bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg38_partial_1.bed" "$BASE_PATH/databases/civic_hg19_partial_2.bed"
     Rscript "$BASE_PATH/scripts/build_civic.R" "$BASE_PATH/databases"
-    [[ -f "$BASE_PATH/databases/civic_database_hg19.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
-    [[ -f "$BASE_PATH/databases/civic_database_hg38.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial"*
-    [[ ! -f "$BASE_PATH/databases/civic_database_hg19.rds" ]] && echo "Unable to build civic database hg19" && exit 10
-    [[ ! -f "$BASE_PATH/databases/civic_database_hg38.rds" ]] && echo "Unable to build civic database hg38" && exit 11
+    [[ -f "$BASE_PATH/databases/hg19/civic_database.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
+    [[ -f "$BASE_PATH/databases/hg38/civic_database.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg38_partial"*
+    [[ ! -f "$BASE_PATH/databases/hg19/civic_database.rds" ]] && echo "Unable to build civic database hg19" && exit 10
+    [[ ! -f "$BASE_PATH/databases/hg38/civic_database.rds" ]] && echo "Unable to build civic database hg38" && exit 11
     rm -rf "$BASE_PATH/databases/civic/"
 else
     echo "CIVIC database already downloaded and processed"
 fi
 
 # Download the latest version of the ClinVar database for hg38 and hg19
-if [ ! -f "$BASE_PATH/databases/clinvar_hg38.vcf" ] || [ ! -f "$BASE_PATH/databases/clinvar_hg19.vcf" ]; then
+if [ ! -f "$BASE_PATH/databases/hg19/clinvar.vcf" ] || [ ! -f "$BASE_PATH/databases/hg38/clinvar.vcf" ]; then
     echo "Downloading ClinVar database"
     CLINVAR_VERSION="$(curl ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/ 2>/dev/null |
         grep 'clinvar.vcf.gz' | head -n 1 | awk -F'->' '{print $2}' | cut -d'_' -f2 | cut -d'.' -f1)"
     echo -e "ClinVar\t$CLINVAR_VERSION\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     download "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz" \
         "/tmp/clinvar.vcf.gz"
-    gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/clinvar_hg38.vcf"
+    gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/hg38/clinvar.vcf"
     [[ ! -f "$BASE_PATH/databases/clinvar_hg38.vcf" ]] && echo "Unable to download clinvar_hg38.vcf" && exit 9
     download "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz" \
         "/tmp/clinvar.vcf.gz"
-    gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/clinvar_hg19.vcf"
+    gunzip "/tmp/clinvar.vcf.gz" && mv "/tmp/clinvar.vcf" "$BASE_PATH/databases/hg19/clinvar.vcf"
     [[ ! -f "$BASE_PATH/databases/clinvar_hg19.vcf" ]] && echo "Unable to download clinvar_hg19.vcf" && exit 10
 else
     echo "ClinVar database already downloaded"
 fi
 
 # Download the latest version of the NCBI RefSeq database for hg38 and hg19
-if [ ! -f "$BASE_PATH/databases/ncbiRefSeq_hg38.txt" ] || [ ! -f "$BASE_PATH/databases/ncbiRefSeq_hg19.txt" ]; then
+if [ ! -f "$BASE_PATH/databases/hg38/ncbiRefSeq.txt" ] || [ ! -f "$BASE_PATH/databases/hg19/ncbiRefSeq.txt" ]; then
     echo "Downloading NCBI RefSeq database"
     HG38_DATE="$(curl http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ 2>/dev/null |
         grep 'ncbiRefSeq.txt.gz' | awk -F' ' '{FF=NF-2; print $FF}')"
@@ -163,13 +163,13 @@ if [ ! -f "$BASE_PATH/databases/ncbiRefSeq_hg38.txt" ] || [ ! -f "$BASE_PATH/dat
     echo -e "NCBI RefSeq hg38\t$HG38_DATE\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     echo -e "NCBI RefSeq hg19\t$HG19_DATE\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
     download "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz" \
-        "$BASE_PATH/databases/ncbiRefSeq_hg38.txt.gz"
-    gunzip "$BASE_PATH/databases/ncbiRefSeq_hg38.txt.gz"
-    [[ ! -f "$BASE_PATH/databases/ncbiRefSeq_hg38.txt" ]] && echo "Unable to download ncbiRefSeq_hg38.txt" && exit 11
+        "$BASE_PATH/databases/hg38/ncbiRefSeq.txt.gz"
+    gunzip "$BASE_PATH/databases/hg38/ncbiRefSeq.txt.gz"
+    [[ ! -f "$BASE_PATH/databases/hg38/ncbiRefSeq.txt" ]] && echo "Unable to download ncbiRefSeq_hg38.txt" && exit 11
     download "http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeq.txt.gz" \
-        "$BASE_PATH/databases/ncbiRefSeq_hg19.txt.gz"
-    gunzip "$BASE_PATH/databases/ncbiRefSeq_hg19.txt.gz"
-    [[ ! -f "$BASE_PATH/databases/ncbiRefSeq_hg19.txt" ]] && echo "Unable to download ncbiRefSeq_hg19.txt" && exit 12
+        "$BASE_PATH/databases/hg19/ncbiRefSeq.txt.gz"
+    gunzip "$BASE_PATH/databases/hg19/ncbiRefSeq.txt.gz"
+    [[ ! -f "$BASE_PATH/databases/hg19/ncbiRefSeq.txt" ]] && echo "Unable to download ncbiRefSeq_hg19.txt" && exit 12
 else
     echo "NCBI RefSeq database already downloaded"
 fi
