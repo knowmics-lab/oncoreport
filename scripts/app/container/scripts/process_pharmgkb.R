@@ -79,7 +79,7 @@ names(pharmgkb_data) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base",
                           "Evidence_level", "Clinical_significance", "PMID",
                           "Drug", "PharmGKB_ID", "Variant")
 pharmgkb_data$Database <- "PharmGKB"
-pharmgkb_data <- separate_rows(pharm, Variant_summary, Evidence_statement,
+pharmgkb_data <- separate_rows(Variant_summary, Evidence_statement,
                                Evidence_level, Clinical_significance, PMID,
                                Drug, PharmGKB_ID, Variant, sep = ";;")
 pharmgkb_data$Gene <- gsub("\\s+\\(.*\\)", "", pharmgkb_data$Gene)
