@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Load libraries
-library(data.table)
+suppressPackageStartupMessages(library(data.table))
 
 # get arguments
 args <- commandArgs(trailingOnly = TRUE)
@@ -85,6 +85,8 @@ fwrite(dbnsfp_hg19,
   file = hg19, sep = "\t", quote = FALSE,
   row.names = FALSE, col.names = FALSE
 )
+colnames(dbnsfp_hg19) <- columns_after
+saveRDS(dbnsfp_hg19, file = "/support/databases/hg19/dbNSFP.rds")
 rm(dbnsfp_hg19)
 cat("done\n")
 
@@ -97,6 +99,8 @@ fwrite(dbnsfp_hg38,
   file = hg38, sep = "\t", quote = FALSE,
   row.names = FALSE, col.names = FALSE
 )
+colnames(dbnsfp_hg38) <- columns_after
+saveRDS(dbnsfp_hg38, file = "/support/databases/hg38/dbNSFP.rds")
 rm(dbnsfp_hg38)
 cat("done\n")
 

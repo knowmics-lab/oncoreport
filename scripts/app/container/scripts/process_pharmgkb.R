@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 
 # Load libraries
-library(data.table)
-library(dplyr)
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 
 # get arguments
 args <- commandArgs(trailingOnly = TRUE)
@@ -42,7 +43,7 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
     dbsnp_data <- dbsnp_data %>%
       inner_join(chrs, by = "ChrID") %>%
       inner_join(var_pheno_ann, by = "ID") %>%
-      tidyr::separate_rows(Alt_base, sep = ",") %>%
+      separate_rows(Alt_base, sep = ",") %>%
       unique()
   })
   if (nrow(dbsnp_data) == 0) {

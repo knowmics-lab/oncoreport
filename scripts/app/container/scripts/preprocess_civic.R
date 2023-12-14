@@ -3,9 +3,9 @@ args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
   stop("Please provide the path to the databases folder as the first argument.")
 }
-library(readr)
-library(dplyr)
-library(tidyr)
+suppressPackageStartupMessages(library(readr))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 database_path <- args[1]
 if (!file.exists(database_path)) {
   stop("The path to the databases folder does not exist.")

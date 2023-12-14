@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
-library(readr)
-library(rvest)
-library(data.table)
-library(readxl)
-library(fuzzyjoin)
-library(webchem)
-library(googleLanguageR)
-library(dbparser)
+suppressPackageStartupMessages(library(readr))
+suppressPackageStartupMessages(library(rvest))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(readxl))
+suppressPackageStartupMessages(library(fuzzyjoin))
+suppressPackageStartupMessages(library(webchem))
+suppressPackageStartupMessages(library(googleLanguageR))
+suppressPackageStartupMessages(library(dbparser))
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 2) {
@@ -43,20 +43,20 @@ cached_db_file <- paste0("drugbank_",format(Sys.Date(), "%Y%m%d"),".rda")
 
 if (!file.exists(cached_db_file)) {
   cat("Reading DrugBank database...\n")
-  dvobj <- parseDrugBank(db_path            = drugbank_zip_path,
+  drugbank <- parseDrugBank(db_path            = drugbank_zip_path,
                          drug_options       = drug_node_options(),
                          parse_salts        = TRUE,
                          parse_products     = TRUE,
                          references_options = references_node_options(),
                          cett_options       = cett_nodes_options())
   cat("Processing vocabulary...\n")
-  salts_ids      <- unique(dvobj$salts[,c("drugbank-id", "parent_key")])
-  salts_names    <- unique(dvobj$salts[,c("name", "parent_key")])
-  products_names <- unique(dvobj$products[,c("name", "parent_key")])
-  mixtures       <- unique(dvobj$drugs$mixtures[,c("name", "parent_key")])
-  synonyms       <- unique(dvobj$drugs$synonyms[,c("synonym", "drugbank-id")])
-  general_names  <- unique(dvobj$drugs$general_information[,c("name", "primary_key")])
-  general_ids    <- unique(dvobj$drugs$general_information[,c("primary_key", "primary_key")])
+  salts_ids      <- unique(drugbank$salts[,c("drugbank-id", "parent_key")])
+  salts_names    <- unique(drugbank$salts[,c("name", "parent_key")])
+  products_names <- unique(drugbank$products[,c("name", "parent_key")])
+  mixtures       <- unique(drugbank$drugs$mixtures[,c("name", "parent_key")])
+  synonyms       <- unique(drugbank$drugs$synonyms[,c("synonym", "drugbank-id")])
+  general_names  <- unique(drugbank$drugs$general_information[,c("name", "primary_key")])
+  general_ids    <- unique(drugbank$drugs$general_information[,c("primary_key", "primary_key")])
   
   colnames(salts_ids)      <- c("synonym", "common_name")
   colnames(salts_names)    <- c("synonym", "common_name")
@@ -71,13 +71,13 @@ if (!file.exists(cached_db_file)) {
   rm(salts_ids, salts_names, products_names, mixtures, synonyms, 
      general_names, general_ids)
   cat("Processing approvals...\n")
-  drugbank_approvals <- dvobj$products %>% 
+  drugbank_approvals <- drugbank$products %>% 
     dplyr::filter(approved == "true") %>% 
     dplyr::group_by(parent_key) %>% 
     dplyr::summarise(approved_by=paste(unique(unlist(strsplit(source, " "))), collapse = "/")) %>%
     unique()
   cat("Saving cached data...\n")
-  save(dvobj, drugbank_vocab_map, drugbank_approvals, file = cached_db_file)
+  save(drugbank, drugbank_vocab_map, drugbank_approvals, file = cached_db_file)
 } else {
   cat("Loading cached DrugBank data...\n")
   load(cached_db_file)
@@ -144,7 +144,7 @@ do_translate_match <- function (df_data, field, source="it") {
   df_transl_match     <- df_data[transl_matched, c("Medicine.name","Active.substance","common_name")]
   df_no_match         <- df_data[!transl_matched, c("Medicine.name","Active.substance")]
   
-  return (list(df_transl_match, df_no_match))
+  return(list(df_transl_match, df_no_match))
 }
 
 do_matches <- function (df_data, match_funs, fields) {
@@ -155,13 +155,13 @@ do_matches <- function (df_data, match_funs, fields) {
     df_data_no_match <- df_data
     for (fn in match_funs) {
       tmp <- do.call(fn, list(df_data_no_match, field))
-      
+
       if (is.null(df_data_match)) {
         df_data_match <- tmp[[1]]
       } else if (is.data.frame(tmp[[2]]) && nrow(tmp[[2]]) > 0) {
         df_data_match <- rbind(df_data_match, tmp[[1]])
       }
-      
+
       df_data_no_match <- tmp[[2]]
     }
     df_data_matched[[field]]     <- df_data_match
@@ -269,7 +269,7 @@ if (!file.exists(cached_aifa_file)) {
     all_data$key <- gsub("[^[:alnum:] ]|\\s+", "", tolower(all_data$Active.substance))
     return (list(all_data, aifa_release_dates_by_class))
   })()
-  
+
   aifa_data <- tmp_data[[1]]
   aifa_release_dates <- tmp_data[[2]]
   rm(tmp_data, aifa_release_date_a_h, aifa_files_by_class)
@@ -298,22 +298,22 @@ if (!file.exists(cached_ema_file)) {
   unlink("ema_medicines.xlsx")
   ema_report_date <- ema_report_date$...1
   ema_report_date <- as.character(as.Date(ema_report_date, tryFormats = "%a, %d/%m/%Y"))
-  
+
   colnames(ema_data) <- make.names(colnames(ema_data))
   ema_data <- ema_data[tolower(ema_data$Category) == "human" &
                          tolower(ema_data$Authorisation.status) == "authorised", ema_columns]
   ema_data <- unique(ema_data)
   ema_data_no_divide <- grep("strain|live|recombinant|subgroup|conjugate|inactivated|rotavirus|encoding", ema_data$Active.substance)
   ema_data_kept      <- ema_data[ema_data_no_divide, ]
-  
+
   ema_data_divided   <- ema_data[-ema_data_no_divide,] %>% 
     tidyr::separate_rows(Active.substance, sep=", ") %>%
     tidyr::separate_rows(Medicine.name, sep="/") %>%
     unique() %>%
     na.omit()
-  
+
   ema_data <- rbind(ema_data_divided, ema_data_kept)
-  
+
   ema_data$Medicine.name    <- trimws(ema_data$Medicine.name)
   ema_data$Active.substance <- trimws(ema_data$Active.substance)
   ema_data$Medicine.name    <- gsub("\\s+\\(.*", "", ema_data$Medicine.name)
@@ -334,12 +334,12 @@ if (!file.exists(cached_ema_file)) {
 # Build approval data
 cat("Matching AIFA and EMA data with DrugBank Approvals...\n")
 aifa_drugs_approval <- data.frame(
-  parent_key=unique(aifa_data_matched$common_name),
-  aifa=TRUE
+  parent_key = unique(aifa_data_matched$common_name),
+  aifa = TRUE
 )
 ema_drugs_approval  <- data.frame(
-  parent_key=unique(ema_data_match$common_name),
-  ema=TRUE
+  parent_key = unique(ema_data_match$common_name),
+  ema = TRUE
 )
 
 supported_agencies  <- c("AIFA", "EMA", "FDA")
@@ -358,20 +358,21 @@ build_approval_string <- function (approved_by, aifa, ema) {
   }))
 }
 
-complete_approvals <- drugbank_approvals %>% 
-  dplyr::full_join(aifa_drugs_approval) %>% 
+complete_approvals <- drugbank_approvals %>%
+  dplyr::full_join(aifa_drugs_approval) %>%
   dplyr::full_join(ema_drugs_approval) %>%
   dplyr::mutate(approvals = build_approval_string(approved_by, aifa, ema)) %>%
   dplyr::select(parent_key, approvals)
 cat("Saving approvals...\n")
-approved_drug_names <- complete_approvals %>% 
-  dplyr::full_join(dvobj$drugs$general_information, by=c("parent_key"="primary_key")) %>%
+approved_drug_names <- complete_approvals %>%
+  dplyr::full_join(drugbank$drugs$general_information, by=c("parent_key"="primary_key")) %>%
   dplyr::select(name, approvals) %>%
   unique()
 approved_drug_names$approvals[is.na(approved_drug_names$approvals)] <- "Not approved"
 colnames(approved_drug_names) <- c("Drug_name", "approved")
-write_tsv(approved_drug_names, file.path(output_directory, "Agency_approval.txt"), 
-          col_names = TRUE, quote = "needed")
+saveRDS(approved_drug_names, file.path(output_directory, "approved_drugs.rds"))
+# write_tsv(approved_drug_names, file.path(output_directory, "Agency_approval.txt"), 
+#           col_names = TRUE, quote = "needed")
 
 ###############################################################################
 # Build version data
@@ -383,12 +384,15 @@ df_version <- data.frame(
 )
 versions_path <- file.path(output_directory, "versions.txt")
 if (file.exists(versions_path)) {
-  v_data <- read_delim(versions_path, delim = "\t", 
-                       escape_double = FALSE, col_names = FALSE, 
-                       col_types = cols(X1 = col_character(), 
-                                        X2 = col_character(), X3 = col_character()), 
+  v_data <- read_delim(versions_path, delim = "\t",
+                       escape_double = FALSE, col_names = FALSE,
+                       col_types = cols(
+                         X1 = col_character(),
+                         X2 = col_character(),
+                         X3 = col_character()
+                       ),
                        trim_ws = TRUE)
-  
+
   colnames(v_data) <- c("name", "release", "date")
   class(v_data)    <- "data.frame"
   df_version       <- rbind(v_data, df_version)
@@ -398,11 +402,13 @@ write_tsv(df_version, versions_path, col_names = FALSE)
 ###############################################################################
 # Build drug info
 cat("Preparing drug general information\n")
-drug_info           <- dvobj$drugs$general_information
+drug_info           <- drugbank$drugs$general_information
 class(drug_info)    <- "data.frame"
-drug_info           <- as.data.frame(cbind(drug_info$primary_key, drug_info$name))
+drug_info           <- as.data.frame(
+  cbind(drug_info$primary_key, drug_info$name)
+)
 colnames(drug_info) <- c("id", "name")
-atc_codes           <- dvobj$drugs$atc_codes
+atc_codes           <- drugbank$drugs$atc_codes
 drug_info           <- drug_info %>% 
   dplyr::left_join(atc_codes, by=c("id" = "drugbank-id")) %>%
   dplyr::select(id, name, atc_code) %>%
@@ -418,36 +424,41 @@ write_csv(
 # Build drug-drug interactions
 cat("Preparing drug-drug interactions\n")
 drug_info_unique  <- drug_info %>% dplyr::select("id", "name") %>% unique()
-drug_interactions <- dvobj$drugs$drug_interactions %>%
-  dplyr::inner_join(drug_info_unique, by=c("parent_key" = "id")) %>%
+drug_interactions <- drugbank$drugs$drug_interactions %>%
+  dplyr::inner_join(drug_info_unique, by = c("parent_key" = "id")) %>%
   unique() %>%
   na.omit()
 colnames(drug_interactions) <- c(
   "Drug1_code", "Drug1_name", "Effect", "Drug2_code", "Drug2_name"
 )
 
-write_tsv(
-  drug_interactions,
-  file = file.path(output_directory, "drug_drug_interactions_light.txt"),
-  quote = "needed"
+saveRDS(
+  drug_interactions, 
+  file.path(output_directory, "drug_drug_interactions.rds")
 )
+# write_tsv(
+#   drug_interactions,
+#   file = file.path(output_directory, "drug_drug_interactions_light.txt"),
+#   quote = "needed"
+# )
 ###############################################################################
 # Build drug-food interactions
 cat("Preparing drug-food interactions\n")
 # data for food interactions
-drug_food_info           <- dvobj$drugs$food_interactions
+drug_food_info           <- drugbank$drugs$food_interactions
 colnames(drug_food_info) <- c("Food_interaction", "Drugbank_ID")
-food_interaction         <- drug_food_info %>% 
+food_interaction         <- drug_food_info %>%
   dplyr::inner_join(drug_info_unique, by = c("Drugbank_ID" = "id")) %>%
   unique() %>%
   na.omit() %>%
-  dplyr::select(Drugbank_ID, Drug=name, Food_interaction)
+  dplyr::select(Drugbank_ID, Drug = name, Food_interaction)
 
-write_csv(
-  food_interaction,
-  file = file.path(output_directory, "drugfood_database.csv"),
-  quote = "needed"
-)
+saveRDS(food_interaction, file.path(output_directory, "drugfood_database.rds"))
+# write_csv(
+#   food_interaction,
+#   file = file.path(output_directory, "drugfood_database.csv"),
+#   quote = "needed"
+# )
 ###############################################################################
 # Clean up
 unlink(cached_db_file)

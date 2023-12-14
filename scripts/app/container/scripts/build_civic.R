@@ -3,9 +3,9 @@ args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
   stop("Please provide the path to the databases folder as the first argument.")
 }
-library(readr)
-library(dplyr)
-library(tidyr)
+suppressPackageStartupMessages(library(readr))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
 database_path <- args[1]
 if (!file.exists(database_path)) {
   stop("The path to the databases folder does not exist.")
@@ -132,8 +132,8 @@ diseases <- unique(na.omit(rbind(
   setNames(hg38_complete[,c("disease_2", "doid_2")], c("disease", "doid"))
 )))
 
-saveRDS(hg19_processed, file.path(database_path, "civic_database_hg19.rds"))
-saveRDS(hg38_processed, file.path(database_path, "civic_database_hg38.rds"))
+saveRDS(hg19_processed, file.path(database_path, "hg19/civic_database.rds"))
+saveRDS(hg38_processed, file.path(database_path, "hg38/civic_database.rds"))
 saveRDS(diseases, file.path(database_path, "civic_diseases.rds"))
 # write_tsv(
 #   x = hg19_processed,
