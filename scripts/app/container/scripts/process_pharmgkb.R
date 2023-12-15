@@ -4,6 +4,7 @@
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(stringr))
 
 # get arguments
 args <- commandArgs(trailingOnly = TRUE)
