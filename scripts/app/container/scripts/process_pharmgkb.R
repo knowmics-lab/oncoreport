@@ -70,9 +70,10 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
 cat("Merging data...")
 dbsnp_all_data <- dbsnp_all_data[sapply(dbsnp_all_data, is.null) == FALSE]
 pharmgkb_data <- na.omit(do.call(rbind, dbsnp_all_data))
-pharmgkb_data <- unique(pharmgkb_data) %>%
-  group_by(Chromosome, Start, Stop, REF, Alt_base, Gene) %>%
-  summarize_all(function(x) (trimws(paste(x, collapse = ";;"))))
+pharmgkb_data <- unique(pharmgkb_data)
+#  %>%
+#   group_by(Chromosome, Start, Stop, REF, Alt_base, Gene) %>%
+#   summarize_all(function(x) (trimws(paste(x, collapse = ";;"))))
 
 names(pharmgkb_data) <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base",
                           "Gene", "Variant_summary", "Evidence_statement",
