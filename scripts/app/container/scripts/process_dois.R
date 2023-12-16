@@ -45,7 +45,7 @@ download.file(download_url, tmp_file)
 onto         <- get_ontology(tmp_file)
 unlink(tmp_file)
 
-to_key <- function(column) (gsub("[^[:alnum:] ]|\\s+", "", gsub("'s", "", gsub("\U00F6", "oe", tolower(unname(column))))))
+to_key <- function(column) (gsub("[^[:alnum:] ]|\\s+", "", gsub("'s", "", gsub("\U00F6", "oe", iconv(tolower(unname(column)), to="UTF-8")))))
 
 df_onto <- data.frame(doid = gsub("DOID:", "", names(onto$name)), name = unname(onto$name), key = to_key(onto$name), doid_orig = names(onto$name))
 
