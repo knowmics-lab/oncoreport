@@ -110,7 +110,7 @@ hg19_converted <- civic_hg38_partial %>%
 
 hg38_converted <- civic_hg19_partial %>%
   inner_join(
-    civic_coords_hg38_converted, 
+    civic_coords_hg38_converted,
     by = "variant_id", 
     suffix = c("", "_hg38"),
     relationship = "many-to-many"
@@ -127,29 +127,11 @@ hg38_processed <- process_civic(hg38_complete)
 
 diseases <- unique(na.omit(rbind(
   hg19_complete[,c("disease", "doid")],
-  setNames(hg19_complete[,c("disease_2", "doid_2")], c("disease", "doid")),
+  setNames(hg19_complete[, c("disease_2", "doid_2")], c("disease", "doid")),
   hg38_complete[,c("disease", "doid")],
-  setNames(hg38_complete[,c("disease_2", "doid_2")], c("disease", "doid"))
+  setNames(hg38_complete[, c("disease_2", "doid_2")], c("disease", "doid"))
 )))
 
 saveRDS(hg19_processed, file.path(database_path, "hg19/civic_database.rds"))
 saveRDS(hg38_processed, file.path(database_path, "hg38/civic_database.rds"))
 saveRDS(diseases, file.path(database_path, "civic_diseases.rds"))
-# write_tsv(
-#   x = hg19_processed,
-#   file = file.path(database_path, "civic_database_hg19.tsv"),
-#   quote = "needed",
-#   col_names = TRUE
-# )
-# write_tsv(
-#   x = hg38_processed,
-#   file = file.path(database_path, "civic_database_hg38.tsv"),
-#   quote = "needed",
-#   col_names = TRUE
-# )
-# write_tsv(
-#   x = diseases,
-#   file = file.path(database_path, "civic_diseases.tsv"),
-#   quote = "needed",
-#   col_names = TRUE
-# )

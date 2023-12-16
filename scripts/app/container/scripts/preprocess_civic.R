@@ -120,4 +120,3 @@ write_tsv(
   col_names = FALSE,
   quote = "none"
 )
-

@@ -40,4 +40,4 @@ cli <- cli[, c(
   "Clinical_significance"
 )]
 saveRDS(cli, output_file)
-# unlink(input_vcf)
+unlink(input_vcf)

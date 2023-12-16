@@ -24,4 +24,4 @@ ref <- unique(ref[, c(
   "cdsEnd", "score", "Gene"
 )])
 saveRDS(ref, output_file)
-# unlink(input_file)
+unlink(input_file)

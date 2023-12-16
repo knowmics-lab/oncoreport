@@ -194,6 +194,19 @@ else
     echo "CGI database already processed"
 fi
 
+if [ ! -f "$BASE_PATH/databases/diseases.tsv" ]; then
+    echo "Building diseases database from Disease Ontology"
+    echo -e "DiseaseOntology\t$(date +%Y%m%d)\t$(date +%Y-%m-%d)" >>"$BASE_PATH/databases/versions.txt"
+    Rscript "$BASE_PATH/scripts/process_dois.R" \
+        "$BASE_PATH/databases/hg19/civic_database.rds" \
+        "$BASE_PATH/databases/hg19/cgi_database.rds" \
+        "$BASE_PATH/databases/diseases_map.txt" \
+        "$BASE_PATH/databases/diseases.tsv" \
+        "$BASE_PATH/databases/do_parents.tsv"
+else
+    echo "Diseases database already processed"
+fi
+
 [ -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz"
 [ -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz"
 [ -f "$BASE_PATH/databases/drugbank.xml" ] && rm -f "$BASE_PATH/databases/drugbank.xml"

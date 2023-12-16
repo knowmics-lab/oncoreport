@@ -63,4 +63,4 @@ cgi$Drug <- gsub(cgi$Drug, pattern = " + ", replace = ",", fixed = TRUE)
 cgi$Variant_summary <- ""
 cgi <- cgi[, c(1:7, 14, 9, 18, 16, 10, 17, 8, 11, 19, 15, 12, 13)]
 saveRDS(cgi, output_file)
-# unlink(input_file)
+unlink(input_file)
