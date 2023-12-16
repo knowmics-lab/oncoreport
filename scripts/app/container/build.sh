@@ -46,11 +46,10 @@ DOCKER_BUILDKIT=1 docker build \
     --env ONCOREPORT_ORIGIN="https://github.com/knowmics-lab/oncoreport.git" \
     --env ONCOREPORT_BRANCH="${ONCOREPORT_BRANCH}" \
     --env BASE_PATH="${CONTAINER_BASE_PATH}" \
-    oncoreport_builder_stage_1 bash ${CONTAINER_BASE_PATH}/scripts/prepare.sh
-
-# DOCKER_BUILDKIT=1 docker build \
-#   --build-arg="ONCOREPORT_BRANCH=${ONCOREPORT_BRANCH}" \
-#   --secret id=drugbank,src=/tmp/secret_drugbank \
-#   --secret id=gltranslate,src=$GLTRANSLATE_JSON_PATH \
-#   -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
-#   rm /tmp/secret_drugbank
+    oncoreport_builder_stage_1 bash ${CONTAINER_BASE_PATH}/scripts/prepare.sh &&
+  DOCKER_BUILDKIT=1 docker build \
+  --target=oncoreport_final \
+  --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}"
+  -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
+  rm -f /tmp/secret_drugbank &&
+  docker rmi oncoreport_builder_stage_1

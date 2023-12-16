@@ -47,7 +47,12 @@ unlink(tmp_file)
 
 to_key <- function(column) (gsub("[^[:alnum:] ]|\\s+", "", gsub("'s", "", gsub("\U00F6", "oe", tolower(unname(column))))))
 
-df_onto <- data.frame(doid = gsub("DOID:", "", names(onto$name)), name = unname(onto$name), key = to_key(onto$name), doid_orig = names(onto$name))
+df_onto <- data.frame(
+  doid = gsub("DOID:", "", names(onto$name)),
+  name = unname(onto$name),
+  key = to_key(onto$name),
+  doid_orig = names(onto$name)
+)
 
 civic_diseases <- readRDS(civic_file)
 cgi            <- readRDS(cgi_file)
@@ -88,11 +93,14 @@ recursive_child_finder <- function(doid) {
 
 tumor_doid_list <- setNames(lapply(tumor_doid, recursive_child_finder), tumor_doid)
 all_tumors_doid <- unique(unname(unlist(tumor_doid)))
-df_tumor_doid   <- data.frame(doid = gsub("DOID:", "", rep(tumor_doid, sapply(tumor_doid_list, length))), rdoid = unname(unlist(tumor_doid_list)))
+df_tumor_doid   <- data.frame(
+  doid = gsub("DOID:", "", rep(tumor_doid, sapply(tumor_doid_list, length))),
+  rdoid = unname(unlist(tumor_doid_list))
+)
 all_db_diseases <- rbind(civic_diseases, cgidb_diseases)
 all_db_diseases <- all_db_diseases[order(all_db_diseases$disease), ]
 all_db_diseases <- all_db_diseases %>%
-  left_join(df_tumor_doid, by = "doid") %>%
+  left_join(df_tumor_doid, by = "doid", relationship = "many-to-many") %>%
   left_join(df_onto, by = c("rdoid" = "doid_orig")) %>%
   select(disease, name, rdoid)
 all_db_diseases$tumor <- 1
@@ -101,9 +109,17 @@ all_db_diseases$general[is.na(all_db_diseases$name)] <- 1
 all_db_diseases$name[is.na(all_db_diseases$name)] <- all_db_diseases$disease[is.na(all_db_diseases$name)]
 all_db_diseases   <- all_db_diseases[!is.na(all_db_diseases$name), ]
 onto_remaining    <- df_onto[!(df_onto$doid_orig %in% na.omit(all_db_diseases$rdoid)), ]
-all_onto_diseases <- data.frame(disease = onto_remaining$name, name = onto_remaining$name, rdoid = onto_remaining$doid_orig, tumor = 0, general = 0)
+all_onto_diseases <- data.frame(
+  disease = onto_remaining$name,
+  name = onto_remaining$name,
+  rdoid = onto_remaining$doid_orig,
+  tumor = 0,
+  general = 0
+)
 final_db_diseases <- rbind(all_db_diseases, all_onto_diseases)
-colnames(final_db_diseases) <- c("Database_name", "DO_name", "DOID", "tumor", "general")
+colnames(final_db_diseases) <- c(
+  "Database_name", "DO_name", "DOID", "tumor", "general"
+)
 final_db_diseases <- final_db_diseases[grepl("^DOID", final_db_diseases$DOID), ]
 final_db_diseases <- final_db_diseases[!onto$obsolete[final_db_diseases$DOID], ]
 final_db_diseases$DO_name <- gsub("–", "-", final_db_diseases$DO_name)
