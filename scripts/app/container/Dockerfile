@@ -88,9 +88,7 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     chmod +x /usr/local/bin/varscan.jar && \
     cd "$PW" && rm -r /oncoreport/tmp/ && apt remove -y libgsl-dev libtool libhts-dev && \
     a2enmod rewrite && \
-    export JAVA_HOME && \
     rm -rf /var/log/mysql && rm -rf /var/lib/mysql && \
-    rm /installPackages.R && \
     apt remove -y software-properties-common && \
     apt autoclean && \
     apt clean && \
@@ -108,7 +106,7 @@ ARG BASE_PATH="/support"
 ENV ONCO_BASE "/oncoreport"
 COPY . ${BASE_PATH}
 
-RUN mkdir -p "${ONCO_BASE}" && \
+RUN mkdir -p "${ONCO_BASE}" && mkdir -p "/etc/supervisor/conf.d/" && \
     mv "${BASE_PATH}/scripts/bootstrap.sh" /usr/local/bin/ && \
     mv "${BASE_PATH}/scripts/setup.sh" /usr/local/bin/ && \
     mv "${BASE_PATH}/scripts/create_mysql_users.sh" /usr/local/bin/ && \
@@ -133,7 +131,7 @@ RUN mkdir -p "${ONCO_BASE}" && \
     rm -rf /usr/local/bin/setup.sh
 
 EXPOSE 80
-VOLUME [ "${ONCO_BASE}/ws" ]
+VOLUME [ "${ONCO_BASE}/ws/storage" ]
 
 CMD ["/bootstrap.sh"]
 

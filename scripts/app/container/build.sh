@@ -53,3 +53,5 @@ DOCKER_BUILDKIT=1 docker build \
     -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
   rm -f /tmp/secret_drugbank &&
   docker rmi oncoreport_builder_stage_1
+
+echo "Container ${CONTAINER_NAME}:${CONTAINER_VERSION} built successfully!"
