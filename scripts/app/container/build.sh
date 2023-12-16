@@ -48,8 +48,8 @@ DOCKER_BUILDKIT=1 docker build \
     --env BASE_PATH="${CONTAINER_BASE_PATH}" \
     oncoreport_builder_stage_1 bash ${CONTAINER_BASE_PATH}/scripts/prepare.sh &&
   DOCKER_BUILDKIT=1 docker build \
-  --target=oncoreport_final \
-  --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}"
-  -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
+    --target=oncoreport_final \
+    --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}" \
+    -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
   rm -f /tmp/secret_drugbank &&
   docker rmi oncoreport_builder_stage_1
