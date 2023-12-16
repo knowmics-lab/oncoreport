@@ -16,12 +16,6 @@
 # pip3 install CrossMap || exit 110
 # pip3 install CrossMap --upgrade || exit 111
 
-# Build database files
-(
-  cd /oncoreport/databases &&
-    rm /oncoreport/databases/drugbank.xml
-) || exit 138
-
 # Apply MYSQL configuration fixes
 apply_configuration_fixes() {
   sed -i 's/^log_error/# log_error/' /etc/mysql/mysql.conf.d/mysqld.cnf
