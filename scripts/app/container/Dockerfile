@@ -2,10 +2,12 @@ FROM ubuntu:jammy as stage1_base
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG CONTAINER_TIMEZONE="GMT"
 ENV LANG en_US.UTF-8 
+ENV LC_ALL en_US.UTF-8
 RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
     echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
     apt update --fix-missing && \
     apt install -y perl dialog software-properties-common wget locales && \
+    locale-gen "${LC_ALL}" && \
     wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
     add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" && \
     add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \

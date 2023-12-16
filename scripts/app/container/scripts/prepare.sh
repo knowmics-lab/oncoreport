@@ -203,6 +203,7 @@ if [ ! -f "$BASE_PATH/databases/diseases.tsv" ]; then
         "$BASE_PATH/databases/diseases_map.txt" \
         "$BASE_PATH/databases/diseases.tsv" \
         "$BASE_PATH/databases/do_parents.tsv"
+
     [[ ! -f "$BASE_PATH/databases/diseases.tsv" ]] && echo "Unable to build diseases database" && exit 17
     [ -f "$BASE_PATH/databases/diseases.tsv" ] &&
         [ -f "$BASE_PATH/databases/do_parents.tsv" ] &&
