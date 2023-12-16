@@ -185,7 +185,7 @@ else
     echo "NCBI RefSeq database already downloaded"
 fi
 
-if [ ! -f "$BASE_PATH/databases/hg19/cgi_database.rds"] || [ ! -f "$BASE_PATH/databases/hg38/cgi_database.rds" ]; then
+if [ ! -f "$BASE_PATH/databases/hg19/cgi_database.rds" ] || [ ! -f "$BASE_PATH/databases/hg38/cgi_database.rds" ]; then
     Rscript "$BASE_PATH/scripts/process_cgi.R" "$BASE_PATH/databases/cgi_original_hg19.txt" "$BASE_PATH/databases/hg19/cgi_database.rds"
     Rscript "$BASE_PATH/scripts/process_cgi.R" "$BASE_PATH/databases/cgi_original_hg38.txt" "$BASE_PATH/databases/hg38/cgi_database.rds"
     [[ ! -f "$BASE_PATH/databases/hg19/cgi_database.rds" ]] && echo "Unable to build cgi database hg19" && exit 15
