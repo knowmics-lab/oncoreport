@@ -11,6 +11,7 @@ use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
 use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JsonException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -21,12 +22,6 @@ use ZipArchive;
 final class Utils
 {
 
-    public const VERSION = '0.0.1';
-
-    public const VERSION_NUMBER = 1;
-
-    public const DEFAULT_VERSION_NUMBER = 1;
-
     public const IGNORED_ERROR_CODE = '===IGNORED===';
 
     public const VALID_GENOMES = ['hg19', 'hg38'];
@@ -36,6 +31,9 @@ final class Utils
     public const TUMOR_ONLY_TYPE = 'tumor-only';
 
     public const TUMOR_NORMAL_TYPE = 'tumor-vs-normal';
+
+    private static array|null $currentVersionCache = null;
+    private static array|null $containerVersionCache = null;
 
     /**
      * Runs a shell command and checks for successful completion of execution
@@ -107,7 +105,7 @@ final class Utils
             new RecursiveDirectoryIterator($rootPath),
             RecursiveIteratorIterator::LEAVES_ONLY
         );
-        foreach ($files as $name => $file) {
+        foreach ($files as $file) {
             if (!$file->isDir()) {
                 $filePath = $file->getRealPath();
                 $relativePath = substr($filePath, strlen($rootPath) + 1);
@@ -124,20 +122,21 @@ final class Utils
      *
      * @param  string  $inputFolder
      * @param  int  $mode
+     * @param  int  $dirMode
      *
      * @return bool
      */
-    public static function recursiveChmod(string $inputFolder, int $mode): bool
+    public static function recursiveChmod(string $inputFolder, int $mode = 0777, int $dirMode = 0777): bool
     {
         $rootPath = realpath($inputFolder);
         if (!file_exists($rootPath) && !is_dir($rootPath)) {
             return false;
         }
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath));
-        foreach ($files as $name => $file) {
-            @chmod($file->getRealPath(), 0777);
+        foreach ($files as $file) {
+            @chmod($file->getRealPath(), $mode);
         }
-        @chmod($rootPath, 0777);
+        @chmod($rootPath, $dirMode);
 
         return true;
     }
@@ -176,4 +175,64 @@ final class Utils
     {
         return config('oncoreport.cloud_env') && !file_exists(storage_path('app/cosmic/.setup_done'));
     }
+
+    public static function containerVersionFilePath(): string
+    {
+        return config('oncoreport.databases_path').'/container_version.json';
+    }
+
+    public static function currentVersionFilePath(): string
+    {
+        return storage_path('app/version_number');
+    }
+
+    public static function containerVersionData(): array
+    {
+        if (self::$containerVersionCache === null) {
+            self::$containerVersionCache = self::readJsonData(self::containerVersionFilePath());
+        }
+
+        return self::$containerVersionCache;
+    }
+
+    public static function currentVersionData(): array
+    {
+        if (self::$currentVersionCache === null) {
+            self::$currentVersionCache = self::readJsonData(self::currentVersionFilePath());
+        }
+
+        return self::$currentVersionCache;
+    }
+
+    public static function containerVersion(): int
+    {
+        $containerVersionData = self::containerVersionData();
+
+        return $containerVersionData['version'] ?? 0;
+    }
+
+    public static function currentVersion(): int
+    {
+        $currentVersionData = self::currentVersionData();
+
+        return $currentVersionData['version'] ?? 0;
+    }
+
+    public static function readJsonData(string $path): array
+    {
+        if (!file_exists($path)) {
+            return [];
+        }
+        try {
+            $data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return [];
+        }
+        if (!is_array($data)) {
+            return [];
+        }
+
+        return $data;
+    }
+
 }

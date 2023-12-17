@@ -7,7 +7,7 @@
 
 namespace App\Console\Commands;
 
-use App\Utils;
+use App\Http\Services\SystemInfoService;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -35,27 +35,11 @@ class CheckForUpdate extends Command
      */
     public function handle(): int
     {
-        $error = false;
-        $message = '';
-        $updateNeeded = false;
-        $versionNumberFile = storage_path('app/version_number');
-        if (file_exists($versionNumberFile)) {
-            try {
-                $content = json_decode(file_get_contents($versionNumberFile), true, 512, JSON_THROW_ON_ERROR);
-                $version = $content['version'] ?? Utils::VERSION_NUMBER;
-                $updateNeeded = Utils::VERSION_NUMBER > $version;
-            } catch (Throwable $ex) {
-                $error = true;
-                $message = $ex->getMessage();
-            }
-        }
         try {
             $this->line(
                 json_encode(
                     [
-                        'error'        => $error,
-                        'message'      => $message,
-                        'updateNeeded' => $updateNeeded,
+                        'updateNeeded' => (new SystemInfoService())->isUpdateNeeded(),
                     ],
                     JSON_THROW_ON_ERROR
                 )

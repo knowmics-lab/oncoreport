@@ -55,7 +55,7 @@ class EsmoParser extends Command
                 }
                 rename($tmpOutputFile, $outputPath);
             }
-        } catch (Error | Exception) {
+        } catch (Error|Exception) {
         }
         if (file_exists($outputPath)) {
             return $outputPath;
@@ -77,8 +77,8 @@ class EsmoParser extends Command
         }
 
         return [
-            self::downloadFile(self::TOC_URL, storage_path(self::ESMO_PATH . 'toc.json')),
-            self::downloadFile(self::IDX_URL, storage_path(self::ESMO_PATH . 'idx.json')),
+            self::downloadFile(self::TOC_URL, storage_path(self::ESMO_PATH.'toc.json')),
+            self::downloadFile(self::IDX_URL, storage_path(self::ESMO_PATH.'idx.json')),
         ];
     }
 
@@ -94,7 +94,7 @@ class EsmoParser extends Command
 
     protected function findEsmoGuidelines(string $doid, array &$toc): array
     {
-        $tumorsToEsmoFile = storage_path(self::ESMO_PATH . 'tumors_to_esmo.tsv');
+        $tumorsToEsmoFile = storage_path(self::ESMO_PATH.'tumors_to_esmo.tsv');
         if (!file_exists($tumorsToEsmoFile)) {
             $this->call('esmo:match');
         }
@@ -155,7 +155,7 @@ class EsmoParser extends Command
             return 102;
         }
         try {
-            $this->info('Processing guidelines for ' . $diseaseName);
+            $this->info('Processing guidelines for '.$diseaseName);
             $toc = self::readJson($tocPath);
             $matches = $this->findEsmoGuidelines($doid, $toc);
             $idx = self::readJson($idxPath);
@@ -170,7 +170,7 @@ class EsmoParser extends Command
                 $this->warn('No matching diseases found in the ESMO guideline.');
             }
             if (file_put_contents(
-                    $outputDir . '/esmo_parsed.html',
+                    $outputDir.'/esmo_parsed.html',
                     view('esmo.index', compact('matches'))->render()
                 ) === false) {
                 $this->error('Unable to render ESMO index file.');

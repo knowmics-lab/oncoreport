@@ -9,7 +9,6 @@ namespace App\Console\Commands;
 
 use App\Utils;
 use Illuminate\Console\Command;
-use JsonException;
 
 class FirstBoot extends Command
 {
@@ -34,23 +33,9 @@ class FirstBoot extends Command
      */
     public function handle(): int
     {
-        $versionNumberFile = storage_path('app/version_number');
+        $versionNumberFile = Utils::currentVersionFilePath();
         if (!file_exists($versionNumberFile)) {
-            try {
-                @file_put_contents(
-                    $versionNumberFile,
-                    json_encode(
-                        [
-                            'version' => Utils::VERSION_NUMBER,
-                        ],
-                        JSON_THROW_ON_ERROR
-                    )
-                );
-            } catch (JsonException $e) {
-                $this->error($e->getMessage());
-
-                return 1;
-            }
+            copy(Utils::containerVersionFilePath(), $versionNumberFile);
             @chmod($versionNumberFile, 0644);
         }
 

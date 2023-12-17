@@ -14,7 +14,7 @@ class UpdateUser
             $values['password'] = Hash::make($values['new_password']);
             unset($values['new_password']);
         }
-        if (isset($values['role']) && !request()->user()->is_admin) {
+        if (isset($values['role']) && !request()?->user()->is_admin) {
             unset($values['role']);
         }
         $user->update($values);

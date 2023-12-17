@@ -474,7 +474,7 @@
             </div>
 
             <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                Oncoreport Web Service v{{ \App\Utils::VERSION }} (PHP v{{ PHP_VERSION }})
+                Oncoreport Web Service v{{ \App\Utils::currentVersion() }} (PHP v{{ PHP_VERSION }})
             </div>
         </div>
     </div>

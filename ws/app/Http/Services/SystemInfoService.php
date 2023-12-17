@@ -7,7 +7,6 @@ use App\Jobs\Types\Factory;
 use App\Models\Job;
 use App\Utils;
 use Illuminate\Support\Facades\Cache;
-use JsonException;
 use Throwable;
 
 class SystemInfoService
@@ -20,18 +19,7 @@ class SystemInfoService
      */
     public function isUpdateNeeded(): bool
     {
-        $versionNumberFile = storage_path('app/version_number');
-        if (!file_exists($versionNumberFile)) {
-            return false;
-        }
-        try {
-            $content = json_decode(file_get_contents($versionNumberFile), true, 512, JSON_THROW_ON_ERROR);
-            $version = $content['version'] ?? Utils::DEFAULT_VERSION_NUMBER;
-        } catch (JsonException) {
-            $version = Utils::DEFAULT_VERSION_NUMBER;
-        }
-
-        return Utils::VERSION_NUMBER > $version;
+        return Utils::containerVersion() > Utils::currentVersion();
     }
 
     /**
@@ -145,14 +133,16 @@ class SystemInfoService
      */
     public function toArray(): array
     {
+        $containerVersionData = Utils::containerVersionData();
+
         return [
             'data' => [
-                'containerVersion' => Utils::VERSION,
-                'containerVersionNumber' => Utils::VERSION_NUMBER,
-                'maxMemory' => $this->maxMemory(),
-                'availableMemory' => $this->availableMemory(),
-                'numCores' => $this->numCores(),
-                'usedCores' => $this->usedCores(),
+                'containerVersion'       => $containerVersionData["version_string"] ?? "Unknown",
+                'containerVersionNumber' => $containerVersionData["version"] ?? 0,
+                'maxMemory'              => $this->maxMemory(),
+                'availableMemory'        => $this->availableMemory(),
+                'numCores'               => $this->numCores(),
+                'usedCores'              => $this->usedCores(),
             ],
         ];
     }

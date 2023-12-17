@@ -56,7 +56,7 @@ class MatchEsmo extends Command
                 }
                 rename($tmpOutputFile, $outputPath);
             }
-        } catch (Error | Exception) {
+        } catch (Error|Exception) {
         }
         if (file_exists($outputPath)) {
             return $outputPath;
@@ -88,8 +88,8 @@ class MatchEsmo extends Command
         }
 
         return [
-            self::downloadFile(self::TOC_URL, storage_path(self::ESMO_PATH . 'toc.json')),
-            self::downloadFile(self::IDX_URL, storage_path(self::ESMO_PATH . 'idx.json')),
+            self::downloadFile(self::TOC_URL, storage_path(self::ESMO_PATH.'toc.json')),
+            self::downloadFile(self::IDX_URL, storage_path(self::ESMO_PATH.'idx.json')),
         ];
     }
 
@@ -119,8 +119,8 @@ class MatchEsmo extends Command
     protected function checkFalseMatches(string $string1, string $string2): bool
     {
         $falseMatches = [
-            //'leukemia' => 'lymphoma',
-            't-cell' => 'b-cell',
+            'leukemia' => 'lymphoma',
+            't-cell'   => 'b-cell',
         ];
         foreach ($falseMatches as $key => $value) {
             if (str_contains($string1, $key) && str_contains($string2, $value)) {
@@ -204,7 +204,7 @@ class MatchEsmo extends Command
      */
     protected function readParents(): array
     {
-        $handle = fopen(config('oncoreport.databases_path') . '/do_parents.tsv', 'rb');
+        $handle = fopen(config('oncoreport.databases_path').'/do_parents.tsv', 'rb');
         $header = fgetcsv($handle, separator: "\t");
         $doids = [];
         $data = [];
@@ -300,16 +300,18 @@ class MatchEsmo extends Command
             $disease =
                 Disease::where('tumor', 1)
                        ->get()
-                       ->map(function (Disease $d) use (&$toc) {
-                           $m = $this->findBestMatch($d->name, $toc);
-                           $guidelines = array_unique(array_map(static fn($d) => $d['guidelineName'], $m));
+                       ->map(
+                           function (Disease $d) use (&$toc) {
+                               $m = $this->findBestMatch($d->name, $toc);
+                               $guidelines = array_unique(array_map(static fn($d) => $d['guidelineName'], $m));
 
-                           return [
-                               $d->doid,
-                               $d->name,
-                               implode(';', $guidelines),
-                           ];
-                       })
+                               return [
+                                   $d->doid,
+                                   $d->name,
+                                   implode(';', $guidelines),
+                               ];
+                           }
+                       )
                        ->keyBy(fn($d) => $d[0]);
             $this->info('Trying to fill empty children...');
             foreach ($disease as $d) {
@@ -325,7 +327,7 @@ class MatchEsmo extends Command
                 }
             }
             $this->info('Writing output file...');
-            $outputFile = storage_path(self::ESMO_PATH . 'tumors_to_esmo.tsv');
+            $outputFile = storage_path(self::ESMO_PATH.'tumors_to_esmo.tsv');
             $fp = fopen($outputFile, 'wb');
             fputcsv($fp, ['DOID', 'Name', 'ESMO_Guidelines_Titles'], separator: "\t");
             foreach ($disease as $d) {

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', fn() => redirect()->route('dashboard'));
+Route::get('/', static fn() => redirect()->route('dashboard'));
 
 Route::group(
     [
