@@ -17,7 +17,7 @@ class DrugSeeder extends Seeder
         $allDrugs = Drug::select(['id', 'drugbank_id'])->pluck('id', 'drugbank_id');
         $toInsert = [];
         $now = now()->toDateTimeString();
-        $path = realpath(config('oncoreport.databases_path') . '/drug_info.csv');
+        $path = realpath(config('oncoreport.databases_path').'/drug_info.csv');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             fgetcsv($fp);
@@ -27,6 +27,7 @@ class DrugSeeder extends Seeder
                     $toInsert[] = [
                         'drugbank_id' => $id,
                         'name'        => trim($line[1]),
+                        'atc_code'    => trim($line[2]),
                         'created_at'  => $now,
                         'updated_at'  => $now,
                     ];

@@ -17,7 +17,7 @@ class DiseasesTableSeeder extends Seeder
         $allDiseases = Disease::select(['id', 'doid'])->pluck('id', 'doid');
         $toInsert = [];
         $now = now()->toDateTimeString();
-        $path = realpath(config('oncoreport.databases_path') . '/Disease.txt');
+        $path = realpath(config('oncoreport.databases_path').'/diseases.tsv');
         if (!empty($path) && file_exists($path) && is_readable($path)) {
             $fp = @fopen($path, 'rb');
             fgetcsv($fp, separator: "\t");
