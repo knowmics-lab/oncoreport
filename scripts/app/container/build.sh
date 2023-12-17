@@ -24,6 +24,7 @@ DEFAULT_VERSION="v${LATEST_GIT_TAG:-"0.0.1"}"
 # Container name and version can be set with environment variables
 CONTAINER_NAME=${CONTAINER_NAME:-"alaimos/oncoreport"}
 CONTAINER_VERSION=${CONTAINER_VERSION:-"$DEFAULT_VERSION"}
+CONTAINER_ARCHITECTURE=${CONTAINER_ARCHITECTURE:-"amd64"}
 CONTAINER_BASE_PATH=${CONTAINER_BASE_PATH:-"/support"}
 
 echo "Building container ${CONTAINER_NAME}:${CONTAINER_VERSION}"
@@ -38,6 +39,8 @@ fi
 
 DOCKER_BUILDKIT=1 docker build \
   --target=stage1_base \
+  --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}" \
+  --build-arg="ARCHITECTURE=${CONTAINER_ARCHITECTURE}" \
   -t oncoreport_builder_stage_1 . &&
   docker run --rm \
     --mount type=bind,source="/tmp/secret_drugbank",target="/run/secrets/drugbank",readonly \
@@ -50,6 +53,7 @@ DOCKER_BUILDKIT=1 docker build \
   DOCKER_BUILDKIT=1 docker build \
     --target=oncoreport_final \
     --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}" \
+    --build-arg="ARCHITECTURE=${CONTAINER_ARCHITECTURE}" \
     -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
   rm -f /tmp/secret_drugbank &&
   docker rmi oncoreport_builder_stage_1
