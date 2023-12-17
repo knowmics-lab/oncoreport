@@ -213,6 +213,13 @@ else
     echo "Diseases database already processed"
 fi
 
+if head -n 1 "$BASE_PATH/databases/versions.txt" | grep '^database'; then
+    tail -n +2 "$BASE_PATH/databases/versions.txt" >"$BASE_PATH/databases/versions.txt.tmp"
+    mv "$BASE_PATH/databases/versions.txt.tmp" "$BASE_PATH/databases/versions.txt"
+fi
+
+Rscript "$BASE_PATH/scripts/process_versions.R" "$BASE_PATH/databases/versions.txt"
+
 [ -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz"
 [ -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz"
 [ -f "$BASE_PATH/databases/drugbank.xml" ] && rm -f "$BASE_PATH/databases/drugbank.xml"
