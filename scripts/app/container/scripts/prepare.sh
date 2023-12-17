@@ -213,7 +213,7 @@ else
     echo "Diseases database already processed"
 fi
 
-if head -n 1 "$BASE_PATH/databases/versions.txt" | grep '^database'; then
+if head -n 1 "$BASE_PATH/databases/versions.txt" | grep '^database' >/dev/null; then
     tail -n +2 "$BASE_PATH/databases/versions.txt" >"$BASE_PATH/databases/versions.txt.tmp"
     mv "$BASE_PATH/databases/versions.txt.tmp" "$BASE_PATH/databases/versions.txt"
 fi
