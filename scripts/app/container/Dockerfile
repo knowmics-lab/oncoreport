@@ -20,6 +20,7 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
                    r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils \
                    r-cran-ontologyindex python3-pip python3-setuptools python3 && \
     apt remove -y software-properties-common && \
+    apt autoremove --purge -y && \
     apt autoclean && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
@@ -90,6 +91,7 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     a2enmod rewrite && \
     rm -rf /var/log/mysql && rm -rf /var/lib/mysql && \
     apt remove -y software-properties-common && \
+    apt autoremove --purge -y && \
     apt autoclean && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
