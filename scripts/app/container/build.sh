@@ -24,6 +24,9 @@ DEFAULT_VERSION="v${LATEST_GIT_TAG:-"0.0.1"}"
 # Container name and version can be set with environment variables
 CONTAINER_NAME=${CONTAINER_NAME:-"alaimos/oncoreport"}
 CONTAINER_VERSION=${CONTAINER_VERSION:-"$DEFAULT_VERSION"}
+CONTAINER_VERSION_NUMBER=$(echo "${CONTAINER_VERSION}" | cut -d'v' -f2 | tr -d '.')
+CONTAINER_VERSION_NUMBER=${CONTAINER_VERSION_NUMBER:-"0"}
+CONTAINER_VERSION_NUMBER=$(printf "%d" "${CONTAINER_VERSION_NUMBER}")
 CONTAINER_ARCHITECTURE=${CONTAINER_ARCHITECTURE:-"amd64"}
 CONTAINER_BASE_PATH=${CONTAINER_BASE_PATH:-"/support"}
 
@@ -49,6 +52,8 @@ DOCKER_BUILDKIT=1 docker build \
     --env ONCOREPORT_ORIGIN="https://github.com/knowmics-lab/oncoreport.git" \
     --env ONCOREPORT_BRANCH="${ONCOREPORT_BRANCH}" \
     --env BASE_PATH="${CONTAINER_BASE_PATH}" \
+    --env CONTAINER_VERSION="$(echo "${CONTAINER_VERSION}" | cut -d'v' -f2)" \
+    --env CONTAINER_VERSION_NUMBER="${CONTAINER_VERSION_NUMBER}" \
     oncoreport_builder_stage_1 bash ${CONTAINER_BASE_PATH}/scripts/prepare.sh &&
   DOCKER_BUILDKIT=1 docker build \
     --target=oncoreport_final \

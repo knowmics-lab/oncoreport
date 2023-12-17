@@ -220,6 +220,10 @@ fi
 
 Rscript "$BASE_PATH/scripts/process_versions.R" "$BASE_PATH/databases/versions.txt"
 
+jq -n --arg v1 "$CONTAINER_VERSION" \
+    --arg v2 "$CONTAINER_VERSION_NUMBER" \
+    '{"version":$v2|tonumber,"version_string":$v1}' >"$BASE_PATH/databases/container_version.json"
+
 [ -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg19ToHg38.over.chain.gz"
 [ -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" ] && rm -f "$BASE_PATH/databases/hg38ToHg19.over.chain.gz"
 [ -f "$BASE_PATH/databases/drugbank.xml" ] && rm -f "$BASE_PATH/databases/drugbank.xml"
