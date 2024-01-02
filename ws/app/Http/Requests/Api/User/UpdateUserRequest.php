@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Laravel\Fortify\Rules\Password;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -35,7 +35,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->user),
             ],
             'password'     => ['required_with_all:new_password', 'password'],
-            'new_password' => ['filled', 'string', new Password()],
+            'new_password' => ['filled', Password::default()],
             'role'         => ['filled', Rule::in(config('constants.roles'))],
         ];
         if ($this->user()->is_admin) {

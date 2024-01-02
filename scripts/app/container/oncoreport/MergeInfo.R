@@ -11,257 +11,354 @@ suppressPackageStartupMessages({
 })
 
 option_list <- list(
-  make_option(c("-g", "--genome"), type="character", default=NULL, help="human genome version (hg19 or hg38)", metavar="character"),
-  make_option(c("-d", "--database"), type="character", default=NULL, help="databases folder", metavar="character"),
-  make_option(c("-c", "--cosmic"), type="character", default=NULL, help="cosmic folder", metavar="character"),
-  make_option(c("-p", "--project"), type="character", default=NULL, help="project folder", metavar="character"),
-  make_option(c("-s", "--sample"), type="character", default=NULL, help="sample name", metavar="character"),
-  make_option(c("-t", "--tumor"), type="character", default=NULL, help="patient tumor", metavar="character")
+  make_option(
+    c("-g", "--genome"),
+    type = "character", default = NULL,
+    help = "human genome version (hg19 or hg38)", metavar = "character"
+  ),
+  make_option(
+    c("-d", "--database"),
+    type = "character", default = NULL,
+    help = "databases folder", metavar = "character"
+  ),
+  make_option(
+    c("-c", "--cosmic"),
+    type = "character", default = NULL,
+    help = "cosmic folder", metavar = "character"
+  ),
+  make_option(
+    c("-p", "--project"),
+    type = "character", default = NULL,
+    help = "project folder", metavar = "character"
+  ),
+  make_option(
+    c("-s", "--sample"),
+    type = "character", default = NULL,
+    help = "sample name", metavar = "character"
+  ),
+  make_option(
+    c("-t", "--tumor"),
+    type = "character", default = NULL,
+    help = "patient tumor", metavar = "character"
+  )
 )
 
-opt_parser <- OptionParser(option_list=option_list)
-opt        <- parse_args(opt_parser)
+opt_parser <- OptionParser(option_list = option_list)
+opt <- parse_args(opt_parser)
 
 if (is.null(opt$genome) || !(opt$genome %in% c("hg19", "hg38"))) {
   print_help(opt_parser)
-  stop("Invalid genome", call.=FALSE)
+  stop("Invalid genome", call. = FALSE)
 }
 if (is.null(opt$database) || !dir.exists(opt$database)) {
   print_help(opt_parser)
-  stop("Databases path does not exist", call.=FALSE)
+  stop("Databases path does not exist", call. = FALSE)
 }
 if (is.null(opt$cosmic) || !dir.exists(opt$cosmic)) {
   print_help(opt_parser)
-  stop("COSMIC path does not exist", call.=FALSE)
+  stop("COSMIC path does not exist", call. = FALSE)
 }
 if (is.null(opt$project) || !dir.exists(opt$project)) {
   print_help(opt_parser)
-  stop("Project folder does not exist", call.=FALSE)
+  stop("Project folder does not exist", call. = FALSE)
 }
 if (is.null(opt$sample) || is.null(opt$tumor)) {
   print_help(opt_parser)
-  stop("All parameters are required", call.=FALSE)
+  stop("All parameters are required", call. = FALSE)
 }
 
 genome <- opt$genome
-database.path <- opt$database
-cosmic.path <- opt$cosmic
-project.path <- opt$project
-sample.name <- opt$sample
-leading.disease <- opt$tumor
+database_path <- opt$database
+cosmic_path <- opt$cosmic
+project_path <- opt$project
+sample_name <- opt$sample
+leading_disease <- opt$tumor
+genome_path <- file.path(database_path, genome)
+cosmic_genome_path <- file.path(cosmic_path, genome)
 
-thisFile <- function() {
-  cmdArgs <- commandArgs(trailingOnly = FALSE)
+this_file <- function() {
+  args <- commandArgs(trailingOnly = FALSE)
   needle <- "--file="
-  match <- grep(needle, cmdArgs)
+  match <- grep(needle, args)
   if (length(match) > 0) {
     # Rscript
-    return(normalizePath(sub(needle, "", cmdArgs[match])))
+    return(normalizePath(sub(needle, "", args[match])))
   } else {
     # 'source'd via R console
     return(normalizePath(sys.frames()[[1]]$ofile))
   }
 }
 
-source(file.path(dirname(thisFile()), "Functions.R"))
+source(file.path(dirname(this_file()), "Functions.R"))
 
-variants <- suppressWarnings(fread(paste0(project.path, "/txt/variants.txt")))
+variants_path <- file.path(project_path, "txt/variants.txt")
+variants <- suppressWarnings(fread(variants_path))
 variants$Chromosome <- as.character(variants$Chromosome)
-variants$Ref_base   <- as.character(variants$Ref_base)
-variants$Var_base   <- as.character(variants$Var_base)
+variants$Ref_base <- as.character(variants$Ref_base)
+variants$Var_base <- as.character(variants$Var_base)
 pat <- variants %>% select(
   Chromosome, Stop, Ref_base, Var_base, Type
 )
 
+output_path <- function(type) {
+  return(
+    file.path(project_path, "txt", paste0(sample_name, "_", type, ".txt"))
+  )
+}
+
 ## Merge with CIVIC
 cat("Annotating with CIVIC...\n")
-civic <- join.and.write(
+civic <- join_and_write_rds(
   variants = pat,
   db = "civic_database",
-  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug",
-                       "Drug_interaction_type", "Evidence_type", "Evidence_level",
-                       "Evidence_direction", "Clinical_significance",
-                       "Evidence_statement", "Variant_summary", "PMID", "Citation",
-                       "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
-  output.file = paste0(project.path, "/txt/", sample.name, "_civic.txt"),
-  genome = genome,
-  db.path = database.path
+  selected_columns = c(
+    "Database", "Gene", "Variant", "Disease", "Drug",
+    "Drug_interaction_type", "Evidence_type", "Evidence_level",
+    "Evidence_direction", "Clinical_significance",
+    "Evidence_statement", "Variant_summary", "PMID", "Citation",
+    "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"
+  ),
+  output_file = output_path("civic"),
+  db_path = genome_path
 )
 
 ## Merge with Clinvar
 cat("Annotating with Clinvar...\n")
-d <- join.and.write(
+d <- join_and_write_rds(
   variants = variants,
   db = "clinvar_database",
-  selected.columns = c("Chromosome", "Stop", "Ref_base", "Var_base", "Change_type",
-                       "Clinical_significance", "AF", "DP", "GT", "VT", "Type"),
-  output.file = paste0(project.path, "/txt/", sample.name, "_clinvar.txt"),
-  genome = genome,
-  db.path = database.path
+  selected_columns = c(
+    "Chromosome", "Stop", "Ref_base", "Var_base", "Change_type",
+    "Clinical_significance", "AF", "DP", "GT", "VT", "Type"
+  ),
+  output_file = output_path("clinvar"),
+  db_path = genome_path
 )
 
-#Merge with COSMIC
+# Merge with COSMIC
 cat("Annotating with COSMIC...\n")
-cosmic <- join.and.write(
+cosmic <- join_and_write_rds(
   variants = pat,
   db = "cosmic_database",
-  selected.columns = NULL,
-  output.file = paste0(project.path, "/txt/", sample.name, "_cosmic.txt"),
-  genome = genome,
-  db.path = cosmic.path
+  selected_columns = NULL,
+  output_file = output_path("cosmic"),
+  db_path = cosmic_genome_path
 )
 
-f <- join.and.write(
+f <- join_and_write_rds(
   variants = variants,
   db = "cosmic_all_variants_database",
-  selected.columns = NULL,
-  output.file = paste0(project.path, "/txt/", sample.name, "_cosmic_all_variants.txt"),
-  genome = genome,
-  db.path = cosmic.path,
-  check.alt.base = TRUE
+  selected_columns = NULL,
+  output_file = output_path("cosmic_all_variants"),
+  db_path = cosmic_genome_path,
+  check_alt_base = TRUE
 )
 
-#Merge with PharmGKB
+# Merge with PharmGKB
 cat("Annotating with PharmGKB...\n")
-pharm <- join.and.write(
+pharm <- join_and_write_rds(
   variants = pat,
   db = "pharm_database",
-  selected.columns = c("Database", "Gene", "Variant_summary", "Evidence_statement",
-                       "Evidence_level", "Clinical_significance", "PMID", "Drug",
-                       "PharmGKB_ID", "Variant", "Chromosome", "Start", "Stop",
-                       "Ref_base", "Var_base", "Type"),
-  output.file = paste0(project.path, "/txt/", sample.name, "_pharm.txt"),
-  genome = genome,
-  db.path = database.path
+  selected_columns = c(
+    "Database", "Gene", "Variant_summary", "Evidence_statement",
+    "Evidence_level", "Clinical_significance", "PMID", "Drug",
+    "PharmGKB_ID", "Variant", "Chromosome", "Start", "Stop",
+    "Ref_base", "Var_base", "Type"
+  ),
+  output_file = output_path("pharm"),
+  db_path = database_path
 )
 
-#Merge with RefGene
+# Merge with RefGene
 cat("Annotating with RefGene...\n")
 if (nrow(pat) > 0) {
-  data <- fread(paste0(database.path, "/refgene_database_", genome, ".txt"), quote = "")
-  tmp.pat <- pat
-  tmp.pat$txStart <- tmp.pat$Stop
-  tmp.pat$txEnd   <- tmp.pat$Stop
+  data <- readRDS(file.path(genome_path, "refgene_database.rds"))
+  tmp_pat <- pat
+  tmp_pat$txStart <- tmp_pat$Stop
+  tmp_pat$txEnd <- tmp_pat$Stop
   data <- genome_left_join(
-    tmp.pat, data,
+    tmp_pat, data,
     by = c("Chromosome", "txStart", "txEnd")
   )
-  data <- data[, c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")]
+  columns <- c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")
+  data <- data[, columns]
   colnames(data)[1] <- "Chromosome"
   data <- unique(data)
 } else {
-  data <- data.frame(Chromosome=character(0), Stop=character(0), Ref_base=character(0), Var_base=character(0),
-                     Gene=character(0), Type=character(0))
+  data <- data.frame(
+    Chromosome = character(0), Stop = character(0), Ref_base = character(0),
+    Var_base = character(0), Gene = character(0), Type = character(0)
+  )
 }
-write.table(data, paste0(project.path, "/txt/", sample.name, "_refgene.txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-
-#Merge with CGI
-cat("Annotating with CGI...\n")
-cgi <- join.and.write(
-  variants = pat,
-  db = "cgi_database",
-  selected.columns = c("Database", "Gene", "Variant", "Disease", "Drug",
-                       "Drug_interaction_type", "Evidence_type", "Evidence_level",
-                       "Evidence_direction", "Clinical_significance",
-                       "Evidence_statement", "Variant_summary", "PMID", "Citation",
-                       "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"),
-  output.file = paste0(project.path, "/txt/", sample.name, "_cgi.txt"),
-  genome = genome,
-  db.path = database.path
+write.table(
+  data, output_path("refgene"),
+  quote = FALSE, row.names = FALSE, na = "NA",
+  sep = "\t"
 )
 
-#Merge CIVIC and CGI info
+# Merge with CGI
+cat("Annotating with CGI...\n")
+cgi <- join_and_write_rds(
+  variants = pat,
+  db = "cgi_database",
+  selected_columns = c(
+    "Database", "Gene", "Variant", "Disease", "Drug",
+    "Drug_interaction_type", "Evidence_type", "Evidence_level",
+    "Evidence_direction", "Clinical_significance",
+    "Evidence_statement", "Variant_summary", "PMID", "Citation",
+    "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"
+  ),
+  output_file = output_path("cgi"),
+  db_path = database_path
+)
+
+# Merge CIVIC and CGI info
 cat("Combining CIVIC and CGI...\n")
 def <- merge(civic, cgi, all = TRUE)
-def$Clinical_significance[def$Clinical_significance == "Responsive"] <- "Sensitivity/Response"
-def$Clinical_significance[def$Clinical_significance == "Resistant"] <- "Resistance"
+def$Clinical_significance[
+  def$Clinical_significance == "Responsive"
+] <- "Sensitivity/Response"
+def$Clinical_significance[
+  def$Clinical_significance == "Resistant"
+] <- "Resistance"
 
 cat("Annotating Agency Approval...\n")
-drug <- read.csv(paste0(database.path, "/Agency_approval.txt"), sep = "\t",
-                 quote = "", na.strings = c("", "NA"),
-                 stringsAsFactors = FALSE)
-drug.map <- setNames(drug[[2]], drug[[1]])
+drug <- readRDS(file.path(database_path, "approved_drugs.rds"))
+drug_map <- setNames(drug[[2]], drug[[1]])
 def$Approved <- unname(sapply(
   def$Drug,
-  function(x) (
-    ifelse(is.na(x), "", paste0(
-      sapply(
-        drug.map[unlist(strsplit(x, ",", fixed = TRUE))],
-        function(x) (ifelse(is.na(x), "", x))),
-      collapse = ",")
+  function(x) {
+    (
+      ifelse(is.na(x), "", paste0(
+        sapply(
+          drug_map[unlist(strsplit(x, ",", fixed = TRUE))],
+          function(x) (ifelse(is.na(x), "", x))
+        ),
+        collapse = ","
+      ))
     )
-  )
+  }
 ))
-def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = T)
-def <- def[, c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
-               "Evidence_type", "Evidence_level", "Evidence_direction", "Clinical_significance",
-               "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome",
-               "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved")]
+def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = TRUE)
+def <- def[, c(
+  "Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
+  "Evidence_type", "Evidence_level", "Evidence_direction",
+  "Clinical_significance", "Evidence_statement", "Variant_summary", "PMID",
+  "Citation", "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type",
+  "Approved"
+)]
 
-def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = T)
+def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = TRUE)
 
-#Score
+# Score
 cat("Computing scores with dbNSFP...\n")
+dbnsfp <- readRDS(file.path(genome_path, "dbNSFP.rds"))
+colnames(dbnsfp)[1:5] <- c(
+  "Chromosome", "Start", "Stop", "Ref_base", "Var_base"
+)
+dbnsfp$Chromosome <- paste0("chr", dbnsfp$Chromosome)
 def$Start <- as.numeric(def$Start)
-def$Stop  <- as.numeric(def$Stop)
-a         <- readLines(paste0(database.path, "/Colnames_dbNSFP.txt"))[-1]
-a[1:5]    <- c("Chromosome", "Start", "Stop", "Ref_base", "Var_base")
-files_db  <- list.files(paste0(database.path, "/", genome, "/dbNSFP"),
-                        pattern = "*.gz", full.names = TRUE, recursive = TRUE)
-
-db_join <- function(i, y) {
-  x <- fread(i)
-  colnames(x) <- a
-  x$Chromosome <- paste0("chr", x$Chromosome)
-  return (suppressMessages(x %>% inner_join(y)))
-}
-tot <- lapply(files_db, db_join, def)
-tot <- as.data.frame(do.call(rbind, tot))
-
+def$Stop <- as.numeric(def$Stop)
+tot <- def %>% inner_join(dbnsfp)
 if (nrow(tot) != 0) {
-  matr <- apply(tot, 1, function(row) (sum(
-    switch(row["SIFT_pred"],              "D"=1,                   "."=-1, 0),
-    switch(row["MutationTaster_pred"],    "A"=1, "D"=0.7, "N"=0.3, "."=-1, 0),
-    switch(row["MutationAssessor_pred"],  "H"=1, "M"=0.7, "L"=0.3, "."=-1, 0),
-    switch(row["LRT_pred"],               "D"=1,          "U"=-1,  "."=-1, 0),
-    switch(row["FATHMM_pred"],            "D"=1,                   "."=-1, 0),
-    switch(row["PROVEAN_pred"],           "D"=1,                   "."=-1, 0),
-    switch(row["fathmm-MKL_coding_pred"], "D"=1,                   "."=-1, 0),
-    switch(row["MetaSVM_pred"],           "D"=1,                   "."=-1, 0),
-    switch(row["MetaLR_pred"],            "D"=1,                   "."=-1, 0)
-  )))
+  matr <- apply(tot, 1, function(row) {
+    return(sum(
+      switch(row["SIFT_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      ),
+      switch(row["MutationTaster_pred"],
+        "A" = 1,
+        "D" = 0.7,
+        "N" = 0.3,
+        "." = -1,
+        0
+      ),
+      switch(row["MutationAssessor_pred"],
+        "H" = 1,
+        "M" = 0.7,
+        "L" = 0.3,
+        "." = -1,
+        0
+      ),
+      switch(row["LRT_pred"],
+        "D" = 1,
+        "U" = -1,
+        "." = -1,
+        0
+      ),
+      switch(row["FATHMM_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      ),
+      switch(row["PROVEAN_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      ),
+      switch(row["fathmm-MKL_coding_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      ),
+      switch(row["MetaSVM_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      ),
+      switch(row["MetaLR_pred"],
+        "D" = 1,
+        "." = -1,
+        0
+      )
+    ))
+  })
   tot$Score <- matr
   def <- merge(tot, def, all = TRUE)
   def$Score[is.na(def$Score)] <- 0
-  def <- def[, c("Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
-                 "Evidence_type", "Evidence_level", "Evidence_direction", "Clinical_significance",
-                 "Evidence_statement", "Variant_summary", "PMID", "Citation", "Chromosome",
-                 "Start", "Stop", "Ref_base", "Var_base", "Type", "Approved", "Score")]
+  def <- def[, c(
+    "Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
+    "Evidence_type", "Evidence_level", "Evidence_direction",
+    "Clinical_significance", "Evidence_statement", "Variant_summary", "PMID",
+    "Citation", "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type",
+    "Approved", "Score"
+  )]
 } else {
   def$Score <- rep(0, nrow(def))
 }
-write.table(def, paste0(project.path, "/txt/", sample.name, "_definitive.txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
-#Food interactions
-list.drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
-drugfood   <- suppressMessages(suppressWarnings(read_csv(paste0(database.path, "/drugfood_database.csv"))))
-drugfood   <- drugfood[drugfood$Drug %in% list.drugs,]
-write.table(drugfood, paste0(project.path, "/txt/", sample.name, "_drugfood.txt"),
-            quote = FALSE, row.names = FALSE, na = "NA", sep = "\t")
+write.table(
+  def, output_path("definitive"),
+  quote = FALSE, row.names = FALSE, na = "NA",
+  sep = "\t"
+)
+# Food interactions
+list_drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
+drugfood <- readRDS(file.path(database_path, "drugfood_database.rds"))
+drugfood <- drugfood[drugfood$Drug %in% list_drugs, ]
+write.table(
+  drugfood, output_path("drugfood"),
+  quote = FALSE, row.names = FALSE, na = "NA",
+  sep = "\t"
+)
 
 
-#Create Pubmed URLs and links to clinical trials
-dis <- read.csv(paste0(database.path, "/Disease.txt"), sep = "\t", stringsAsFactors = FALSE)
-#Leading disease
+# Create Pubmed URLs and links to clinical trials
+dis <- read.csv(
+  file.path(database_path, "diseases.tsv"),
+  sep = "\t",
+  stringsAsFactors = FALSE
+)
+# Leading disease
 cat("Searching URLs related to the primary disease...\n")
-leading.urls(def, leading.disease, dis, project.path, sample.name)
-#OFF - Other diseases
+leading_urls(def, leading_disease, dis, project_path, sample_name)
+# OFF - Other diseases
 cat("Searching URLs related to the other diseases...\n")
-off.urls(def, leading.disease, dis, project.path, sample.name)
-#Cosmic
+off_urls(def, leading_disease, dis, project_path, sample_name)
+# Cosmic
 cat("Searching COSMIC URLs...\n")
-cosmic.urls(cosmic, project.path, sample.name)
-#PharmGKB
+cosmic_urls(cosmic, project_path, sample_name)
+# PharmGKB
 cat("Searching PharmGKB URLs...\n")
-pharm.urls(pharm, project.path, sample.name)
+pharm_urls(pharm, project_path, sample_name)

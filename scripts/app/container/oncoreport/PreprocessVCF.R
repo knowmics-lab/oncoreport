@@ -8,12 +8,23 @@ suppressPackageStartupMessages({
 })
 
 option_list <- list(
-  make_option(c("-i", "--input"), type = "character", default = NULL, help = "input VCF file", metavar = "character"),
-  make_option(c("-o", "--output"), type = "character", default = NULL, help = "output TSV file", metavar = "character"),
-  make_option(c("-d", "--dp"), type = "character", default = NULL, help = "DP filtering expression", metavar = "character"),
-  make_option(c("-a", "--af"), type = "character", default = NULL, help = "AF filtering expression", metavar = "character")
-);
-
+  make_option(c("-i", "--input"),
+    type = "character", default = NULL,
+    help = "input VCF file", metavar = "character"
+  ),
+  make_option(c("-o", "--output"),
+    type = "character", default = NULL,
+    help = "output TSV file", metavar = "character"
+  ),
+  make_option(c("-d", "--dp"),
+    type = "character", default = NULL,
+    help = "DP filtering expression", metavar = "character"
+  ),
+  make_option(c("-a", "--af"),
+    type = "character", default = NULL,
+    help = "AF filtering expression", metavar = "character"
+  )
+)
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
 
@@ -26,17 +37,23 @@ if (is.null(opt$output)) {
   stop("Output is empty", call. = FALSE)
 }
 
-input.file <- opt$input
-output.file <- opt$output
-output.dir <- dirname(output.file)
-dp.filter <- opt$dp
-af.filter <- opt$af
+input_file <- opt$input
+output_file <- opt$output
+output_dir <- dirname(output_file)
+dp_filter <- opt$dp
+af_filter <- opt$af
 
-if (!dir.exists(output.dir)) {
-  dir.create(output.dir, showWarnings = FALSE, recursive = TRUE)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 }
 
-vcf <- read.vcfR(input.file)
+p_ifelse <- function(test, yes, no) {
+  if (length(yes) < length(test)) yes <- rep(yes, length.out = length(test))
+  if (length(no) < length(test)) no <- rep(no, length.out = length(test))
+  return(sapply(seq_along(test), function(i) (ifelse(test[i], yes[i], no[i]))))
+}
+
+vcf <- read.vcfR(input_file)
 dfs <- vcfR2tidy(vcf)
 merged <- cbind(dfs$fix, dfs$gt)
 colnames(merged) <- make.names(colnames(merged), unique = TRUE)
@@ -63,28 +80,39 @@ if (!("GT" %in% colnames(merged))) {
 }
 merged <- merged %>%
   mutate(
-    finalAF = as.numeric(ifelse(is.na(AF), ifelse(is.na(gt_AF), as.numeric(gsub("%", "", gt_FREQ)) / 100, gt_AF), AF)),
-    finalDP = as.numeric(ifelse(is.na(DP), gt_DP, DP)),
-    VT = ifelse(nchar(REF) == nchar(ALT), ifelse(nchar(ALT) == 1, "SNP", "MNP"), "INDEL"),
-    finalFT = ifelse(is.na(FT), gt_FT, FT)
+    finalAF = as.numeric(p_ifelse(
+      is.na(AF),
+      p_ifelse(is.na(gt_AF), as.numeric(gsub("%", "", gt_FREQ)) / 100, gt_AF),
+      AF
+    )),
+    finalDP = as.numeric(p_ifelse(is.na(DP), gt_DP, DP)),
+    VT = p_ifelse(
+      nchar(REF) == nchar(ALT),
+      ifelse(nchar(ALT) == 1, "SNP", "MNP"),
+      "INDEL"
+    ),
+    finalFT = p_ifelse(is.na(FT), gt_FT, FT)
   ) %>%
-  select(CHROM, POS, REF, ALT, AF = finalAF, DP = finalDP, GT = gt_GT, VT, FT = finalFT)
+  select(CHROM, POS, REF, ALT,
+    AF = finalAF, DP = finalDP, GT = gt_GT, VT,
+    FT = finalFT
+  )
 
 merged$GT <- gsub("|", "/", merged$GT, fixed = TRUE)
 
-if (!is.null(dp.filter)) {
+if (!is.null(dp_filter)) {
   merged <- merged %>%
     mutate(
-      DPFilt = eval(rlang::parse_expr(paste0("DP", dp.filter)))
+      DPFilt = eval(rlang::parse_expr(paste0("DP", dp_filter)))
     )
 } else {
   merged$DPFilt <- TRUE
 }
 
-if (!is.null(af.filter)) {
+if (!is.null(af_filter)) {
   merged <- merged %>%
     mutate(
-      AFFilt = eval(rlang::parse_expr(paste0("AF", af.filter))),
+      AFFilt = eval(rlang::parse_expr(paste0("AF", af_filter))),
       useFT = FALSE
     )
 } else {
@@ -95,10 +123,18 @@ if (!is.null(af.filter)) {
 merged <- merged %>%
   filter(DPFilt) %>%
   mutate(
-    Type = ifelse(!useFT | is.na(FT) | FT != "Germline", ifelse(!is.na(AFFilt) & AFFilt, "Germline", "Somatic"), FT)
+    Type = p_ifelse(
+      !useFT | is.na(FT) | FT != "Germline",
+      ifelse(!is.na(AFFilt) & AFFilt, "Germline", "Somatic"),
+      FT
+    )
   ) %>%
   select(
-    Chromosome = CHROM, Stop = POS, Ref_base = REF, Var_base = ALT, AF, DP, GT, VT, Type
+    Chromosome = CHROM, Stop = POS, Ref_base = REF, Var_base = ALT, AF, DP,
+    GT, VT, Type
   )
 
-write.table(merged, output.file, append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
+write.table(merged, output_file,
+  append = FALSE, quote = FALSE, sep = "\t",
+  row.names = FALSE, col.names = TRUE
+)

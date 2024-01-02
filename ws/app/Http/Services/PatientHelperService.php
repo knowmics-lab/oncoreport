@@ -55,10 +55,10 @@ class PatientHelperService
                 'last_name'          => $values['last_name'],
                 'gender'             => $values['gender'],
                 'age'                => $values['age'],
-                'email'              => $values['email'] ?? null,
-                'fiscal_number'      => $values['fiscal_number'] ?? null,
-                'telephone'          => $values['telephone'] ?? null,
-                'city'               => $values['city'] ?? null,
+//                'email'              => $values['email'] ?? null,
+//                'fiscal_number'      => $values['fiscal_number'] ?? null,
+//                'telephone'          => $values['telephone'] ?? null,
+//                'city'               => $values['city'] ?? null,
                 'user_id'            => null,
                 'owner_id'           => $ownerId,
                 'primary_disease_id' => null,
@@ -76,11 +76,11 @@ class PatientHelperService
                 $this->internalCreateOrUpdateDrug($patient, $drug, $diseasesIdList);
             }
         }
-        $userId = $this->createAccount($patient, $values);
+//        $userId = $this->createAccount($patient, $values);
         $patient->update(
             [
                 'primary_disease_id' => $primaryDisease->id,
-                'user_id'            => $userId,
+//                'user_id'            => $userId,
             ]
         );
         DB::commit();
@@ -174,23 +174,23 @@ class PatientHelperService
         return $diseasesIdList[$diseaseId] ?? null;
     }
 
-    public function createAccount(Patient $patient, array $values): ?int
-    {
-        $id = null;
-        if ($values['create_account'] ?? false) {
-            $user = (new CreateUserAction())->create(
-                [
-                    'name'     => $patient->full_name,
-                    'email'    => $values['email'],
-                    'password' => $values['password'],
-                ]
-            );
-            $user->update(['email_verified_at' => now()]);
-            $id = $user->id;
-        }
-
-        return $id;
-    }
+//    public function createAccount(Patient $patient, array $values): ?int
+//    {
+//        $id = null;
+//        if ($values['create_account'] ?? false) {
+//            $user = (new CreateUserAction())->create(
+//                [
+//                    'name'     => $patient->full_name,
+//                    'email'    => $values['email'],
+//                    'password' => $values['password'],
+//                ]
+//            );
+//            $user->update(['email_verified_at' => now()]);
+//            $id = $user->id;
+//        }
+//
+//        return $id;
+//    }
 
     /**
      * @throws \Throwable
@@ -230,10 +230,10 @@ class PatientHelperService
                 'last_name'          => $this->old('last_name', $values, $oldData),
                 'gender'             => $this->old('gender', $values, $oldData),
                 'age'                => $this->old('age', $values, $oldData),
-                'email'              => $this->old('email', $values, $oldData),
-                'fiscal_number'      => $this->old('fiscal_number', $values, $oldData),
-                'telephone'          => $this->old('telephone', $values, $oldData),
-                'city'               => $this->old('city', $values, $oldData),
+//                'email'              => $this->old('email', $values, $oldData),
+//                'fiscal_number'      => $this->old('fiscal_number', $values, $oldData),
+//                'telephone'          => $this->old('telephone', $values, $oldData),
+//                'city'               => $this->old('city', $values, $oldData),
                 'primary_disease_id' => $primaryDiseaseId,
             ]
         );
