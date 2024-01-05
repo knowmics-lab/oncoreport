@@ -47,7 +47,7 @@ if [ -z "$COSMIC_TOKEN" ]; then
 fi
 
 cosmic_download() {
-  TMP_OUT=$(curl -H "Authorization: Basic ${COSMIC_TOKEN}" "$1")
+  TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$1")
   if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
     MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
     if [ "${MESSAGE,,}" = "not authorised" ]; then
@@ -56,7 +56,8 @@ cosmic_download() {
     exit_abnormal "$MESSAGE" false 105
   fi
   URL="$(echo "$TMP_OUT" | jq -M -r ".url" --)"
-  wget --progress=bar:force:noscroll --tries=0 -O "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
+  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
+   -O "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
 }
 
 OLD_PWD=$(pwd)
@@ -125,6 +126,7 @@ echo "Done!"
 
 echo -e "COSMIC\t${COSMIC_VERSION}\t$(date +%Y-%m-%d)" >"$ONCOREPORT_COSMIC_PATH/version.txt"
 
+rm "$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg19.txt" "$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_hg38.txt"
 rm "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_hg19.tsv.gz"
 rm "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_hg19.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_hg19.tsv.gz"
 rm "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_hg19.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_hg19.txt.gz"

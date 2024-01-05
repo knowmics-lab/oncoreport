@@ -26,7 +26,7 @@ b <- fread(coding_muts_file)
 a$`Gene Name` <- gsub("_ENST.*", "", a$`Gene Name`)
 colnames(a)[8] <- "ID"
 names(b) <- c("Chromosome", "Stop", "ID", "Ref_base", "Alt_base")
-cosm <- inner_join(a, b, by = NULL, copy = FALSE)
+cosm <- inner_join(a, b, by = NULL, copy = FALSE, relationship = "many-to-many")
 names(cosm)[grep("Genome Coordinates", names(cosm))] <- "Genome Coordinates"
 cosm <- cosm[, c(
   "Gene Name", "Drug Name", "AA Mutation", "Primary Tissue", "Tissue Subtype 1",
@@ -67,7 +67,7 @@ a <- a %>%
     Effect = paste0(unique(Effect), collapse = ", "),
     PMID = paste0(unique(PMID), collapse = ", ")
   ) %>%
-  inner_join(b, by = "ID") %>%
+  inner_join(b, by = "ID", relationship = "many-to-many") %>%
   ungroup() %>%
   select(
     Chromosome, Start, Stop, Ref_base, Var_base, GeneName,
