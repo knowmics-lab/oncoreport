@@ -1,0 +1,43 @@
+{
+  "items": [
+    {
+      "icon": "fas fa-home",
+      "text": "Home",
+      "collapsible": false,
+      "configured": true,
+      "exact": true,
+      "key": "main-menu-home",
+      "to": "/"
+    },
+    {
+      "icon": "fas fa-user-injured",
+      "text": "Patients",
+      "collapsible": false,
+      "configured": true,
+      "key": "main-menu-patients",
+      "to": "/patients"
+    },
+    {
+      "icon": "far fa-hourglass",
+      "text": "Jobs",
+      "collapsible": false,
+      "configured": true,
+      "key": "main-menu-jobs",
+      "to": "/jobs"
+    },
+    {
+      "configured": true,
+      "key": "main-menu-divider1",
+      "divider": true
+    },
+    {
+      "icon": "fas fa-cog",
+      "text": "Settings",
+      "collapsible": false,
+      "configured": false,
+      "exact": true,
+      "key": "main-menu-settings",
+      "to": "/settings"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "HOME": "/",
+  "SETTINGS": "/settings",
+  "PATIENTS_CREATE": "/patients/create",
+  "NEW_ANALYSIS": "/patients/:id(\\d+)/jobs/create",
+  "JOBS_BY_PATIENT": "/patients/:id(\\d+)/jobs",
+  "PATIENTS_EDIT": "/patients/:id(\\d+)",
+  "PATIENT":"/patient/:id(\\d+)",
+  "PATIENTS_TUMORS": "/patients/tumors/:id(\\d+)",
+  "PATIENTS": "/patients",
+  "JOBS_EDIT": "/jobs/:id(\\d+)",
+  "JOBS": "/jobs"
+}
