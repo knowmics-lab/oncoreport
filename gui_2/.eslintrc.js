@@ -17,6 +17,7 @@ module.exports = {
     'no-useless-constructor': 'off',
     'no-empty-function': 'off',
     'import/no-cycle': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

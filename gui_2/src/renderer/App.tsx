@@ -2,6 +2,9 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
+import injector from '../injector';
+import InjectorContext from '../reactInjector/context';
+import AppStartedContext from './app/components/layout/appStartedContext';
 
 function Hello() {
   return (
@@ -42,10 +45,14 @@ function Hello() {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+    <InjectorContext.Provider value={injector}>
+      <AppStartedContext>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Hello />} />
+          </Routes>
+        </Router>
+      </AppStartedContext>
+    </InjectorContext.Provider>
   );
 }
