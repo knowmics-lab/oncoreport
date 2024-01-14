@@ -8,8 +8,9 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
+import 'reflect-metadata';
 import path from 'path';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -17,6 +18,9 @@ import { resolveHtmlPath } from './util';
 import injector from '../injector';
 import { MainProcessManager } from '../api';
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -38,6 +42,8 @@ const isDebug =
 if (isDebug) {
   require('electron-debug')();
 }
+
+require('@electron/remote/main').initialize();
 
 const installExtensions = async () => {
   const installer = require('electron-extension-installer');
@@ -75,11 +81,13 @@ const createWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      /* preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'), */
+      // preload: app.isPackaged
+      //   ? path.join(__dirname, 'preload.js')
+      //   : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
+  require('@electron/remote/main').enable(mainWindow.webContents);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

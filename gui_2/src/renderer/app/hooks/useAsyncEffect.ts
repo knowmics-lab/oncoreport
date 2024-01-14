@@ -1,6 +1,6 @@
 import { DependencyList, useCallback, useEffect } from 'react';
 import { runAsync } from '../components/utils';
-import { Notifications } from '../../api';
+import { Notifications } from '../../../api';
 
 export default function useAsyncEffect(
   callback: (manager: Notifications) => Promise<void>,

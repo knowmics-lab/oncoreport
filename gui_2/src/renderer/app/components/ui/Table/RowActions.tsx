@@ -1,7 +1,7 @@
 import React from 'react';
 import type { RowActionType } from './types';
 import RowAction from './RowAction';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
 
 type Props<E extends EntityObject> = {
   actions: RowActionType<E>[];

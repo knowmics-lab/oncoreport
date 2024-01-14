@@ -1,6 +1,5 @@
 /* eslint-disable import/no-cycle */
 import { BrowserWindow, ipcMain, ipcRenderer } from 'electron';
-import { is } from 'electron-util';
 import uniqid from 'uniqid';
 import { singleton } from 'tsyringe';
 import copyFile, { ProgressData } from 'cp-file';
@@ -11,6 +10,7 @@ import type { UploadProgressFunction } from '../interfaces';
 import { UsesUpload } from '../interfaces';
 import Settings from './settings';
 import { JobEntity } from './entities';
+import { is } from './utils';
 
 type UploadCallbackType = {
   resolve: () => void;

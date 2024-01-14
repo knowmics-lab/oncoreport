@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import path from 'path';
 import fs from 'fs-extra';
-import { api as electron } from 'electron-util';
 import { injectable } from 'tsyringe';
 import type { JobConfig, JobOutput, Nullable } from '../../interfaces';
 import { JobStatus, JobTypes } from '../../interfaces';
@@ -14,6 +13,7 @@ import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
 import Entity, { field } from '../../apiConnector/entity/entity';
 import { RelationsType } from '../../apiConnector';
+import electronApi from '../../electronApi';
 
 @injectable()
 export default class Job extends Entity {
@@ -126,7 +126,7 @@ export default class Job extends Entity {
         );
         if (!(await fs.pathExists(jobFolder)))
           throw new EntityError('Unable to find output path');
-        if (!electron.shell.openPath(jobFolder)) {
+        if (!electronApi.shell.openPath(jobFolder)) {
           throw new EntityError('Unable to open output folder');
         }
         return;

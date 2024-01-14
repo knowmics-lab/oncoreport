@@ -1,11 +1,11 @@
 import React, { SyntheticEvent } from 'react';
 import { useFormikContext } from 'formik';
-import { api, activeWindow } from 'electron-util';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import type { DialogOptions } from '../../../../interfaces';
+import Icon from '@mui/material/Icon';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import type { DialogOptions } from '../../../../../interfaces';
 import TextField from './TextField';
+import electronApi, { activeWindow } from '../../../../../electronApi';
 
 export type FileFieldProps = {
   label: string;
@@ -26,13 +26,13 @@ export default function FileField({
   const multiple = dialogOptions?.properties?.includes('multiSelections');
 
   const handleClick = async () => {
-    const { canceled, filePaths } = await api.dialog.showOpenDialog(
-      activeWindow(),
-      dialogOptions,
+    const { canceled, filePaths } = await electronApi.dialog.showOpenDialog(
+      activeWindow()!,
+      dialogOptions as any, //@TODO: fix this
     );
     if (!canceled) {
       if (filePaths) {
-        setFieldValue(
+        await setFieldValue(
           name,
           multiple ? filePaths.join(separator) : filePaths.shift(),
         );
@@ -59,4 +59,5 @@ FileField.defaultProps = {
   required: false,
   dialogOptions: {},
   separator: ', ',
+  helperText: undefined,
 };

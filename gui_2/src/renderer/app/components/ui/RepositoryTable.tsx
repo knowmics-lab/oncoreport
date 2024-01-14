@@ -16,12 +16,12 @@ import RemoteTable from './RemoteTable';
 import {
   EntityObject,
   QueryBuilderInterface,
-} from '../../../apiConnector/interfaces/entity';
-import { Repository, SortingDirection } from '../../../apiConnector';
+} from '../../../../apiConnector/interfaces/entity';
+import { Repository, SortingDirection } from '../../../../apiConnector';
 import useRepositoryQuery, {
   QueryBuilderCallback,
 } from '../../hooks/useRepositoryQuery';
-import { SimpleMapType } from '../../../apiConnector/interfaces/common';
+import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
 import useForceRerender from '../../hooks/useForceRerender';
 
 export type RepositoryTableRef = {
@@ -29,7 +29,11 @@ export type RepositoryTableRef = {
 };
 
 export interface TableProps<E extends EntityObject> {
-  title?: string | React.ReactNode | React.ReactNodeArray;
+  title?:
+    | string
+    | React.ReactNode
+    | React.ReactNode[]
+    | Iterable<React.ReactNode>;
   doNotWrap?: boolean;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
@@ -191,3 +195,26 @@ export default function RepositoryTable<E extends EntityObject>({
     />
   );
 }
+
+RepositoryTable.defaultProps = {
+  title: undefined,
+  doNotWrap: false,
+  size: 'small',
+  toolbar: [],
+  actions: [],
+  sortable: true,
+  queryBuilderCallback: undefined,
+  parameters: undefined,
+  onPageChanged: undefined,
+  hasCheckbox: false,
+  selectedItems: undefined,
+  handleSelect: undefined,
+  handleSelectAll: undefined,
+  collapsible: false,
+  collapsibleContent: undefined,
+  tableRef: undefined,
+  autoRefresh: false,
+  autoRefreshWhen: undefined,
+  autoRefreshTime: undefined,
+  globalSearch: undefined,
+};

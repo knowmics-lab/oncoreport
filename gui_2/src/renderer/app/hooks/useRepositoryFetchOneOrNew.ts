@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import { InjectionToken } from 'tsyringe';
-import { useService } from '../../reactInjector';
+import { useService } from '../../../reactInjector';
 import useAsyncEffect from './useAsyncEffect';
-import { EntityObject } from '../../apiConnector/interfaces/entity';
-import { Repository } from '../../apiConnector';
-import { SimpleMapType } from '../../apiConnector/interfaces/common';
+import { EntityObject } from '../../../apiConnector/interfaces/entity';
+import { Repository } from '../../../apiConnector';
+import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 
 type OutputType<V> = [boolean, V | undefined, () => void];
 

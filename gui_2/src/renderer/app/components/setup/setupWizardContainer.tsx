@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
-import { useService } from '../../../reactInjector';
-import { Settings } from '../../../api';
-import { Notifications } from '../layout';
+import React, { useEffect, useState, ReactNode } from 'react';
+import { styled, Toolbar } from '@mui/material';
+import { useService } from '../../../../reactInjector';
+import { Settings } from '../../../../api';
+import { BlockingMessageHandler, ContentWrapper, Notifications, StartHandler } from '../layout';
 import SetupWizard from './setupWizard';
 import ConfigUploader from './configUploader';
+import { Footer } from '@mui-treasury/layout';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    display: 'flex',
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
+const Main = styled('main')(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
 }));
 
 type Props = {
-  children: React.ReactNode | React.ReactNodeArray;
-  header?: React.ReactNode;
+  children: ReactNode | ReactNode[] | Iterable<ReactNode>;
+  header?: ReactNode;
 };
 
 export default function SetupWizardContainer({ children, header }: Props) {
-  const classes = useStyles();
   const settings = useService(Settings);
-  const [configured, setConfigured] = useState(settings.isConfigured());
+  const [configured, setConfigured] = useState(true); // settings.isConfigured());
 
   useEffect(() => {
     const id = settings.subscribe((c) => {
@@ -36,18 +31,17 @@ export default function SetupWizardContainer({ children, header }: Props) {
   }, [settings]);
 
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {configured ? (
         children
       ) : (
         <ConfigUploader>
           {header}
-          <div className={classes.root}>
-            <main className={classes.content}>
-              <SetupWizard />
-              <Notifications />
-            </main>
-          </div>
+          <ContentWrapper>
+            <SetupWizard />
+            <Notifications />
+          </ContentWrapper>
         </ConfigUploader>
       )}
     </>

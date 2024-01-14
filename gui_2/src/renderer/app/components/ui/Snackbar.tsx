@@ -1,20 +1,19 @@
-import React, { MouseEventHandler, SyntheticEvent } from 'react';
-import clsx from 'clsx';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import CloseIcon from '@material-ui/icons/Close';
-import { amber, green } from '@material-ui/core/colors';
-import IconButton from '@material-ui/core/IconButton';
+import React, { MouseEventHandler } from 'react';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
+import { amber, green } from '@mui/material/colors';
+import IconButton from '@mui/material/IconButton';
 import {
   Snackbar as MaterialSnackbar,
   SnackbarCloseReason,
-} from '@material-ui/core';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import WarningIcon from '@material-ui/icons/Warning';
-import { makeStyles } from '@material-ui/core/styles';
-import { Alert } from '@material-ui/lab';
-import { TypeOfNotification } from '../../../interfaces';
+} from '@mui/material';
+import SnackbarContent from '@mui/material/SnackbarContent';
+import WarningIcon from '@mui/icons-material/Warning';
+import { Alert } from '@mui/lab';
+import { TypeOfNotification } from '../../../../interfaces';
+import theme from '../../theme';
 
 const variantIcon = {
   [TypeOfNotification.success]: CheckCircleIcon,
@@ -23,31 +22,28 @@ const variantIcon = {
   [TypeOfNotification.info]: InfoIcon,
 };
 
-const useStylesWrapper = makeStyles((theme) => ({
-  success: {
-    backgroundColor: green[600],
-  },
-  error: {
-    backgroundColor: theme.palette.error.dark,
-  },
-  info: {
-    backgroundColor: theme.palette.primary.main,
-  },
-  warning: {
-    backgroundColor: amber[700],
-  },
-  icon: {
-    fontSize: 20,
-  },
-  iconVariant: {
-    opacity: 0.9,
-    marginRight: theme.spacing(1),
-  },
-  message: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+const variantStyle = (variant: TypeOfNotification) => {
+  switch (variant) {
+    case TypeOfNotification.success:
+      return {
+        backgroundColor: green[600],
+      };
+    case TypeOfNotification.error:
+      return {
+        backgroundColor: theme.palette.error.dark,
+      };
+    case TypeOfNotification.info:
+      return {
+        backgroundColor: theme.palette.primary.main,
+      };
+    case TypeOfNotification.warning:
+      return {
+        backgroundColor: amber[700],
+      };
+    default:
+      return {};
+  }
+};
 
 type ContentWrapperProps = {
   message: string;
@@ -56,7 +52,6 @@ type ContentWrapperProps = {
 };
 
 function ContentWrapper({ message, onClose, variant }: ContentWrapperProps) {
-  const classes = useStylesWrapper();
   const Icon = variantIcon[variant];
   const actions = [];
   if (onClose) {
@@ -67,17 +62,28 @@ function ContentWrapper({ message, onClose, variant }: ContentWrapperProps) {
         color="inherit"
         onClick={onClose}
       >
-        <CloseIcon className={classes.icon} />
+        <CloseIcon sx={{ fontSize: 20 }} />
       </IconButton>,
     );
   }
 
   return (
     <SnackbarContent
-      className={clsx(classes[variant])}
+      sx={variantStyle(variant)}
       message={
-        <span className={classes.message}>
-          <Icon className={clsx(classes.icon, classes.iconVariant)} />
+        <span
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Icon
+            sx={(t) => ({
+              fontSize: 20,
+              opacity: 0.9,
+              marginRight: t.spacing(1),
+            })}
+          />
           {message}
         </span>
       }
@@ -109,7 +115,7 @@ export default function Snackbar({
   anchorVertical,
   anchorHorizontal,
 }: SnackbarProps) {
-  const onClose = (_e: SyntheticEvent, reason?: SnackbarCloseReason) => {
+  const onClose = (_e: unknown, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') {
       return;
     }

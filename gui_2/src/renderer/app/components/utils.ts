@@ -1,6 +1,14 @@
 import { container } from 'tsyringe';
+import { Theme } from '@mui/material';
 import { Notifications } from '../../../api';
 import { TypeOfNotification } from '../../../interfaces';
+
+export function formControlStyle(theme: Theme) {
+  return {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  };
+}
 
 export function runAsync(
   asyncFn: (manager: Notifications) => Promise<void>,

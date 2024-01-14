@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import { Nullable } from '../../apiConnector/interfaces/common';
+import { Nullable } from '../../../apiConnector/interfaces/common';
 
 export default function useInterval(
   callback: () => void | Promise<void>,

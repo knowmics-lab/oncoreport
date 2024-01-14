@@ -1,5 +1,5 @@
 import ApiError from './ApiError';
-import { RecursiveMapType } from '../interfaces/common';
+import { RecursiveMapType } from '../interfaces';
 
 export default class ApiValidationError extends ApiError {
   constructor(

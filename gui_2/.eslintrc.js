@@ -18,6 +18,11 @@ module.exports = {
     'no-empty-function': 'off',
     'import/no-cycle': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'class-methods-use-this': 'off',
+    'no-restricted-syntax': 'off',
+    'no-promise-executor-return': 'off',
+    'no-use-before-define': 'off',
+    camelcase: 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

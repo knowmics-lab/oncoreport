@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableContainer from '@material-ui/core/TableContainer';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { makeStyles, Theme, createStyles, Typography } from '@material-ui/core';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TablePagination from '@mui/material/TablePagination';
+import TableContainer from '@mui/material/TableContainer';
+import LinearProgress from '@mui/material/LinearProgress';
+import { Typography, styled } from '@mui/material';
 import type {
   RowActionType,
   TableColumn,
@@ -14,39 +14,25 @@ import TableHeader from './Table/Header';
 import TableBody from './Table/Body';
 import TableBodyLoading from './Table/LoadingBody';
 import TableToolbar from './Table/Toolbar';
-import { EntityObject } from '../../../apiConnector/interfaces/entity';
-import { SimpleMapType } from '../../../apiConnector/interfaces/common';
-import { SortingDirection } from '../../../apiConnector';
+import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
+import { SortingDirection } from '../../../../apiConnector';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      padding: 16,
-    },
-    container: {
-      // maxHeight: 440
-    },
-    stickyStyle: {
-      backgroundColor: theme.palette.background.default,
-    },
-    loading: {
-      width: '100%',
-      '& > * + *': {
-        marginTop: theme.spacing(2),
-      },
-    },
-  }),
-);
+const Loading = styled('div')(({ theme }) => ({
+  width: '100%',
+  '& > * + *': {
+    marginTop: theme.spacing(2),
+  },
+}));
 
 type ContainerProps = React.PropsWithChildren<{
   wrapped: boolean;
 }>;
 
 function WrappedTableContainer({ children, wrapped }: ContainerProps) {
-  const classes = useStyles();
-  if (!wrapped) return <>{children}</>;
+  if (!wrapped) return children;
   return (
-    <Paper elevation={1} className={classes.root}>
+    <Paper elevation={1} sx={{ padding: 16 }}>
       {children}
     </Paper>
   );
@@ -55,7 +41,11 @@ function WrappedTableContainer({ children, wrapped }: ContainerProps) {
 type SortingSpec = SimpleMapType<SortingDirection>;
 
 export interface TableProps<E extends EntityObject> {
-  title?: string | React.ReactNode | React.ReactNodeArray;
+  title?:
+    | string
+    | React.ReactNode
+    | React.ReactNode[]
+    | Iterable<React.ReactNode>;
   doNotWrap?: boolean;
   size?: 'small' | 'medium';
   columns: TableColumn<E>[];
@@ -109,7 +99,6 @@ export default function RemoteTable<E extends EntityObject>({
   globalSearch,
   onGlobalSearch,
 }: TableProps<E>) {
-  const classes = useStyles();
   const single = !!hasCheckbox && !handleSelectAll;
   const selectedAny = !single && selectedItems && selectedItems.length > 0;
   const selectedAll = !single && selectedItems?.length === totalRows;
@@ -152,7 +141,7 @@ export default function RemoteTable<E extends EntityObject>({
         ) : (
           title
         ))}
-      <TableContainer className={classes.container}>
+      <TableContainer>
         <TableToolbar
           actions={finalToolbar}
           state={{ currentPage, rowsPerPage, totalRows, isLoading }}
@@ -162,9 +151,9 @@ export default function RemoteTable<E extends EntityObject>({
           setLoading={setLoading}
         />
         {(loading || isLoading) && (
-          <div className={classes.loading}>
+          <Loading>
             <LinearProgress />
-          </div>
+          </Loading>
         )}
         <Table stickyHeader size={size}>
           <TableHeader
@@ -217,7 +206,6 @@ export default function RemoteTable<E extends EntityObject>({
 
 RemoteTable.defaultProps = {
   title: null,
-  keyField: 'id',
   size: 'small',
   sortable: true,
   toolbar: [],
@@ -230,4 +218,12 @@ RemoteTable.defaultProps = {
   collapsibleContent: undefined,
   globalSearch: false,
   onGlobalSearch: undefined,
+  doNotWrap: false,
+  onPageChanged: undefined,
+  currentPage: 0,
+  rowsPerPage: 10,
+  totalRows: undefined,
+  sorting: undefined,
+  data: undefined,
+  fetching: undefined,
 };

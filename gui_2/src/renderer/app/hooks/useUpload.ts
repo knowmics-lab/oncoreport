@@ -4,7 +4,7 @@ import {
   UploadHook,
   UploadProgressFunction,
   UploadState,
-} from '../../interfaces';
+} from '../../../interfaces';
 
 export default function useUpload(): UploadHook {
   const [state, setState] = useState<UploadState>({

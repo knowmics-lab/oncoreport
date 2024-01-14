@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any,no-use-before-define */
 
 export type Nullable<T> = T | undefined | null;
 

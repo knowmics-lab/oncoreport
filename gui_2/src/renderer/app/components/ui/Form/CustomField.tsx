@@ -1,20 +1,16 @@
 import React from 'react';
 import { useField } from 'formik';
-import { makeStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import { makeStyles } from '@mui/material/styles';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import { Theme } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  label: {
-    fontSize: '0.75rem',
-  },
-}));
+const formControlStyle = (theme: Theme) => ({
+  width: '100%',
+  margin: theme.spacing(1),
+  minWidth: 120,
+});
 
 type CustomFieldProps = {
   name: string;
@@ -31,7 +27,6 @@ export default function CustomField({
   helperText,
   ...props
 }: CustomFieldProps) {
-  const classes = useStyles();
   const [, { error, touched }] = useField(props);
   const hasError = !!(touched && error);
   const finalHelperText = hasError ? error : helperText;
@@ -39,10 +34,10 @@ export default function CustomField({
     <FormControl
       fullWidth
       required={required}
-      className={classes.root}
+      sx={formControlStyle}
       error={hasError}
     >
-      <FormLabel className={classes.label}>{label}</FormLabel>
+      <FormLabel sx={{ fontSize: '0.75rem' }}>{label}</FormLabel>
       {children}
       {!!finalHelperText && <FormHelperText>{finalHelperText}</FormHelperText>}
     </FormControl>

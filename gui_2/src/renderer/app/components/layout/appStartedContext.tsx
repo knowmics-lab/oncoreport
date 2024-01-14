@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useService } from '../../../../reactInjector';
 import { Settings } from '../../../../api';
 
@@ -20,14 +20,12 @@ export default function AppStartedContext({
   const settings = useService(Settings);
 
   const [started, setStarted] = useState(!settings.isLocal());
-  const
+  const contextContent = useMemo(
+    () => ({ started, setStarted }),
+    [started, setStarted],
+  );
   return (
-    <StartedContext.Provider
-      value={{
-        started,
-        setStarted,
-      }}
-    >
+    <StartedContext.Provider value={contextContent}>
       {children}
     </StartedContext.Provider>
   );

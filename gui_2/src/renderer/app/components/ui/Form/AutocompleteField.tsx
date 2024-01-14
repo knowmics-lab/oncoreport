@@ -4,16 +4,16 @@ import {
   Autocomplete as FormikAutocompleteField,
   AutocompleteProps as FormikAutocompleteProps,
   AutocompleteRenderInputParams as FormikRenderInputParams,
-} from 'formik-material-ui-lab';
-import { TextField } from '@material-ui/core';
+} from 'formik-mui';
+import { TextField } from '@mui/material';
 import { InjectionToken } from 'tsyringe';
 import { useDebouncedCallback } from 'use-debounce';
-import useStyles from './hooks';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
-import { Repository } from '../../../../apiConnector';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
+import { Repository } from '../../../../../apiConnector';
 import { QueryBuilderCallback } from '../../../hooks/useRepositoryQuery';
-import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
+import { SimpleMapType } from '../../../../../apiConnector/interfaces/common';
 import useRepositorySearch from '../../../hooks/useRepositorySearch';
+import { formControlStyle } from '../../utils';
 
 export interface AutocompleteFieldProps<
   T extends EntityObject,
@@ -43,13 +43,12 @@ function CustomFormikTextField({
   name,
   ...params
 }: FormikRenderInputParams & { label: string; name: string }) {
-  const classes = useStyles();
   const [, meta] = useField(name);
   const { touched, error } = meta;
   return (
     <TextField
       {...params}
-      className={classes.formControl}
+      sx={formControlStyle}
       error={touched && !!error}
       helperText={error}
       label={label}
@@ -101,3 +100,8 @@ export default function AutocompleteField<
     />
   );
 }
+
+AutocompleteField.defaultProps = {
+  queryBuilderCallback: undefined,
+  parameters: undefined,
+};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress, Grid } from '@material-ui/core';
+import { CircularProgress, Grid } from '@mui/material';
 
 interface LoadingSectionProps {
   loading: boolean;
@@ -10,24 +10,22 @@ export default function LoadingSection({
   loading,
   children,
 }: LoadingSectionProps) {
+  // eslint-disable-next-line no-nested-ternary
+  if (!loading && typeof children === 'function') return children();
+  if (!loading && typeof children !== 'function') return children;
+
   return (
     <>
-      {loading ? (
-        <>
-          <Grid container justifyContent="center">
-            <Grid item xs="auto">
-              <CircularProgress color="inherit" />
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="center">
-            <Grid item xs="auto">
-              Please wait...
-            </Grid>
-          </Grid>
-        </>
-      ) : (
-        <>{typeof children === 'function' ? children() : children}</>
-      )}
+      <Grid container justifyContent="center">
+        <Grid item xs="auto">
+          <CircularProgress color="inherit" />
+        </Grid>
+      </Grid>
+      <Grid container justifyContent="center">
+        <Grid item xs="auto">
+          Please wait...
+        </Grid>
+      </Grid>
     </>
   );
 }

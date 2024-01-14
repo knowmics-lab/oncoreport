@@ -17,7 +17,7 @@ type WeakObserver<E extends EntityObject> = WeakRef<
 export default class ResultSet<E extends EntityObject> extends Array<E> {
   protected metadata?: PaginationMetadata;
 
-  protected observers = new Array<WeakObserver<E>>();
+  protected observers: WeakObserver<E>[] = [];
 
   protected entityObserver: EntityObserver<E> = {
     updated: () => this.refreshed(),

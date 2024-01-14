@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { MouseEvent, ReactNode, ReactNodeArray } from 'react';
-import { PropTypes } from '@material-ui/core';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
-import { Nullable } from '../../../../apiConnector/interfaces/common';
+import type { MouseEvent, ReactNode } from 'react';
+import { PropTypes } from '@mui/material';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
+import { Nullable } from '../../../../../apiConnector/interfaces/common';
 
 export type ActionColumn = 'actions';
 
@@ -13,7 +13,7 @@ export type NormalColumn<E extends EntityObject> = {
   disableSorting?: boolean;
   label: string;
   minWidth?: number;
-  align?: PropTypes.Alignment;
+  align?: any; // TODO: PropTypes.Alignment;
   format?: (value: any, data: E) => ReactNode;
 };
 
@@ -32,7 +32,7 @@ export type RowActionFunction<E extends EntityObject> = (
   data: E,
   size: 'small' | 'medium',
   setLoading?: (isLoading: boolean) => void,
-) => ReactNodeArray | ReactNode;
+) => Iterable<ReactNode> | ReactNode[] | ReactNode;
 
 export type RowActionObject<E extends EntityObject> = {
   shown: boolean | ((data: E) => boolean);
@@ -62,7 +62,7 @@ export type ToolbarActionFunction<E extends EntityObject> = (
   state: TableState,
   data?: E[],
   setLoading?: (isLoading: boolean) => void,
-) => ReactNodeArray | ReactNode;
+) => Iterable<ReactNode> | ReactNode[] | ReactNode;
 
 export type ToolbarActionCustom<E extends EntityObject> = {
   custom: true;

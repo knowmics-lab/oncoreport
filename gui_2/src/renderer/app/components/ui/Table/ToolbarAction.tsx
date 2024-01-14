@@ -1,8 +1,8 @@
 import React from 'react';
-import Icon from '@material-ui/core/Icon';
+import Icon from '@mui/material/Icon';
 import IconButton from '../IconButton';
 import type { TableState, ToolbarActionType } from './types';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
 
 export type Props<E extends EntityObject> = {
   action: ToolbarActionType<E>;
@@ -11,7 +11,6 @@ export type Props<E extends EntityObject> = {
   setLoading?: (loading: boolean) => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function isF(x: unknown): x is Function {
   return typeof x === 'function';
 }
@@ -55,3 +54,7 @@ export default function ToolbarAction<E extends EntityObject>({
     </IconButton>
   );
 }
+
+ToolbarAction.defaultProps = {
+  setLoading: undefined,
+};

@@ -23,6 +23,16 @@ let watcher: FSWatcher | null = null;
 
 let containerCapabilities: Capabilities | undefined;
 
+export const is = {
+  macos: process.platform === 'darwin',
+  linux: process.platform === 'linux',
+  windows: process.platform === 'win32',
+  main: process.type === 'browser',
+  renderer: process.type === 'renderer',
+  macAppStore: process.mas,
+  windowsStore: process.windowsStore,
+};
+
 export default {
   capabilitiesLoaded() {
     return !!containerCapabilities;
@@ -90,7 +100,7 @@ export default {
     raw: T,
     callback: (k: keyof T) => boolean,
   ): Omit<T, K> {
-    return Object.keys(raw)
+    return Object.keys(raw as Record<string, unknown>)
       .filter((k) => callback(k as keyof T))
       .reduce((obj, key) => {
         return {
@@ -201,8 +211,11 @@ export default {
     obj: X,
     prop: Y,
   ): obj is X & Record<Y, JobPath> {
+    const propString = String(prop);
     return (
-      has(obj, prop) && has(obj, `${prop}.path`) && has(obj, `${prop}.url`)
+      has(obj, propString) &&
+      has(obj, `${propString}.path`) &&
+      has(obj, `${propString}.url`)
     );
   },
 };

@@ -205,7 +205,7 @@ function NavContent() {
     nested = false,
   ): React.ReactNode => {
     if (configured && !settings.isConfigured()) return null;
-    if (divider) return <Divider key={key} style={{ margin: '12px 0' }} />;
+    if (divider) return <Divider key={key} sx={{ margin: '12px 0' }} />;
     if (collapsible) {
       const ExpandableComponent = nested
         ? NestedListItemExpandable

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import Snackbar from '../ui/Snackbar';
-import { Notifications } from '../../../../api';
 import { useService } from '../../../../reactInjector';
+import { Notifications } from '../../../../api';
 
 export default function NotificationsList() {
   const manager = useService(Notifications);

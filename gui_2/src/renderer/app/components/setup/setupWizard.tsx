@@ -1,14 +1,11 @@
 /* eslint-disable react/no-danger */
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { api } from 'electron-util';
 import {
   Button,
   Collapse,
-  createStyles,
   Link,
-  makeStyles,
   CircularProgress,
   Backdrop,
   Paper,
@@ -16,61 +13,54 @@ import {
   Grid,
   Typography,
   LinearProgress,
-} from '@material-ui/core';
+  Theme,
+} from '@mui/material';
 import Convert from 'ansi-to-html';
 import { DependencyContainer } from 'tsyringe';
-import { useContainer, useService } from '../../../reactInjector';
-import { DockerManager, Settings, ValidateConfig } from '../../../api';
+import { useContainer, useService } from '../../../../reactInjector';
+import { DockerManager, Settings, ValidateConfig } from '../../../../api';
 import { runAsync } from '../utils';
 import { SubmitButton } from '../ui/Button';
-import { ConfigObjectType } from '../../../interfaces';
+import { ConfigObjectType } from '../../../../interfaces';
 import Wizard from '../ui/Wizard';
 import SelectField from '../ui/Form/SelectField';
 import TextField from '../ui/Form/TextField';
 import SwitchField from '../ui/Form/SwitchField';
 import FileField from '../ui/Form/FileField';
+import electronApi from '../../../../electronApi';
 
 const COSMIC_URL = 'https://cancer.sanger.ac.uk/cosmic/register';
 const DEFAULT_START_PORT = 18080;
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      padding: theme.spacing(3, 2),
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    backButton: {
-      marginRight: theme.spacing(1),
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-      fontSize: theme.typography.fontSize,
-    },
-    instructionsSmall: {
-      margin: theme.spacing(1),
-      fontSize: '0.8rem',
-    },
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: '#fff',
-    },
-    bold: {
-      fontWeight: theme.typography.fontWeightBold,
-    },
-    logContainer: {
-      fontFamily: "'Courier New', monospace",
-      color: 'white',
-      background: 'black',
-      width: '100%',
-      overflowY: 'auto',
-      wordBreak: 'break-all',
-    },
-  }),
-);
+const instructionText = (theme: Theme) => ({
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  fontSize: theme.typography.fontSize,
+});
+//
+// const smallInstructionText = (theme: Theme) => ({
+//   margin: theme.spacing(1),
+//   fontSize: '0.8rem',
+// });
+
+const boldText = (theme: Theme) => ({
+  fontWeight: theme.typography.fontWeightBold,
+});
+
+// const useStyles = makeStyles((theme) =>
+//   createStyles({
+//     root: {
+//       padding: theme.spacing(3, 2),
+//     },
+//     formControl: {
+//       margin: theme.spacing(1),
+//       minWidth: 120,
+//     },
+//     backButton: {
+//       marginRight: theme.spacing(1),
+//     },
+//   }),
+// );
 
 const convert = new Convert({ newline: true });
 
@@ -96,7 +86,6 @@ interface ExtendedConfig extends ConfigObjectType {
 type Props = { values: ExtendedConfig };
 
 function CosmicForm({ label }: { label?: boolean }) {
-  const classes = useStyles();
   return (
     <Grid
       container
@@ -105,7 +94,7 @@ function CosmicForm({ label }: { label?: boolean }) {
       spacing={2}
     >
       {label && (
-        <Grid item md={2} className={classes.bold}>
+        <Grid item md={2} sx={boldText}>
           COSMIC Account:
         </Grid>
       )}
@@ -126,10 +115,9 @@ function CosmicForm({ label }: { label?: boolean }) {
 CosmicForm.defaultProps = { label: false };
 
 function Step0({ values }: Props) {
-  const classes = useStyles();
   return (
     <>
-      <Typography className={classes.instructions}>
+      <Typography sx={instructionText}>
         Here you can select whether you wish to use OncoReport with a local
         docker installation or with a remote server.
       </Typography>
@@ -154,11 +142,10 @@ function Step0({ values }: Props) {
 }
 
 function Step1({ values }: Props) {
-  const classes = useStyles();
   const { local } = values;
   return (
     <>
-      <Typography className={classes.instructions}>
+      <Typography sx={instructionText}>
         Here you can configure the connection with OncoReport
         {local
           ? ' local docker container and your COSMIC account.'
@@ -205,9 +192,8 @@ function Step1({ values }: Props) {
 }
 
 function Step2() {
-  const classes = useStyles();
   return (
-    <Typography className={classes.instructions}>
+    <Typography sx={instructionText}>
       All parameters have been set. Click &quot;Install&quot; to start the
       process.
     </Typography>
@@ -289,7 +275,6 @@ async function runSetup(
 }
 
 export default function SetupWizard() {
-  const classes = useStyles();
   const settings = useService(Settings);
   const container = useContainer();
   const [loading, setLoading] = useState(true);
@@ -320,22 +305,27 @@ export default function SetupWizard() {
     'Complete setup',
   ];
 
-  function MySubmit() {
-    return <SubmitButton isSaving={saving} text="Install" />;
-  }
+  const MySubmit = useMemo(
+    () =>
+      // eslint-disable-next-line react/no-unstable-nested-components,func-names
+      function () {
+        return <SubmitButton isSaving={saving} text="Install" />;
+      },
+    [saving],
+  );
 
   const validationSchema = Yup.object().shape({
     local: Yup.boolean(),
     dataPath: Yup.string().when('local', {
       is: true,
-      then: Yup.string().required(),
-      otherwise: Yup.string().notRequired(),
+      then: (s) => s.required(),
+      otherwise: (s) => s.notRequired(),
     }),
     socketPath: Yup.string().notRequired(),
     containerName: Yup.string().when('local', {
       is: true,
-      then: Yup.string().required(),
-      otherwise: Yup.string().notRequired(),
+      then: (s) => s.required(),
+      otherwise: (s) => s.notRequired(),
     }),
     apiProtocol: Yup.string().required(),
     apiHostname: Yup.string().required(),
@@ -344,25 +334,28 @@ export default function SetupWizard() {
     publicPath: Yup.string().required(),
     apiKey: Yup.string().when('local', {
       is: true,
-      then: Yup.string().notRequired(),
-      otherwise: Yup.string().required(),
+      then: (s) => s.notRequired(),
+      otherwise: (s) => s.required(),
     }),
     cosmicUsername: Yup.string().when('local', {
       is: true,
-      then: Yup.string().required(),
-      otherwise: Yup.string().notRequired(),
+      then: (s) => s.required(),
+      otherwise: (s) => s.notRequired(),
     }),
     cosmicPassword: Yup.string().when('local', {
       is: true,
-      then: Yup.string().required(),
-      otherwise: Yup.string().notRequired(),
+      then: (s) => s.required(),
+      otherwise: (s) => s.notRequired(),
     }),
   });
-
   return (
     <>
       <Box>
-        <Paper className={classes.root}>
+        <Paper
+          sx={(theme) => ({
+            padding: theme.spacing(3, 2),
+          })}
+        >
           {!saving ? (
             <>
               <Typography variant="h5" component="h3">
@@ -384,7 +377,7 @@ export default function SetupWizard() {
                   <Form>
                     {firstStep && (
                       <>
-                        <Typography className={classes.instructions}>
+                        <Typography sx={instructionText}>
                           Here you will setup your OncoReport instance through a
                           step-by-step procedure. Before you proceed with the
                           process, you should prepare your COSMIC account.
@@ -401,7 +394,7 @@ export default function SetupWizard() {
                               e.preventDefault();
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                               // @ts-ignore
-                              api.shell.openExternal(e.target.href);
+                              electronApi.shell.openExternal(e.target.href);
                             }}
                           >
                             clicking here
@@ -415,7 +408,7 @@ export default function SetupWizard() {
                           alignItems="center"
                         >
                           <Grid item>
-                            <Typography className={classes.bold}>
+                            <Typography sx={boldText}>
                               Choose setup mode
                             </Typography>
                           </Grid>
@@ -478,7 +471,7 @@ export default function SetupWizard() {
                     )}
                     {!firstStep && !advancedSetup && (
                       <>
-                        <Typography className={classes.instructions}>
+                        <Typography sx={instructionText}>
                           Please, insert here your COSMIC credentials (username
                           and password), and click &quot;Install&quot; to start
                           the process. If you do not have a COSMIC account, you
@@ -522,7 +515,14 @@ export default function SetupWizard() {
               </Typography>
               <Box>
                 <div
-                  className={classes.logContainer}
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    color: 'white',
+                    background: 'black',
+                    width: '100%',
+                    overflowY: 'auto',
+                    wordBreak: 'break-all',
+                  }}
                   dangerouslySetInnerHTML={{ __html: logToHtml(logContent) }}
                 />
                 <div ref={logRef} />
@@ -532,7 +532,13 @@ export default function SetupWizard() {
           )}
         </Paper>
       </Box>
-      <Backdrop className={classes.backdrop} open={loading}>
+      <Backdrop
+        sx={(theme) => ({
+          zIndex: theme.zIndex.drawer + 1,
+          color: '#fff',
+        })}
+        open={loading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </>

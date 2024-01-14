@@ -5,8 +5,8 @@ import React, {
   MouseEventHandler,
 } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Tooltip, IconButton as IB, PropTypes } from '@material-ui/core';
-import { Nullable } from '../../../interfaces';
+import { Tooltip, IconButton as IB, PropTypes } from '@mui/material';
+import { Nullable } from '../../../../interfaces';
 
 export type IconButtonType = {
   color?: PropTypes.Color;
@@ -45,7 +45,7 @@ export default function IconButton({
   const renderLink = useMemo(
     () =>
       forwardRef((itemProps, ref: ForwardedRef<HTMLAnchorElement>) => (
-        <RouterLink to={href || ''} {...itemProps} innerRef={ref} />
+        <RouterLink to={href || ''} {...itemProps} ref={ref} />
       )),
     [href],
   );

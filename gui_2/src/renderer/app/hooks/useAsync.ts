@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DependencyList, useCallback, useEffect, useState } from 'react';
 import { runAsync } from '../components/utils';
-import { Notifications } from '../../api';
+import { Notifications } from '../../../api';
 
 export default function useAsync<T>(
   callback: (manager: Notifications) => Promise<T>,

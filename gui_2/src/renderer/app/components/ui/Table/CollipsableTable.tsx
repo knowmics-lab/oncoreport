@@ -1,19 +1,18 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 interface NestedRowData {
   id: number;
@@ -30,24 +29,18 @@ interface RowData {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      borderBottom: 'unset',
-    },
-  },
-  stickyStyle: {
-    backgroundColor: theme.palette.background.default,
-  },
-}));
-
 function Row({ id, row, nestedTable }: RowData) {
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const colSpan = row.length + 1;
   return (
     <>
-      <TableRow className={classes.root}>
+      <TableRow
+        sx={{
+          '& > *': {
+            borderBottom: 'unset',
+          },
+        }}
+      >
         <TableCell>
           {nestedTable && (
             <IconButton size="small" onClick={() => setOpen(!open)}>
@@ -116,12 +109,15 @@ export default function CollapsibleTable({
   head,
   data,
 }: CollapsibleTableProps) {
-  const classes = useStyles();
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow className={classes.stickyStyle}>
+          <TableRow
+            sx={(theme) => ({
+              backgroundColor: theme.palette.background.default,
+            })}
+          >
             <TableCell component="th" scope="row" />
             {head.map((h) => (
               <TableCell key={`table-cell-${h}`}>{h}</TableCell>

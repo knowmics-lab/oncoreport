@@ -1,25 +1,21 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { has, get } from 'lodash';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import TableCell from '@material-ui/core/TableCell';
-import Checkbox from '@material-ui/core/Checkbox';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TableCell from '@mui/material/TableCell';
+import Checkbox from '@mui/material/Checkbox';
+import { Theme } from '@mui/material';
 import type { NormalColumn, TableColumn } from './types';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
-import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
-import { SortingDirection } from '../../../../apiConnector';
-import { Utils } from '../../../../api';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
+import { SimpleMapType } from '../../../../../apiConnector/interfaces/common';
+import { SortingDirection } from '../../../../../apiConnector';
+import { Utils } from '../../../../../api';
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    stickyStyle: {
-      backgroundColor: theme.palette.background.default,
-    },
-  }),
-);
+const stickyStyle = (theme: Theme) => ({
+  backgroundColor: theme.palette.background.default,
+});
 
 type SortingSpec = SimpleMapType<SortingDirection>;
 
@@ -48,7 +44,6 @@ export default function Header<E extends EntityObject>({
   handleSelect,
   collapsible,
 }: Props<E>) {
-  const classes = useStyles();
   const sf = (column: NormalColumn<E>): keyof E =>
     (column.sortingField || column.dataField) as unknown as keyof E;
   const makeChangeHandler =
@@ -85,7 +80,7 @@ export default function Header<E extends EntityObject>({
               key={column.key ?? column.dataField.toString()}
               align={column.align}
               style={{ minWidth: column.minWidth }}
-              className={classes.stickyStyle}
+              sx={stickyStyle}
             >
               {sortable && !column.disableSorting ? (
                 <TableSortLabel
@@ -103,7 +98,7 @@ export default function Header<E extends EntityObject>({
             <TableCell
               key="actions"
               align="center"
-              className={classes.stickyStyle}
+              sx={stickyStyle}
             >
               Actions
             </TableCell>

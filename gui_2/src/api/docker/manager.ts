@@ -1,11 +1,13 @@
+/* eslint-disable no-console */
+// noinspection TypeScriptUMDGlobal
+
 import fs from 'fs-extra';
-import { is } from 'electron-util';
 import Client from 'dockerode';
 import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
 import { inject, injectable } from 'tsyringe';
 import { Stream } from 'stream';
-import Utils from '../utils';
+import Utils, { is } from '../utils';
 import SystemConstants from '../../constants/system.json';
 import type { ConfigObjectType } from '../../interfaces';
 import TimeoutError from '../../errors/TimeoutError';
@@ -60,8 +62,8 @@ export default class Manager {
     let ended = false;
 
     const bufferSlice = (end: number) => {
-      const out = buffer.slice(0, end);
-      buffer = Buffer.from(buffer.slice(end, buffer.length));
+      const out = buffer.subarray(0, end);
+      buffer = Buffer.from(buffer.subarray(end, buffer.length));
       return out;
     };
     const processData = (data?: Uint8Array) => {
@@ -334,7 +336,7 @@ export default class Manager {
     } else if (status === 'exited' || status === 'created') {
       await this.cleanupBootedFile();
       const container = this.getContainer();
-      container.start();
+      container.start().catch(console.error);
       await new Promise<void>((resolve, reject) => {
         let timer: ReturnType<typeof setInterval>;
         const fnTimer = async () => {
@@ -551,6 +553,7 @@ export default class Manager {
                 outputCallback(status);
               }
             };
+            // @ts-ignore
             this.#client.modem.followProgress(stream, onFinished, onProgress);
           }
         },

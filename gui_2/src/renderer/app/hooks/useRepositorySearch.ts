@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { InjectionToken } from 'tsyringe';
-import { useService } from '../../reactInjector';
+import { useService } from '../../../reactInjector';
 import useAsyncEffect from './useAsyncEffect';
-import { Repository } from '../../apiConnector';
+import { Repository } from '../../../apiConnector';
 import {
   EntityObject,
   QueryBuilderInterface,
   ResultSetInterface,
   ResultSetObserver,
-} from '../../apiConnector/interfaces/entity';
-import { SimpleMapType } from '../../apiConnector/interfaces/common';
+} from '../../../apiConnector/interfaces/entity';
+import { SimpleMapType } from '../../../apiConnector/interfaces/common';
 import usePrevious from './usePrevious';
 
 type QueryBuilderCallback<E extends EntityObject> = (

@@ -20,6 +20,7 @@ export default class HasMany<R extends EntityObject>
   extends Array<R>
   implements EntityObserver<EntityObject>, Array<R>
 {
+  // eslint-disable-next-line no-undef
   [index: number]: R;
 
   /**

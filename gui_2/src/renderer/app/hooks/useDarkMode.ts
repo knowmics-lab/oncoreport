@@ -1,5 +1,5 @@
-import { darkMode as electronDarkMode } from 'electron-util';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+import { darkMode as electronDarkMode } from '../../../electronApi';
 import useMediaQuery from './useMediaQuery';
 import { useLocalStorage } from './useStorage';
 

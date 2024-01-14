@@ -183,6 +183,12 @@ export default class MainProcessManager {
     });
   }
 
+  private registerPathHandler() {
+    ipcMain.handle('get-path', (_e, args) => {
+      return app.getPath(args);
+    });
+  }
+
   public registerHandlers() {
     if (!this.#registered) {
       this.registerQuitHandler();
@@ -191,6 +197,7 @@ export default class MainProcessManager {
       this.registerNewWindowHandler();
       this.registerConfigChangeHandler();
       this.registerRelaunchHandler();
+      this.registerPathHandler();
       this.#registered = true;
     }
   }

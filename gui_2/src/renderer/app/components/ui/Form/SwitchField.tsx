@@ -1,10 +1,10 @@
 import React from 'react';
 import { Field } from 'formik';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { Switch, SwitchProps as FormikSwitchProps } from 'formik-material-ui';
-import useStyles from './hooks';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Switch, SwitchProps as FormikSwitchProps } from 'formik-mui';
+import { formControlStyle } from '../../utils';
 
 export interface SwitchProps
   extends Omit<FormikSwitchProps, 'form' | 'meta' | 'field'> {
@@ -13,9 +13,8 @@ export interface SwitchProps
 }
 
 export default function SwitchField({ label, ...props }: SwitchProps) {
-  const classes = useStyles();
   return (
-    <FormControl className={classes.formControl} fullWidth>
+    <FormControl sx={formControlStyle} fullWidth>
       <FormGroup>
         <FormControlLabel
           control={<Field component={Switch} type="checkbox" {...props} />}

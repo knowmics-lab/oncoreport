@@ -2,9 +2,14 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
+import 'reflect-metadata';
 import injector from '../injector';
 import InjectorContext from '../reactInjector/context';
+import Constants from '../constants/system.json';
+// import Routes from '../constants/routes.json';
+import UNICT_LOGO from '../resources/unict.png';
 import AppStartedContext from './app/components/layout/appStartedContext';
+import Layout from './app/layout';
 
 function Hello() {
   return (
@@ -48,9 +53,11 @@ export default function App() {
     <InjectorContext.Provider value={injector}>
       <AppStartedContext>
         <Router>
-          <Routes>
-            <Route path="/" element={<Hello />} />
-          </Routes>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Hello />} />
+            </Routes>
+          </Layout>
         </Router>
       </AppStartedContext>
     </InjectorContext.Provider>

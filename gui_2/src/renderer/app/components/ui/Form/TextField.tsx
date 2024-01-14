@@ -3,8 +3,8 @@ import { Field } from 'formik';
 import {
   TextField as FormikTextField,
   TextFieldProps as FormikTextFieldProps,
-} from 'formik-material-ui';
-import useStyles from './hooks';
+} from 'formik-mui';
+import { formControlStyle } from '../../utils';
 
 export interface TextFieldProps
   extends Omit<FormikTextFieldProps, 'form' | 'meta' | 'field' | 'fullWidth'> {
@@ -12,10 +12,9 @@ export interface TextFieldProps
 }
 
 export default function TextField(props: TextFieldProps) {
-  const classes = useStyles();
   return (
     <Field
-      className={classes.formControl}
+      sx={formControlStyle}
       component={FormikTextField}
       fullWidth
       {...props}

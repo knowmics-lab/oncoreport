@@ -1,12 +1,11 @@
-import { TextField } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+import { TextField, Autocomplete } from '@mui/material';
 import { Field, FieldProps, useField } from 'formik';
 import React, { useCallback } from 'react';
 import {
   AutocompleteProps as MuiAutocompleteProps,
   AutocompleteRenderInputParams as FormikRenderInputParams,
-} from '@material-ui/lab/Autocomplete/Autocomplete';
-import useStyles from './hooks';
+} from '@mui/material/Autocomplete';
+import { formControlStyle } from '../../utils';
 
 interface Option<T> {
   label: string;
@@ -30,16 +29,15 @@ function CustomFormikTextField({
   name,
   ...params
 }: FormikRenderInputParams & { label: string; name: string }) {
-  const classes = useStyles();
   const [, meta] = useField(name);
   const { touched, error } = meta;
   return (
     <TextField
       {...params}
-      className={classes.formControl}
       error={touched && !!error}
       helperText={error}
       label={label}
+      sx={formControlStyle}
     />
   );
 }

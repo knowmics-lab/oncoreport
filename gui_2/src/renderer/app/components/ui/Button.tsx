@@ -1,17 +1,18 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useMemo, forwardRef, ForwardedRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Button as OB, createStyles, PropTypes } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { green } from '@material-ui/core/colors';
+import { Button as OB, styled } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { green } from '@mui/material/colors';
+import { ButtonOwnProps } from '@mui/material/Button/Button';
 
 type ButtonProps = {
-  color?: PropTypes.Color;
+  color?: ButtonOwnProps['color'];
   children: React.ReactNode;
   disabled?: boolean;
   href?: string;
-  size?: 'small' | 'medium' | 'large';
-  variant?: 'text' | 'outlined' | 'contained';
+  size?: ButtonOwnProps['size'];
+  variant?: ButtonOwnProps['variant'];
   onClick?: () => void;
 };
 
@@ -27,7 +28,7 @@ export default function Button({
   const renderLink = useMemo(
     () =>
       forwardRef((itemProps, ref: ForwardedRef<HTMLAnchorElement>) => (
-        <RouterLink to={href || ''} {...itemProps} innerRef={ref} />
+        <RouterLink to={href || ''} {...itemProps} ref={ref} />
       )),
     [href],
   );
@@ -54,22 +55,10 @@ Button.defaultProps = {
   onClick: null,
 };
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    buttonWrapper: {
-      margin: theme.spacing(1),
-      position: 'relative',
-    },
-    buttonProgress: {
-      color: green[500],
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -12,
-      marginLeft: -12,
-    },
-  }),
-);
+const ButtonWrapper = styled('div')(({ theme }) => ({
+  margin: theme.spacing(1),
+  position: 'relative',
+}));
 
 type SubmitButtonProps = {
   isSaving: boolean;
@@ -77,16 +66,25 @@ type SubmitButtonProps = {
 };
 
 export function SubmitButton({ isSaving, text }: SubmitButtonProps) {
-  const classes = useStyles();
   return (
-    <div className={classes.buttonWrapper}>
+    <ButtonWrapper>
       <OB type="submit" variant="contained" color="primary" disabled={isSaving}>
         {text || 'Save'}
       </OB>
       {isSaving && (
-        <CircularProgress size={24} className={classes.buttonProgress} />
+        <CircularProgress
+          size={24}
+          sx={{
+            color: green[500],
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginTop: -12,
+            marginLeft: -12,
+          }}
+        />
       )}
-    </div>
+    </ButtonWrapper>
   );
 }
 

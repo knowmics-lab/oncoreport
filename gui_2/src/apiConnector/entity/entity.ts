@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,no-nested-ternary */
+/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,no-nested-ternary,no-use-before-define */
 import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
 import { container, InjectionToken } from 'tsyringe';
-import produce, { Draft } from 'immer';
+import { Draft, produce } from 'immer';
 import EntityError from '../../errors/EntityError';
 import {
   ExtendedPartialObject,
@@ -175,7 +175,7 @@ export default abstract class Entity {
 
   protected adapter: Adapter<this>;
 
-  protected observers = new Array<WeakEntityObserver<this>>();
+  protected observers: WeakEntityObserver<this>[] = [];
 
   @field<number>({
     readonly: true,

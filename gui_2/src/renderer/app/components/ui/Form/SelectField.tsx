@@ -1,12 +1,11 @@
 import React from 'react';
-// import MenuItem from '@material-ui/core/MenuItem';
 import { Field } from 'formik';
 import {
   TextField as FormikTextField,
   TextFieldProps as FormikTextFieldProps,
-} from 'formik-material-ui';
-import useStyles from './hooks';
-import { SimpleMapArray, SimpleMapType } from '../../../../interfaces';
+} from 'formik-mui';
+import { SimpleMapArray, SimpleMapType } from '../../../../../interfaces';
+import { formControlStyle } from '../../utils';
 
 function OPTION_MAPPER([k, v]: [string | number, string]) {
   return (
@@ -44,14 +43,12 @@ export default function SelectField({
   InputLabelProps,
   ...props
 }: SelectProps) {
-  const classes = useStyles();
   const entries = Object.entries(options).map(OPTION_MAPPER);
   if (addEmpty) {
     entries.unshift(EMPTY_OPTION(emptyText || 'None'));
   }
   return (
     <Field
-      className={classes.formControl}
       component={FormikTextField}
       type="text"
       select
@@ -65,6 +62,7 @@ export default function SelectField({
         ...(InputLabelProps || {}),
         shrink: true,
       }}
+      sx={formControlStyle}
       {...props}
     >
       {entries}

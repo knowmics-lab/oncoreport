@@ -1,22 +1,13 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import {
   Box,
   FormGroup,
   Grid,
   LinearProgress,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
+} from '@mui/material';
 import byteSize from 'byte-size';
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-  }),
-);
+import { formControlStyle } from '../utils';
 
 type Props = {
   isUploading: boolean;
@@ -33,11 +24,10 @@ export default function UploadProgress({
   uploadedPercent,
   uploadTotal,
 }: Props) {
-  const classes = useStyles();
   return (
     <>
       {isUploading && (
-        <FormGroup row className={classes.formControl}>
+        <FormGroup row sx={formControlStyle}>
           <Grid
             container
             justifyContent="center"

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Icon, Menu, MenuItem } from '@material-ui/core';
+import { Icon, Menu, MenuItem } from '@mui/material';
 import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
-import { JobEntity } from '../../../api';
-import { JobStatus, OutputTypes } from '../../../interfaces';
+import { JobEntity } from '../../../../api';
+import { JobStatus, OutputTypes } from '../../../../interfaces';
 import IconButton, { IconButtonType } from './IconButton';
 import { runAsync } from '../utils';
 
@@ -34,7 +34,7 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
     status !== JobStatus.completed ||
     (type !== OutputTypes.tumorNormal && type !== OutputTypes.tumorOnly)
   ) {
-    return <></>;
+    return null;
   }
 
   if (downloading) {
@@ -80,7 +80,7 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
                       e.preventDefault();
                       runAsync(
                         async () => {
-                          job.download(
+                          await job.download(
                             key,
                             () => setDownloading(true),
                             () => setDownloading(false),

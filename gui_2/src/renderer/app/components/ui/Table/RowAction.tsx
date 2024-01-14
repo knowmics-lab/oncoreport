@@ -1,8 +1,8 @@
 import React from 'react';
-import Icon from '@material-ui/core/Icon';
+import Icon from '@mui/material/Icon';
 import IconButton from '../IconButton';
 import type { RowActionType } from './types';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
 
 export type Props<E extends EntityObject> = {
   action: RowActionType<E>;
@@ -11,7 +11,6 @@ export type Props<E extends EntityObject> = {
   setLoading?: (isLoading: boolean) => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function isF(x: unknown): x is Function {
   return typeof x === 'function';
 }

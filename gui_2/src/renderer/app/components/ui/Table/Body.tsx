@@ -1,24 +1,16 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { useCallback } from 'react';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import Checkbox from '@material-ui/core/Checkbox';
-import { Collapse, IconButton } from '@material-ui/core';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { makeStyles } from '@material-ui/styles';
+import TableBody from '@mui/material/TableBody';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Checkbox from '@mui/material/Checkbox';
+import { Collapse, IconButton } from '@mui/material';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import type { RowActionType, TableColumn } from './types';
 import RowActions from './RowActions';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
 import useToggle from '../../../hooks/useToggle';
-
-const useRowStyles = makeStyles({
-  root: {
-    '& > *': {
-      borderBottom: 'unset',
-    },
-  },
-});
 
 function Cell<E extends EntityObject>(
   column: TableColumn<E>,
@@ -35,7 +27,7 @@ function Cell<E extends EntityObject>(
         key={`${keyBase}-${column.key ?? column.dataField.toString()}`}
         align={column.align}
       >
-        {column.format ? column.format(value, row) : value}
+        {column.format ? column.format(value, row) : `${value}`}
       </TableCell>
     );
   }
@@ -107,7 +99,6 @@ function Row<E extends EntityObject>({
   collapsibleContent,
   setLoading,
 }: RowProps<E>) {
-  const classes = useRowStyles();
   const { id } = row;
   const isCollapsible = collapsible && !!collapsibleContent;
   const numColumns =
@@ -117,7 +108,11 @@ function Row<E extends EntityObject>({
     <>
       <TableRow
         hover
-        className={classes.root}
+        sx={{
+          '& > *': {
+            borderBottom: 'unset',
+          },
+        }}
         role="checkbox"
         tabIndex={-1}
         selected={isSelected(id)}

@@ -1,56 +1,45 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import MaterialToolbar from '@material-ui/core/Toolbar';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import SearchIcon from '@material-ui/icons/Search';
-import { EntityObject } from '../../../../apiConnector/interfaces/entity';
+import MaterialToolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import SearchIcon from '@mui/icons-material/Search';
+import { styled, Theme } from '@mui/material';
+import { EntityObject } from '../../../../../apiConnector/interfaces/entity';
 import ToolbarAction from './ToolbarAction';
 import { Alignment } from './types';
 import type { TableState, ToolbarActionType } from './types';
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      paddingRight: theme.spacing(1),
-      flexFlow: 'row nowrap',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    title: {
-      flex: '0 0 auto',
-      color: theme.palette.text.primary,
-      order: 0,
-    },
-    left: {
-      flex: '1 1 auto',
-      color: theme.palette.text.secondary,
-      order: 1,
-    },
-    right: {
-      flex: '1 1 auto',
-      color: theme.palette.text.secondary,
-      textAlign: 'right',
-      order: 3,
-    },
-    center: {
-      flex: '1 0 auto',
-      color: theme.palette.text.secondary,
-      textAlign: 'center',
-      order: 2,
-    },
-    actions: {
-      color: theme.palette.text.secondary,
-    },
-    search: {
-      marginLeft: theme.spacing(-3),
-    },
-  }),
-);
+const rootStyle = (theme: Theme) => ({
+  paddingRight: theme.spacing(1),
+  flexFlow: 'row nowrap',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+const searchStyle = (theme: Theme) => ({
+  marginLeft: theme.spacing(-3),
+});
+
+const LeftDiv = styled('div')(({ theme }) => ({
+  flex: '1 1 auto',
+  color: theme.palette.text.secondary,
+  order: 1,
+}));
+const RightDiv = styled('div')(({ theme }) => ({
+  flex: '1 1 auto',
+  color: theme.palette.text.secondary,
+  textAlign: 'right',
+  order: 3,
+}));
+const CenterDiv = styled('div')(({ theme }) => ({
+  flex: '1 0 auto',
+  color: theme.palette.text.secondary,
+  textAlign: 'center',
+  order: 2,
+}));
 
 type Props<E extends EntityObject> = {
   actions: ToolbarActionType<E>[];
@@ -69,7 +58,6 @@ export default function Toolbar<E extends EntityObject>({
   onSearch,
   setLoading,
 }: Props<E>) {
-  const classes = useStyles();
   const searchRef = React.useRef<HTMLInputElement>(null);
   if (!actions || actions.length === 0) return null;
   const renderActions = (d: Alignment) =>
@@ -96,10 +84,10 @@ export default function Toolbar<E extends EntityObject>({
     .substring(1);
   const searchId = `table-search-field-${randomId}`;
   return (
-    <MaterialToolbar className={classes.root}>
-      <div className={classes.left}>
+    <MaterialToolbar sx={rootStyle}>
+      <LeftDiv>
         {globalSearch && (
-          <FormControl className={classes.search}>
+          <FormControl sx={searchStyle}>
             <InputLabel htmlFor={searchId}>Search table</InputLabel>
             <Input
               id={searchId}
@@ -126,9 +114,9 @@ export default function Toolbar<E extends EntityObject>({
           </FormControl>
         )}
         {renderActions(Alignment.left)}
-      </div>
-      <div className={classes.center}>{renderActions(Alignment.center)}</div>
-      <div className={classes.right}>{renderActions(Alignment.right)}</div>
+      </LeftDiv>
+      <CenterDiv>{renderActions(Alignment.center)}</CenterDiv>
+      <RightDiv>{renderActions(Alignment.right)}</RightDiv>
     </MaterialToolbar>
   );
 }

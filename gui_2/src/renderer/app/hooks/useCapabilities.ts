@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from 'react';
-import { Capabilities } from '../../api/utils';
-import { Utils } from '../../api';
+import { Capabilities } from '../../../api/utils';
+import { Utils } from '../../../api';
 import { runAsync } from '../components/utils';
 
 export default function useCapabilities(

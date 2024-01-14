@@ -1,26 +1,10 @@
-import React from 'react';
-import {
-  CssBaseline,
-  createTheme,
-  Toolbar,
-  IconButton,
-  Tooltip,
-  ThemeProvider,
-} from '@mui/material';
-import {
-  EdgeTrigger,
-  EdgeSidebar,
-  Root,
-  Header,
-  Footer,
-  SidebarContent,
-  Content,
-} from '@mui-treasury/layout';
-import Brightness4 from '@mui/icons-material/Brightness4';
-import Brightness7 from '@mui/icons-material/Brightness7';
+import React, { useEffect } from 'react';
+import { CssBaseline, createTheme, ThemeProvider } from '@mui/material';
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Footer } from '@mui-treasury/layout';
 import {
   LayoutHeader,
-  NavContent,
   Notifications,
   ContentWrapper,
   BlockingMessageHandler,
@@ -29,6 +13,9 @@ import {
 import SetupWizardContainer from './components/setup/setupWizardContainer';
 import ThemeContext from './themeContext';
 import useDarkMode from './hooks/useDarkMode';
+import useToggle from './hooks/useToggle';
+import LeftDrawer from './components/layout/leftDrawer';
+import usePrevious from './hooks/usePrevious';
 
 type Props = {
   children: React.ReactNode;
@@ -37,6 +24,17 @@ type Props = {
 
 function Layout({ children, footer }: Props) {
   const [dark, setDark] = useDarkMode();
+  const isMedium = useMediaQuery('(min-width:900px)');
+  const prevMedium = usePrevious(isMedium);
+  const [open, toggleOpen] = useToggle(false);
+
+  useEffect(() => {
+    if (isMedium && prevMedium !== isMedium) {
+      toggleOpen(true);
+    } else if (!isMedium && prevMedium !== isMedium) {
+      toggleOpen(false);
+    }
+  }, [isMedium, prevMedium, toggleOpen]);
 
   const theme = React.useMemo(
     () =>
@@ -53,97 +51,35 @@ function Layout({ children, footer }: Props) {
   return (
     <ThemeContext.Provider value={dark}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Root
-          scheme={{
-            header: {
-              config: {
-                xs: {
-                  position: 'sticky',
-                  clipped: false,
-                  height: 56,
-                },
-                md: {
-                  position: 'fixed',
-                  clipped: false,
-                  height: 64,
-                },
-              },
-            },
-            leftEdgeSidebar: {
-              config: {
-                xs: {
-                  width: 256,
-                  variant: 'temporary',
-                },
-                lg: {
-                  width: 256,
-                  collapsible: false,
-                  variant: 'permanent',
-                },
-              },
-            },
-          }}
-        >
+        <Box sx={{ display: 'flex' }}>
+          <CssBaseline />
           <SetupWizardContainer
             header={
-              <Header color={dark ? 'default' : 'primary'}>
-                <Toolbar>
-                  <LayoutHeader />
-                  <Tooltip title={switcherLabel}>
-                    <IconButton
-                      aria-label={switcherLabel}
-                      onClick={() => setDark((v) => !v)}
-                    >
-                      {dark ? <Brightness7 /> : <Brightness4 />}
-                    </IconButton>
-                  </Tooltip>
-                </Toolbar>
-              </Header>
+              <LayoutHeader
+                themeSwitcher={{ label: switcherLabel, setDark, dark }}
+              />
             }
           >
-            <Header color={dark ? 'default' : 'primary'}>
-              <Toolbar>
-                <EdgeTrigger target={{ anchor: 'left', field: 'open' }}>
-                  {
-                    ((
-                      state: boolean,
-                      setState: (newState: boolean) => void,
-                    ) => (
-                      <IconButton onClick={() => setState(!state)}>
-                        {state ? 'Close' : 'Open'}
-                      </IconButton>
-                    )) as any
-                  }
-                </EdgeTrigger>
-                <LayoutHeader />
-                <Tooltip title={switcherLabel}>
-                  <IconButton
-                    aria-label={switcherLabel}
-                    onClick={() => setDark((v) => !v)}
-                  >
-                    {dark ? <Brightness7 /> : <Brightness4 />}
-                  </IconButton>
-                </Tooltip>
-              </Toolbar>
-            </Header>
-            <EdgeSidebar anchor="left">
-              <SidebarContent style={{ overflow: 'hidden' }}>
-                <NavContent />
-              </SidebarContent>
-              {/* <CollapseBtn style={{ overflow: 'hidden' }} /> */}
-            </EdgeSidebar>
-            <Content>
-              <ContentWrapper>
-                <StartHandler />
-                {children}
-                <Notifications />
-                <BlockingMessageHandler />
-              </ContentWrapper>
-            </Content>
-            {footer && <Footer>{footer}</Footer>}
+            <LayoutHeader
+              hasDrawer
+              toggleDrawer={toggleOpen}
+              open={open}
+              themeSwitcher={{
+                label: switcherLabel,
+                setDark,
+                dark,
+              }}
+            />
+            <LeftDrawer open={open} />
+            <ContentWrapper>
+              <StartHandler />
+              {children}
+              <Notifications />
+              <BlockingMessageHandler />
+              {footer && <Footer>{footer}</Footer>}
+            </ContentWrapper>
           </SetupWizardContainer>
-        </Root>
+        </Box>
       </ThemeProvider>
     </ThemeContext.Provider>
   );

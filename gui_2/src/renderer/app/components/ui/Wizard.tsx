@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary,no-plusplus */
 import React, { useCallback, useMemo, useState } from 'react';
-import { has, get } from 'lodash';
+import { has } from 'lodash';
 import { FormikErrors, FormikTouched, useFormikContext } from 'formik';
 import {
   FormGroup,
@@ -9,16 +9,44 @@ import {
   Stepper,
   Step,
   StepLabel,
-  createStyles,
-  makeStyles,
-  colors,
-} from '@material-ui/core';
+  Theme,
+  styled,
+} from '@mui/material';
+import { formControlStyle } from '../utils';
 
 type ButtonClickHandler = (e: React.MouseEvent<HTMLButtonElement>) => void;
 
+// const rootStyle = (theme: Theme) => ({ padding: theme.spacing(3, 2) });
+// const stepperContentStyle = (theme: Theme) => ({ padding: theme.spacing(3) });
+// const buttonWrapperStyle = (theme: Theme) => ({
+//   margin: theme.spacing(1),
+//   position: 'relative',
+// });
+// const buttonProgressStyle = (theme: Theme) => ({
+//   color: colors.green[500],
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   marginTop: -12,
+//   marginLeft: -12,
+// });
+const backButtonStyle = (theme: Theme) => ({ marginRight: theme.spacing(1) });
+// const instructionsStyle = (theme: Theme) => ({
+//   marginTop: theme.spacing(1),
+//   marginBottom: theme.spacing(1),
+// });
+
+const ButtonWrapperDiv = styled('div')(({ theme }) => ({
+  margin: theme.spacing(1),
+  position: 'relative',
+}));
+const StepperContentDiv = styled('div')(({ theme }) => ({
+  padding: theme.spacing(3),
+}));
+
 export type WizardProps<E> = {
   steps: string[] | (() => string[]);
-  children: React.ReactNodeArray | ((page: number) => React.ReactNode);
+  children: React.ReactNode[] | ((page: number) => React.ReactNode);
   connectedFields?: (keyof E)[][] | ((page: number) => (keyof E)[]);
   fieldsErrors?: FormikErrors<E>;
   fieldsTouched?: FormikTouched<E>;
@@ -29,51 +57,37 @@ export type WizardProps<E> = {
   onChangeActiveStep?: (page: number) => void;
 };
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      padding: theme.spacing(3, 2),
-    },
-    stepperContent: {
-      padding: theme.spacing(3),
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    buttonWrapper: {
-      margin: theme.spacing(1),
-      position: 'relative',
-    },
-    buttonProgress: {
-      color: colors.green[500],
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -12,
-      marginLeft: -12,
-    },
-    backButton: {
-      marginRight: theme.spacing(1),
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-    },
-  }),
-);
-
+type PropsWithName<E> = { name: keyof E };
+type PropsWithChildren = {
+  children: React.ReactNode | React.ReactNode[] | Iterable<React.ReactNode>;
+};
 type MaybeComponent = Parameters<typeof React.isValidElement>[0];
+
+function hasName<E>(
+  props: React.ReactElement['props'],
+): props is PropsWithName<E> {
+  return has(props, 'name');
+}
+
+function hasChildren(
+  props: React.ReactElement['props'],
+): props is PropsWithChildren {
+  return has(props, 'children');
+}
 
 function findFieldNames<E>(component: MaybeComponent): (keyof E)[] {
   if (!React.isValidElement(component)) return [];
   const { props } = component;
-  if (has(props, 'name')) return [get(props, 'name')];
-  if (has(props, 'children')) {
-    return React.Children.toArray(get(props, 'children')).flatMap(
-      findFieldNames,
-    );
+  if (hasName<E>(props)) return [props.name];
+  if (hasChildren(props)) {
+    return React.Children.toArray(props.children).flatMap(findFieldNames);
   }
+  // if (has(props, 'name')) return [get(props, 'name')!];
+  // if (has(props, 'children')) {
+  //   return React.Children.toArray(get(props, 'children')).flatMap(
+  //     findFieldNames,
+  //   );
+  // }
   return [];
 }
 
@@ -112,7 +126,6 @@ export default function Wizard<E>({
   submitButton,
   onChangeActiveStep,
 }: WizardProps<E>) {
-  const classes = useStyles();
   const formik = useFormikContext<E>();
   const [step, setStep] = useState(0);
   const allSteps = typeof steps === 'function' ? steps() : steps;
@@ -160,11 +173,7 @@ export default function Wizard<E>({
       return prevButton(handleBack);
     }
     return (
-      <Button
-        disabled={step === 0}
-        onClick={handleBack}
-        className={classes.backButton}
-      >
+      <Button disabled={step === 0} onClick={handleBack} sx={backButtonStyle}>
         {prevButton || 'Previous'}
       </Button>
     );
@@ -191,16 +200,16 @@ export default function Wizard<E>({
   })();
   const bottomNavigation = (() => {
     return (
-      <FormGroup row className={classes.formControl}>
+      <FormGroup row sx={formControlStyle}>
         <Grid container justifyContent="flex-start">
           <Grid item xs="auto">
-            <div className={classes.buttonWrapper}>{backButtonElement}</div>
+            <ButtonWrapperDiv>{backButtonElement}</ButtonWrapperDiv>
           </Grid>
           <Grid item xs="auto">
             {step === numberOfSteps - 1 ? (
-              <div className={classes.buttonWrapper}>{submitButtonElement}</div>
+              <ButtonWrapperDiv>{submitButtonElement}</ButtonWrapperDiv>
             ) : (
-              <div className={classes.buttonWrapper}>{nextButtonElement}</div>
+              <ButtonWrapperDiv>{nextButtonElement}</ButtonWrapperDiv>
             )}
           </Grid>
         </Grid>
@@ -217,10 +226,21 @@ export default function Wizard<E>({
           </Step>
         ))}
       </Stepper>
-      <div className={classes.stepperContent}>
+      <StepperContentDiv>
         {currentStepContent}
         {bottomNavigation}
-      </div>
+      </StepperContentDiv>
     </>
   );
 }
+
+Wizard.defaultProps = {
+  connectedFields: undefined,
+  fieldsErrors: undefined,
+  fieldsTouched: undefined,
+  hasErrors: undefined,
+  prevButton: undefined,
+  nextButton: undefined,
+  submitButton: undefined,
+  onChangeActiveStep: undefined,
+};

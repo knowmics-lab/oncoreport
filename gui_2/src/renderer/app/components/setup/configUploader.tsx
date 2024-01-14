@@ -1,30 +1,27 @@
 import React, { ReactNode, useState } from 'react';
 import {
-  Backdrop,
+  Backdrop as OriginalBackdrop,
   CircularProgress,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core';
+  styled,
+} from '@mui/material';
 import fs from 'fs';
 import { ipcRenderer } from 'electron';
-import { Settings, Utils, ValidateConfig } from '../../../api';
-import { useContainer, useService } from '../../../reactInjector';
-import { ApiProtocol } from '../../../interfaces';
+import Box from '@mui/material/Box';
+import { Settings, Utils, ValidateConfig } from '../../../../api';
+import { useContainer, useService } from '../../../../reactInjector';
+import { ApiProtocol } from '../../../../interfaces';
 import { runAsync } from '../utils';
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    messageContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: '#fff',
-    },
-  }),
-);
+const MessageContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+});
+
+const Backdrop = styled(OriginalBackdrop)(({ theme }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  color: '#fff',
+}));
 
 type Props = { children: ReactNode | undefined };
 type BackdropState = {
@@ -34,7 +31,6 @@ type BackdropState = {
 };
 
 export default function ConfigUploader({ children }: Props) {
-  const classes = useStyles();
   const [backdropState, setBackdropState] = useState<BackdropState>({});
   const settings = useService(Settings);
   const container = useContainer();
@@ -49,10 +45,10 @@ export default function ConfigUploader({ children }: Props) {
     setBackdropState({
       shown: true,
       message: (
-        <div className={classes.messageContainer}>
+        <MessageContainer>
           <i className="fas fa-4x fa-fw fa-upload" />
           <h2>Drop a configuration file here to continue.</h2>
-        </div>
+        </MessageContainer>
       ),
     });
   };
@@ -124,20 +120,21 @@ export default function ConfigUploader({ children }: Props) {
   };
 
   return (
-    <div
+    <Box
+      sx={{ display: 'flex', flexGrow: 1 }}
       onDragOver={handleShowMessage}
       onDragEnter={(e) => e.preventDefault()}
-      onDragLeave={(e) => e.preventDefault()}
+      onDragLeave={handleHideMessage}
       onDragEnd={handleHideMessage}
       onDrop={handleDrop}
     >
       {children}
-      <Backdrop className={classes.backdrop} open={!!backdropState.shown}>
-        <div className={classes.messageContainer}>
+      <Backdrop open={!!backdropState.shown}>
+        <MessageContainer>
           {backdropState.spinner && <CircularProgress color="inherit" />}
           {backdropState.message}
-        </div>
+        </MessageContainer>
       </Backdrop>
-    </div>
+    </Box>
   );
 }

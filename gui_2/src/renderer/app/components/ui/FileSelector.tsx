@@ -1,9 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
 import path from 'path';
-import { activeWindow, api } from 'electron-util';
 import {
-  makeStyles,
   List,
   ListItem,
   ListItemAvatar,
@@ -15,26 +13,12 @@ import {
   Icon,
   Box,
   Divider,
-  createStyles,
-} from '@material-ui/core';
+} from '@mui/material';
 import mimetype2fa from 'mimetype-to-fontawesome';
 import FileType from 'file-type';
-import { FileFilter } from '../../../interfaces';
-import { Utils } from '../../../api';
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-      backgroundColor: theme.palette.background.paper,
-    },
-    title: {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    },
-  }),
-);
+import { FileFilter } from '../../../../interfaces';
+import { Utils } from '../../../../api';
+import electronApi, { activeWindow } from '../../../../electronApi';
 
 export type File = {
   name: string;
@@ -79,7 +63,6 @@ export default function FileSelector({
   onFileAdd,
   onFileRemove,
 }: Props) {
-  const classes = useStyles();
   const [files, setFiles] = React.useState<File[]>(value || []);
   const processedFilters = React.useMemo(
     () => processFiltersList(filters),
@@ -89,7 +72,7 @@ export default function FileSelector({
   const processFiles = async (paths: string[]): Promise<File[]> => {
     return Promise.all(
       paths.map(async (f) => {
-        const t = await FileType.fromFile(f);
+        const t = await FileType.fileTypeFromFile(f);
         return {
           name: path.basename(f),
           path: f,
@@ -118,13 +101,11 @@ export default function FileSelector({
   };
 
   const handleAdd = async () => {
-    const properties = [];
-    if (multiple) properties.push('multiSelections');
-    const { canceled, filePaths } = await api.dialog.showOpenDialog(
-      activeWindow(),
+    const { canceled, filePaths } = await electronApi.dialog.showOpenDialog(
+      activeWindow()!,
       {
         filters,
-        properties,
+        properties: multiple ? ['multiSelections'] : [],
       },
     );
     if (!canceled) {
@@ -146,10 +127,10 @@ export default function FileSelector({
   const handleDrop = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     if (!multiple && files.length < 1) {
-      const fileArray = Utils.toArray(e.dataTransfer.files);
+      const fileArray = Utils.toArray<File>(e.dataTransfer.files);
       let filePaths = fileArray.map((t) => t.path);
       if (!multiple) {
-        filePaths = [filePaths.shift()];
+        filePaths = [filePaths[0]];
       }
       realAddFile(filePaths)
         .then(() => true)
@@ -182,7 +163,6 @@ export default function FileSelector({
   const m2f = mimetype2fa({ prefix: 'fa-' });
   return (
     <Box
-      className={classes.root}
       boxShadow={2}
       borderRadius="borderRadius"
       onDragOver={handlePrevent}
@@ -190,6 +170,10 @@ export default function FileSelector({
       onDragLeave={handlePrevent}
       onDragEnd={handlePrevent}
       onDrop={handleDrop}
+      sx={(theme) => ({
+        width: '100%',
+        backgroundColor: theme.palette.background.paper,
+      })}
     >
       <List subheader={makeSubheader()} dense>
         {multiple && files.length > 0 && <Divider />}
@@ -201,9 +185,13 @@ export default function FileSelector({
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              className={classes.title}
               primary={f.name}
               title={f.name}
+              sx={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
             />
             {!disabled && (
               <ListItemSecondaryAction>
