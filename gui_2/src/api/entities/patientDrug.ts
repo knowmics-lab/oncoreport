@@ -90,5 +90,6 @@ export default class PatientDrug extends Entity {
 
   public constructor(adapter: PatientDrugAdapter) {
     super(adapter);
+    this.init();
   }
 }

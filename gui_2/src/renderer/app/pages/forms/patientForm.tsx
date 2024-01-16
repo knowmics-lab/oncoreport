@@ -47,20 +47,20 @@ function useValidationSchema() {
     gender: Yup.mixed()
       .oneOf([Gender.m, Gender.f] as Gender[], 'Gender is invalid')
       .defined('Gender is required'),
-    email: Yup.string()
-      .required('The email is required')
-      .nullable()
-      .max(255, 'Email is too long')
-      .email('Invalid email address'),
-    fiscal_number: Yup.string()
-      .notRequired()
-      .nullable()
-      .max(255, 'Fiscal Number is too long'),
-    telephone: Yup.string()
-      .notRequired()
-      .nullable()
-      .max(255, 'Telephone is too long'),
-    city: Yup.string().notRequired().nullable().max(255, 'City is too long'),
+    // email: Yup.string()
+    //   .required('The email is required')
+    //   .nullable()
+    //   .max(255, 'Email is too long')
+    //   .email('Invalid email address'),
+    // fiscal_number: Yup.string()
+    //   .notRequired()
+    //   .nullable()
+    //   .max(255, 'Fiscal Number is too long'),
+    // telephone: Yup.string()
+    //   .notRequired()
+    //   .nullable()
+    //   .max(255, 'Telephone is too long'),
+    // city: Yup.string().notRequired().nullable().max(255, 'City is too long'),
     diagnosis_date: Yup.date().notRequired(),
     primary_disease: Yup.object({
       disease: Yup.object()
@@ -131,7 +131,7 @@ export default function PatientForm() {
           <Typography variant="h5" component="h3">
             {patient.isNew ? 'New Patient' : 'Edit Patient'}
           </Typography>
-          <Formik
+          <Formik<typeof initialValue>
             initialValues={initialValue}
             validationSchema={validationSchema}
             onSubmit={async (d) => {
@@ -184,18 +184,18 @@ export default function PatientForm() {
                   />
                 </Grid>
               </Grid>
-              <TextField label="Fiscal Number" name="fiscal_number" />
-              <Grid container spacing={2}>
-                <Grid item md>
-                  <TextField label="Email" name="email" type="email" required />
-                </Grid>
-                <Grid item md>
-                  <TextField label="Telephone" name="telephone" type="string" />
-                </Grid>
-                <Grid item md>
-                  <TextField label="City" name="city" />
-                </Grid>
-              </Grid>
+              {/* <TextField label="Fiscal Number" name="fiscal_number" /> */}
+              {/* <Grid container spacing={2}> */}
+              {/*   <Grid item md> */}
+              {/*     <TextField label="Email" name="email" type="email" required /> */}
+              {/*   </Grid> */}
+              {/*   <Grid item md> */}
+              {/*     <TextField label="Telephone" name="telephone" type="string" /> */}
+              {/*   </Grid> */}
+              {/*   <Grid item md> */}
+              {/*     <TextField label="City" name="city" /> */}
+              {/*   </Grid> */}
+              {/* </Grid> */}
               <Grid container spacing={2}>
                 <Grid item md>
                   <AutocompleteField
@@ -206,14 +206,13 @@ export default function PatientForm() {
                     parameters={{
                       tumor: true,
                     }}
-                    // getOptionSelected={(option, value) => {
-                    //   if (!option || !value) {
-                    //     return false;
-                    //   }
-                    //   return option.id === value.id;
-                    // }}
+                    isOptionEqualToValue={(option, value) => {
+                      if (!option || !value) {
+                        return false;
+                      }
+                      return option.id === value.id;
+                    }}
                     getOptionLabel={(option) => {
-                      console.log(option);
                       return option && typeof option === 'object'
                         ? option.name
                         : 'Type something or Select a disease';
@@ -272,7 +271,7 @@ export default function PatientForm() {
               <FormGroup row sx={styles.formControl}>
                 <Grid container justifyContent="space-between">
                   <Grid item xs="auto">
-                    <Button variant="contained" href={goBackUrl}>
+                    <Button variant="outlined" href={goBackUrl}>
                       <Icon className="fas fa-arrow-left" /> Go Back
                     </Button>
                   </Grid>

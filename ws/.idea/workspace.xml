@@ -5,8 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/layout/leftDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/layout/leftDrawer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/adapters/disease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/adapters/disease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/disease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/disease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/drug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/drug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/job.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/job.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/patientDisease.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/patientDisease.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/patientDrug.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/patientDrug.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/entities/suspensionReason.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/entities/suspensionReason.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/apiConnector/entity/entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/apiConnector/entity/entity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/constants/routes.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/constants/routes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/interfaces/entities/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/interfaces/entities/patient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/Button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/Form/AutocompleteField.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/Form/AutocompleteField.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/RemoteTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/ui/RemoteTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/pages/forms/patientForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/pages/forms/patientForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -518,6 +531,7 @@
       <workItem from="1704438462015" duration="1229000" />
       <workItem from="1704660274804" duration="2000" />
       <workItem from="1705310884601" duration="2000" />
+      <workItem from="1705438527188" duration="626000" />
     </task>
     <servers />
   </component>

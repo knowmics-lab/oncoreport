@@ -79,6 +79,7 @@ export default class Job extends Entity {
     private transferManager: TransferManager,
   ) {
     super(adapter);
+    this.init();
   }
 
   public getUploadUrl(): string {

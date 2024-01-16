@@ -56,6 +56,11 @@ function CustomFormikTextField({
   );
 }
 
+function mergeOptions<T>(a: T[], b: T[]) {
+  const set = new Set<T>([...a, ...b]);
+  return [...set];
+}
+
 export default function AutocompleteField<
   T extends EntityObject,
   Multiple extends boolean | undefined,
@@ -82,13 +87,12 @@ export default function AutocompleteField<
     parameters,
     queryBuilderCallback,
   );
-
   return (
     <Field
       name={name}
       component={FormikAutocompleteField}
       fullWidth
-      options={loading ? [] : [meta.value, ...(options ?? [])]}
+      options={loading ? [] : mergeOptions([meta.value], options ?? [])}
       onInputChange={(_e: never, newInputValue: string) => {
         dSetInputValue(newInputValue);
       }}

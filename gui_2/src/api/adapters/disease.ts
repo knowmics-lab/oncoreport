@@ -7,7 +7,7 @@ import { QueryRequest } from '../../apiConnector/interfaces/queryRequest';
 
 @singleton()
 export default class Disease extends Adapter<DiseaseEntity> {
-  protected isReadOnly = true;
+  protected isReadOnly = false;
 
   public constructor(client: HttpClient) {
     super(client);

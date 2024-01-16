@@ -24,5 +24,6 @@ export default class Disease extends Entity {
 
   public constructor(adapter: DiseaseAdapter) {
     super(adapter);
+    this.init();
   }
 }

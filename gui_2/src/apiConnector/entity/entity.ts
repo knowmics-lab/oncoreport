@@ -109,8 +109,8 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
       pushToMetadataMap(RELATIONS, target, key, options.relation);
     if (options.serialize)
       pushToMetadataMap(SERIALIZE, target, key, options.serialize);
-
-    return Object.defineProperty(target, key, {
+    delete target[key];
+    Object.defineProperty(target, key, {
       get() {
         let value = get(this.data, key);
         if (
@@ -814,5 +814,12 @@ export default abstract class Entity {
       const o = ref.deref();
       if (o && o.refreshed) o.refreshed(this);
     });
+  }
+
+  protected init() {
+    for (const f of getMetadataArray(FIELDS, this)) {
+      // @ts-ignore
+      delete this[f];
+    }
   }
 }

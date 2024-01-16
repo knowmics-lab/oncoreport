@@ -1,7 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useMemo, forwardRef, ForwardedRef } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { Button as OB, styled } from '@mui/material';
+import React from 'react';
+import {
+  Link as RouterLink,
+  LinkProps as RouterLinkProps,
+} from 'react-router-dom';
+import { Button as MuiButton, styled } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { green } from '@mui/material/colors';
 import { ButtonOwnProps } from '@mui/material/Button/Button';
@@ -16,38 +19,24 @@ type ButtonProps = {
   onClick?: () => void;
 };
 
-export default function Button({
-  color: co,
-  children: c,
-  disabled: d,
-  href,
-  size: s,
-  variant: v,
-  onClick,
-}: ButtonProps) {
-  const renderLink = useMemo(
-    () =>
-      forwardRef((itemProps, ref: ForwardedRef<HTMLAnchorElement>) => (
-        <RouterLink to={href || ''} {...itemProps} ref={ref} />
-      )),
-    [href],
-  );
+const LinkBehavior = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
+>((props, ref) => {
+  const { href, ...other } = props;
+  // Map href (Material UI) -> to (react-router)
+  return <RouterLink ref={ref} to={href} {...other} />;
+});
+
+export default function Button({ href, onClick, ...props }: ButtonProps) {
   if (onClick) {
-    return (
-      <OB variant={v} color={co} disabled={d} onClick={onClick} size={s}>
-        {c}
-      </OB>
-    );
+    return <MuiButton onClick={onClick} {...props} />;
   }
-  return (
-    <OB variant={v} color={co} disabled={d} size={s} component={renderLink}>
-      {c}
-    </OB>
-  );
+  return <MuiButton href={href} component={LinkBehavior} {...props} />;
 }
 
 Button.defaultProps = {
-  color: 'default',
+  color: 'secondary',
   size: 'medium',
   variant: 'text',
   disabled: false,
@@ -68,9 +57,14 @@ type SubmitButtonProps = {
 export function SubmitButton({ isSaving, text }: SubmitButtonProps) {
   return (
     <ButtonWrapper>
-      <OB type="submit" variant="contained" color="primary" disabled={isSaving}>
+      <MuiButton
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={isSaving}
+      >
         {text || 'Save'}
-      </OB>
+      </MuiButton>
       {isSaving && (
         <CircularProgress
           size={24}

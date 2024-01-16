@@ -32,7 +32,7 @@ type ContainerProps = React.PropsWithChildren<{
 function WrappedTableContainer({ children, wrapped }: ContainerProps) {
   if (!wrapped) return children;
   return (
-    <Paper elevation={1} sx={{ padding: 16 }}>
+    <Paper elevation={1} sx={{ padding: 2 }}>
       {children}
     </Paper>
   );
@@ -196,7 +196,7 @@ export default function RemoteTable<E extends EntityObject>({
         component="div"
         count={totalRows ?? 0}
         rowsPerPage={rowsPerPage ?? 15}
-        page={(currentPage ?? 1) - 1}
+        page={Math.max((currentPage ?? 1) - 1, 0)}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
@@ -221,7 +221,7 @@ RemoteTable.defaultProps = {
   doNotWrap: false,
   onPageChanged: undefined,
   currentPage: 0,
-  rowsPerPage: 10,
+  rowsPerPage: 15,
   totalRows: undefined,
   sorting: undefined,
   data: undefined,
