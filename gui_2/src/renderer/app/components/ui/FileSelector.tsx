@@ -15,7 +15,7 @@ import {
   Divider,
 } from '@mui/material';
 import mimetype2fa from 'mimetype-to-fontawesome';
-import FileType from 'file-type';
+import { fileTypeFromFile } from 'file-type';
 import { FileFilter } from '../../../../interfaces';
 import { Utils } from '../../../../api';
 import electronApi, { activeWindow } from '../../../../electronApi';
@@ -72,7 +72,7 @@ export default function FileSelector({
   const processFiles = async (paths: string[]): Promise<File[]> => {
     return Promise.all(
       paths.map(async (f) => {
-        const t = await FileType.fileTypeFromFile(f);
+        const t = await fileTypeFromFile(f);
         return {
           name: path.basename(f),
           path: f,

@@ -1,16 +1,9 @@
 import React, { useEffect, useState, ReactNode } from 'react';
-import { styled, Toolbar } from '@mui/material';
 import { useService } from '../../../../reactInjector';
 import { Settings } from '../../../../api';
-import { BlockingMessageHandler, ContentWrapper, Notifications, StartHandler } from '../layout';
+import { ContentWrapper, Notifications } from '../layout';
 import SetupWizard from './setupWizard';
 import ConfigUploader from './configUploader';
-import { Footer } from '@mui-treasury/layout';
-
-const Main = styled('main')(({ theme }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-}));
 
 type Props = {
   children: ReactNode | ReactNode[] | Iterable<ReactNode>;

@@ -5,93 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui_2/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/.eslintrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.base.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.eslint.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.main.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.preload.dev.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.renderer.dev.dll.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.renderer.dev.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.config.renderer.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/configs/webpack.paths.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/img/erb-banner.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/img/erb-logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/img/palette-sponsor-banner.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/mocks/fileMock.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/.eslintrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/check-build-exists.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/check-native-dep.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/check-node-env.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/check-port-in-use.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/clean.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/delete-source-maps.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/electron-rebuild.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/link-modules.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.erb/scripts/notarize.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.eslintignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.eslintrc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/FUNDING.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/ISSUE_TEMPLATE/1-Bug_report.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/ISSUE_TEMPLATE/2-Question.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/ISSUE_TEMPLATE/3-Feature_request.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/stale.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/workflows/codeql-analysis.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/workflows/publish.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.github/workflows/test.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.vscode/extensions.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.vscode/launch.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/.vscode/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/CHANGELOG.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/CODE_OF_CONDUCT.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/assets.d.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/entitlements.mac.plist" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icon.icns" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/1024x1024.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/128x128.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/16x16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/24x24.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/256x256.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/32x32.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/48x48.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/512x512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/64x64.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/assets/icons/96x96.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/pnpm-lock.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/release/app/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/release/app/pnpm-lock.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/__tests__/App.test.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/injector.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/main/main.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/main/menu.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/main/preload.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/main/util.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/renderer/App.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/renderer/App.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/renderer/index.ejs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/src/renderer/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui_2/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/logs/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/public/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/tus_cache/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/debugbar/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/data/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/testing/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/views/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/layout/leftDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/layout/leftDrawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -602,6 +517,7 @@
       <workItem from="1704438414320" duration="39000" />
       <workItem from="1704438462015" duration="1229000" />
       <workItem from="1704660274804" duration="2000" />
+      <workItem from="1705310884601" duration="2000" />
     </task>
     <servers />
   </component>
