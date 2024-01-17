@@ -115,7 +115,7 @@ done
 [ -z "$PATIENT_AGE" ] && exit_abnormal_usage "Error: patient age is required."
 IS_A_NUM='^[0-9]+$'
 { ! [[ "$PATIENT_AGE" =~ $IS_A_NUM ]] || ((PATIENT_AGE < 0)); } && exit_abnormal_usage "Error: patient age must be a positive integer."
-if ! grep -w "$PATIENT_TUMOR" "$ONCOREPORT_DATABASES_PATH/Disease.txt" >/dev/null; then
+if ! grep -w "$PATIENT_TUMOR" "$ONCOREPORT_DATABASES_PATH/diseases.tsv" >/dev/null; then
   exit_abnormal_usage "Error: Invalid tumor supplied."
 fi
 if [ ! -d "$PROJECT_DIR" ] && ! mkdir -p "$PROJECT_DIR"; then

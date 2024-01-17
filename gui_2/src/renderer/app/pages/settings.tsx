@@ -5,7 +5,6 @@ import {
   Collapse,
   FormGroup,
   Grid,
-  Paper,
   styled,
   Typography,
 } from '@mui/material';
@@ -21,6 +20,7 @@ import { ConfigObjectType, TypeOfNotification } from '../../../interfaces';
 import useNotifications from '../hooks/useNotifications';
 import styles from './styles';
 import { is } from '../../../api/utils';
+import StandardContainer from '../components/ui/StandardContainer';
 
 const ButtonContainer = styled('div')(({ theme }) => ({
   margin: theme.spacing(1),
@@ -84,7 +84,7 @@ export default function Settings() {
   });
 
   return (
-    <Paper elevation={1} sx={styles.paperWithPadding}>
+    <StandardContainer>
       <Typography variant="h5" component="h3">
         Settings
       </Typography>
@@ -173,6 +173,6 @@ export default function Settings() {
           </Form>
         )}
       </Formik>
-    </Paper>
+    </StandardContainer>
   );
 }

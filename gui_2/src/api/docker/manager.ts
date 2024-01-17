@@ -258,7 +258,11 @@ export default class Manager {
             : undefined;
           const res = await this.pullImage(displayStatus);
           if (displayStatus) {
-            displayStatus.cancel();
+            try {
+              displayStatus.cancel();
+            } catch (_e) {
+              // ignore
+            }
           }
           if (!res.isUpToDate()) {
             await Utils.retryFunction(

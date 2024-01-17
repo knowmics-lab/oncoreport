@@ -4,10 +4,11 @@ import {
   Link as RouterLink,
   LinkProps as RouterLinkProps,
 } from 'react-router-dom';
-import { Button as MuiButton, styled } from '@mui/material';
+import { Button as MuiButton } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import { green } from '@mui/material/colors';
 import { ButtonOwnProps } from '@mui/material/Button/Button';
+import Box from '@mui/material/Box';
+import styles from '../../pages/styles';
 
 type ButtonProps = {
   color?: ButtonOwnProps['color'];
@@ -44,11 +45,6 @@ Button.defaultProps = {
   onClick: null,
 };
 
-const ButtonWrapper = styled('div')(({ theme }) => ({
-  margin: theme.spacing(1),
-  position: 'relative',
-}));
-
 type SubmitButtonProps = {
   isSaving: boolean;
   text?: string;
@@ -56,7 +52,7 @@ type SubmitButtonProps = {
 
 export function SubmitButton({ isSaving, text }: SubmitButtonProps) {
   return (
-    <ButtonWrapper>
+    <Box component="div" sx={styles.buttonWrapper}>
       <MuiButton
         type="submit"
         variant="contained"
@@ -65,20 +61,8 @@ export function SubmitButton({ isSaving, text }: SubmitButtonProps) {
       >
         {text || 'Save'}
       </MuiButton>
-      {isSaving && (
-        <CircularProgress
-          size={24}
-          sx={{
-            color: green[500],
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            marginTop: -12,
-            marginLeft: -12,
-          }}
-        />
-      )}
-    </ButtonWrapper>
+      {isSaving && <CircularProgress size={24} sx={styles.buttonProgress} />}
+    </Box>
   );
 }
 

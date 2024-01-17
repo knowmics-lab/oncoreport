@@ -6,7 +6,6 @@ import {
   FormGroup,
   FormHelperText,
   Grid,
-  Paper,
   Typography,
 } from '@mui/material';
 import { ErrorMessage, Form, Formik, FormikHelpers } from 'formik';
@@ -41,6 +40,7 @@ import useEffectOnce from '../../hooks/useEffectOnce';
 import useRepositoryFetchOne from '../../hooks/useRepositoryFetchOne';
 import useNotifications from '../../hooks/useNotifications';
 import styles from '../styles';
+import StandardContainer from '../../components/ui/StandardContainer';
 
 const steps = [
   'Choose analysis type',
@@ -588,7 +588,7 @@ export default function NewAnalysisForm() {
   );
 
   return (
-    <Paper elevation={1} sx={styles.paperWithPadding}>
+    <StandardContainer>
       {loading || !patient ? (
         <>
           <Grid container justifyContent="center">
@@ -713,6 +713,6 @@ export default function NewAnalysisForm() {
           </Formik>
         </>
       )}
-    </Paper>
+    </StandardContainer>
   );
 }

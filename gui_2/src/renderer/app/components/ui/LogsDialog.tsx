@@ -68,7 +68,14 @@ export default function LogsDialog({ job, open, onClose }: LogsDialogProps) {
   }, [logRef, needsRefresh]);
 
   return (
-    <Dialog fullScreen={fullScreen} open={isOpen} onClose={onClose}>
+    <Dialog
+      fullScreen={fullScreen}
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="lg"
+      scroll="paper"
+      fullWidth
+    >
       <DialogTitle>{job ? `Logs of ${job.name}` : 'Logs'}</DialogTitle>
       <DialogContent>
         {job && !loading ? (
