@@ -36,7 +36,7 @@ export type RowActionFunction<E extends EntityObject> = (
 
 export type RowActionObject<E extends EntityObject> = {
   shown: boolean | ((data: E) => boolean);
-  icon: string | (() => ReactNode);
+  icon: string | (() => ReactNode) | ReactNode;
   size?: 'small' | 'medium';
   disabled?: boolean | ((data: E) => boolean);
   color?: PropTypes.Color;

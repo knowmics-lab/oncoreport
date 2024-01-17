@@ -137,10 +137,9 @@ export default function PatientDrugForm({ drug, patient, onSave }: Props) {
                       label="Drug"
                       repositoryToken={DrugRepository}
                       queryBuilderCallback={(q) => q.paginate(50)}
-                      // TODO: fix this
-                      // getOptionSelected={(option, value) => {
-                      //   return option.id === value.id;
-                      // }}
+                      isOptionEqualToValue={(option, value) => {
+                        return option && value && option.id === value.id;
+                      }}
                       getOptionLabel={(option) =>
                         option && typeof option === 'object' && option.name
                           ? `${option.drugbank_id} - ${option.name}`

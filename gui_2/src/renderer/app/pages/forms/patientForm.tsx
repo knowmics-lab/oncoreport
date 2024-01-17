@@ -8,7 +8,6 @@ import {
   FormGroup,
   Grid,
   Icon,
-  Paper,
   Typography,
 } from '@mui/material';
 import { Form, Formik } from 'formik';
@@ -25,6 +24,7 @@ import useRepositoryFetchOneOrNew from '../../hooks/useRepositoryFetchOneOrNew';
 import useNotifications from '../../hooks/useNotifications';
 import AutocompleteField from '../../components/ui/Form/AutocompleteField';
 import styles from '../styles';
+import StandardContainer from '../../components/ui/StandardContainer';
 
 function useValidationSchema() {
   return Yup.object().shape({
@@ -112,7 +112,7 @@ export default function PatientForm() {
   }, [patient]);
 
   return (
-    <Paper elevation={1} sx={styles.paperWithPadding}>
+    <StandardContainer>
       {loadingPatient || !patient ? (
         <>
           <Grid container justifyContent="center">
@@ -284,6 +284,6 @@ export default function PatientForm() {
           </Formik>
         </>
       )}
-    </Paper>
+    </StandardContainer>
   );
 }

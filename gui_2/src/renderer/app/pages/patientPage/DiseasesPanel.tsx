@@ -22,6 +22,7 @@ import { runAsync } from '../../components/utils';
 import { TypeOfNotification } from '../../../../interfaces';
 import IconButton from '../../components/ui/IconButton';
 import useForceRerender from '../../hooks/useForceRerender';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface PanelProps {
   index: number;
@@ -123,7 +124,7 @@ export default function DiseasesPanel({
           {
             shown: (d) => d.id !== primaryDiseaseId,
             color: 'secondary',
-            icon: 'fas fa-trash',
+            icon: <DeleteIcon />,
             tooltip: 'Delete',
             onClick: (_e, data) => {
               runAsync(async (manager) => {

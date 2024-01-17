@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Paper, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -12,6 +12,7 @@ import DiseasesPanel from './patientPage/DiseasesPanel';
 import DrugsPanel from './patientPage/DrugsPanel';
 import PatientAnalysisPanel from './patientPage/PatientAnalysisPanel';
 import styles from './patientPage/useStyles';
+import StandardContainer from '../components/ui/StandardContainer';
 
 export default function Patient() {
   const { id } = useParams<{ id: string }>();
@@ -35,7 +36,7 @@ export default function Patient() {
           <Typography variant="h5" component="h3" sx={styles.bottomSeparation}>
             Clinical records of {patient.fullName}
           </Typography>
-          <Paper elevation={1} sx={styles.paper}>
+          <StandardContainer sx={{ px: 0, py: 0 }}>
             <AppBar position="static" color="default" sx={styles.appbar}>
               <Tabs
                 value={currentTab}
@@ -51,12 +52,6 @@ export default function Patient() {
                 <Tab label="Analysis" {...a11yProps(4)} />
               </Tabs>
             </AppBar>
-            {/* <SwipeableViews */}
-            {/*   axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} */}
-            {/*   index={currentTab} */}
-            {/*   onChangeIndex={(idx: number) => setCurrentTab(idx)} */}
-            {/*   style={{ padding: 10 }} */}
-            {/* > */}
             <PatientDataPanel
               currentTab={currentTab}
               patient={patient}
@@ -73,8 +68,7 @@ export default function Patient() {
               patient={patient}
               index={3}
             />
-            {/* </SwipeableViews> */}
-          </Paper>
+          </StandardContainer>
         </>
       )}
     </LoadingSection>

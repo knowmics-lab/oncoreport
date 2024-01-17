@@ -100,10 +100,9 @@ export default function PatientDiseaseForm({
                     parameters={{
                       tumor: isPrimary,
                     }}
-                    // TODO: fix this
-                    // getOptionSelected={(option, value) => {
-                    //   return option.id === value.id;
-                    // }}
+                    isOptionEqualToValue={(option, value) => {
+                      return option && value && option.id === value.id;
+                    }}
                     getOptionLabel={(option) =>
                       option && typeof option === 'object'
                         ? option.name

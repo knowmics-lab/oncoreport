@@ -4,6 +4,7 @@ import { Dayjs } from 'dayjs';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogContent } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   DrugEntity,
   PatientDiseaseEntity,
@@ -77,7 +78,7 @@ export default function DrugsPanel({ currentTab, patient, index }: PanelProps) {
           {
             shown: true,
             color: 'secondary',
-            icon: 'fas fa-trash',
+            icon: <DeleteIcon />,
             tooltip: 'Delete',
             onClick: (_e, data) => {
               runAsync(async (manager) => {

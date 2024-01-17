@@ -108,11 +108,6 @@ function Row<E extends EntityObject>({
     <>
       <TableRow
         hover
-        sx={{
-          '& > *': {
-            borderBottom: 'unset',
-          },
-        }}
         role="checkbox"
         tabIndex={-1}
         selected={isSelected(id)}

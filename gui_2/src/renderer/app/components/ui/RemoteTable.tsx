@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TablePagination from '@mui/material/TablePagination';
 import TableContainer from '@mui/material/TableContainer';
@@ -17,6 +16,7 @@ import TableToolbar from './Table/Toolbar';
 import { EntityObject } from '../../../../apiConnector/interfaces/entity';
 import { SimpleMapType } from '../../../../apiConnector/interfaces/common';
 import { SortingDirection } from '../../../../apiConnector';
+import StandardContainer from './StandardContainer';
 
 const Loading = styled('div')(({ theme }) => ({
   width: '100%',
@@ -31,11 +31,7 @@ type ContainerProps = React.PropsWithChildren<{
 
 function WrappedTableContainer({ children, wrapped }: ContainerProps) {
   if (!wrapped) return children;
-  return (
-    <Paper elevation={1} sx={{ padding: 2 }}>
-      {children}
-    </Paper>
-  );
+  return <StandardContainer sx={{ px: 2 }}>{children}</StandardContainer>;
 }
 
 type SortingSpec = SimpleMapType<SortingDirection>;

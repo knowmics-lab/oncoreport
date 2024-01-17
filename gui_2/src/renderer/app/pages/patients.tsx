@@ -2,6 +2,10 @@
 
 import React from 'react';
 import { useNavigate, generatePath } from 'react-router-dom';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import DeleteIcon from '@mui/icons-material/Delete';
 import RepositoryTable from '../components/ui/RepositoryTable';
 import { PatientDiseaseEntity, PatientRepository } from '../../../api';
 import { Gender, TypeOfNotification } from '../../../interfaces';
@@ -43,7 +47,7 @@ export default function Patients() {
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-pencil-alt',
+          icon: <EditIcon />,
           tooltip: 'Edit',
           onClick: (_e, data) => {
             navigate(
@@ -56,7 +60,7 @@ export default function Patients() {
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-fw fa-eye',
+          icon: <VisibilityIcon />,
           tooltip: 'Clinical records',
           onClick: (_e, data) => {
             navigate(
@@ -69,7 +73,7 @@ export default function Patients() {
         {
           shown: true,
           color: 'default',
-          icon: 'fas fa-tint',
+          icon: <WaterDropIcon />,
           tooltip: 'Analysis',
           onClick: (_e, data) => {
             navigate(
@@ -82,7 +86,7 @@ export default function Patients() {
         {
           shown: true,
           color: 'secondary',
-          icon: 'fas fa-trash',
+          icon: <DeleteIcon />,
           tooltip: 'Delete',
           onClick: (_e, data, setLoading) => {
             runAsync(async (manager) => {
