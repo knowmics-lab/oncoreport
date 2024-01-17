@@ -258,11 +258,7 @@ export default class Manager {
             : undefined;
           const res = await this.pullImage(displayStatus);
           if (displayStatus) {
-            try {
-              displayStatus.cancel();
-            } catch (_e) {
-              // ignore
-            }
+            displayStatus.cancel('Update finished');
           }
           if (!res.isUpToDate()) {
             await Utils.retryFunction(
@@ -537,7 +533,7 @@ export default class Manager {
   }
 
   public async pullImage(
-    outputCallback: Nullable<(s: PullStatus) => void>,
+    outputCallback: Nullable<(s: PullStatus) => Promise<void>>,
   ): Promise<PullStatus> {
     return new Promise((resolve, reject) => {
       this.#client.pull(
@@ -554,7 +550,7 @@ export default class Manager {
             const onProgress = (event: PullEvent) => {
               status.pushEvent(event);
               if (outputCallback) {
-                outputCallback(status);
+                outputCallback(status).catch((error) => error);
               }
             };
             // @ts-ignore

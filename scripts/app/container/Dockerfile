@@ -59,7 +59,7 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
                    ca-certificates-java r-cran-shiny r-cran-rmarkdown \
                    r-cran-kableextra r-cran-rcurl r-cran-stringr r-cran-xml2 \
                    r-cran-knitr r-cran-devtools r-cran-optparse r-bioc-iranges \
-                   r-cran-brew r-cran-vcfr r-cran-dt && \
+                   r-cran-brew r-cran-vcfr r-cran-dt libgsl27 && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     update-java-alternatives -s "java-1.17.0-openjdk-${ARCHITECTURE}" && \
     update-ca-certificates -f && \
