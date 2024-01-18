@@ -166,7 +166,7 @@ pharm <- join_and_write_rds(
     "Ref_base", "Var_base", "Type"
   ),
   output_file = output_path("pharm"),
-  db_path = database_path
+  db_path = genome_path
 )
 
 # Merge with RefGene
@@ -209,7 +209,7 @@ cgi <- join_and_write_rds(
     "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"
   ),
   output_file = output_path("cgi"),
-  db_path = database_path
+  db_path = genome_path
 )
 
 # Merge CIVIC and CGI info

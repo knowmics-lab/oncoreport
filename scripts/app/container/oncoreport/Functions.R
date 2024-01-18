@@ -207,6 +207,7 @@ join_and_write_rds <- function(
   if (check_alt_base && any(colnames(data) == "Alt_base")) {
     colnames(data)[colnames(data) == "Alt_base"] <- "Var_base"
   }
+  data$Stop <- as.integer(data$Stop)
   data <- suppressMessages(data %>% inner_join(variants))
   if (check_for_type) {
     data$Type <- rep("NA", nrow(data))

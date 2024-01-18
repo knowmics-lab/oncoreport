@@ -49,8 +49,8 @@ if (nrow(cosmic_data_orig) > 0) {
 }
 cosmic_data_details <- cosmic_data_orig %>% 
   select(Gene, Variant, Chromosome, Ref_base, Var_base, Start, Stop) %>%
-  mutate(Start = format(as.numeric(Start), digits=0, big.mark=",", scientific = FALSE), 
-         Stop = format(as.numeric(Stop), digits=0, big.mark=",", scientific = FALSE)) %>%
+  mutate(Start = format(as.numeric(Start), big.mark=",", scientific = FALSE),
+         Stop = format(as.numeric(Stop), big.mark=",", scientific = FALSE)) %>%
   arrange(Gene, Variant) %>%
   distinct()
 if (nrow(cosmic_data_details) > 0) {

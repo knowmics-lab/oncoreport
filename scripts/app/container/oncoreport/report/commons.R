@@ -101,6 +101,9 @@ prepare.annotation <- function(all_annotations, pt_tumor, get.raw.function, ref.
     primary.annotations$y_score <- sapply(
       current_year - as.numeric(primary.annotations$year),
       function(y.diff) {
+        if (all(is.na(y.diff))) {
+          return(0)
+        }
         if (y.diff < 3) {
           return(3)
         }

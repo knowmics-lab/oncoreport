@@ -19,8 +19,8 @@ class EsmoParser extends Command
     use CleanupEsmoTitles;
 
     private const ESMO_PATH = 'app/esmo/';
-    private const IDX_URL   = 'http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/SearchFiles/idx.json';
-    private const TOC_URL   = 'http://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/TOCJson/guidelinesTOC.json';
+    private const IDX_URL   = 'https://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/SearchFiles/idx.json';
+    private const TOC_URL   = 'https://interactiveguidelines.esmo.org/esmo-web-app/media/data/EN/TOCJson/guidelinesTOC.json';
 
     /**
      * The name and signature of the console command.
@@ -47,9 +47,20 @@ class EsmoParser extends Command
      */
     protected static function downloadFile(string $url, string $outputPath): ?string
     {
+        if (file_exists($outputPath)) {
+            return $outputPath;
+        }
         try {
+            $context = stream_context_create(
+                [
+                    "ssl" => [
+                        "verify_peer"      => false,
+                        "verify_peer_name" => false,
+                    ],
+                ]
+            );
             $tmpOutputFile = tempnam("/tmp", "downloaded_file");
-            if (file_put_contents($tmpOutputFile, fopen($url, 'rb')) !== false) {
+            if (file_put_contents($tmpOutputFile, file_get_contents($url, context: $context)) !== false) {
                 if (file_exists($outputPath)) {
                     unlink($outputPath);
                 }

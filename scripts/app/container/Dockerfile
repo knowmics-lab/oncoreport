@@ -94,7 +94,8 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     apt autoremove --purge -y && \
     apt autoclean && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 FROM stage1_base as stage1_support
 ARG BASE_PATH="/support"

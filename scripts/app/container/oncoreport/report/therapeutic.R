@@ -136,8 +136,8 @@ if (nrow(primary.annotations) > 0) {
       group_by(Gene, Variant, Chromosome, Ref_base, Var_base, Start, Stop) %>%
       summarise(Variant_summary = paste0("<ul>", paste0("<li>", Variant_summary[trimws(Variant_summary) != ""], "</li>", collapse = ""), "</ul>")) %>% 
       arrange(Gene, Variant, Chromosome, Start, Stop) %>%
-      mutate(Start = format(as.numeric(Start), digits=0, big.mark=",", scientific = FALSE), 
-             Stop = format(as.numeric(Stop), digits=0, big.mark=",", scientific = FALSE))
+      mutate(Start = format(as.numeric(Start), big.mark=",", scientific = FALSE),
+             Stop = format(as.numeric(Stop), big.mark=",", scientific = FALSE))
     
     details.genes <- annot.details$Gene
     annot.details$Gene <- NULL

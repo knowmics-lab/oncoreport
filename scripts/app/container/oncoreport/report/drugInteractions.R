@@ -1,7 +1,7 @@
 cat("Building Drug-Drug Interactions File\n")
 
 .variables.to.keep <- ls()
-interactions_db <- unique(read.csv(paste0(path_db, "/drug_drug_interactions_light.txt"), sep = "\t"))
+interactions_db <- unique(readRDS(paste0(path_db, "/drug_drug_interactions.rds")))
 interactions_db$key <- mapply(
   function (i1,i2) (paste(sort(c(i1,i2)), collapse = ",")), interactions_db$Drug2_code, interactions_db$Drug1_code)
 pt_drugs <- unique(tryCatch(readLines(pt_path_file_comorbid), error = function(e) (character(0))))
