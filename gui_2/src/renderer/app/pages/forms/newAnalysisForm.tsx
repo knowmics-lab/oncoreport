@@ -662,7 +662,7 @@ export default function NewAnalysisForm() {
                   uploadCallbacks.uploadEnd();
                 }
                 pushSimple(`Upload completed!`, TypeOfNotification.success);
-                // await job.submit();
+                // await job.submit(); // todo: fix this
                 pushSimple(`Job submitted!`, TypeOfNotification.success);
                 navigate(
                   generatePath(Routes.JOBS_BY_PATIENT, {
