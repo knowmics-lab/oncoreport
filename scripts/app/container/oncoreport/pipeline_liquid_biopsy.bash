@@ -22,8 +22,6 @@ usage() {
   echo "  -d STRING                 Patient tumor disease id in disease ontology (required)" 1>&2
   echo "  -D FILE                   File containing list of drugbank ids of drugs taken by the patient (required)" 1>&2
   echo "  -a INT                    Patient age (required)" 1>&2
-  echo "  -c STRING                 Patient city" 1>&2
-  echo "  -l STRING                 Patient telephone" 1>&2
   echo "  -S STRING                 Patient tumor stage" 1>&2
   echo "  -T INT                    Number of threads (default: 1)" 1>&2
   echo "  -G STRING                 Genome version ('hg19' or 'hg38', default: 'hg19')" 1>&2
@@ -66,7 +64,7 @@ LOFREQ_ENABLE=false
 LOFREQ_OPTIONS=()
 VARSCAN_ENABLE=false
 VARSCAN_OPTIONS=()
-while getopts t:1:2:P:C:i:n:s:g:d:D:a:c:l:S:T:G:E:A:M:L:V:p flag; do
+while getopts t:1:2:P:C:i:n:s:g:d:D:a:S:T:G:E:A:M:L:V:p flag; do
   case "${flag}" in
   t) INPUT_TYPE="${OPTARG}" ;;
   p) PAIRED=true ;;
@@ -85,8 +83,6 @@ while getopts t:1:2:P:C:i:n:s:g:d:D:a:c:l:S:T:G:E:A:M:L:V:p flag; do
   d) PATIENT_TUMOR="${OPTARG}" ;;
   D) PATIENT_DRUGS="${OPTARG}" ;;
   a) PATIENT_AGE="${OPTARG}" ;;
-  c) PATIENT_CITY="${OPTARG}" ;;
-  l) PATIENT_TELEPHONE="${OPTARG}" ;;
   S) PATIENT_STAGE="${OPTARG}" ;;
   T) THREADS="${OPTARG}" ;;
   G) GENOME="${OPTARG}" ;;
@@ -274,9 +270,8 @@ php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$PATIENT_TUMOR" "$PROJEC
 echo "Report creation"
 Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$PATIENT_NAME" -s "$PATIENT_SURNAME" -c "$PATIENT_ID" \
   -g "$PATIENT_SEX" -a "$PATIENT_AGE" -t "$PATIENT_TUMOR" -f "$FILE_1_NAME" -p "$PROJECT_DIR" \
-  -d "$ONCOREPORT_DATABASES_PATH" -A "$TYPE" -C "$PATIENT_CITY" -P "$PATIENT_TELEPHONE" \
-  -T "$PATIENT_STAGE" -D "$PATIENT_DRUGS" -H "$ONCOREPORT_HTML_TEMPLATE" -E "$DEPTH_FILTER" \
-  -F "$AF_FILTER" || exit_abnormal_code "Unable to create report" 113
+  -d "$ONCOREPORT_DATABASES_PATH" -A "$TYPE" -T "$PATIENT_STAGE" -D "$PATIENT_DRUGS" \
+  -H "$ONCOREPORT_HTML_TEMPLATE" -E "$DEPTH_FILTER" -F "$AF_FILTER" || exit_abnormal_code "Unable to create report" 113
 
 echo "Archiving results"
 [[ "$RAW_VARIANTS" == "true" ]] && tar -zcf "$PROJECT_DIR/variants_raw.tgz" "$PATH_VARIANTS_RAW"

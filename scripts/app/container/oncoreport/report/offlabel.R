@@ -16,7 +16,7 @@ offlabel.trials <- read.csv(paste0(path_project, "/txt/trial/", pt_fastq, ".txt"
 list.all.trials    <- unique(offlabel.trials$Clinical_trial)
 
 .variables.to.keep <- ls()
-offlabel.annotations <- build.other.annotations(all.annotations, pt_tumor)
+offlabel.annotations <- build.other.annotations(all.annotations, pt_tumor, offlabel.references)
 order_id <- c()
 order_evidence <- c()
 if (nrow(offlabel.annotations) > 0) {

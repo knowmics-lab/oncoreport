@@ -202,7 +202,8 @@ join.and.write <- function(
 
 join_and_write_rds <- function(
     variants, db, selected_columns = NULL, output_file,
-    db_path, check_for_type = FALSE, check_alt_base = FALSE) {
+    db_path, check_for_type = FALSE, check_alt_base = FALSE,
+    separate_rows_by = NULL) {
   data <- readRDS(file.path(db_path, paste0(db, ".rds")))
   if (check_alt_base && any(colnames(data) == "Alt_base")) {
     colnames(data)[colnames(data) == "Alt_base"] <- "Var_base"
@@ -214,6 +215,11 @@ join_and_write_rds <- function(
   }
   if (!is.null(selected_columns)) {
     data <- data.frame(data)[, selected_columns, drop = FALSE]
+  }
+  if (!is.null(separate_rows_by)) {
+    data <- data %>%
+      tidyr::separate_rows(all_of(separate_rows_by), sep = ";;") %>%
+      unique()
   }
   write.table(data, output_file,
     quote = FALSE, row.names = FALSE,

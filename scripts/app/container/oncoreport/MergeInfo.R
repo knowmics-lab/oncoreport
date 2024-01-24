@@ -119,7 +119,8 @@ civic <- join_and_write_rds(
     "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"
   ),
   output_file = output_path("civic"),
-  db_path = genome_path
+  db_path = genome_path,
+  separate_rows_by = c("PMID", "Citation")
 )
 
 ## Merge with Clinvar
@@ -209,7 +210,8 @@ cgi <- join_and_write_rds(
     "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type"
   ),
   output_file = output_path("cgi"),
-  db_path = genome_path
+  db_path = genome_path,
+  separate_rows_by = c("PMID", "Citation")
 )
 
 # Merge CIVIC and CGI info

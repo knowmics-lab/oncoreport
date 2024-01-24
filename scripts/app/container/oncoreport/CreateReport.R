@@ -27,8 +27,6 @@ pt_fastq <- get_option("fastq")
 path_project <- get_option("project")
 path_db <- get_option("database")
 tumor_type <- get_option("analysis")
-pt_city <- get_nullable("city")
-pt_phone <- get_nullable("phone")
 pt_tumor_stage <- get_nullable("stage")
 pt_path_file_comorbid <- get_option("drugs")
 path_html_source <- get_option("sources")
@@ -60,8 +58,6 @@ template.env$pt_surname <- pt_surname
 template.env$pt_name <- pt_name
 template.env$pt_sex <- ifelse(pt_sex == "m", "Male", "Female")
 template.env$pt_age <- pt_age
-template.env$pt_city <- pt_city
-template.env$pt_phone <- pt_phone
 template.env$pt_sample_name <- pt_sample_name
 template.env$pt_disease_name <- pt_disease_name
 template.env$pt_tumor_stage <- pt_tumor_stage

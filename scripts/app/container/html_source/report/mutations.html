@@ -87,13 +87,12 @@
                                     </div>
                                     <div class="col-4 card-text">
                                         Age: <%=pt_age %><br>
-                                        City: <%=ifelse(is.null(pt_city), "Not Available", pt_city) %><br>
-                                        Phone: <%=ifelse(is.null(pt_phone), "Not Available", pt_phone) %><br>
+                                        Disease: <%=pt_disease_name %><br>
+                                        Stage: <%=ifelse(is.null(pt_tumor_stage), "Not Available", pt_tumor_stage) %>
                                     </div>
                                     <div class="col-4 card-text">
                                         Sample Name: <%=pt_sample_name %><br>
-                                        Disease: <%=pt_disease_name %><br>
-                                        Stage: <%=ifelse(is.null(pt_tumor_stage), "Not Available", pt_tumor_stage) %>
+                                        &nbsp;<br>&nbsp;
                                     </div>
                                 </div>
                             </div>
@@ -125,10 +124,10 @@
                         <use xlink:href="#exclamation-triangle-fill"/>
                     </svg>
                     <div>
-                        * COSMIC clinical significance is predicted with the FATHMM-MKL algorithm.
+                        * COSMIC tier is obtained from the Cancer Mutation Census.
                         For more details see
-                        <a href="https://cancer.sanger.ac.uk/cosmic/analyses">
-                            https://cancer.sanger.ac.uk/cosmic/analyses
+                        <a href="https://cancer.sanger.ac.uk/cmc/help">
+                            https://cancer.sanger.ac.uk/cmc/help
                         </a>.
                     </div>
                 </div>

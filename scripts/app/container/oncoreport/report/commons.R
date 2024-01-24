@@ -41,7 +41,7 @@ get.raw.other.annotations <- function(all_annotations, pt_tumor) {
   return(other_annotations)
 }
 
-prepare.annotation <- function(all_annotations, pt_tumor, get.raw.function, ref.base = "ref") {
+prepare.annotation <- function(all_annotations, pt_tumor, therapeutic.references, get.raw.function, ref.base = "ref") {
   primary.annotations <- get.raw.function(all_annotations, pt_tumor)
   if (nrow(primary.annotations) > 0) {
     substitutes <- primary.annotations[primary.annotations$Drug_interaction_type == "Substitutes", ]
@@ -94,7 +94,7 @@ prepare.annotation <- function(all_annotations, pt_tumor, get.raw.function, ref.
       }
       return(paste0(agencies, collapse = "/"))
     }, str_count(primary.annotations$Drug, ","), primary.annotations$Approved)
-    primary.annotations$Citation <- gsub("(,)([0-9]+)", "\\1 \\2,", primary.annotations$Citation)
+    primary.annotations$Citation <- gsub("(,)\\s+([0-9]+)", "\\1 \\2,", primary.annotations$Citation)
     primary.annotations$year <- gsub(".*, (\\w+),.*", "\\1", primary.annotations$Citation)
     primary.annotations$Score <- as.numeric(primary.annotations$Score)
     current_year <- as.numeric(format(Sys.time(), "%Y"))
@@ -182,16 +182,16 @@ prepare.annotation <- function(all_annotations, pt_tumor, get.raw.function, ref.
   return(primary.annotations)
 }
 
-build.primary.annotations <- function(all_annotations, pt_tumor) {
+build.primary.annotations <- function(all_annotations, pt_tumor, therapeutic.references) {
   return(
-    prepare.annotation(all_annotations, pt_tumor, get.raw.primary.annotations)
+    prepare.annotation(all_annotations, pt_tumor, therapeutic.references, get.raw.primary.annotations)
   )
 }
 
-build.other.annotations <- function(all_annotations, pt_tumor) {
+build.other.annotations <- function(all_annotations, pt_tumor, therapeutic.references) {
   return(
     prepare.annotation(
-      all_annotations, pt_tumor, get.raw.other.annotations, "off"
+      all_annotations, pt_tumor, therapeutic.references, get.raw.other.annotations, "off"
     )
   )
 }

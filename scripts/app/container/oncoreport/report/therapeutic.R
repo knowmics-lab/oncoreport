@@ -18,7 +18,7 @@ all.annotations[is.na(all.annotations)] <- " "
 all.annotations$id <- seq_len(nrow(all.annotations))
 
 .variables.to.keep <- c(ls(), "recommended_drugs")
-primary.annotations <- build.primary.annotations(all.annotations, pt_tumor)
+primary.annotations <- build.primary.annotations(all.annotations, pt_tumor, therapeutic.references)
 order_id <- c()
 order_evidence <- c()
 if (nrow(primary.annotations) > 0) {

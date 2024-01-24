@@ -55,14 +55,6 @@ option_list <- list(
     type = "character", default = NULL,
     help = "tumor site", metavar = "character"
   ),
-  make_option(c("-C", "--city"),
-    type = "character", default = NULL,
-    help = "patient city", metavar = "character"
-  ),
-  make_option(c("-P", "--phone"),
-    type = "character", default = NULL,
-    help = "patient phone", metavar = "character"
-  ),
   make_option(c("-T", "--stage"),
     type = "character", default = NULL,
     help = "tumor stage (TNM)", metavar = "character"
@@ -76,6 +68,7 @@ option_list <- list(
     help = "analysis AF filter", metavar = "character"
   )
 )
+
 opt_parser <- OptionParser(option_list = option_list)
 opt <- tryCatch(parse_args(opt_parser), error = function(e) {
   print_help(opt_parser)
