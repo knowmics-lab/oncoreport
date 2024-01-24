@@ -234,8 +234,6 @@ class TumorOnlyAnalysisJobType extends AbstractJob
                  ->flagParameter('-p', $paired)
                  ->conditionalParameter('-2', $file2, $paired)
                  ->optionalParameter('-S', $patient->primaryDisease->stage_string)
-                 ->optionalParameter('-c', $patient->city)
-                 ->optionalParameter('-l', $patient->telephone)
                  ->arrayParameter('-M', $callersOptions['mutect'])
                  ->arrayParameter('-L', $callersOptions['lofreq'])
                  ->arrayParameter('-V', $callersOptions['varscan']);

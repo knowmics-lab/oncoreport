@@ -245,8 +245,6 @@ class TumorVsNormalAnalysisJobType extends AbstractJob
                  ->conditionalParameter('-3', $file3, $type !== 'vcf')
                  ->conditionalParameter('-4', $file4, $type === 'fastq' && $paired)
                  ->optionalParameter('-S', $patient->primaryDisease->stage_string)
-                 ->optionalParameter('-c', $patient->city)
-                 ->optionalParameter('-l', $patient->telephone)
                  ->arrayParameter('-M', $callersOptions['mutect'])
                  ->arrayParameter('-L', $callersOptions['lofreq'])
                  ->arrayParameter('-V', $callersOptions['varscan']);
