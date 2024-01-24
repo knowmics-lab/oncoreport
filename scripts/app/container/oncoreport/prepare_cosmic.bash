@@ -144,7 +144,7 @@ preprocess_archives() {
   echo "   - Merging all mutations positions and variations..."
   zcat "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_${GENOME}.tsv.gz" \
     "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_${GENOME}.tsv.gz" | sort |
-    uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_hg19.tsv.gz"
+    uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_${GENOME}.tsv.gz"
 
   echo "   - Extracting mutation tiers from COSMIC CMC..."
   zcat "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME}.tsv.gz" |
@@ -159,11 +159,12 @@ cleanup() {
 
 OLD_PWD=$(pwd)
 cd "$ONCOREPORT_COSMIC_PATH" || exit 107
-echo "Preparing COSMIC database:"
+echo "Preparing COSMIC hg19 database:"
 download_files "hg19" "GRCh37"
 preprocess_archives "hg19"
 echo " - Processing hg19 database..."
 Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
+echo "Preparing COSMIC hg38 database:"
 download_files "hg38" "GRCh38"
 preprocess_archives "hg38"
 echo " - Processing hg38 database..."
