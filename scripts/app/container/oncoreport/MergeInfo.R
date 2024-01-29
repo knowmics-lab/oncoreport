@@ -336,7 +336,24 @@ write.table(
   sep = "\t"
 )
 # Food interactions
-list_drugs <- unique(unlist(strsplit(c(def$Drug, pharm$Drug), ",")))
+drugs    <- gsub("\\\"+", "\"", c(def$Drug, pharm$Drug), perl = TRUE)
+to_clean <- grep("\\\"", drugs, value = TRUE)
+to_split <- grep("\\\"", drugs, value = TRUE, invert = TRUE)
+list_drugs <- unique(unlist(strsplit(to_split, ",")))
+cleaned  <- sapply(lapply(strsplit(to_clean, "\\\""), function(x) { 
+  x[x != ","] <- gsub(",", "\\,", x[x != ","], fixed = TRUE)
+  return (x)
+}), function(x)(paste0(x, collapse="")))
+list_drugs <- c(list_drugs, 
+                unique(
+                  gsub(
+                    pattern = "(\\\\,.*)", 
+                    replacement = "", 
+                    x = unlist(
+                      strsplit(x = cleaned, split = "(?<!\\\\),", perl = TRUE)
+                    ), 
+                    perl = TRUE)))
+list_drugs <- na.omit(list_drugs)
 drugfood <- readRDS(file.path(database_path, "drugfood_database.rds"))
 drugfood <- drugfood[drugfood$Drug %in% list_drugs, ]
 write.table(

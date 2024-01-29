@@ -48,7 +48,7 @@ pt_disease_name <- unique(pt_disease_details$DO_name)[1]
 evidence_list <- c(
   "Validated association", "FDA guidelines", "NCCN guidelines",
   "Clinical evidence", "Late trials", "Early trials", "Case study",
-  "Case report", "Preclinical evidence", "Pre-clinical", 
+  "Case report", "Preclinical evidence", "Pre-clinical",
   "Inferential association"
 )
 

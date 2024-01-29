@@ -47,6 +47,13 @@ unlink(tmp_file)
 
 to_key <- function(column) (gsub("[^[:alnum:] ]|\\s+", "", gsub("'s", "", gsub("\U00F6", "oe", tolower(unname(column))))))
 
+replace_all <- function(data, find, replace) {
+  for (i in seq_along(find)) {
+    data[data == find[i]] <- replace[i]
+  }
+  return(data)
+}
+
 df_onto <- data.frame(
   doid = gsub("DOID:", "", names(onto$name)),
   name = unname(onto$name),
@@ -62,7 +69,15 @@ civic_diseases$key <- to_key(civic_diseases$disease)
 
 cgidb_diseases <-
   data.frame(disease = unique(cgi$Disease)) %>%
-  mutate(key = to_key(disease)) %>%
+  mutate(key = replace_all(to_key(disease), c(
+    "anycancertype",
+    "solidtumors",
+    "hematologicmalignancies"
+  ), c(
+    "cancer",
+    "cancer",
+    "hematologiccancer"
+  ))) %>%
   stringdist_left_join(civic_diseases, by = "key", max_dist = 2, distance_col = "dist") %>%
   group_by(disease = disease.x, key = key.x) %>%
   summarise(

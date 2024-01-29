@@ -13,7 +13,7 @@ list.all.trials    <- unique(therapeutic.trials$Clinical_trial)
 
 all.annotations <- read.csv(paste0(path_project, "/txt/", pt_fastq, "_definitive.txt"), sep = "\t", 
                             colClasses = "character", stringsAsFactors = FALSE)
-all.annotations <- diseases_db_simple %>% inner_join(all.annotations, by = "Disease")
+all.annotations <- diseases_db_simple %>% left_join(all.annotations, by = "Disease")
 all.annotations[is.na(all.annotations)] <- " "
 all.annotations$id <- seq_len(nrow(all.annotations))
 

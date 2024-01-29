@@ -200,6 +200,15 @@ join.and.write <- function(
   return(data.frame(data))
 }
 
+trimws_df <- function(df) {
+  for (i in 1:ncol(df)) {
+    if (is.character(df[[i]])) {
+      df[[i]] <- trimws(df[[i]])
+    }
+  }
+  return(df)
+}
+
 join_and_write_rds <- function(
     variants, db, selected_columns = NULL, output_file,
     db_path, check_for_type = FALSE, check_alt_base = FALSE,
@@ -218,9 +227,9 @@ join_and_write_rds <- function(
   }
   if (!is.null(separate_rows_by)) {
     data <- data %>%
-      tidyr::separate_rows(all_of(separate_rows_by), sep = ";;") %>%
-      unique()
+      tidyr::separate_rows(all_of(separate_rows_by), sep = ";;")
   }
+  data <- data %>% trimws_df(.) %>% unique()
   write.table(data, output_file,
     quote = FALSE, row.names = FALSE,
     na = "NA", sep = "\t"
