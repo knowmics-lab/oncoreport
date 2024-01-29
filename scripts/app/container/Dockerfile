@@ -81,7 +81,6 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     [ -d "gatk-$GATK_VERSION/" ] && mv "gatk-$GATK_VERSION/gatk-package-$GATK_VERSION-local.jar" "/usr/local/bin/gatk-package-local.jar" && \
     wget "https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar" && \
     mv picard.jar /usr/local/bin/ && \
-    apt remove -y pandoc && \
     curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-${PANDOC_VERSION}-1-${ARCHITECTURE}.deb" -o pandoc.deb && \
     dpkg -i pandoc.deb && \
     wget "https://github.com/dkoboldt/varscan/raw/master/VarScan.v${VARSCAN_VERSION}.jar" && \
@@ -138,6 +137,7 @@ VOLUME [ "${ONCO_BASE}/ws/storage" ]
 
 CMD ["/bootstrap.sh"]
 
+#apt remove -y pandoc && \
 #libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev
 #Rscript /installPackages.R "stage2" && 
 #apt remove -y r-base-dev libssl-dev libxml2-dev libcurl4-openssl-dev libyaml-dev libfontconfig1-dev unixodbc-dev && \
