@@ -124,9 +124,9 @@ if [ ! -f "$BASE_PATH/databases/hg19/civic_database.rds" ] || [ ! -f "$BASE_PATH
     Rscript "$BASE_PATH/scripts/preprocess_civic.R" "$BASE_PATH/databases"
     pip3 install cython
     pip3 install CrossMap
-    CrossMap.py bed "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" \
+    /usr/local/bin/CrossMap bed "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg19_partial_1.bed" "$BASE_PATH/databases/civic_hg38_partial_2.bed"
-    CrossMap.py bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \
+    /usr/local/bin/CrossMap bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg38_partial_1.bed" "$BASE_PATH/databases/civic_hg19_partial_2.bed"
     Rscript "$BASE_PATH/scripts/build_civic.R" "$BASE_PATH/databases"
     [[ -f "$BASE_PATH/databases/hg19/civic_database.rds" ]] && rm -rf "$BASE_PATH/databases/civic_hg19_partial"*
