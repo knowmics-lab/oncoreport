@@ -94,7 +94,7 @@ prepare.annotation <- function(all_annotations, pt_tumor, therapeutic.references
       }
       return(paste0(agencies, collapse = "/"))
     }, str_count(primary.annotations$Drug, ","), primary.annotations$Approved)
-    primary.annotations$Citation <- gsub("(,)\\s+([0-9]+)", "\\1 \\2,", primary.annotations$Citation)
+    primary.annotations$Citation <- gsub("(,)\\s*([0-9]+)", "\\1 \\2,", primary.annotations$Citation)
     primary.annotations$year <- gsub(".*, (\\w+),.*", "\\1", primary.annotations$Citation)
     primary.annotations$Score <- as.numeric(primary.annotations$Score)
     current_year <- as.numeric(format(Sys.time(), "%Y"))
@@ -182,16 +182,22 @@ prepare.annotation <- function(all_annotations, pt_tumor, therapeutic.references
   return(primary.annotations)
 }
 
-build.primary.annotations <- function(all_annotations, pt_tumor, therapeutic.references) {
+build.primary.annotations <- function(
+    all_annotations, pt_tumor, therapeutic.references) {
   return(
-    prepare.annotation(all_annotations, pt_tumor, therapeutic.references, get.raw.primary.annotations)
+    prepare.annotation(
+      all_annotations, pt_tumor, therapeutic.references,
+      get.raw.primary.annotations
+    )
   )
 }
 
-build.other.annotations <- function(all_annotations, pt_tumor, therapeutic.references) {
+build.other.annotations <- function(
+    all_annotations, pt_tumor, therapeutic.references) {
   return(
     prepare.annotation(
-      all_annotations, pt_tumor, therapeutic.references, get.raw.other.annotations, "off"
+      all_annotations, pt_tumor, therapeutic.references,
+      get.raw.other.annotations, "off"
     )
   )
 }
