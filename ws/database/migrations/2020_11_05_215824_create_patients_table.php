@@ -23,10 +23,6 @@ class CreatePatientsTable extends Migration
                 $table->string('last_name');
                 $table->enum('gender', Constants::GENDERS);
                 $table->tinyInteger('age');
-//                $table->string('email')->nullable();
-//                $table->string('fiscal_number')->nullable();
-//                $table->string('telephone')->nullable();
-//                $table->string('city')->nullable();
                 $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamps();

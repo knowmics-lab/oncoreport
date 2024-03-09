@@ -208,24 +208,24 @@ if [[ "$INPUT_TYPE" == "ubam" ]] || { [[ "$INPUT_TYPE" == "bam" ]] && [[ "$REALI
   if [[ "$PAIRED" == "true" ]]; then
     INPUT_FILE_2="$PATH_FASTQ/${TUMOR_UB}_2.fq"
     INPUT_FILE_4="$PATH_FASTQ/${NORMAL_UB}_2.fq"
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -p -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
+    bash "$ONCOREPORT_PIPELINE_PATH/ubam_to_fastq.sh" -p -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
+    bash "$ONCOREPORT_PIPELINE_PATH/ubam_to_fastq.sh" -p -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
   else
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/ubam_to_fastq.sh" -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
+    bash "$ONCOREPORT_PIPELINE_PATH/ubam_to_fastq.sh" -t "$THREADS" -i "$TUMOR_UBAM_FILE" -1 "$INPUT_FILE_1" || exit_abnormal_code "Unable to convert tumor uBAM to FASTQ" 102
+    bash "$ONCOREPORT_PIPELINE_PATH/ubam_to_fastq.sh" -t "$THREADS" -i "$NORMAL_UBAM_FILE" -1 "$INPUT_FILE_3" || exit_abnormal_code "Unable to convert normal uBAM to FASTQ" 103
   fi
   INPUT_TYPE="fastq"
 fi
 
-TUMOR_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_1")
-[[ "$INPUT_TYPE" != "vcf" ]] && NORMAL_NAME=$(. "$ONCOREPORT_SCRIPT_PATH/pipeline/get_name.sh" "$INPUT_FILE_3")
+TUMOR_NAME=$(. "$ONCOREPORT_PIPELINE_PATH/get_name.sh" "$INPUT_FILE_1")
+[[ "$INPUT_TYPE" != "vcf" ]] && NORMAL_NAME=$(. "$ONCOREPORT_PIPELINE_PATH/get_name.sh" "$INPUT_FILE_3")
 
 if [[ "$INPUT_TYPE" == "fastq" ]]; then
   echo "Aligning TUMOR sample"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
+  bash "$ONCOREPORT_PIPELINE_PATH/trim_and_align.sh" -1 "$INPUT_FILE_1" -2 "$INPUT_FILE_2" -i "$GENOME" \
     -t "$THREADS" -r "$PATH_TRIM_TUMOR" -o "$PATH_PREPROCESS/tumor_aligned_raw.bam" -n "$DO_TRIM" || exit_abnormal_code "Unable to perform alignment of tumor sample" 104
   echo "Aligning NORMAL sample"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/trim_and_align.sh" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" -i "$GENOME" \
+  bash "$ONCOREPORT_PIPELINE_PATH/trim_and_align.sh" -1 "$INPUT_FILE_3" -2 "$INPUT_FILE_4" -i "$GENOME" \
     -t "$THREADS" -r "$PATH_TRIM_NORMAL" -o "$PATH_PREPROCESS/normal_aligned_raw.bam" -n "$DO_TRIM" || exit_abnormal_code "Unable to perform alignment of normal sample" 105
   INPUT_FILE_1="$PATH_PREPROCESS/tumor_aligned_raw.bam"
   INPUT_FILE_3="$PATH_PREPROCESS/normal_aligned_raw.bam"
@@ -235,13 +235,13 @@ fi
 RAW_VARIANTS=false
 if [[ "$INPUT_TYPE" == "bam" ]]; then
   echo "Pre-processing TUMOR sample"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/preprocess_alignment.sh" -g "$TUMOR_NAME" -t "$THREADS" -i "$GENOME" \
+  bash "$ONCOREPORT_PIPELINE_PATH/preprocess_alignment.sh" -g "$TUMOR_NAME" -t "$THREADS" -i "$GENOME" \
     -b "$INPUT_FILE_1" -a "$PATH_PREPROCESS/tumor_annotated.bam" -s "$PATH_PREPROCESS/tumor_sorted.bam" \
     -d "$PATH_PREPROCESS/tumor_nodup.bam" -m "$PATH_PREPROCESS/tumor_marked.txt" \
     -r "$PATH_PREPROCESS/tumor_recal_data.csv" -R "$PATH_PREPROCESS/tumor_recal.bam" \
     -o "$PATH_PREPROCESS/tumor_ordered.bam" || exit_abnormal_code "Unable to pre-process TUMOR BAM" 106
   echo "Pre-processing NORMAL sample"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/preprocess_alignment.sh" -g "$NORMAL_NAME" -t "$THREADS" -i "$GENOME" \
+  bash "$ONCOREPORT_PIPELINE_PATH/preprocess_alignment.sh" -g "$NORMAL_NAME" -t "$THREADS" -i "$GENOME" \
     -b "$INPUT_FILE_3" -a "$PATH_PREPROCESS/normal_annotated.bam" -s "$PATH_PREPROCESS/normal_sorted.bam" \
     -d "$PATH_PREPROCESS/normal_nodup.bam" -m "$PATH_PREPROCESS/normal_marked.txt" \
     -r "$PATH_PREPROCESS/normal_recal_data.csv" -R "$PATH_PREPROCESS/normal_recal.bam" \
@@ -251,7 +251,7 @@ if [[ "$INPUT_TYPE" == "bam" ]]; then
   VAR_INPUTS=()
 
   if [[ "$MUTECT_ENABLE" == "true" ]]; then
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_mutect.sh" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_ordered.bam" \
+    bash "$ONCOREPORT_PIPELINE_PATH/call_mutect.sh" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_ordered.bam" \
       -T "$TUMOR_NAME" -n "$PATH_PREPROCESS/normal_ordered.bam" -N "$NORMAL_NAME" \
       -v "$PATH_VARIANTS_RAW/variants_mutect.vcf" -f "$PATH_VARIANTS_RAW/variants_mutect_with_filter.vcf" \
       -p "$PATH_VARIANTS_PASS/variants_mutect.vcf" -d "$DOWNSAMPLE" || exit_abnormal_code "Unable to call variants with Mutect2" 108
@@ -259,21 +259,21 @@ if [[ "$INPUT_TYPE" == "bam" ]]; then
   fi
 
   if [[ "$LOFREQ_ENABLE" == "true" ]]; then
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_lofreq.sh" -@ "$THREADS" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_ordered.bam" \
+    bash "$ONCOREPORT_PIPELINE_PATH/call_lofreq.sh" -@ "$THREADS" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_ordered.bam" \
       -T "$TUMOR_NAME" -n "$PATH_PREPROCESS/normal_ordered.bam" -v "$PATH_VARIANTS_RAW/variants_lofreq.vcf" \
       -p "$PATH_VARIANTS_PASS/variants_lofreq.vcf" || exit_abnormal_code "Unable to call variants with LoFreq" 109
     VAR_INPUTS+=("-i" "$PATH_VARIANTS_PASS/variants_lofreq.vcf")
   fi
 
   if [[ "$VARSCAN_ENABLE" == "true" ]]; then
-    bash "$ONCOREPORT_SCRIPT_PATH/pipeline/call_varscan.sh" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_annotated.bam" \
+    bash "$ONCOREPORT_PIPELINE_PATH/call_varscan.sh" -i "$GENOME" -t "$PATH_PREPROCESS/tumor_annotated.bam" \
       -T "$TUMOR_NAME" -n "$PATH_PREPROCESS/normal_annotated.bam" -v "$PATH_VARIANTS_RAW/variants_varscan.vcf" \
       -p "$PATH_VARIANTS_PASS/variants_varscan.vcf" || exit_abnormal_code "Unable to call variants with VarScan" 110
     VAR_INPUTS+=("-i" "$PATH_VARIANTS_PASS/variants_varscan.vcf")
   fi
 
   echo "Concatenating calls"
-  bash "$ONCOREPORT_SCRIPT_PATH/pipeline/merge_calls.sh" -o "$PATH_VARIANTS_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 111
+  bash "$ONCOREPORT_PIPELINE_PATH/merge_calls.sh" -o "$PATH_VARIANTS_PASS/variants.vcf" "${VAR_INPUTS[@]}" || exit_abnormal_code "Unable to concatenate variant calls" 111
 
   INPUT_FILE_1="$PATH_VARIANTS_PASS/variants.vcf"
   INPUT_TYPE="vcf"
@@ -294,6 +294,9 @@ fi
 echo "Pre-processing variants"
 Rscript "$ONCOREPORT_SCRIPT_PATH/PreprocessVCF.R" -i "$INPUT_FILE_1" -o "$PATH_TXT/variants.txt" -d "$DEPTH_FILTER" || exit_abnormal_code "Unable to pre-process variants" 113
 echo "Annotation of VCF files"
+python3 "$ONCOREPORT_PIPELINE_PATH/annotate_oncokb.py" -g "$GENOME" \
+   -o "$PATH_TXT/${TUMOR_NAME}_oncokb.txt" \
+   -e "$ONCOREPORT_APP_PATH/.env_oncokb" "$PATH_TXT/variants.txt"
 Rscript "$ONCOREPORT_SCRIPT_PATH/MergeInfo.R" -g "$GENOME" -d "$ONCOREPORT_DATABASES_PATH" -c "$ONCOREPORT_COSMIC_PATH" \
   -p "$PROJECT_DIR" -s "$TUMOR_NAME" -t "$PATIENT_TUMOR" || exit_abnormal_code "Unable to prepare report input files" 114
 php "$ONCOREPORT_SCRIPT_PATH/../ws/artisan" esmo:parse "$PATIENT_TUMOR" "$PROJECT_DIR" || exit_abnormal_code "Unable to prepare ESMO guidelines" 115

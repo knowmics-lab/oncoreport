@@ -71,8 +71,7 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     cd fastq-pair/ && mkdir build && cd build && cmake .. && make && make install && \
     apt install -y libtool libgsl-dev libhts-dev && cd /oncoreport/tmp/ && \
     git clone https://github.com/CSB5/lofreq.git && cd lofreq && ./bootstrap && ./configure && make && make install && \
-    pip3 install cutadapt && \
-    pip3 install pysam && \
+    pip3 install cutadapt pysam python-dotenv requests urllib3 metapub && \
     curl -fsSL "https://github.com/FelixKrueger/TrimGalore/archive/$TRIM_GALORE_VERSION.tar.gz" -o trim_galore.tar.gz && \
     tar -zxvf trim_galore.tar.gz && \
     cp "TrimGalore-$TRIM_GALORE_VERSION/trim_galore" /usr/local/bin/ && \

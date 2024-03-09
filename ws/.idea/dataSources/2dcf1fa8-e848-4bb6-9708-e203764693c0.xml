@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="oncoreport@localhost">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.51">
-    <root id="1"/>
+    <root id="1">
+      <DefaultCasing>mixed/mixed</DefaultCasing>
+      <DefaultEngine>InnoDB</DefaultEngine>
+      <DefaultTmpEngine>InnoDB</DefaultTmpEngine>
+      <Grants>oncoreport|schema||oncoreport||ALTER|G
+oncoreport|schema||oncoreport||ALTER ROUTINE|G
+oncoreport|schema||oncoreport||CREATE|G
+oncoreport|schema||oncoreport||CREATE ROUTINE|G
+oncoreport|schema||oncoreport||CREATE TEMPORARY TABLES|G
+oncoreport|schema||oncoreport||CREATE VIEW|G
+oncoreport|schema||oncoreport||DELETE|G
+oncoreport|schema||oncoreport||DROP|G
+oncoreport|schema||oncoreport||EVENT|G
+oncoreport|schema||oncoreport||EXECUTE|G
+oncoreport|schema||oncoreport||INDEX|G
+oncoreport|schema||oncoreport||INSERT|G
+oncoreport|schema||oncoreport||LOCK TABLES|G
+oncoreport|schema||oncoreport||REFERENCES|G
+oncoreport|schema||oncoreport||SELECT|G
+oncoreport|schema||oncoreport||SHOW VIEW|G
+oncoreport|schema||oncoreport||TRIGGER|G
+oncoreport|schema||oncoreport||UPDATE|G</Grants>
+      <ServerVersion>8.0.35</ServerVersion>
+    </root>
     <collation id="2" parent="1" name="armscii8_general_ci">
       <Charset>armscii8</Charset>
       <DefaultForCharset>1</DefaultForCharset>
