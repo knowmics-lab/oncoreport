@@ -74,11 +74,7 @@ prepare.annotation <- function(all_annotations, pt_tumor, therapeutic.references
         Clinical_significance, Evidence_statement, Variant_summary, PMID, Citation, Chromosome, Start, Stop,
         Ref_base, Var_base, Type, Approved, Score, Reference, id
       )
-    primary.annotations$Evidence_level <- ordered(primary.annotations$Evidence_level, levels = c(
-      "Validated association", "FDA guidelines", "NCCN guidelines", "Clinical evidence",
-      "Late trials", "Early trials", "Case study", "Case report", "Preclinical evidence",
-      "Pre-clinical", "Inferential association"
-    ))
+    primary.annotations$Evidence_level <- ordered(primary.annotations$Evidence_level, levels = .evidence_list)
     primary.annotations <- primary.annotations[order(primary.annotations$Evidence_level), ]
     primary.annotations$Approved <- mapply(function(dcount, approved) {
       if (dcount < 1) {
@@ -162,12 +158,7 @@ prepare.annotation <- function(all_annotations, pt_tumor, therapeutic.references
     }
     primary.annotations$Evidence_level <- factor(
       primary.annotations$Evidence_level,
-      levels = c(
-        "Validated association", "FDA guidelines", "NCCN guidelines",
-        "Clinical evidence", "Late trials", "Early trials", "Case study",
-        "Case report", "Preclinical evidence", "Pre-clinical",
-        "Inferential association"
-      )
+      levels = .evidence_list
     )
     primary.annotations <- primary.annotations[
       order(
@@ -246,4 +237,12 @@ assign.colors <- function(df) {
     color[red] <- make_color_gradient(df$Score[red], "#FFE6E6", "red")
   }
   return(color)
+}
+
+remap_evidence_levels_oncokb <- function(x) {
+  x <- as.character(x)
+  for (n in names(.oncokb_levels_map)) {
+    x[x == n] <- unname(.oncokb_levels_map[n])
+  }
+  return(x)
 }

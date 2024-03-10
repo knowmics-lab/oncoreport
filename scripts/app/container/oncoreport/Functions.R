@@ -34,22 +34,9 @@ leading_urls <- function(x, leading_disease, dis, project_path, sample_name) {
   x <- x[selection, , drop = FALSE]
   x[is.na(x)] <- " "
   x$Drug_interaction_type <- gsub(" ", "", x$Drug_interaction_type)
-  x$Evidence_type <- factor(
-    x$Evidence_type,
-    levels = c(
-      "Diagnostic", "Prognostic", "Predisposing",
-      "Predictive", "Oncogenic", "Functional"
-    )
-  )
-  x$Evidence_level <- factor(
-    x$Evidence_level,
-    levels = c(
-      "Validated association", "FDA guidelines", "NCCN guidelines",
-      "Clinical evidence", "Late trials", "Early trials", "Case study",
-      "Case report", "Preclinical evidence", "Pre-clinical",
-      "Inferential association"
-    )
-  )
+  x$Evidence_type <- factor(x$Evidence_type, levels = .evidence_types)
+  x$Evidence_level <- factor(x$Evidence_level, levels = .evidence_list)
+
   x <- x[order(
     x$Gene, x$Evidence_level, x$Evidence_type, x$Variant, x$Drug,
     x$Drug_interaction_type, x$Clinical_significance, x$PMID
@@ -73,22 +60,8 @@ off_urls <- function(x, leading_disease, dis, project_path, sample_name) {
   x <- x[selection, , drop = FALSE]
   x[is.na(x)] <- " "
   x$Drug <- as.character(x$Drug, levels = (x$Drug))
-  x$Evidence_type <- factor(
-    x$Evidence_type,
-    levels = c(
-      "Diagnostic", "Prognostic", "Predisposing", "Predictive",
-      "Oncogenic", "Functional"
-    )
-  )
-  x$Evidence_level <- factor(
-    x$Evidence_level,
-    levels = c(
-      "Validated association", "FDA guidelines", "NCCN guidelines",
-      "Clinical evidence", "Late trials", "Early trials", "Case study",
-      "Case report", "Preclinical evidence", "Pre-clinical",
-      "Inferential association"
-    )
-  )
+  x$Evidence_type <- factor(x$Evidence_type, levels = .evidence_types)
+  x$Evidence_level <- factor(x$Evidence_level, levels = .evidence_list)
   x <- x[order(
     x$Disease, x$Evidence_level, x$Evidence_type, x$Gene, x$Variant,
     x$Drug, x$Clinical_significance, x$PMID
@@ -201,7 +174,7 @@ join.and.write <- function(
 }
 
 trimws_df <- function(df) {
-  for (i in 1:ncol(df)) {
+  for (i in seq_len(ncol(df))) {
     if (is.character(df[[i]])) {
       df[[i]] <- trimws(df[[i]])
     }
@@ -229,7 +202,9 @@ join_and_write_rds <- function(
     data <- data %>%
       tidyr::separate_rows(all_of(separate_rows_by), sep = ";;")
   }
-  data <- data %>% trimws_df(.) %>% unique()
+  data <- data %>%
+    trimws_df(.) %>%
+    unique()
   write.table(data, output_file,
     quote = FALSE, row.names = FALSE,
     na = "NA", sep = "\t"

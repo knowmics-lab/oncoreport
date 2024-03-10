@@ -59,6 +59,7 @@ if (nrow(offlabel.annotations) > 0) {
     "Evidence_level", "Type", "Evidence_statement", "Reference", "Score", "AIFA", "EMA", "FDA",
     "year", "id"
   ), drop = F]
+  es$Evidence_level <- remap_evidence_levels_oncokb(es$Evidence_level)
   es$Evidence <- seq_len(nrow(es))
   es$Details <- paste0('[<a href="Javascript:;" class="evidence-details-link" data-id="#det-', es$id, '">+</a>]')
   es$Details[!complete.cases(es[, c("Evidence_statement", "Reference"), drop = FALSE]) | trimws(es$Evidence_statement) == ""] <- ""

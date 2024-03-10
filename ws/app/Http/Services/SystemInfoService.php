@@ -7,6 +7,7 @@ use App\Jobs\Types\Factory;
 use App\Models\Job;
 use App\Utils;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Throwable;
 
 class SystemInfoService
@@ -20,6 +21,42 @@ class SystemInfoService
     public function isUpdateNeeded(): bool
     {
         return Utils::containerVersion() > Utils::currentVersion();
+    }
+
+    /**
+     * Checks if the oncokb token is valid
+     *
+     * @return array
+     */
+    public function oncokbTokenStatus(): array
+    {
+        if (Cache::has('oncokbTokenStatus')) {
+            return Cache::get('oncokbTokenStatus');
+        }
+        $status = 'ok';
+        try {
+            $statusMessage = Utils::runCommand(
+                [
+                    'bash',
+                    realpath(config('oncoreport.bash_script_path').'/verify_oncokb_key.bash'),
+                ]
+            );
+        } catch (ProcessFailedException $e) {
+            $process = $e->getProcess();
+            $exitCode = $process->getExitCode();
+            if ($exitCode > 0 && $exitCode <= 4) {
+                $statusMessage = $process->getOutput();
+                $status = ($exitCode === 4) ? 'warning' : 'error';
+            } else {
+                $status = 'error';
+                $statusMessage = $e->getMessage();
+            }
+        }
+        $statusMessage = trim($statusMessage);
+        $tokenStatus = ['status' => $status, 'message' => $statusMessage];
+        Cache::put('oncokbTokenStatus', $tokenStatus, now()->addDay());
+
+        return $tokenStatus;
     }
 
     /**
@@ -143,6 +180,7 @@ class SystemInfoService
                 'availableMemory'        => $this->availableMemory(),
                 'numCores'               => $this->numCores(),
                 'usedCores'              => $this->usedCores(),
+                'oncokbTokenStatus'      => $this->oncokbTokenStatus(),
             ],
         ];
     }

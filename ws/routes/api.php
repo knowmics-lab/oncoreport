@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\DiseaseController;
 use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\JobTypeController;
-use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientDiseaseController;
 use App\Http\Controllers\Api\PatientDiseaseDrugController;

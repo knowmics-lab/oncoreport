@@ -89,6 +89,7 @@ this_file <- function() {
   }
 }
 
+source(file.path(dirname(this_file()), "report/constants.R"))
 source(file.path(dirname(this_file()), "Functions.R"))
 
 variants_path <- file.path(project_path, "txt/variants.txt")
@@ -214,9 +215,37 @@ cgi <- join_and_write_rds(
   separate_rows_by = c("PMID", "Citation")
 )
 
+cat("Reading OncoKB annotations...\n")
+if (file.exists(output_path("oncokb"))) {
+  oncokb <- read.delim(output_path("oncokb")) %>%
+    tidyr::separate_rows(PMID, Citation, sep = ";;") %>%
+    unique()
+  # Fix PMID and Citation columns for the score computation
+  # We will use the most recent publication
+  # for (i in seq_len(nrow(oncokb))) {
+  #   parts <- strsplit(oncokb$Citation[i], ";;")[[1]]
+  #   if (length(parts) > 1) {
+  #     selected <- which.max(as.numeric(
+  #       gsub(".*,([0-9]{4})", "\\1", parts, perl = TRUE)
+  #     ))
+  #     pmid <- strsplit(oncokb$PMID[i], ";;")[[1]][selected]
+  #     oncokb$PMID[i] <- pmid
+  #     oncokb$Citation[i] <- parts[selected]
+  #   }
+  # }
+} else {
+  oncokb <- NULL
+}
+
 # Merge CIVIC and CGI info
-cat("Combining CIVIC and CGI...\n")
+cat("Combining CIVIC, CGI, and OncoKB...\n")
 def <- merge(civic, cgi, all = TRUE)
+if (!is.null(oncokb)) {
+  def <- merge(def, oncokb, all = TRUE)
+}
+def$Disease[
+  def$Disease %in% c("All Solid Tumors", "All Liquid Tumors", "All Tumors")
+] <- "Any cancer type"
 def$Clinical_significance[
   def$Clinical_significance == "Responsive"
 ] <- "Sensitivity/Response"
@@ -336,23 +365,27 @@ write.table(
   sep = "\t"
 )
 # Food interactions
-drugs    <- gsub("\\\"+", "\"", c(def$Drug, pharm$Drug), perl = TRUE)
+drugs <- gsub("\\\"+", "\"", c(def$Drug, pharm$Drug), perl = TRUE)
 to_clean <- grep("\\\"", drugs, value = TRUE)
 to_split <- grep("\\\"", drugs, value = TRUE, invert = TRUE)
 list_drugs <- unique(unlist(strsplit(to_split, ",")))
-cleaned  <- sapply(lapply(strsplit(to_clean, "\\\""), function(x) { 
+cleaned <- sapply(lapply(strsplit(to_clean, "\\\""), function(x) {
   x[x != ","] <- gsub(",", "\\,", x[x != ","], fixed = TRUE)
-  return (x)
-}), function(x)(paste0(x, collapse="")))
-list_drugs <- c(list_drugs, 
-                unique(
-                  gsub(
-                    pattern = "(\\\\,.*)", 
-                    replacement = "", 
-                    x = unlist(
-                      strsplit(x = cleaned, split = "(?<!\\\\),", perl = TRUE)
-                    ), 
-                    perl = TRUE)))
+  return(x)
+}), function(x) (paste0(x, collapse = "")))
+list_drugs <- c(
+  list_drugs,
+  unique(
+    gsub(
+      pattern = "(\\\\,.*)",
+      replacement = "",
+      x = unlist(
+        strsplit(x = cleaned, split = "(?<!\\\\),", perl = TRUE)
+      ),
+      perl = TRUE
+    )
+  )
+)
 list_drugs <- na.omit(list_drugs)
 drugfood <- readRDS(file.path(database_path, "drugfood_database.rds"))
 drugfood <- drugfood[drugfood$Drug %in% list_drugs, ]

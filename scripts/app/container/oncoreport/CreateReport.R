@@ -13,6 +13,10 @@ this_file <- function() {
 }
 this_dir <- dirname(this_file())
 source(file.path(this_dir, "report", "imports.R"), local = knitr::knit_global())
+source(
+  file.path(this_dir, "report", "constants.R"),
+  local = knitr::knit_global()
+)
 source(file.path(this_dir, "report", "commons.R"), local = knitr::knit_global())
 source(file.path(this_dir, "report", "args.R"), local = knitr::knit_global())
 options(knitr.table.format = "html")
@@ -44,14 +48,6 @@ diseases_db <- imported_diseases[[1]]
 diseases_db_simple <- imported_diseases[[2]]
 pt_disease_details <- diseases_db[diseases_db$DOID == pt_tumor, , drop = FALSE]
 pt_disease_name <- unique(pt_disease_details$DO_name)[1]
-
-evidence_list <- c(
-  "Validated association", "FDA guidelines", "NCCN guidelines",
-  "Clinical evidence", "Late trials", "Early trials", "Case study",
-  "Case report", "Preclinical evidence", "Pre-clinical",
-  "Inferential association"
-)
-
 
 template.env <- new.env()
 template.env$pt_surname <- pt_surname
