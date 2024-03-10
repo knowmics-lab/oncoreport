@@ -164,6 +164,45 @@ class SystemInfoService
     }
 
     /**
+     * Get the versions of the databases used by the system to perform the annotation
+     *
+     * @return array
+     */
+    public function dbVersions(): array
+    {
+        return Cache::remember(
+            'dbVersions',
+            now()->addDay(),
+            static function () {
+                $versions = [];
+                $fp = @fopen(config('oncoreport.db_versions'), 'rb');
+                if ($fp) {
+                    fgetcsv($fp, separator: "\t"); // skip header
+                    while ($line = fgetcsv($fp, separator: "\t")) {
+                        $versions[] = [
+                            'name'          => $line[0],
+                            'version'       => $line[1],
+                            'download_date' => $line[2],
+                        ];
+                    }
+                    @fclose($fp);
+                }
+                $fp = @fopen(config('oncoreport.cosmic_version'), 'rb');
+                if ($fp) {
+                    $line = fgetcsv($fp, separator: "\t");
+                    $versions[] = [
+                        'name'          => $line[0],
+                        'version'       => $line[1],
+                        'download_date' => $line[2],
+                    ];
+                }
+
+                return $versions;
+            }
+        );
+    }
+
+    /**
      * Transforms this object in an array
      *
      * @return array
@@ -181,6 +220,7 @@ class SystemInfoService
                 'numCores'               => $this->numCores(),
                 'usedCores'              => $this->usedCores(),
                 'oncokbTokenStatus'      => $this->oncokbTokenStatus(),
+                'dbVersions'             => $this->dbVersions(),
             ],
         ];
     }

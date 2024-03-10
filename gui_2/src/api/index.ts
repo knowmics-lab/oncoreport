@@ -28,6 +28,7 @@ export {
 } from './repositories';
 export { DockerManager, DockerPullStatus } from './docker';
 export { default as Settings } from './settings';
+export { default as OncoKb } from './oncokb';
 export { default as TransferManager } from './transferManager';
 export { default as ValidateConfig } from './validateConfig';
 export { default as Notifications } from './notifications';

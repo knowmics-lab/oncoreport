@@ -8,10 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import {
   Snackbar as MaterialSnackbar,
   SnackbarCloseReason,
+  Alert,
 } from '@mui/material';
 import SnackbarContent from '@mui/material/SnackbarContent';
 import WarningIcon from '@mui/icons-material/Warning';
-import { Alert } from '@mui/lab';
 import { TypeOfNotification } from '../../../../interfaces';
 import theme from '../../theme';
 

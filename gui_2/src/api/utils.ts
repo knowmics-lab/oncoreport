@@ -17,6 +17,15 @@ export type Capabilities = {
   numCores: number;
   usedCores: number;
   availableCores: number;
+  oncokbTokenStatus: {
+    status: 'ok' | 'warning' | 'error';
+    message: string;
+  };
+  dbVersions: {
+    name: string;
+    version: string;
+    download_date: string;
+  }[];
 };
 
 let watcher: FSWatcher | null = null;

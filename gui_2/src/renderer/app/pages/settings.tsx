@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Button,
   CircularProgress,
@@ -15,7 +15,11 @@ import SelectField from '../components/ui/Form/SelectField';
 import FileField from '../components/ui/Form/FileField';
 import SwitchField from '../components/ui/Form/SwitchField';
 import { useContainer, useService } from '../../../reactInjector';
-import { Settings as SettingsManager, ValidateConfig } from '../../../api';
+import {
+  Settings as SettingsManager,
+  ValidateConfig,
+  OncoKb as OncoKbManager,
+} from '../../../api';
 import { ConfigObjectType, TypeOfNotification } from '../../../interfaces';
 import useNotifications from '../hooks/useNotifications';
 import styles from './styles';
@@ -27,13 +31,27 @@ const ButtonContainer = styled('div')(({ theme }) => ({
   position: 'relative',
 }));
 
+type ConfigFormDataType = ConfigObjectType & {
+  oncoKbApiKey?: string;
+  ncbiApiKey?: string;
+};
+
 export default function Settings() {
   const injector = useContainer();
   const settings = useService(SettingsManager);
+  const oncokb = useService(OncoKbManager);
   const [isSaving, setIsSaving] = useState(false);
   const { pushSimple } = useNotifications();
+  const initialConfig = useMemo(
+    () => ({
+      ...settings.getConfig(),
+      ...(oncokb.getConfig() ?? {}),
+    }),
+    [settings, oncokb],
+  );
+  console.log(initialConfig);
 
-  const formSubmit = async (values: ConfigObjectType) => {
+  const formSubmit = async (values: ConfigFormDataType) => {
     setIsSaving(true);
     try {
       const validator = injector.resolve(ValidateConfig);
@@ -46,6 +64,12 @@ export default function Settings() {
       };
       const newConfig = await validator.validate();
       settings.saveConfig(newConfig);
+      if (newConfig.local) {
+        await oncokb.saveConfig({
+          oncoKbApiKey: values.oncoKbApiKey,
+          ncbiApiKey: values.ncbiApiKey,
+        });
+      }
       pushSimple('Settings saved!', TypeOfNotification.success);
       setIsSaving(false);
     } catch (e) {
@@ -81,6 +105,8 @@ export default function Settings() {
       then: (schema) => schema.notRequired(),
       otherwise: (schema) => schema.required(),
     }),
+    oncoKbApiKey: Yup.string().notRequired(),
+    ncbiApiKey: Yup.string().notRequired(),
   });
 
   return (
@@ -90,7 +116,7 @@ export default function Settings() {
       </Typography>
       <Typography component="p" />
       <Formik
-        initialValues={settings.getConfig()}
+        initialValues={initialConfig}
         validationSchema={validationSchema}
         onSubmit={formSubmit}
       >
@@ -150,7 +176,11 @@ export default function Settings() {
                 </Grid>
               </Grid>
             </Collapse>
-            <TextField label="API key" name="apiKey" />
+            <TextField label="API key" name="apiKey" required />
+            <Collapse in={values.local}>
+              <TextField label="OncoKB API key" name="oncoKbApiKey" />
+              <TextField label="NCBI API key" name="ncbiApiKey" />
+            </Collapse>
             <FormGroup row sx={styles.formControl}>
               <Grid container justifyContent="flex-end">
                 <Grid item xs="auto">
