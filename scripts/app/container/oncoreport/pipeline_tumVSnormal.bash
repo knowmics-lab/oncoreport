@@ -307,6 +307,8 @@ Rscript "$ONCOREPORT_SCRIPT_PATH/CreateReport.R" -n "$PATIENT_NAME" -s "$PATIENT
   -H "$ONCOREPORT_HTML_TEMPLATE" -E "$DEPTH_FILTER" || exit_abnormal_code "Unable to create report" 116
 
 echo "Archiving results"
+cat "$ONCOREPORT_DATABASES_PATH/versions.txt" \
+  "$ONCOREPORT_COSMIC_PATH/version.txt" >"$PROJECT_DIR/database_versions.txt"
 [[ "$RAW_VARIANTS" == "true" ]] && tar -zcf "$PROJECT_DIR/variants_raw.tgz" "$PATH_VARIANTS_RAW"
 [[ "$RAW_VARIANTS" == "true" ]] && mv "$INPUT_FILE_1" "$PROJECT_DIR/variants.vcf"
 [[ "$RAW_VARIANTS" == "true" ]] && tar -zcf "$PROJECT_DIR/variants_pass.tgz" "$PATH_VARIANTS_PASS"
