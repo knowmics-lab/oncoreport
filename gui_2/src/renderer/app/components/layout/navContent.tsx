@@ -214,17 +214,15 @@ function NavContent() {
       return (
         <React.Fragment key={key}>
           <ExpandableComponent
-            icon={<Icon className={icon} />}
+            icon={<Icon sx={{ width: '1.25em' }} className={icon} />}
             primary={text}
             isOpen={getState(key)}
             handleClick={() => setState(key)}
-            // className={nested ? classes.nested : undefined}
           />
           <CollapseComponent
             in={getState(key)}
             timeout="auto"
             unmountOnExit
-            // className={nested ? classes.nested : undefined}
           >
             {renderMenuItems(items, renderMenuItem, true)}
           </CollapseComponent>
@@ -235,7 +233,7 @@ function NavContent() {
       const Link = nested ? NestedListItemLink : ListItemLink;
       return (
         <Link
-          icon={<Icon className={icon} />}
+          icon={<Icon sx={{ width: '1.25em' }} className={icon} />}
           primary={text}
           to={to}
           exact={exact}
