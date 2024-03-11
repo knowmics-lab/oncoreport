@@ -30,33 +30,34 @@ class SystemInfoService
      */
     public function oncokbTokenStatus(): array
     {
-        if (Cache::has('oncokbTokenStatus')) {
-            return Cache::get('oncokbTokenStatus');
-        }
-        $status = 'ok';
-        try {
-            $statusMessage = Utils::runCommand(
-                [
-                    'bash',
-                    realpath(config('oncoreport.bash_script_path').'/verify_oncokb_key.bash'),
-                ]
-            );
-        } catch (ProcessFailedException $e) {
-            $process = $e->getProcess();
-            $exitCode = $process->getExitCode();
-            if ($exitCode > 0 && $exitCode <= 4) {
-                $statusMessage = $process->getOutput();
-                $status = ($exitCode === 4) ? 'warning' : 'error';
-            } else {
-                $status = 'error';
-                $statusMessage = $e->getMessage();
-            }
-        }
-        $statusMessage = trim($statusMessage);
-        $tokenStatus = ['status' => $status, 'message' => $statusMessage];
-        Cache::put('oncokbTokenStatus', $tokenStatus, now()->addDay());
+        return Cache::remember(
+            'oncokbTokenStatus',
+            now()->addMinute(),
+            static function () {
+                $status = 'ok';
+                try {
+                    $statusMessage = Utils::runCommand(
+                        [
+                            'bash',
+                            realpath(config('oncoreport.bash_script_path').'/verify_oncokb_key.bash'),
+                        ]
+                    );
+                } catch (ProcessFailedException $e) {
+                    $process = $e->getProcess();
+                    $exitCode = $process->getExitCode();
+                    if ($exitCode > 0 && $exitCode <= 4) {
+                        $statusMessage = $process->getOutput();
+                        $status = ($exitCode === 4) ? 'warning' : 'error';
+                    } else {
+                        $status = 'error';
+                        $statusMessage = $e->getMessage();
+                    }
+                }
+                $statusMessage = trim($statusMessage);
 
-        return $tokenStatus;
+                return ['status' => $status, 'message' => $statusMessage];
+            }
+        );
     }
 
     /**
@@ -221,6 +222,7 @@ class SystemInfoService
                 'usedCores'              => $this->usedCores(),
                 'oncokbTokenStatus'      => $this->oncokbTokenStatus(),
                 'dbVersions'             => $this->dbVersions(),
+                'isUpdateNeeded'         => $this->isUpdateNeeded(),
             ],
         ];
     }

@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Livewire/Admin/Setup/Update.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Jobs/Types/UpdateJobType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/livewire/admin/setup/update.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/navigation-dropdown.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/jetstream/components/welcome.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/SystemInfoService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/SystemInfoService.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -536,7 +528,7 @@
       <workItem from="1710075740798" duration="1112000" />
       <workItem from="1710077049281" duration="742000" />
       <workItem from="1710091246383" duration="2762000" />
-      <workItem from="1710152491629" duration="3569000" />
+      <workItem from="1710152491629" duration="4574000" />
     </task>
     <servers />
   </component>
