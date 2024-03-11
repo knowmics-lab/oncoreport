@@ -20,6 +20,10 @@
                             <x-jet-nav-link href="{{ route('run-setup') }}" :active="request()->routeIs('run-setup')">
                                 {{ __('Run Setup Script') }}
                             </x-jet-nav-link>
+                        @elseif (\App\Utils::isUpdateNeeded())
+                            <x-jet-nav-link href="{{ route('run-update') }}" :active="request()->routeIs('run-update')">
+                                {{ __('Run Update Script') }}
+                            </x-jet-nav-link>
                         @else
                             <x-jet-nav-link href="{{ route('users-list') }}"
                                             :active="request()->routeIs('users-list') || request()->routeIs('users-show')">

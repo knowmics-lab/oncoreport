@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientConfigController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Livewire\Admin\Setup\Run as AdminRunSetup;
+use App\Http\Livewire\Admin\Setup\Update as AdminRunUpdate;
 use App\Http\Livewire\Admin\User\Create as AdminUserCreate;
 use App\Http\Livewire\Admin\User\Index as AdminUserIndex;
 use App\Http\Livewire\Admin\User\Show as AdminUserShow;
@@ -42,6 +43,8 @@ Route::group(
             Route::get('/admin/setup', AdminRunSetup::class)
                  ->name('run-setup');
         }
+        Route::get('/admin/update', AdminRunUpdate::class)
+             ->name('run-update');
         if (config('oncoreport.config_generator')) {
             Route::get('/config-download', ClientConfigController::class)->name('config-download');
         }

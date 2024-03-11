@@ -9,6 +9,7 @@ namespace App;
 
 use App\Exceptions\IgnoredException;
 use App\Exceptions\ProcessingJobException;
+use App\Http\Services\SystemInfoService;
 use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JsonException;
@@ -174,6 +175,11 @@ final class Utils
     public static function isSetupNeeded(): bool
     {
         return config('oncoreport.cloud_env') && !file_exists(storage_path('app/cosmic/.setup_done'));
+    }
+
+    public static function isUpdateNeeded(): bool
+    {
+        return config('oncoreport.cloud_env') && (new SystemInfoService())->isUpdateNeeded();
     }
 
     public static function containerVersionFilePath(): string
