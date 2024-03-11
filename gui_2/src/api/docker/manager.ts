@@ -5,15 +5,19 @@ import fs from 'fs-extra';
 import Client from 'dockerode';
 import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
-import { inject, injectable } from 'tsyringe';
 import { Stream } from 'stream';
+import { inject, injectable } from 'tsyringe';
 import Utils, { is } from '../utils';
 import SystemConstants from '../../constants/system.json';
 import type { ConfigObjectType } from '../../interfaces';
-import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces';
+import TimeoutError from '../../errors/TimeoutError';
 import PullStatus from './pullStatus';
 import { AuthTokenResult, PullEvent } from './types';
+
+type UpdateNeededResponse = {
+  updateNeeded: boolean;
+};
 
 @injectable()
 export default class Manager {
@@ -275,7 +279,9 @@ export default class Manager {
               timeout,
               maxTries,
             );
+            return true;
           }
+          return false;
         } catch (e) {
           if (e instanceof TimeoutError) {
             throw new Error(
@@ -287,6 +293,7 @@ export default class Manager {
         }
       }
     }
+    return true;
   }
 
   public async startupSequence(
@@ -296,7 +303,12 @@ export default class Manager {
     maxTries = 3,
   ) {
     if (displayLog) displayLog('');
-    await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
+    const couldRequireUpdate = await this.checkForUpdates(
+      showMessage,
+      displayLog,
+      timeout,
+      maxTries,
+    );
     try {
       await Utils.retryFunction(
         async (t: number) => {
@@ -313,7 +325,15 @@ export default class Manager {
           if (odd) {
             await this.removeContainer();
           }
-          return this.startContainer();
+          await this.startContainer();
+          if (couldRequireUpdate) {
+            showMessage('Waiting for the container to boot...', false);
+            await this.waitContainerBooted();
+            if (await this.isUpdateNeeded()) {
+              showMessage('Updating container...', false);
+              await this.runUpdateScript(showMessage, displayLog);
+            }
+          }
         },
         timeout,
         maxTries,
@@ -418,6 +438,14 @@ export default class Manager {
     throw new Error('Unable to exec command. Container is not running');
   }
 
+  public async isUpdateNeeded(): Promise<boolean> {
+    const result = (await this.execDockerCommand(
+      ['php', '/oncoreport/ws/artisan', 'update:check'],
+      1000,
+    )) as UpdateNeededResponse;
+    return result.updateNeeded;
+  }
+
   public async generateAuthToken(): Promise<string> {
     const result = (await this.execDockerCommand([
       '/genkey.sh',
@@ -518,6 +546,40 @@ export default class Manager {
         reject(e);
       });
     });
+  }
+
+  public async runUpdateScript(
+    showMessage: (a: string, b: boolean) => void,
+    displayLog: Nullable<(a: string) => void>,
+  ) {
+    let accumulator = '';
+    const debouncedCallback = (s: string) => {
+      accumulator += s;
+    };
+    const fnDebouncer = () => {
+      if (accumulator !== '' && displayLog) {
+        if (displayLog) displayLog(accumulator);
+        accumulator = '';
+      }
+    };
+    const timer = setInterval(fnDebouncer, 500);
+    return new Promise<void>((resolve, reject) => {
+      this.execDockerCommandLive(
+        ['php', '/oncoreport/ws/artisan', 'update:run'],
+        debouncedCallback,
+        debouncedCallback,
+        (c) => {
+          clearInterval(timer);
+          if (c === 0) resolve();
+          else reject(new Error(`Unknown error (Code: ${c})`));
+        },
+      ).catch((e) => {
+        clearInterval(timer);
+        showMessage('Error running update script', true);
+        reject(e);
+      });
+    });
+
   }
 
   public async clearQueue(): Promise<unknown> {
