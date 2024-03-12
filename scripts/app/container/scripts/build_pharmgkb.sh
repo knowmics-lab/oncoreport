@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 SCRIPT_PATH="$(
     cd "$(dirname "$0")" >/dev/null 2>&1
     pwd -P
@@ -36,7 +38,10 @@ function process_variants() {
 function wget_progress() {
     local url="$1"
     local output="$2"
-    wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output"
+    for i in {1..10}; do do
+        wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output" && break
+        echo "Download failed. Retrying..."
+    done
 }
 
 OUTPUT_DIR="$(realpath $1)"
