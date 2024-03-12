@@ -38,7 +38,7 @@ function process_variants() {
 function wget_progress() {
     local url="$1"
     local output="$2"
-    for i in {1..10}; do do
+    for i in {1..10}; do
         wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output" && break
         echo "Download failed. Retrying..."
     done
