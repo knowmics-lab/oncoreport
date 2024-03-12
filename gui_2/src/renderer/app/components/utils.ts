@@ -1,7 +1,10 @@
 import { container } from 'tsyringe';
 import { Theme } from '@mui/material';
+import Convert from 'ansi-to-html';
 import { Notifications } from '../../../api';
 import { TypeOfNotification } from '../../../interfaces';
+
+const convert = new Convert({ newline: true });
 
 export function formControlStyle(theme: Theme) {
   return {
@@ -30,6 +33,20 @@ export function runAsync(
       }
       if (catchFn) catchFn(e);
     });
+}
+
+export function logToHtml(log: string): string {
+  return convert.toHtml(
+    log
+      .split('\n')
+      .map((s) => s.split('\r').pop())
+      .map((s) =>
+        (s || '')
+          .replaceAll(' ', '&nbsp;')
+          .replaceAll('\t', '&nbsp;&nbsp;&nbsp;&nbsp;'),
+      )
+      .join('\n'),
+  );
 }
 
 export default {};

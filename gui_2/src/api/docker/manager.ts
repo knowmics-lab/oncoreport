@@ -250,50 +250,45 @@ export default class Manager {
     timeout = 120000,
     maxTries = 3,
   ) {
-    if (this.config.local) {
-      showMessage('Checking internet connection...', false);
-      if (!(await this.isRunning()) && (await Utils.isOnline())) {
-        showMessage('Checking for container updates...', false);
-        try {
-          const displayStatus = displayLog
-            ? debounce((s: PullStatus) => {
-                if (s) displayLog(s.toString());
-              }, 500)
-            : undefined;
-          const res = await this.pullImage(displayStatus);
-          if (displayStatus) {
-            displayStatus.cancel('Update finished');
-          }
-          if (!res.isUpToDate()) {
-            await Utils.retryFunction(
-              async (t: number) => {
-                const first = t === 0;
-                showMessage(
-                  `Update found...removing old container...${
-                    first ? '' : `Attempt ${t + 1} of ${maxTries}...`
-                  }`,
-                  !first,
-                );
-                await this.removeContainer();
-              },
-              timeout,
-              maxTries,
-            );
-            return true;
-          }
-          return false;
-        } catch (e) {
-          if (e instanceof TimeoutError) {
-            throw new Error(
-              `Unable to update the container ${this.config.containerName}. Update it manually`,
-            );
-          } else {
-            throw e;
-          }
-        }
+    if (!this.config.local) return false;
+    showMessage('Checking internet connection...', false);
+    if ((await this.isRunning()) || !(await Utils.isOnline())) return false;
+    showMessage('Checking for container updates...', false);
+    try {
+      const displayStatus = displayLog
+        ? debounce((s: PullStatus) => {
+            if (s) displayLog(s.toString());
+          }, 500)
+        : undefined;
+      const res = await this.pullImage(displayStatus);
+      if (displayStatus) {
+        displayStatus.cancel('Update finished');
+      }
+      if (res.isUpToDate()) return false;
+      await Utils.retryFunction(
+        async (t: number) => {
+          const first = t === 0;
+          showMessage(
+            `Update found...removing old container...${
+              first ? '' : `Attempt ${t + 1} of ${maxTries}...`
+            }`,
+            !first,
+          );
+          await this.removeContainer();
+        },
+        timeout,
+        maxTries,
+      );
+      return true;
+    } catch (e) {
+      if (e instanceof TimeoutError) {
+        throw new Error(
+          `Unable to update the container ${this.config.containerName}. Update it manually`,
+        );
+      } else {
+        throw e;
       }
     }
-    return true;
   }
 
   public async startupSequence(
@@ -326,18 +321,18 @@ export default class Manager {
             await this.removeContainer();
           }
           await this.startContainer();
-          if (couldRequireUpdate) {
-            showMessage('Waiting for the container to boot...', false);
-            await this.waitContainerBooted();
-            if (await this.isUpdateNeeded()) {
-              showMessage('Updating container...', false);
-              await this.runUpdateScript(showMessage, displayLog);
-            }
-          }
         },
         timeout,
         maxTries,
       );
+      if (!couldRequireUpdate) {
+        showMessage('Waiting for the container to boot...', false);
+        await this.waitContainerBooted();
+        if (await this.isUpdateNeeded()) {
+          showMessage('Updating container...', false);
+          await this.runUpdateScript(showMessage, displayLog);
+        }
+      }
     } catch (e) {
       if (e instanceof TimeoutError) {
         throw new Error(
@@ -559,7 +554,6 @@ export default class Manager {
     const fnDebouncer = () => {
       if (accumulator !== '' && displayLog) {
         if (displayLog) displayLog(accumulator);
-        accumulator = '';
       }
     };
     const timer = setInterval(fnDebouncer, 500);
@@ -579,7 +573,6 @@ export default class Manager {
         reject(e);
       });
     });
-
   }
 
   public async clearQueue(): Promise<unknown> {

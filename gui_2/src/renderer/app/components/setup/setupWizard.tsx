@@ -1,4 +1,4 @@
-/* eslint-disable react/no-danger */
+/* eslint-disable react/no-danger,no-console */
 import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -15,11 +15,10 @@ import {
   LinearProgress,
   Theme,
 } from '@mui/material';
-import Convert from 'ansi-to-html';
 import { DependencyContainer } from 'tsyringe';
 import { useContainer, useService } from '../../../../reactInjector';
 import { DockerManager, Settings, ValidateConfig } from '../../../../api';
-import { runAsync } from '../utils';
+import { logToHtml, runAsync } from '../utils';
 import { SubmitButton } from '../ui/Button';
 import { ConfigObjectType } from '../../../../interfaces';
 import Wizard from '../ui/Wizard';
@@ -37,46 +36,10 @@ const instructionText = (theme: Theme) => ({
   marginBottom: theme.spacing(1),
   fontSize: theme.typography.fontSize,
 });
-//
-// const smallInstructionText = (theme: Theme) => ({
-//   margin: theme.spacing(1),
-//   fontSize: '0.8rem',
-// });
 
 const boldText = (theme: Theme) => ({
   fontWeight: theme.typography.fontWeightBold,
 });
-
-// const useStyles = makeStyles((theme) =>
-//   createStyles({
-//     root: {
-//       padding: theme.spacing(3, 2),
-//     },
-//     formControl: {
-//       margin: theme.spacing(1),
-//       minWidth: 120,
-//     },
-//     backButton: {
-//       marginRight: theme.spacing(1),
-//     },
-//   }),
-// );
-
-const convert = new Convert({ newline: true });
-
-function logToHtml(log: string): string {
-  return convert.toHtml(
-    log
-      .split('\n')
-      .map((s) => s.split('\r').pop())
-      .map((s) =>
-        (s || '')
-          .replaceAll(' ', '&nbsp;')
-          .replaceAll('\t', '&nbsp;&nbsp;&nbsp;&nbsp;'),
-      )
-      .join('\n'),
-  );
-}
 
 interface ExtendedConfig extends ConfigObjectType {
   cosmicUsername: string;
@@ -235,7 +198,7 @@ async function runSetup(
       if (!(await manager.hasImage())) {
         log += 'Container image not found...Downloading...\n';
         setLog(log);
-        const state = await manager.pullImage((s) => {
+        const state = await manager.pullImage(async (s) => {
           setLog(`${log}${s.toString()}`);
         });
         log += `${state.toString()}\n`;
@@ -392,9 +355,11 @@ export default function SetupWizard() {
                               e: React.MouseEvent<HTMLAnchorElement>,
                             ) => {
                               e.preventDefault();
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore
-                              electronApi.shell.openExternal(e.target.href);
+                              electronApi.shell
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                                .openExternal(e.target.href)
+                                .catch(console.error);
                             }}
                           >
                             clicking here
@@ -482,9 +447,11 @@ export default function SetupWizard() {
                               e: React.MouseEvent<HTMLAnchorElement>,
                             ) => {
                               e.preventDefault();
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore
-                              api.shell.openExternal(e.target.href);
+                              electronApi.shell
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                                .openExternal(e.target.href)
+                                .catch(console.error);
                             }}
                           >
                             clicking here

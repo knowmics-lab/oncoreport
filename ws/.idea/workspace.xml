@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gui_2/src/api/docker/manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/api/docker/manager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -529,7 +530,9 @@
       <workItem from="1710077049281" duration="742000" />
       <workItem from="1710091246383" duration="2762000" />
       <workItem from="1710152491629" duration="4574000" />
-      <workItem from="1710183169926" duration="1644000" />
+      <workItem from="1710183169926" duration="1684000" />
+      <workItem from="1710231977609" duration="646000" />
+      <workItem from="1710232895734" duration="2225000" />
     </task>
     <servers />
   </component>

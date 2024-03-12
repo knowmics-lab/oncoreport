@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react/no-danger */
+import React, { createRef, useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 import ErrorIcon from '@mui/icons-material/Error';
 import {
@@ -9,6 +10,7 @@ import {
   Grid,
   styled,
 } from '@mui/material';
+import { logToHtml } from '../utils';
 
 const Backdrop = styled(OriginalBackdrop)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 10,
@@ -21,6 +23,13 @@ const Paper = styled(OriginalPaper)({
 
 function LogHandler() {
   const [log, setLog] = useState('');
+  const logRef = createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    if (log && logRef.current) {
+      logRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [log, logRef]);
 
   useEffect(() => {
     ipcRenderer.on('on-blocking-message-log', (_e, newState: string) => {
@@ -34,7 +43,24 @@ function LogHandler() {
     };
   }, []);
   return log ? (
-    <pre style={{ maxHeight: '400px', overflow: 'auto' }}>{log}</pre>
+    <div
+      style={{
+        width: '100%',
+        maxHeight: '400px',
+        overflowY: 'auto',
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "'Courier New', monospace",
+          color: 'white',
+          background: 'black',
+          wordBreak: 'break-all',
+        }}
+        dangerouslySetInnerHTML={{ __html: logToHtml(log) }}
+      />
+      <div ref={logRef} />
+    </div>
   ) : null;
 }
 

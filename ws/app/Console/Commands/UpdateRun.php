@@ -10,6 +10,7 @@ namespace App\Console\Commands;
 use App\Exceptions\ProcessingJobException;
 use App\Jobs\Types\AbstractJob;
 use App\Utils;
+use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
@@ -66,9 +67,10 @@ class UpdateRun extends Command
                 return $retCode;
             }
             $versionNumberFile = Utils::currentVersionFilePath();
+            @unlink($versionNumberFile);
             copy(Utils::containerVersionFilePath(), $versionNumberFile);
             @chmod($versionNumberFile, 0644);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error($e->getMessage());
 
             return 1;
@@ -98,9 +100,9 @@ class UpdateRun extends Command
                     null,
                     function ($type, $buffer) {
                         if ($type === Process::ERR) {
-                            $this->error($buffer);
+                            $this->output->write('<error>'.$buffer.'</error>');
                         } else {
-                            $this->line($buffer);
+                            $this->output->write($buffer);
                         }
                     }
                 );
@@ -112,6 +114,7 @@ class UpdateRun extends Command
         } elseif ($warn) {
             $this->warn('No update script to run');
         }
+        $this->output->newLine();
 
         return 0;
     }
