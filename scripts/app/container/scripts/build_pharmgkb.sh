@@ -38,8 +38,9 @@ function process_variants() {
 function wget_progress() {
     local url="$1"
     local output="$2"
-    for i in {1..10}; do
+    while true; do
         wget --no-verbose --show-progress --progress=bar:force:noscroll "$url" -O "$output" && break
+        sleep 1
         echo "Download failed. Retrying..."
     done
 }
@@ -55,9 +56,9 @@ mkdir -p "$OUTPUT_DIR"
 mkdir -p "$TEMP_DIR"
 cd "$TEMP_DIR"
 echo "Downloading PharmGKB variants"
-[ ! -f "$TEMP_DIR/variantAnnotations.zip" ] && wget_progress "$PHARMGKB_VARIANTS_URL" "$TEMP_DIR/variantAnnotations.zip"
+wget_progress "$PHARMGKB_VARIANTS_URL" "$TEMP_DIR/variantAnnotations.zip"
 echo "Extracting Annotations"
-unzip -o "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR"
+unzip -o "$TEMP_DIR/variantAnnotations.zip" -d "$TEMP_DIR" || exit 100
 echo "Extracting version date"
 RELEASE_DATE=$(cat "$TEMP_DIR/"CREATED_*.txt | cut -d' ' -f 3 | tr -d '\r')
 echo -e "PharmGKB\t$RELEASE_DATE\t$(date +%Y-%m-%d)" >>"$OUTPUT_DIR/versions.txt"
