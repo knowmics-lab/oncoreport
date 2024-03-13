@@ -242,6 +242,7 @@ if (!file.exists(cached_aifa_file)) {
       data <- fread(aifa_files_by_class[cls], sep = ";")
       tmp  <- make.names(iconv(colnames(data),"WINDOWS-1252","UTF-8"))
       tmp[tmp == "PRINCIPIO.ATTIVO"] <- "Principio.Attivo"
+      tmp[tmp == "Codice.AIC"] <- "AIC"
       tmp[tmp == "AIC.Farmaco"] <- "AIC"
       tmp[tmp == "Codice..AIC"] <- "AIC"
       tmp[grep("^DENOMINAZIONE\\.FARMACO", tmp)] <- "Denominazione.e.Confezione"
