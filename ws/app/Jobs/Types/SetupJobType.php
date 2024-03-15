@@ -105,20 +105,20 @@ class SetupJobType extends AbstractJob
             $model = $this->model;
             try {
                 self::runCommand(
-                    $this->command(),
-                    $this->getAbsoluteJobDirectory(),
-                    null,
-                    static function ($type, $buffer) use ($model) {
+                    command:      $this->command(),
+                    cwd:          $this->getAbsoluteJobDirectory(),
+                    callback: static function ($type, $buffer) use ($model) {
                         $model->appendLog($buffer, false);
                     },
-                    [
-                        101 => 'Invalid Parameter',
-                        102 => 'COSMIC username is required',
-                        103 => 'COSMIC password is required',
-                        104 => 'Unable to prepare indexes',
-                        105 => 'Unable to download cosmic database',
-                        106 => 'Setup already done',
-                    ]
+                    env:          true,
+                    errorCodeMap: [
+                                      101 => 'Invalid Parameter',
+                                      102 => 'COSMIC username is required',
+                                      103 => 'COSMIC password is required',
+                                      104 => 'Unable to prepare indexes',
+                                      105 => 'Unable to download cosmic database',
+                                      106 => 'Setup already done',
+                                  ]
                 );
             } catch (IgnoredException $e) {
                 $this->log("\n\nUnable to complete the setup procedure! Try again!");

@@ -75,6 +75,7 @@ class UpdateRun extends Command
 
             return 1;
         }
+
         return 0;
     }
 
@@ -93,19 +94,18 @@ class UpdateRun extends Command
         if (file_exists($updateScript)) {
             try {
                 AbstractJob::runCommand(
-                    [
-                        'bash',
-                        $updateScript,
-                    ],
-                    null,
-                    null,
-                    function ($type, $buffer) {
+                    command: [
+                                 'bash',
+                                 $updateScript,
+                             ],
+                    callback: function ($type, $buffer) {
                         if ($type === Process::ERR) {
                             $this->output->write('<error>'.$buffer.'</error>');
                         } else {
                             $this->output->write($buffer);
                         }
-                    }
+                    },
+                    env:     true
                 );
             } catch (ProcessingJobException $e) {
                 $this->error($e->getMessage());

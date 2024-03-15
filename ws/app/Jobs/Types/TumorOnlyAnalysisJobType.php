@@ -37,7 +37,7 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             'genome'               => 'The genome version (hg19 or hg38; OPTIONAL; default: hg19)',
             'threads'              => 'The number of threads to use for the analysis (OPTIONAL; default: 1)',
             'callers'              => 'A list of enabled callers (Array of: mutect, lofreq, varscan; OPTIONAL; default: all)',
-            'callers_options'      => 'A list of options for each caller (Map of caller name => array of options; OPTIONAL; default: none). ' .
+            'callers_options'      => 'A list of options for each caller (Map of caller name => array of options; OPTIONAL; default: none). '.
                 'One parameter per array element (Example: the option "--test VALUE" should provided as ["--test","VALUE"].',
             'enable_options'       => [
                 'mutect_downsampling'  => 'A boolean value indicating whether to enable the downsampling of the input file in Mutect2 (OPTIONAL; default: FALSE)',
@@ -105,12 +105,14 @@ class TumorOnlyAnalysisJobType extends AbstractJob
             'file1'                               => ['required', 'string'],
             'file2'                               => [
                 'nullable',
-                Rule::requiredIf(static function () use ($parameters) {
-                    $paired = data_get($parameters, 'paired', false);
-                    $type = data_get($parameters, 'type', 'fastq');
+                Rule::requiredIf(
+                    static function () use ($parameters) {
+                        $paired = data_get($parameters, 'paired', false);
+                        $type = data_get($parameters, 'type', 'fastq');
 
-                    return $paired && $type === 'fastq';
-                }),
+                        return $paired && $type === 'fastq';
+                    }
+                ),
             ],
             'callers'                             => ['filled', 'array'],
             'callers.*'                           => [Rule::in(['mutect', 'lofreq', 'varscan'])],
@@ -240,71 +242,71 @@ class TumorOnlyAnalysisJobType extends AbstractJob
 
             $model = $this->model;
             self::runCommand(
-                $this->command(),
-                $this->getAbsoluteJobDirectory(),
-                null,
-                static function ($type, $buffer) use ($model) {
+                command:      $this->command(),
+                cwd:          $this->getAbsoluteJobDirectory(),
+                callback: static function ($type, $buffer) use ($model) {
                     $model->appendLog($buffer, false);
                 },
-                [
-                    1   => 'An invalid parameter has been detected',
-                    100 => 'Unable to create FASTQ directory',
-                    101 => 'Unable to create working directory',
-                    102 => 'Unable to convert uBAM to FASTQ',
-                    103 => 'Unable to perform pre-processing and alignment of sample',
-                    104 => 'Unable to pre-process aligned reads',
-                    105 => 'Unable to perform variant calling with Mutect2',
-                    106 => 'Unable to perform variant calling with LoFreq',
-                    107 => 'Unable to perform variant calling with VarScan',
-                    108 => 'Unable to concatenate variant calls',
-                    109 => 'ASSERTION FAILED: output is not a VCF file?',
-                    110 => 'Unable to pre-process variants',
-                    111 => 'Unable to prepare report input files',
-                    112 => 'Unable to prepare ESMO guidelines',
-                    113 => 'Unable to create report',
-                    114 => 'Unable to clean up folders',
-                    115 => 'Unable to filter variants',
-                    116 => 'No PASS variants were found',
-                ]
+                env:          true,
+                errorCodeMap: [
+                                  1   => 'An invalid parameter has been detected',
+                                  100 => 'Unable to create FASTQ directory',
+                                  101 => 'Unable to create working directory',
+                                  102 => 'Unable to convert uBAM to FASTQ',
+                                  103 => 'Unable to perform pre-processing and alignment of sample',
+                                  104 => 'Unable to pre-process aligned reads',
+                                  105 => 'Unable to perform variant calling with Mutect2',
+                                  106 => 'Unable to perform variant calling with LoFreq',
+                                  107 => 'Unable to perform variant calling with VarScan',
+                                  108 => 'Unable to concatenate variant calls',
+                                  109 => 'ASSERTION FAILED: output is not a VCF file?',
+                                  110 => 'Unable to pre-process variants',
+                                  111 => 'Unable to prepare report input files',
+                                  112 => 'Unable to prepare ESMO guidelines',
+                                  113 => 'Unable to create report',
+                                  114 => 'Unable to clean up folders',
+                                  115 => 'Unable to filter variants',
+                                  116 => 'No PASS variants were found',
+                              ]
             );
             throw_unless(
-                $this->fileExistsRelative($outputRelative . '/txt'),
+                $this->fileExistsRelative($outputRelative.'/txt'),
                 ProcessingJobException::class,
                 'Unable to generate report intermediate files.'
             );
             throw_unless(
-                $this->fileExistsRelative($outputRelative . '/report/index.html'),
+                $this->fileExistsRelative($outputRelative.'/report/index.html'),
                 ProcessingJobException::class,
                 'Unable to generate report output file.'
             );
             $this->log('Building intermediate archive');
             Utils::makeZipArchive(
-                $this->absoluteJobPath($outputRelative . '/txt'),
-                $this->absoluteJobPath($outputRelative . '/report/intermediate.zip')
+                $this->absoluteJobPath($outputRelative.'/txt'),
+                $this->absoluteJobPath($outputRelative.'/report/intermediate.zip')
             );
             $this->log('Building report archive');
             Utils::makeZipArchive(
-                $this->absoluteJobPath($outputRelative . '/report'),
-                $this->absoluteJobPath($outputRelative . '/report.zip')
+                $this->absoluteJobPath($outputRelative.'/report'),
+                $this->absoluteJobPath($outputRelative.'/report.zip')
             );
             $this->log('Writing output');
             $this->setOutput(
                 [
                     'type'                    => Utils::TUMOR_ONLY_TYPE,
                     'bamRawFile'              => $this->getFilePathsForOutput(
-                        $outputRelative . '/preprocess/annotated.bam'
+                        $outputRelative.'/preprocess/annotated.bam'
                     ),
                     'bamFinalFile'            => $this->getFilePathsForOutput(
-                        $outputRelative . '/preprocess/ordered.bam'
+                        $outputRelative.'/preprocess/ordered.bam'
                     ),
-                    'variantsRAWCallFile'     => $this->getFilePathsForOutput($outputRelative . '/variants_raw.tgz'),
-                    'variantsPASSOutputFile'  => $this->getFilePathsForOutput($outputRelative . '/variants_pass.tgz'),
-                    'variantsFINALOutputFile' => $this->getFilePathsForOutput($outputRelative . '/variants.vcf'),
+                    'variantsRAWCallFile'     => $this->getFilePathsForOutput($outputRelative.'/variants_raw.tgz'),
+                    'variantsPASSOutputFile'  => $this->getFilePathsForOutput($outputRelative.'/variants_pass.tgz'),
+                    'variantsFINALOutputFile' => $this->getFilePathsForOutput($outputRelative.'/variants.vcf'),
                     'textOutputFiles'         => $this->getFilePathsForOutput(
-                        $outputRelative . '/report/intermediate.zip'
+                        $outputRelative.'/report/intermediate.zip'
                     ),
-                    'reportOutputFile'        => $this->getFilePathsForOutput($outputRelative . '/report/index.html'),
-                    'reportZipFile'           => $this->getFilePathsForOutput($outputRelative . '/report.zip'),
+                    'reportOutputFile'        => $this->getFilePathsForOutput($outputRelative.'/report/index.html'),
+                    'reportZipFile'           => $this->getFilePathsForOutput($outputRelative.'/report.zip'),
                 ]
             );
             $this->log('Analysis completed.');

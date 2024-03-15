@@ -126,7 +126,7 @@ abstract class AbstractJob
      */
     public static function scriptPath(string $script): string
     {
-        return realpath(config('oncoreport.bash_script_path') . '/' . $script);
+        return realpath(config('oncoreport.bash_script_path').'/'.$script);
     }
 
     /**
@@ -136,10 +136,10 @@ abstract class AbstractJob
      * @param  string|null  $cwd
      * @param  int|null  $timeout
      * @param  callable|null  $callback
+     * @param  array|bool|null  $env
      * @param  array  $errorCodeMap
      *
      * @return string
-     * @throws \App\Exceptions\ProcessingJobException
      * @throws \Exception
      */
     public static function runCommand(
@@ -147,10 +147,11 @@ abstract class AbstractJob
         ?string $cwd = null,
         ?int $timeout = null,
         ?callable $callback = null,
+        array|bool|null $env = null,
         array $errorCodeMap = []
     ): string {
         try {
-            return Utils::runCommand($command, $cwd, $timeout, $callback);
+            return Utils::runCommand($command, $cwd, $timeout, $callback, $env);
         } catch (ProcessFailedException $e) {
             throw Utils::mapCommandException($e, $errorCodeMap);
         }
@@ -225,9 +226,7 @@ abstract class AbstractJob
      * Actions to clean up everything if the job failed.
      * The default implementation does nothing.
      */
-    public function cleanupOnFail(): void
-    {
-    }
+    public function cleanupOnFail(): void {}
 
     /**
      * Append text to the log of this job
@@ -252,7 +251,7 @@ abstract class AbstractJob
         if (!$source) {
             return;
         }
-        $absoluteSourceFilename = realpath($this->model->getAbsoluteJobDirectory() . '/' . $source);
+        $absoluteSourceFilename = realpath($this->model->getAbsoluteJobDirectory().'/'.$source);
         if ($absoluteSourceFilename === false) {
             return;
         }
@@ -271,7 +270,7 @@ abstract class AbstractJob
         if (method_exists($this->model, $name)) {
             return $this->model->$name(...$arguments);
         }
-        throw new RuntimeException('Undefined method ' . $name);
+        throw new RuntimeException('Undefined method '.$name);
     }
 
     /**
@@ -302,7 +301,7 @@ abstract class AbstractJob
             return false;
         }
 
-        return $this->fileExistsRelative($this->model->getJobDirectory() . '/' . $file);
+        return $this->fileExistsRelative($this->model->getJobDirectory().'/'.$file);
     }
 
     /**
@@ -356,7 +355,7 @@ abstract class AbstractJob
      */
     protected function getFilePaths(string $filename): array
     {
-        return $this->pathHelper($this->model->getJobDirectory() . '/' . $filename);
+        return $this->pathHelper($this->model->getJobDirectory().'/'.$filename);
     }
 
     /**

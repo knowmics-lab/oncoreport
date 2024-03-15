@@ -7,6 +7,12 @@
     <list default="true" id="98f1fd2d-373a-469c-9bf2-00c9668023f1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/UpdateRun.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Services/SystemInfoService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Services/SystemInfoService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/AbstractJob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/SetupJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/SetupJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorOnlyAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/Types/TumorVsNormalAnalysisJobType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Utils.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -533,6 +539,7 @@
       <workItem from="1710231977609" duration="646000" />
       <workItem from="1710232895734" duration="2225000" />
       <workItem from="1710496662692" duration="1491000" />
+      <workItem from="1710527991966" duration="1896000" />
     </task>
     <servers />
   </component>

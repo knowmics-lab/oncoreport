@@ -43,6 +43,7 @@ final class Utils
      * @param  string|null  $cwd
      * @param  int|null  $timeout
      * @param  callable|null  $callback
+     * @param  array|bool|null  $env
      *
      * @return string|null
      */
@@ -50,9 +51,13 @@ final class Utils
         array $command,
         ?string $cwd = null,
         ?int $timeout = null,
-        ?callable $callback = null
+        ?callable $callback = null,
+        array|bool|null $env = null,
     ): ?string {
-        $process = new Process($command, $cwd, null, null, $timeout);
+        if ($env === true) {
+            $env = (array)getenv();
+        }
+        $process = new Process($command, $cwd, $env, null, $timeout);
         $process->run($callback);
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);

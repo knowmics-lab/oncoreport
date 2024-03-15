@@ -37,10 +37,11 @@ class SystemInfoService
                 $status = 'ok';
                 try {
                     $statusMessage = Utils::runCommand(
-                        [
-                            'bash',
-                            realpath(config('oncoreport.bash_script_path').'/verify_oncokb_key.bash'),
-                        ]
+                             [
+                                 'bash',
+                                 realpath(config('oncoreport.bash_script_path').'/verify_oncokb_key.bash'),
+                             ],
+                        env: true
                     );
                 } catch (ProcessFailedException $e) {
                     $process = $e->getProcess();
