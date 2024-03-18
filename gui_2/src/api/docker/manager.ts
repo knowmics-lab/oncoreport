@@ -325,7 +325,7 @@ export default class Manager {
         timeout,
         maxTries,
       );
-      if (!couldRequireUpdate) {
+      if (couldRequireUpdate) {
         showMessage('Waiting for the container to boot...', false);
         await this.waitContainerBooted();
         if (await this.isUpdateNeeded()) {
