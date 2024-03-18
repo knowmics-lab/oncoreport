@@ -55,7 +55,7 @@ final class Utils
         array|bool|null $env = null,
     ): ?string {
         if ($env === true) {
-            $env = (array)getenv();
+            $env = self::getEnv();
         }
         $process = new Process($command, $cwd, $env, null, $timeout);
         $process->run($callback);
@@ -244,6 +244,15 @@ final class Utils
         }
 
         return $data;
+    }
+
+    public static function getEnv(): array|null
+    {
+        if (config('oncoreport.cloud_env')) {
+            return (array)getenv();
+        }
+
+        return null;
     }
 
 }
