@@ -12,7 +12,7 @@ type Props = {
 
 export default function SetupWizardContainer({ children, header }: Props) {
   const settings = useService(Settings);
-  const [configured, setConfigured] = useState(true); // settings.isConfigured());
+  const [configured, setConfigured] = useState(settings.isConfigured());
 
   useEffect(() => {
     const id = settings.subscribe((c) => {

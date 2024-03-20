@@ -4,9 +4,9 @@
   "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Salvatore Alaimo",
+    "email": "salvatore.alaimo@unict.it",
+    "url": "https://www.medclin.unict.it/docenti/salvatore.alaimo"
   },
   "main": "./dist/main/main.js",
   "scripts": {

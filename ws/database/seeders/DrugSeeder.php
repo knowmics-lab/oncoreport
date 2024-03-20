@@ -38,7 +38,7 @@ class DrugSeeder extends Seeder
                     $allDrugs[$id] = 1;
                 } elseif ($hasAtcCode) {
                     $internalId = $allDrugs[$id];
-                    $internalAtcCode = $atcCodes[$internalId];
+                    $internalAtcCode = $atcCodes[$internalId] ?? null;
                     if (empty($internalAtcCode)) {
                         $toUpsert[] = [
                             'drugbank_id' => $id,

@@ -2,7 +2,7 @@
   "name": "oncoreport",
   "productName": "Oncoreport",
   "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
-  "homepage": "https://TODO",
+  "homepage": "https://oncoreport.atlas.dmi.unict.it",
   "bugs": {
     "url": "https://github.com/knowmics-lab/oncoreport/issues"
   },
@@ -10,11 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/knowmics-lab/oncoreport.git"
   },
-  "license": "",
+  "license": "The OncoReport License - https://github.com/knowmics-lab/oncoreport/blob/master/LICENSE",
   "author": {
-    "name": "TODO",
-    "email": "TODO",
-    "url": "TODO"
+    "name": "Salvatore Alaimo",
+    "email": "salvatore.alaimo@unict.it",
+    "url": "https://www.medclin.unict.it/docenti/salvatore.alaimo"
   },
   "contributors": [
     {
@@ -31,7 +31,7 @@
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run build:dll",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never && npm run build:dll",
+    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build -wml --x64 --arm64 --publish never && npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
@@ -132,6 +132,7 @@
     "react-router-dom": "^6.16.0",
     "react-select": "^5.8.0",
     "reflect-metadata": "^0.2.1",
+    "source-map-support": "^0.5.21",
     "sprintf-js": "^1.1.3",
     "ts-debounce": "^4.0.0",
     "tsyringe": "^4.8.0",
@@ -212,8 +213,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Oncoreport",
+    "appId": "eu.dioncogen.oncoreport",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -259,7 +260,7 @@
       "target": [
         "AppImage"
       ],
-      "category": "Development"
+      "category": "Science"
     },
     "directories": {
       "app": "release/app",
@@ -271,12 +272,9 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "knowmics-lab",
+      "repo": "oncoreport"
     }
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "devEngines": {
     "node": ">=14.x",
