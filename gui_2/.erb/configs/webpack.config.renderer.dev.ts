@@ -113,6 +113,10 @@ const configuration: webpack.Configuration = {
           'file-loader',
         ],
       },
+      {
+        test: /\.node$/,
+        use: 'native-addon-loader',
+      },
     ],
   },
   plugins: [

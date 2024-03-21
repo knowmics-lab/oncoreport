@@ -21,6 +21,8 @@
       <change beforePath="$PROJECT_DIR$/../gui_2/release/app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/release/app/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui_2/release/app/pnpm-lock.yaml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui_2/src/renderer/app/components/setup/setupWizardContainer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DrugSeeder.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -549,7 +551,7 @@
       <workItem from="1710496662692" duration="1491000" />
       <workItem from="1710527991966" duration="1896000" />
       <workItem from="1710753984674" duration="1713000" />
-      <workItem from="1710955134416" duration="164000" />
+      <workItem from="1710955134416" duration="1005000" />
     </task>
     <servers />
   </component>
