@@ -58,7 +58,10 @@ class GenomicChangeQuery:
             self.referenceGenome = ReferenceGenome.hg19.value
 
     def get_genomic_location_parts(self) -> [str, str, str, str, str]:
-        return self.genomicLocation.split(',')
+        locationData = self.genomicLocation.split(',')
+        if not locationData[0].startswith("chr"):
+            locationData[0] = "chr" + locationData[0]
+        return locationData
 
     def __repr__(self):
         return f"GenomicChangeQuery(genomicLocation={self.genomicLocation}, referenceGenome={self.referenceGenome})"
