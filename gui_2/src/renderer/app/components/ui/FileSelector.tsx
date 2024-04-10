@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import React from 'react';
+import React, { useCallback } from 'react';
 import path from 'path';
 import {
   List,
@@ -19,6 +19,7 @@ import { fileTypeFromFile } from 'file-type';
 import { FileFilter } from '../../../../interfaces';
 import { Utils } from '../../../../api';
 import electronApi, { activeWindow } from '../../../../electronApi';
+import { is } from '../../../../api/utils';
 
 export type File = {
   name: string;
@@ -37,6 +38,10 @@ type Props = {
   filters?: FileFilter[];
 };
 
+const DEFAULT_FILE_FILTERS: FileFilter[] = [
+  { name: 'All Files', extensions: ['*'] },
+];
+
 function processFiltersList(filters?: FileFilter[]): string[] {
   const res = [];
   for (const filter of filters || []) {
@@ -54,6 +59,29 @@ function isExtensionAllowed(ext: string, filters: string[]): boolean {
   return filters.includes(lowerExt);
 }
 
+function prepareFilterForDialog(filters?: FileFilter[]): FileFilter[] {
+  if (!filters) return DEFAULT_FILE_FILTERS;
+  if (!is.macos) return filters;
+  return filters.map(({ name, extensions }) => ({
+    name,
+    extensions: extensions.map((e) => (e.includes('*') ? e : `*.${e}`)),
+  }));
+}
+
+async function processFiles(paths: string[]): Promise<File[]> {
+  return Promise.all(
+    paths.map(async (f) => {
+      const t = await fileTypeFromFile(f);
+      return {
+        name: path.basename(f),
+        path: f,
+        type: (t && t.mime) || 'text/plain',
+        ext: path.extname(f),
+      };
+    }),
+  );
+}
+
 export default function FileSelector({
   title,
   value,
@@ -69,43 +97,35 @@ export default function FileSelector({
     [filters],
   );
 
-  const processFiles = async (paths: string[]): Promise<File[]> => {
-    return Promise.all(
-      paths.map(async (f) => {
-        const t = await fileTypeFromFile(f);
-        return {
-          name: path.basename(f),
-          path: f,
-          type: (t && t.mime) || 'text/plain',
-          ext: path.extname(f),
-        };
-      }),
-    );
-  };
+  const fileExists = useCallback(
+    (file: File) => {
+      for (let i = 0, l = files.length; i < l; i += 1) {
+        if (files[i].path === file.path) return true;
+      }
+      return false;
+    },
+    [files],
+  );
 
-  const fileExists = (file: File) => {
-    for (let i = 0, l = files.length; i < l; i += 1) {
-      if (files[i].path === file.path) return true;
-    }
-    return false;
-  };
+  const realAddFile = useCallback(
+    async (filePaths: string[]) => {
+      if (filePaths.length === 0) return;
+      const selectedFiles = (await processFiles(filePaths)).filter(
+        (f) => isExtensionAllowed(f.ext, processedFilters) && !fileExists(f),
+      );
+      if (selectedFiles.length === 0) return;
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      onFileAdd(selectedFiles);
+    },
+    [fileExists, onFileAdd, processedFilters],
+  );
 
-  const realAddFile = async (filePaths: string[]) => {
-    if (filePaths.length === 0) return;
-    const selectedFiles = (await processFiles(filePaths)).filter(
-      (f) => isExtensionAllowed(f.ext, processedFilters) && !fileExists(f),
-    );
-    if (selectedFiles.length === 0) return;
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-    onFileAdd(selectedFiles);
-  };
-
-  const handleAdd = async () => {
+  const handleAdd = useCallback(async () => {
     const { canceled, filePaths } = await electronApi.dialog.showOpenDialog(
       activeWindow()!,
       {
-        filters,
-        properties: multiple ? ['multiSelections'] : [],
+        filters: prepareFilterForDialog(filters),
+        properties: multiple ? ['openFile', 'multiSelections'] : ['openFile'],
       },
     );
     if (!canceled) {
@@ -113,7 +133,7 @@ export default function FileSelector({
         await realAddFile(filePaths);
       }
     }
-  };
+  }, [filters, multiple, realAddFile]);
 
   const handleRemove = (f: File) => () => {
     setFiles((prevFiles) => [...prevFiles.filter((o) => o.path !== f.path)]);
@@ -216,5 +236,5 @@ FileSelector.defaultProps = {
   value: [],
   multiple: false,
   disabled: false,
-  filters: [{ name: 'All Files', extensions: ['*'] }],
+  filters: DEFAULT_FILE_FILTERS,
 };
