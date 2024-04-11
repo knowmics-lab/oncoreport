@@ -25,6 +25,14 @@ const resultsMenuItems: [string, string][] = [
   ['normalBamFinalFile', 'Normal Sample BAM File sorted and recalibrated'],
 ];
 
+const CENTERED_ICON_SX = {
+  width: '1.25em',
+  height: '1.25em',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
   const { id, status } = job;
   const type = job.output?.type;
@@ -46,7 +54,11 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
         onClick={(e) => e.preventDefault()}
         title="Saving..."
       >
-        <Icon className="fas fa-circle-notch fa-spin" fontSize="inherit" />
+        <Icon
+          className="fas fa-circle-notch fa-spin"
+          fontSize="inherit"
+          sx={CENTERED_ICON_SX}
+        />
       </IconButton>
     );
   }
@@ -67,7 +79,11 @@ export default function SaveResultsMenu({ job, size }: SaveMenuProps) {
         return (
           <>
             <IconButton {...iconProps}>
-              <Icon className="fas fa-save" fontSize="inherit" />
+              <Icon
+                className="fas fa-save"
+                fontSize="inherit"
+                sx={CENTERED_ICON_SX}
+              />
             </IconButton>
             <Menu {...bindMenu(popupState)} key={`popup-menu-job-${id}`}>
               {resultsMenuItems

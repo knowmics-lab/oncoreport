@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,react/no-unstable-nested-components */
-import React, { useMemo, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams, generatePath } from 'react-router-dom';
 import {
   CircularProgress,
@@ -98,7 +98,7 @@ function ThreadsText({ capabilities, values }: ThreadsTextProps) {
   const maxMultiple = Math.floor(allCores / 3);
   const standardMessage = `Do not select more than ${maxMultiple} cores to allow for multiple concurrent analysis.`;
   return threads <= maxMultiple ? (
-    <Typography>{standardMessage}</Typography>
+    <Typography component="span">{standardMessage}</Typography>
   ) : (
     <Typography color="error" component="span">
       {standardMessage}
@@ -183,24 +183,24 @@ function VCFFilters({ type }: { type: JobTypes }) {
             alignItems="baseline"
             spacing={1}
           >
-            <Grid item xs={6} md={4}>
+            <Grid item xs={6} lg={4}>
               <SelectField
                 label="Depth filter"
                 name="depthFilter.comparison"
                 options={ComparisonMap}
               />
             </Grid>
-            <Grid item xs={6} md={2}>
+            <Grid item xs={6} lg={2}>
               <TextField label="Value" name="depthFilter.value" type="number" />
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={6} lg={4}>
               <SelectField
                 label="Variant Allele Fraction Filter"
                 name="alleleFractionFilter.comparison"
                 options={ComparisonMap}
               />
             </Grid>
-            <Grid item xs={6} md={2}>
+            <Grid item xs={6} lg={2}>
               <TextField
                 label="Value"
                 name="alleleFractionFilter.value"
@@ -587,6 +587,16 @@ export default function NewAnalysisForm() {
     [],
   );
 
+  const submitButtonElement = useMemo(
+    () => <SubmitButton isSaving={submitting} text="Start Analysis" />,
+    [submitting],
+  );
+
+  const submitButtonFunction = useCallback(
+    () => submitButtonElement,
+    [submitButtonElement],
+  );
+
   return (
     <StandardContainer>
       {loading || !patient ? (
@@ -662,7 +672,7 @@ export default function NewAnalysisForm() {
                   uploadCallbacks.uploadEnd();
                 }
                 pushSimple(`Upload completed!`, TypeOfNotification.success);
-                // await job.submit(); // todo: fix this
+                await job.submit();
                 pushSimple(`Job submitted!`, TypeOfNotification.success);
                 navigate(
                   generatePath(Routes.JOBS_BY_PATIENT, {
@@ -679,9 +689,7 @@ export default function NewAnalysisForm() {
               <Form>
                 <Wizard
                   steps={steps}
-                  submitButton={() => (
-                    <SubmitButton isSaving={submitting} text="Start Analysis" /> // TODO: fix this
-                  )}
+                  submitButton={submitButtonFunction}
                   connectedFields={[
                     ['sample_code', 'name', 'type', 'inputType', 'threads'],
                     [

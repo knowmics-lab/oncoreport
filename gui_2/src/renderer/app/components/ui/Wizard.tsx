@@ -141,34 +141,49 @@ export default function Wizard<E>({
   const detectedFields = useMemo(() => {
     return findAllFields(getStepContent, numberOfSteps);
   }, [getStepContent, numberOfSteps]);
-  const getConnectedFields = (index: number): (keyof E)[] => {
-    if (typeof connectedFields === 'function') return connectedFields(index);
-    if (connectedFields) return connectedFields[index];
-    return detectedFields[index];
-  };
-  const errors = (index: number): boolean => {
-    if (hasErrors && typeof hasErrors === 'function') {
-      return hasErrors(index);
-    }
-    const fields = getConnectedFields(index);
-    if (formik) {
-      return findFormikErrors(fields, formik.errors, formik.touched);
-    }
-    return findFormikErrors(fields, fieldsErrors, fieldsTouched);
-  };
-  const currentStepContent = getStepContent(step);
+  const getConnectedFields = useCallback(
+    (index: number): (keyof E)[] => {
+      if (typeof connectedFields === 'function') return connectedFields(index);
+      if (connectedFields) return connectedFields[index];
+      return detectedFields[index];
+    },
+    [connectedFields, detectedFields],
+  );
+  const errors = useCallback(
+    (index: number): boolean => {
+      if (hasErrors && typeof hasErrors === 'function') {
+        return hasErrors(index);
+      }
+      const fields = getConnectedFields(index);
+      if (formik) {
+        return findFormikErrors(fields, formik.errors, formik.touched);
+      }
+      return findFormikErrors(fields, fieldsErrors, fieldsTouched);
+    },
+    [fieldsErrors, fieldsTouched, formik, getConnectedFields, hasErrors],
+  );
+  const currentStepContent = useMemo(
+    () => getStepContent(step),
+    [getStepContent, step],
+  );
 
-  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setStep((s) => s + 1);
-    if (onChangeActiveStep) onChangeActiveStep(step + 1);
-    e.preventDefault();
-  };
-  const handleBack = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setStep((s) => s - 1);
-    if (onChangeActiveStep) onChangeActiveStep(step - 1);
-    e.preventDefault();
-  };
-  const backButtonElement = ((): React.ReactNode => {
+  const handleNext = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setStep((s) => s + 1);
+      if (onChangeActiveStep) onChangeActiveStep(step + 1);
+      e.preventDefault();
+    },
+    [onChangeActiveStep, step],
+  );
+  const handleBack = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setStep((s) => s - 1);
+      if (onChangeActiveStep) onChangeActiveStep(step - 1);
+      e.preventDefault();
+    },
+    [onChangeActiveStep, step],
+  );
+  const backButtonElement = useMemo((): React.ReactNode => {
     if (typeof prevButton === 'function') {
       return prevButton(handleBack);
     }
@@ -177,8 +192,8 @@ export default function Wizard<E>({
         {prevButton || 'Previous'}
       </Button>
     );
-  })();
-  const nextButtonElement = ((): React.ReactNode => {
+  }, [handleBack, prevButton, step]);
+  const nextButtonElement = useMemo((): React.ReactNode => {
     if (typeof nextButton === 'function') {
       return nextButton(handleNext);
     }
@@ -187,8 +202,8 @@ export default function Wizard<E>({
         {nextButton || 'Next'}
       </Button>
     );
-  })();
-  const submitButtonElement = ((): React.ReactNode => {
+  }, [handleNext, nextButton]);
+  const submitButtonElement = useMemo((): React.ReactNode => {
     if (typeof submitButton === 'function') {
       return submitButton();
     }
@@ -197,29 +212,17 @@ export default function Wizard<E>({
         {submitButton || 'Submit'}
       </Button>
     );
-  })();
-  const bottomNavigation = (() => {
-    return (
-      <FormGroup row sx={formControlStyle}>
-        <Grid container justifyContent="flex-start">
-          <Grid item xs="auto">
-            <ButtonWrapperDiv>{backButtonElement}</ButtonWrapperDiv>
-          </Grid>
-          <Grid item xs="auto">
-            {step === numberOfSteps - 1 ? (
-              <ButtonWrapperDiv>{submitButtonElement}</ButtonWrapperDiv>
-            ) : (
-              <ButtonWrapperDiv>{nextButtonElement}</ButtonWrapperDiv>
-            )}
-          </Grid>
-        </Grid>
-      </FormGroup>
-    );
-  })();
+  }, [submitButton]);
 
   return (
     <>
-      <Stepper activeStep={step} alternativeLabel>
+      <Stepper
+        activeStep={step}
+        alternativeLabel
+        sx={{
+          pt: 2,
+        }}
+      >
         {allSteps.map((label, i) => (
           <Step key={label}>
             <StepLabel error={errors(i)}>{label}</StepLabel>
@@ -228,7 +231,20 @@ export default function Wizard<E>({
       </Stepper>
       <StepperContentDiv>
         {currentStepContent}
-        {bottomNavigation}
+        <FormGroup row sx={formControlStyle}>
+          <Grid container justifyContent="flex-end">
+            <Grid item xs="auto">
+              <ButtonWrapperDiv>{backButtonElement}</ButtonWrapperDiv>
+            </Grid>
+            <Grid item xs="auto">
+              {step === numberOfSteps - 1 ? (
+                <ButtonWrapperDiv>{submitButtonElement}</ButtonWrapperDiv>
+              ) : (
+                <ButtonWrapperDiv>{nextButtonElement}</ButtonWrapperDiv>
+              )}
+            </Grid>
+          </Grid>
+        </FormGroup>
       </StepperContentDiv>
     </>
   );

@@ -27,7 +27,19 @@ function CustomIcon({
     return icon();
   }
   if (isS(icon)) {
-    return <Icon className={icon} fontSize="inherit" />;
+    return (
+      <Icon
+        className={icon}
+        fontSize="inherit"
+        sx={{
+          width: '1.25em',
+          height: '1.25em',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
+    );
   }
   return icon;
 }
