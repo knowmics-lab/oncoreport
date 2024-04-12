@@ -50,6 +50,8 @@ cosmic_download() {
   TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$1")
   if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
     MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
+    echo "COSMIC token: $COSMIC_TOKEN"
+    echo "Error response: $TMP_OUT"
     if [ "${MESSAGE,,}" = "not authorised" ]; then
       exit_abnormal "Unable to validate COSMIC account. Check your username and password!" false 104
     fi

@@ -26,6 +26,8 @@ cd "$BASE_PATH"
 
 [[ ! -f "$BASE_PATH/ws.tgz" ]] && echo "Archive not built!" && exit 1
 
+[[ "$DO_NOT_BUILD_DB" == "true" ]] && echo "Skipping database build" && exit 0
+
 echo "Downloading pre-buit databases"
 bash "$BASE_PATH/scripts/download_databases.sh" "$BASE_PATH/databases"
 
