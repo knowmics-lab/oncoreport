@@ -270,7 +270,18 @@ def$Approved <- unname(sapply(
     )
   }
 ))
-def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = TRUE)
+# Old code removed to avoid deleting too many commas:
+# ==> def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = TRUE)
+def$Approved <- sapply(seq_len(nrow(def)), function(i) {
+  x1 <- strsplit(def$Drug[i], ",", fixed = TRUE)
+  x2 <- strsplit(def$Approved[i], ",", fixed = TRUE)
+  if (length(x1) != length(x2)) { # Apply gsub only if the number of elements is
+                                  # different since some spurious commas may
+                                  # appear at the beginning or end of the string
+    return(gsub("^,*|(?<=,),|,*$", "", def$Approved[i], perl = TRUE))
+  }
+  return(def$Approved[i])
+})
 def <- def[, c(
   "Database", "Gene", "Variant", "Disease", "Drug", "Drug_interaction_type",
   "Evidence_type", "Evidence_level", "Evidence_direction",
@@ -278,8 +289,6 @@ def <- def[, c(
   "Citation", "Chromosome", "Start", "Stop", "Ref_base", "Var_base", "Type",
   "Approved"
 )]
-
-def$Approved <- gsub("^,*|(?<=,),|,*$", "", def$Approved, perl = TRUE)
 
 # Score
 cat("Computing scores with dbNSFP...\n")
@@ -386,7 +395,7 @@ if (length(to_clean) > 0) {
     ),
     perl = TRUE
   ))
-  list_drugs <- unique(c(list_drugs,cleaned))
+  list_drugs <- unique(c(list_drugs, cleaned))
 }
 list_drugs <- na.omit(list_drugs)
 drugfood <- readRDS(file.path(database_path, "drugfood_database.rds"))
