@@ -217,7 +217,9 @@ cgi <- join_and_write_rds(
 
 cat("Reading OncoKB annotations...\n")
 if (file.exists(output_path("oncokb"))) {
-  oncokb <- read.delim(output_path("oncokb")) %>%
+  oncokb <- read.delim(output_path("oncokb"), colClasses = c(
+    "Ref_base" = "character", "Var_base" = "character"
+  )) %>%
     tidyr::separate_rows(PMID, Citation, sep = ";;") %>%
     unique()
   # Fix PMID and Citation columns for the score computation
