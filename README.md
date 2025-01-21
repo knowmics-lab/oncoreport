@@ -1,10 +1,11 @@
 # Oncoreport
 
-![immagine](https://user-images.githubusercontent.com/57007795/163539998-1be36952-2e90-4023-bb21-1e8fee0e6dd2.png)
+![immagine](https://github.com/user-attachments/assets/34be6c57-a940-48ad-b6db-2203c6f784a8)
+
 
 **OncoReport** is a user-friendly software system for the analysis of DNA-seq data coming either from solid or liquid biopsy samples. The aim of **OncoReport** to identify the patients' tumor mutations allowing the help in the definition of the most suitable therapy.
 
-![immagine](https://user-images.githubusercontent.com/57007795/151794368-902242bd-e6ca-48cf-8108-b794fa6497c1.png)
+![immagine](https://github.com/user-attachments/assets/2cd54267-6e86-46ca-837d-74d6a7b2e12a)
 
 The software performs two types of analysis:
 * Tumor vs Normal 
@@ -78,7 +79,7 @@ First of all, the user has to create a new patient using the "+" in the patients
 You can see from the image the specific of the patients page.
 
 
-![immagine](https://user-images.githubusercontent.com/57007795/151526164-a1d0842f-474f-47f1-a13d-0ac3ca3f3a0f.png)
+![immagine](https://github.com/user-attachments/assets/f439b440-c3c2-433f-b37a-e393a8ea7955)
 
 
 The information needed to add a new patient are:
@@ -100,13 +101,13 @@ The information needed to add a new patient are:
 
 The information indicated with the asterisk are mandatory.
 
-![immagine](https://user-images.githubusercontent.com/57007795/151539525-c646d215-331a-4c0a-a682-f529a2b7a03c.png)
+![immagine](https://github.com/user-attachments/assets/f337c326-6754-43ae-89f9-793c7c72831f)
 
 
 After the patient creation, it is also possible to add information about other diseases of the patient and about the drugs already taken. 
 In this way OncoReport is able to discover possible drug-drug interactions.
 
-![immagine](https://user-images.githubusercontent.com/57007795/151528305-9143aa13-792c-4ca7-8285-539f54bef7ff.png)
+![immagine](https://github.com/user-attachments/assets/6e2140e2-a5eb-4ae2-b47f-26f8e1b1687d)
 
 ### Analysis creation
 
