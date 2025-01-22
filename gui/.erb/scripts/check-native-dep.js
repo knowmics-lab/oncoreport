@@ -7,7 +7,8 @@ if (dependencies) {
   const dependenciesKeys = Object.keys(dependencies);
   const nativeDeps = fs
     .readdirSync('node_modules')
-    .filter((folder) => fs.existsSync(`node_modules/${folder}/binding.gyp`));
+    .filter((folder) => fs.existsSync(`node_modules/${folder}/binding.gyp`))
+    .filter((dep) => !(['dockerode', 'cpu-features'].includes(dep)));
   if (nativeDeps.length === 0) {
     process.exit(0);
   }
