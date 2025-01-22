@@ -40,17 +40,17 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     }
     const endpoint = sprintf(
       this.endpoint,
-      this.getParameters(undefined, entity)
+      this.getParameters(undefined, entity),
     );
     const { data } = await this.client.post<Single<PartialObject<T>>>(
       endpoint,
-      this.prepareEntityForCreate(entity)
+      this.prepareEntityForCreate(entity),
     );
     return data;
   }
 
   public async update(
-    entity: PartialObject<T> & { id: number }
+    entity: PartialObject<T> & { id: number },
   ): Promise<PartialObject<T>> {
     if (this.isReadOnly) {
       throw new ApiError('This operation is not supported');
@@ -58,18 +58,18 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     const { id } = entity;
     const endpoint = sprintf(
       this.getEndpointForResource(id),
-      this.getParameters(undefined, entity)
+      this.getParameters(undefined, entity),
     );
     const { data } = await this.client.patch<Single<PartialObject<T>>>(
       endpoint,
-      this.prepareEntityForUpdate(entity)
+      this.prepareEntityForUpdate(entity),
     );
     return data;
   }
 
   public async delete(
     id: number | (PartialObject<T> & { id: number }) | (T & { id: number }),
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<void> {
     if (this.isReadOnly) {
       throw new ApiError('This operation is not supported');
@@ -77,18 +77,18 @@ export default abstract class Adapter<T> implements IAdapter<T> {
     const entityId = typeof id === 'number' ? id : id.id;
     const endpoint = sprintf(
       this.getEndpointForResource(entityId),
-      this.getParameters(parameters, typeof id === 'object' ? id : undefined)
+      this.getParameters(parameters, typeof id === 'object' ? id : undefined),
     );
     await this.client.delete(endpoint);
   }
 
   public async find(
     id: number,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<PartialObject<T>> {
     const endpoint = sprintf(
       this.getEndpointForResource(id),
-      this.getParameters(parameters)
+      this.getParameters(parameters),
     );
     const { data } = await this.client.get<Single<PartialObject<T>>>(endpoint);
     return data;
@@ -96,17 +96,17 @@ export default abstract class Adapter<T> implements IAdapter<T> {
 
   public async query(
     queryRequest?: QueryRequest,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<QueryResponse<T>> {
     const endpoint = sprintf(this.endpoint, this.getParameters(parameters));
     const params = this.postProcessQueryParams(
       this.prepareQueryRequest(queryRequest ?? {}),
       queryRequest,
-      parameters
+      parameters,
     );
     const { data, meta } = await this.client.get<Collection<T>>(
       endpoint,
-      params
+      params,
     );
     return {
       data: Object.values(data),
@@ -121,7 +121,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
   protected postProcessQueryParams(
     queryParams: MapType,
     _queryRequest?: QueryRequest,
-    _parameters?: SimpleMapType
+    _parameters?: SimpleMapType,
   ): MapType {
     return queryParams;
   }
@@ -154,7 +154,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
   }
 
   protected prepareEntityForCreate(
-    entity: Serializable<PartialObject<T>>
+    entity: Serializable<PartialObject<T>>,
   ): MapType {
     if (typeof entity.serialize === 'function') {
       return entity.serialize();
@@ -163,7 +163,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
   }
 
   protected prepareEntityForUpdate(
-    entity: Serializable<PartialObject<T>>
+    entity: Serializable<PartialObject<T>>,
   ): MapType {
     if (typeof entity.serialize === 'function') {
       return entity.serialize();
@@ -173,7 +173,7 @@ export default abstract class Adapter<T> implements IAdapter<T> {
 
   protected getParameters(
     parameters?: SimpleMapType,
-    entity?: WithParameters<PartialObject<T>>
+    entity?: WithParameters<PartialObject<T>>,
   ): SimpleMapType {
     return {
       ...(parameters ?? {}),

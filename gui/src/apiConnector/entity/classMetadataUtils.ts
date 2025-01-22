@@ -7,7 +7,7 @@ export function pushToMetadataMap(
   key: symbol,
   target: any,
   property: string | symbol,
-  value: any
+  value: any,
 ): void {
   const old = (Reflect.getMetadata(key, target) || Map()) as MetaMap;
   Reflect.defineMetadata(key, old.set(property, value), target);
@@ -20,7 +20,7 @@ export function getMetadataMap<T>(key: symbol, target: any): MetaMap<T> {
 export function pushToMetadataArray(
   key: symbol,
   target: any,
-  value: any
+  value: any,
 ): void {
   const old = Reflect.getMetadata(key, target) || [];
   Reflect.defineMetadata(key, [...old, value], target);

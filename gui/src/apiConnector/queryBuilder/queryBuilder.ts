@@ -18,7 +18,7 @@ export default class QueryBuilder<E extends EntityObject> {
 
   public constructor(
     protected repository: RepositoryObject<E>,
-    protected parameters?: SimpleMapType
+    protected parameters?: SimpleMapType,
   ) {
     this.adapter = repository.adapter;
   }
@@ -110,7 +110,7 @@ export default class QueryBuilder<E extends EntityObject> {
    */
   public orderBy(
     attribute: keyof E,
-    direction?: SortingDirection | string
+    direction?: SortingDirection | string,
   ): this {
     let realDirection = SortingDirection.asc;
     if (typeof direction === 'undefined' || direction === null) {
@@ -138,7 +138,7 @@ export default class QueryBuilder<E extends EntityObject> {
    * @param attributes
    */
   public orderByAll(
-    attributes: SimpleMapType<SortingDirection | string | undefined>
+    attributes: SimpleMapType<SortingDirection | string | undefined>,
   ): this {
     this.queryRequest = { ...this.queryRequest, sort: {} };
     for (const [attribute, direction] of Object.entries(attributes)) {
@@ -152,7 +152,7 @@ export default class QueryBuilder<E extends EntityObject> {
     clone.queryRequest.page = page;
     const response = await this.adapter.query(
       clone.queryRequest,
-      clone.parameters
+      clone.parameters,
     );
     return new ResultSet<E>(response, clone.repository);
   }

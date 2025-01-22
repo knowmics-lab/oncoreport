@@ -38,10 +38,10 @@ export interface Patient extends Entity {
   last_name: string;
   age: number;
   gender: Gender;
-  email?: Nullable<string>;
-  fiscal_number?: Nullable<string>;
-  city?: Nullable<string>;
-  telephone?: Nullable<string>;
+  // email?: Nullable<string>;
+  // fiscal_number?: Nullable<string>;
+  // city?: Nullable<string>;
+  // telephone?: Nullable<string>;
   diseases: Nullable<EntityArray<PatientDisease>>;
   primary_disease: PatientDisease;
   drugs: Nullable<EntityArray<PatientDrug>>;

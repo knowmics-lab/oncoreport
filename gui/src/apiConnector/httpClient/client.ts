@@ -14,7 +14,7 @@ import ApiValidationError from '../../errors/ApiValidationError';
 
 function validationErrorParser(
   obj: ValidationErrorType,
-  suppress: string[] = []
+  suppress: string[] = [],
 ): ValidationErrorType {
   const rxp = new RegExp(suppress.join('|'));
   const res = {};
@@ -42,7 +42,7 @@ function parseErrorResponse(response: AxiosResponse) {
   if (status === 422) {
     throw new ApiValidationError(
       'Error occurred during validation of input data',
-      validationErrorParser(response.data.errors, ['^parameters'])
+      validationErrorParser(response.data.errors, ['^parameters']),
     );
   }
   if (response.data && response.data.message) {
@@ -81,7 +81,7 @@ export default class Client {
     url: string,
     method: Method,
     config: PartialAxiosConfig,
-    retry = 10
+    retry = 10,
   ): Promise<T> {
     if (retry < 0) throw new ApiError('Too many retries');
     try {
@@ -121,7 +121,7 @@ export default class Client {
   public async get<T>(
     endpoint: string,
     params: MapType = {},
-    config: PartialAxiosConfig = {}
+    config: PartialAxiosConfig = {},
   ): Promise<T> {
     return this.call<T>(this.getEndpointUrl(endpoint), 'get', {
       ...config,
@@ -138,7 +138,7 @@ export default class Client {
   public async post<T>(
     endpoint: string,
     params: MapType = {},
-    config: PartialAxiosConfig = {}
+    config: PartialAxiosConfig = {},
   ): Promise<T> {
     return this.call<T>(this.getEndpointUrl(endpoint), 'post', {
       ...config,
@@ -155,7 +155,7 @@ export default class Client {
   public async patch<T>(
     endpoint: string,
     params: MapType = {},
-    config: PartialAxiosConfig = {}
+    config: PartialAxiosConfig = {},
   ): Promise<T> {
     return this.call<T>(this.getEndpointUrl(endpoint), 'patch', {
       ...config,
@@ -172,7 +172,7 @@ export default class Client {
   public async delete(
     endpoint: string,
     params: MapType = {},
-    config: PartialAxiosConfig = {}
+    config: PartialAxiosConfig = {},
   ): Promise<void> {
     return this.call(this.getEndpointUrl(endpoint), 'delete', {
       ...config,

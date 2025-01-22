@@ -1,9 +1,8 @@
+/* eslint-disable import/no-cycle */
 import { BrowserWindow, ipcMain, ipcRenderer } from 'electron';
-import { is } from 'electron-util';
 import uniqid from 'uniqid';
 import { singleton } from 'tsyringe';
-import cpFile, { ProgressData } from 'cp-file';
-// import { debounce } from 'ts-debounce';
+import copyFile, { ProgressData } from 'cp-file';
 import { download } from 'electron-dl';
 import * as tus from 'tus-js-client';
 import fs from 'fs';
@@ -11,6 +10,7 @@ import type { UploadProgressFunction } from '../interfaces';
 import { UsesUpload } from '../interfaces';
 import Settings from './settings';
 import { JobEntity } from './entities';
+import { is } from './utils';
 
 type UploadCallbackType = {
   resolve: () => void;
@@ -88,7 +88,7 @@ export default class TransferManager {
             percentage,
             bytesUploaded,
             bytesTotal,
-          }
+          },
         ) => {
           if (this.uploadCallbacks.has(id)) {
             const callback = this.uploadCallbacks.get(id);
@@ -104,7 +104,7 @@ export default class TransferManager {
               }
             }
           }
-        }
+        },
       );
     }
   }
@@ -113,7 +113,7 @@ export default class TransferManager {
     url: string,
     filename: string,
     onStart?: () => void,
-    onCompleted?: () => void
+    onCompleted?: () => void,
   ) {
     const id = uniqid();
     if (onStart) this.downloadStartCallbacks.set(id, onStart);
@@ -148,11 +148,11 @@ export default class TransferManager {
     job: JobEntity,
     filePath: string,
     fileName: string,
-    onProgress?: UploadProgressFunction
+    onProgress?: UploadProgressFunction,
   ): Promise<void> {
-    await cpFile(filePath, `${job.getLocalDirectory()}/${fileName}`).on(
+    await copyFile(filePath, `${job.getLocalDirectory()}/${fileName}`).on(
       'progress',
-      TransferManager.makeLocalOnProgress(onProgress)
+      TransferManager.makeLocalOnProgress(onProgress),
     );
   }
 
@@ -161,7 +161,7 @@ export default class TransferManager {
     filePath: string,
     fileName: string,
     fileType: string,
-    onProgress?: UploadProgressFunction
+    onProgress?: UploadProgressFunction,
   ): Promise<void> {
     if (this.#settings.isLocal()) {
       return TransferManager.localCopy(job, filePath, fileName, onProgress);
@@ -175,7 +175,7 @@ export default class TransferManager {
         onProgress: (
           percentage: number,
           bytesUploaded: number,
-          bytesTotal: number
+          bytesTotal: number,
         ) => {
           if (onProgress) onProgress(percentage, bytesUploaded, bytesTotal);
         },
@@ -279,7 +279,7 @@ export default class TransferManager {
           });
 
           upload.start();
-        }
+        },
       );
     }
   }

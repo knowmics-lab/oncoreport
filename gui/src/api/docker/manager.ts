@@ -1,17 +1,23 @@
+/* eslint-disable no-console */
+// noinspection TypeScriptUMDGlobal
+
 import fs from 'fs-extra';
-import { is } from 'electron-util';
 import Client from 'dockerode';
 import { debounce } from 'ts-debounce';
 import * as NodeStream from 'stream';
-import { inject, injectable } from 'tsyringe';
 import { Stream } from 'stream';
-import Utils from '../utils';
+import { inject, injectable } from 'tsyringe';
+import Utils, { is } from '../utils';
 import SystemConstants from '../../constants/system.json';
 import type { ConfigObjectType } from '../../interfaces';
-import TimeoutError from '../../errors/TimeoutError';
 import { Nullable } from '../../interfaces';
+import TimeoutError from '../../errors/TimeoutError';
 import PullStatus from './pullStatus';
 import { AuthTokenResult, PullEvent } from './types';
+
+type UpdateNeededResponse = {
+  updateNeeded: boolean;
+};
 
 @injectable()
 export default class Manager {
@@ -52,7 +58,7 @@ export default class Manager {
     onStderr: Nullable<(b: Buffer) => void>,
     onEnd: Nullable<() => void>,
     checkRunning: Nullable<() => Promise<boolean>>,
-    timeoutRunning = 30000
+    timeoutRunning = 30000,
   ): void {
     let nextDataType: number | null = null;
     let nextDataLength = -1;
@@ -60,8 +66,8 @@ export default class Manager {
     let ended = false;
 
     const bufferSlice = (end: number) => {
-      const out = buffer.slice(0, end);
-      buffer = Buffer.from(buffer.slice(end, buffer.length));
+      const out = buffer.subarray(0, end);
+      buffer = Buffer.from(buffer.subarray(end, buffer.length));
       return out;
     };
     const processData = (data?: Uint8Array) => {
@@ -110,7 +116,7 @@ export default class Manager {
   public static async demuxStream(
     stream: NodeStream.Duplex,
     checkRunning: Nullable<() => Promise<boolean>>,
-    timeoutRunning = 30000
+    timeoutRunning = 30000,
   ): Promise<[string, string]> {
     return new Promise((resolve) => {
       let stdout = Buffer.from('');
@@ -125,7 +131,7 @@ export default class Manager {
         },
         () => resolve([stdout.toString(), stderr.toString()]),
         checkRunning,
-        timeoutRunning
+        timeoutRunning,
       );
     });
   }
@@ -159,7 +165,7 @@ export default class Manager {
         // eslint-disable-next-line no-await-in-loop
         inspect = await Utils.promiseTimeout(
           this.getContainer().inspect(),
-          500
+          500,
         );
       } catch (e) {
         if (!(e instanceof TimeoutError)) {
@@ -221,8 +227,8 @@ export default class Manager {
             if (currentStatus !== 'created') {
               reject(
                 new Error(
-                  `Unable to create the container ${this.config.containerName}. Create it manually`
-                )
+                  `Unable to create the container ${this.config.containerName}. Create it manually`,
+                ),
               );
             }
             try {
@@ -242,47 +248,45 @@ export default class Manager {
     showMessage: (a: string, b: boolean) => void,
     displayLog: Nullable<(a: string) => void>,
     timeout = 120000,
-    maxTries = 3
+    maxTries = 3,
   ) {
-    if (this.config.local) {
-      showMessage('Checking internet connection...', false);
-      if (!(await this.isRunning()) && (await Utils.isOnline())) {
-        showMessage('Checking for container updates...', false);
-        try {
-          const displayStatus = displayLog
-            ? debounce((s: PullStatus) => {
-                if (s) displayLog(s.toString());
-              }, 500)
-            : undefined;
-          const res = await this.pullImage(displayStatus);
-          if (displayStatus) {
-            displayStatus.cancel();
-          }
-          if (!res.isUpToDate()) {
-            await Utils.retryFunction(
-              async (t: number) => {
-                const first = t === 0;
-                showMessage(
-                  `Update found...removing old container...${
-                    first ? '' : `Attempt ${t + 1} of ${maxTries}...`
-                  }`,
-                  !first
-                );
-                await this.removeContainer();
-              },
-              timeout,
-              maxTries
-            );
-          }
-        } catch (e) {
-          if (e instanceof TimeoutError) {
-            throw new Error(
-              `Unable to update the container ${this.config.containerName}. Update it manually`
-            );
-          } else {
-            throw e;
-          }
-        }
+    if (!this.config.local) return false;
+    showMessage('Checking internet connection...', false);
+    if ((await this.isRunning()) || !(await Utils.isOnline())) return false;
+    showMessage('Checking for container updates...', false);
+    try {
+      const displayStatus = displayLog
+        ? debounce((s: PullStatus) => {
+            if (s) displayLog(s.toString());
+          }, 500)
+        : undefined;
+      const res = await this.pullImage(displayStatus);
+      if (displayStatus) {
+        displayStatus.cancel('Update finished');
+      }
+      if (res.isUpToDate()) return false;
+      await Utils.retryFunction(
+        async (t: number) => {
+          const first = t === 0;
+          showMessage(
+            `Update found...removing old container...${
+              first ? '' : `Attempt ${t + 1} of ${maxTries}...`
+            }`,
+            !first,
+          );
+          await this.removeContainer();
+        },
+        timeout,
+        maxTries,
+      );
+      return true;
+    } catch (e) {
+      if (e instanceof TimeoutError) {
+        throw new Error(
+          `Unable to update the container ${this.config.containerName}. Update it manually`,
+        );
+      } else {
+        throw e;
       }
     }
   }
@@ -291,10 +295,15 @@ export default class Manager {
     showMessage: (a: string, b: boolean) => void,
     displayLog: Nullable<(a: string) => void>,
     timeout = 120000,
-    maxTries = 3
+    maxTries = 3,
   ) {
     if (displayLog) displayLog('');
-    await this.checkForUpdates(showMessage, displayLog, timeout, maxTries);
+    const couldRequireUpdate = await this.checkForUpdates(
+      showMessage,
+      displayLog,
+      timeout,
+      maxTries,
+    );
     try {
       await Utils.retryFunction(
         async (t: number) => {
@@ -306,20 +315,28 @@ export default class Manager {
               : `Container is not starting...Attempt ${
                   t + 1
                 } of ${maxTries}...`,
-            !first
+            !first,
           );
           if (odd) {
             await this.removeContainer();
           }
-          return this.startContainer();
+          await this.startContainer();
         },
         timeout,
-        maxTries
+        maxTries,
       );
+      if (couldRequireUpdate) {
+        showMessage('Waiting for the container to boot...', false);
+        await this.waitContainerBooted();
+        if (await this.isUpdateNeeded()) {
+          showMessage('Updating container...', false);
+          await this.runUpdateScript(showMessage, displayLog);
+        }
+      }
     } catch (e) {
       if (e instanceof TimeoutError) {
         throw new Error(
-          `Unable to start the container ${this.config.containerName}. Start it manually`
+          `Unable to start the container ${this.config.containerName}. Start it manually`,
         );
       } else {
         throw e;
@@ -334,7 +351,7 @@ export default class Manager {
     } else if (status === 'exited' || status === 'created') {
       await this.cleanupBootedFile();
       const container = this.getContainer();
-      container.start();
+      container.start().catch(console.error);
       await new Promise<void>((resolve, reject) => {
         let timer: ReturnType<typeof setInterval>;
         const fnTimer = async () => {
@@ -386,7 +403,7 @@ export default class Manager {
   public async execDockerCommand(
     Cmd: string[],
     timeoutRunning = 30000,
-    parse = true
+    parse = true,
   ): Promise<unknown> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
@@ -406,7 +423,7 @@ export default class Manager {
             });
           });
         },
-        timeoutRunning
+        timeoutRunning,
       );
       if (parse) {
         return JSON.parse(stdout);
@@ -414,6 +431,14 @@ export default class Manager {
       return stdout;
     }
     throw new Error('Unable to exec command. Container is not running');
+  }
+
+  public async isUpdateNeeded(): Promise<boolean> {
+    const result = (await this.execDockerCommand(
+      ['php', '/oncoreport/ws/artisan', 'update:check'],
+      1000,
+    )) as UpdateNeededResponse;
+    return result.updateNeeded;
   }
 
   public async generateAuthToken(): Promise<string> {
@@ -432,7 +457,7 @@ export default class Manager {
     outputCallback: (a: string) => void,
     errCallback: Nullable<(a: string) => void> = null,
     exitCallback: Nullable<(a: number) => void> = null,
-    timeoutRunning = 30000
+    timeoutRunning = 30000,
   ): Promise<void> {
     const status = await this.checkContainerStatus();
     if (status === 'running') {
@@ -467,7 +492,7 @@ export default class Manager {
             });
           });
         },
-        timeoutRunning
+        timeoutRunning,
       );
     }
     throw new Error('Unable to exec command. Container is not running');
@@ -477,7 +502,7 @@ export default class Manager {
     cosmicUsername: string,
     cosmicPassword: string,
     outputCallback: (a: string) => void,
-    debounceTime = 500
+    debounceTime = 500,
   ) {
     let debouncedCallback = outputCallback;
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -510,9 +535,41 @@ export default class Manager {
           if (timer) clearInterval(timer);
           if (c === 0) resolve();
           else reject(new Error(`Unknown error (Code: ${c})`));
-        }
+        },
       ).catch((e) => {
         if (timer) clearInterval(timer);
+        reject(e);
+      });
+    });
+  }
+
+  public async runUpdateScript(
+    showMessage: (a: string, b: boolean) => void,
+    displayLog: Nullable<(a: string) => void>,
+  ) {
+    let accumulator = '';
+    const debouncedCallback = (s: string) => {
+      accumulator += s;
+    };
+    const fnDebouncer = () => {
+      if (accumulator !== '' && displayLog) {
+        if (displayLog) displayLog(accumulator);
+      }
+    };
+    const timer = setInterval(fnDebouncer, 500);
+    return new Promise<void>((resolve, reject) => {
+      this.execDockerCommandLive(
+        ['php', '/oncoreport/ws/artisan', 'update:run'],
+        debouncedCallback,
+        debouncedCallback,
+        (c) => {
+          clearInterval(timer);
+          if (c === 0) resolve();
+          else reject(new Error(`Unknown error (Code: ${c})`));
+        },
+      ).catch((e) => {
+        clearInterval(timer);
+        showMessage('Error running update script', true);
         reject(e);
       });
     });
@@ -524,14 +581,14 @@ export default class Manager {
       return this.execDockerCommand(
         ['php', '/oncoreport/ws/artisan', 'queue:clear'],
         1000,
-        false
+        false,
       );
     }
     return undefined;
   }
 
   public async pullImage(
-    outputCallback: Nullable<(s: PullStatus) => void>
+    outputCallback: Nullable<(s: PullStatus) => Promise<void>>,
   ): Promise<PullStatus> {
     return new Promise((resolve, reject) => {
       this.#client.pull(
@@ -548,12 +605,13 @@ export default class Manager {
             const onProgress = (event: PullEvent) => {
               status.pushEvent(event);
               if (outputCallback) {
-                outputCallback(status);
+                outputCallback(status).catch((error) => error);
               }
             };
+            // @ts-ignore
             this.#client.modem.followProgress(stream, onFinished, onProgress);
           }
-        }
+        },
       );
     });
   }
@@ -563,7 +621,7 @@ export default class Manager {
     return (
       images.filter(
         (r) =>
-          r.RepoTags && r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME)
+          r.RepoTags && r.RepoTags.includes(SystemConstants.DOCKER_IMAGE_NAME),
       ).length > 0
     );
   }

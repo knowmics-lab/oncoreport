@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import path from 'path';
 import fs from 'fs-extra';
-import { api as electron } from 'electron-util';
 import { injectable } from 'tsyringe';
 import type { JobConfig, JobOutput, Nullable } from '../../interfaces';
 import { JobStatus, JobTypes } from '../../interfaces';
@@ -14,6 +13,7 @@ import TransferManager from '../transferManager';
 import { JobAdapter } from '../adapters';
 import Entity, { field } from '../../apiConnector/entity/entity';
 import { RelationsType } from '../../apiConnector';
+import electronApi from '../../electronApi';
 
 @injectable()
 export default class Job extends Entity {
@@ -76,9 +76,10 @@ export default class Job extends Entity {
   public constructor(
     adapter: JobAdapter,
     private settings: Settings,
-    private transferManager: TransferManager
+    private transferManager: TransferManager,
   ) {
     super(adapter);
+    this.init();
   }
 
   public getUploadUrl(): string {
@@ -98,7 +99,7 @@ export default class Job extends Entity {
   public async download(
     outputVariable: string,
     onStart?: (s: string) => void,
-    onCompleted?: (s: string) => void
+    onCompleted?: (s: string) => void,
   ): Promise<void> {
     if (this.output && Utils.hasPathProperty(this.output, outputVariable)) {
       const { path: outputPath } = this.output[outputVariable];
@@ -108,7 +109,7 @@ export default class Job extends Entity {
         outputUrl,
         outputFilename,
         onStart ? () => onStart(outputVariable) : undefined,
-        onCompleted ? () => onCompleted(outputVariable) : undefined
+        onCompleted ? () => onCompleted(outputVariable) : undefined,
       );
     } else {
       throw new EntityError('Unable to find output path');
@@ -122,11 +123,11 @@ export default class Job extends Entity {
       const outputPath = this.output.reportOutputFile.path;
       if (outputPath) {
         const jobFolder = path.dirname(
-          this.settings.getLocalPath(`/public/${outputPath}`)
+          this.settings.getLocalPath(`/public/${outputPath}`),
         );
         if (!(await fs.pathExists(jobFolder)))
           throw new EntityError('Unable to find output path');
-        if (!electron.shell.openPath(jobFolder)) {
+        if (!electronApi.shell.openPath(jobFolder)) {
           throw new EntityError('Unable to open output folder');
         }
         return;

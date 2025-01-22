@@ -17,11 +17,30 @@ export type Capabilities = {
   numCores: number;
   usedCores: number;
   availableCores: number;
+  oncokbTokenStatus: {
+    status: 'ok' | 'warning' | 'error';
+    message: string;
+  };
+  dbVersions: {
+    name: string;
+    version: string;
+    download_date: string;
+  }[];
 };
 
 let watcher: FSWatcher | null = null;
 
 let containerCapabilities: Capabilities | undefined;
+
+export const is = {
+  macos: process.platform === 'darwin',
+  linux: process.platform === 'linux',
+  windows: process.platform === 'win32',
+  main: process.type === 'browser',
+  renderer: process.type === 'renderer',
+  macAppStore: process.mas,
+  windowsStore: process.windowsStore,
+};
 
 export default {
   capabilitiesLoaded() {
@@ -88,9 +107,9 @@ export default {
   },
   filterByKey<T, K extends keyof T>(
     raw: T,
-    callback: (k: keyof T) => boolean
+    callback: (k: keyof T) => boolean,
   ): Omit<T, K> {
-    return Object.keys(raw)
+    return Object.keys(raw as Record<string, unknown>)
       .filter((k) => callback(k as keyof T))
       .reduce((obj, key) => {
         return {
@@ -105,7 +124,7 @@ export default {
   async retryFunction<T>(
     f: (idx: number) => Promise<T>,
     timeout = 0,
-    maxTries = 3
+    maxTries = 3,
   ): Promise<T> {
     const realMaxTries = Math.max(1, maxTries);
     // eslint-disable-next-line no-plusplus
@@ -120,7 +139,7 @@ export default {
       }
     }
     throw new TimeoutError(
-      'Operation timed out too many times. No other attempt will be made.'
+      'Operation timed out too many times. No other attempt will be made.',
     );
   },
   async promiseTimeout<T>(p: Promise<T>, timeout = 0): Promise<T> {
@@ -131,7 +150,7 @@ export default {
       new Promise((_resolve, reject) => {
         setTimeout(
           () => reject(new TimeoutError('Operation timed out')),
-          timeout
+          timeout,
         );
       }) as Promise<never>,
     ]);
@@ -154,7 +173,7 @@ export default {
         timer = setTimeout(() => {
           closeWatcher();
           reject(
-            new TimeoutError(`Unable to find ${filePath}. Operation timed out`)
+            new TimeoutError(`Unable to find ${filePath}. Operation timed out`),
           );
         }, timeout);
       }
@@ -199,10 +218,13 @@ export default {
   // eslint-disable-next-line @typescript-eslint/ban-types
   hasPathProperty<X extends {}, Y extends PropertyKey>(
     obj: X,
-    prop: Y
+    prop: Y,
   ): obj is X & Record<Y, JobPath> {
+    const propString = String(prop);
     return (
-      has(obj, prop) && has(obj, `${prop}.path`) && has(obj, `${prop}.url`)
+      has(obj, propString) &&
+      has(obj, `${propString}.path`) &&
+      has(obj, `${propString}.url`)
     );
   },
 };

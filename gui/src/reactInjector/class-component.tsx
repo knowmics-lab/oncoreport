@@ -31,7 +31,7 @@ function useCreateHOC<C extends ReactComponent>(
   Target: C,
   propName: string,
   value: () => any,
-  options?: Options
+  options?: Options,
 ) {
   const useGetProps = (props: any) => {
     const extractedValue = value();
@@ -40,7 +40,7 @@ function useCreateHOC<C extends ReactComponent>(
         ...props,
         [propName]: extractedValue,
       }),
-      [props, extractedValue]
+      [props, extractedValue],
     );
   };
 
@@ -74,7 +74,7 @@ export function injectContainer(propName: string, options?: Options) {
 export function injectService<S>(
   propName: string,
   id: InjectionToken<S>,
-  options?: Options
+  options?: Options,
 ) {
   return <C extends ReactComponent>(Target: C) => {
     return useCreateHOC(Target, propName, () => useService<S>(id), options);
@@ -84,7 +84,7 @@ export function injectService<S>(
 export function injectAllServices<S>(
   propName: string,
   id: InjectionToken<S>,
-  options?: Options
+  options?: Options,
 ) {
   return <C extends ReactComponent>(Target: C) => {
     return useCreateHOC(Target, propName, () => useAllServices<S>(id), options);

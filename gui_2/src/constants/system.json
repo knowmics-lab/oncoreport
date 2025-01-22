@@ -1,5 +1,0 @@
-{
-  "DOCKER_IMAGE_NAME": "alaimos/oncoreport:v0.0.2",
-  "DOCKER_IMAGE_VERSION": "0.0.2",
-  "GUI_VERSION": "1.0.0"
-}

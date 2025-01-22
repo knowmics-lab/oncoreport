@@ -1,10 +1,10 @@
 import { FilteringSpec, SimpleMapType, SortingSpec } from './common';
 import Collection from './collection';
 import Entity from './common/entity';
-import Connector from '../api/adapters/connector';
+// import Connector from '../api/adapters/connector';
 
 export interface Adapter<T> {
-  readonly connector: Connector;
+  // readonly connector: Connector;
 
   create(entity: T): Promise<T>;
 
@@ -19,6 +19,6 @@ export interface Adapter<T> {
     filtering?: FilteringSpec,
     page?: number,
     per_page?: number,
-    parameters?: SimpleMapType<string>
+    parameters?: SimpleMapType<string>,
   ): Promise<Collection<T>>;
 }

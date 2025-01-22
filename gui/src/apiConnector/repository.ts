@@ -34,7 +34,7 @@ export default abstract class Repository<E extends EntityObject> {
 
   protected constructor(
     protected _adapter: Adapter<E>,
-    protected token: InjectionToken<E>
+    protected token: InjectionToken<E>,
   ) {}
 
   public get adapter() {
@@ -61,7 +61,7 @@ export default abstract class Repository<E extends EntityObject> {
    */
   public createEntitySync(
     data?: PartialObject<E>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): E {
     const id = data?.id;
     const entity = this.resolve(id);
@@ -97,7 +97,7 @@ export default abstract class Repository<E extends EntityObject> {
    */
   public async createEntityAsync(
     id?: number,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<E> {
     const entity = this.resolve(id);
     if (id && !entity.isInitialized) {
@@ -118,18 +118,18 @@ export default abstract class Repository<E extends EntityObject> {
   public async new(data?: Partial<E>, parameters?: SimpleMapType): Promise<E> {
     if (this._adapter.readonly)
       throw new Error(
-        'Attempting to create a new object for a readonly entity'
+        'Attempting to create a new object for a readonly entity',
       );
     return this.createEntitySync(data, parameters);
   }
 
   public async create(
     data?: Partial<E>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<E> {
     if (this._adapter.readonly)
       throw new Error(
-        'Attempting to create a new object for a readonly entity'
+        'Attempting to create a new object for a readonly entity',
       );
     return this.createEntitySync(data, parameters).save();
   }

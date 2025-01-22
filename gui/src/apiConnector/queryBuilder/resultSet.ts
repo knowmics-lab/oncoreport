@@ -17,7 +17,7 @@ type WeakObserver<E extends EntityObject> = WeakRef<
 export default class ResultSet<E extends EntityObject> extends Array<E> {
   protected metadata?: PaginationMetadata;
 
-  protected observers = new Array<WeakObserver<E>>();
+  protected observers: WeakObserver<E>[] = [];
 
   protected entityObserver: EntityObserver<E> = {
     updated: () => this.refreshed(),
@@ -28,7 +28,7 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
 
   public constructor(
     queryResponse: QueryResponse<PartialObject<E>>,
-    protected repository: RepositoryObject<E>
+    protected repository: RepositoryObject<E>,
   ) {
     super();
     this.adapter = repository.adapter;
@@ -43,7 +43,7 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       super.push(
         this.repository
           .createEntitySync(entityData, this.parameters)
-          .observe(this.entityObserver)
+          .observe(this.entityObserver),
       );
     }
   }
@@ -134,8 +134,8 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
             ...this.query,
             page,
           },
-          this.parameters
-        )
+          this.parameters,
+        ),
       );
       this.changedPage();
     }
@@ -143,14 +143,14 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
 
   map<U>(
     callbackfn: (value: E, index: number, array: E[]) => U,
-    thisArg?: any
+    thisArg?: any,
   ): U[] {
     return [...this].map(callbackfn, thisArg);
   }
 
   filter<S extends E>(
     predicate: (value: E, index: number, array: E[]) => value is S,
-    thisArg?: any
+    thisArg?: any,
   ): S[] {
     return [...this].filter(predicate, thisArg);
   }
@@ -160,9 +160,9 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       previousValue: E,
       currentValue: E,
       currentIndex: number,
-      array: E[]
+      array: E[],
     ) => E,
-    initialValue?: any
+    initialValue?: any,
   ): E {
     return [...this].reduce(callbackfn, initialValue);
   }
@@ -172,9 +172,9 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       previousValue: E,
       currentValue: E,
       currentIndex: number,
-      array: E[]
+      array: E[],
     ) => E,
-    initialValue?: any
+    initialValue?: any,
   ): E {
     return [...this].reduceRight(callbackfn, initialValue);
   }
@@ -184,9 +184,9 @@ export default class ResultSet<E extends EntityObject> extends Array<E> {
       this: This,
       value: E,
       index: number,
-      array: E[]
+      array: E[],
     ) => ReadonlyArray<U> | U,
-    thisArg?: This
+    thisArg?: This,
   ): U[] {
     return [...this].flatMap(callback, thisArg);
   }

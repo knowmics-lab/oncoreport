@@ -7,7 +7,7 @@ import { QueryRequest } from '../../apiConnector/interfaces/queryRequest';
 
 @singleton()
 export default class Disease extends Adapter<DiseaseEntity> {
-  protected isReadOnly = true;
+  protected isReadOnly = false;
 
   public constructor(client: HttpClient) {
     super(client);
@@ -20,7 +20,7 @@ export default class Disease extends Adapter<DiseaseEntity> {
   protected postProcessQueryParams(
     queryParams: MapType,
     _queryRequest?: QueryRequest,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): MapType {
     if (has(parameters, 'tumor') && get(parameters, 'tumor')) {
       queryParams.tumor = true;

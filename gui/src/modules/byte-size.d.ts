@@ -15,6 +15,6 @@ declare module 'byte-size' {
       precision?: number;
       units?: 'metric' | 'iec' | 'metric_octet' | 'iec_octet';
       toStringFn?: () => string & ThisType<ByteSize>;
-    }
+    },
   ): ByteSize;
 }

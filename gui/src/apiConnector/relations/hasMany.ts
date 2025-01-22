@@ -20,6 +20,7 @@ export default class HasMany<R extends EntityObject>
   extends Array<R>
   implements EntityObserver<EntityObject>, Array<R>
 {
+  // eslint-disable-next-line no-undef
   [index: number]: R;
 
   /**
@@ -51,7 +52,7 @@ export default class HasMany<R extends EntityObject>
     relatedRepositoryToken: InjectionToken<RepositoryObject<R>> | number,
     private referringObject: EntityObject,
     private foreignKey: keyof R | { [localKey: string]: keyof R },
-    data: Fillable<R>[] = []
+    data: Fillable<R>[] = [],
   ) {
     super();
     if (typeof relatedRepositoryToken !== 'number') {
@@ -77,7 +78,7 @@ export default class HasMany<R extends EntityObject>
           return o as R;
         }
         return this.repository.createEntitySync(o, this.getParameters());
-      })
+      }),
     );
     return this;
   }
@@ -88,7 +89,7 @@ export default class HasMany<R extends EntityObject>
   public new(): R {
     if (this.repository.adapter.readonly)
       throw new Error(
-        'Attempting to create a new object for a readonly entity'
+        'Attempting to create a new object for a readonly entity',
       );
     const entity = this.repository.resolve().initializeNew();
     entity.observe(this.entityObserver);
@@ -106,11 +107,11 @@ export default class HasMany<R extends EntityObject>
    * @param data
    */
   public async create(
-    data: ExtendedPartialObject<R, EntityObject>
+    data: ExtendedPartialObject<R, EntityObject>,
   ): Promise<R> {
     if (this.repository.adapter.readonly)
       throw new Error(
-        'Attempting to create a new object for a readonly entity'
+        'Attempting to create a new object for a readonly entity',
       );
     const entity = this.repository.resolve().initializeNew();
     entity.fill(data).observe(this.entityObserver);
@@ -131,7 +132,7 @@ export default class HasMany<R extends EntityObject>
    */
   public async findOrCreate(
     id: number,
-    values: ExtendedPartialObject<R, EntityObject>
+    values: ExtendedPartialObject<R, EntityObject>,
   ): Promise<R> {
     const idx = this.findIndex((o) => o.id === id);
     if (idx <= 0) return this.create(values);
@@ -145,7 +146,7 @@ export default class HasMany<R extends EntityObject>
    */
   public async firstOrCreate(
     attributes: ExtendedPartialObject<R, EntityObject>,
-    values: ExtendedPartialObject<R, EntityObject>
+    values: ExtendedPartialObject<R, EntityObject>,
   ): Promise<R> {
     const idx = this.findIndex((o) => {
       for (const [k, v] of Object.entries(attributes)) {
@@ -176,7 +177,7 @@ export default class HasMany<R extends EntityObject>
    */
   public async updateOrCreate(
     attributes: ExtendedPartialObject<R, EntityObject>,
-    values: ExtendedPartialObject<R, EntityObject>
+    values: ExtendedPartialObject<R, EntityObject>,
   ): Promise<R> {
     const o = await this.firstOrCreate(attributes, values);
     if (!o.wasRecentlyCreated) {
@@ -223,9 +224,9 @@ export default class HasMany<R extends EntityObject>
           {
             perPage: 0,
           },
-          this.getParameters()
+          this.getParameters(),
         )
-      ).data
+      ).data,
     );
     return this;
   }
@@ -256,10 +257,10 @@ export default class HasMany<R extends EntityObject>
    */
   public toFormObject(
     fullyDump?: boolean,
-    dumpAsFormObject?: boolean
+    dumpAsFormObject?: boolean,
   ): (EntityObject | PartialWithoutRelations<R, EntityObject> | number)[] {
     return this.map((o) => (fullyDump ? o : o.id)).map((o) =>
-      dumpAsFormObject && typeof o === 'object' ? o.toFormObject() : o
+      dumpAsFormObject && typeof o === 'object' ? o.toFormObject() : o,
     );
   }
 
@@ -289,14 +290,14 @@ export default class HasMany<R extends EntityObject>
 
   public map<U>(
     callbackfn: (value: R, index: number, array: R[]) => U,
-    thisArg?: any
+    thisArg?: any,
   ): U[] {
     return [...this].map(callbackfn, thisArg);
   }
 
   public filter<S extends R>(
     predicate: (value: R, index: number, array: R[]) => value is S,
-    thisArg?: any
+    thisArg?: any,
   ): S[] {
     return [...this].filter(predicate, thisArg);
   }
@@ -306,9 +307,9 @@ export default class HasMany<R extends EntityObject>
       previousValue: R,
       currentValue: R,
       currentIndex: number,
-      array: R[]
+      array: R[],
     ) => R,
-    initialValue?: any
+    initialValue?: any,
   ): R {
     return [...this].reduce(callbackfn, initialValue);
   }
@@ -318,9 +319,9 @@ export default class HasMany<R extends EntityObject>
       previousValue: R,
       currentValue: R,
       currentIndex: number,
-      array: R[]
+      array: R[],
     ) => R,
-    initialValue?: any
+    initialValue?: any,
   ): R {
     return [...this].reduceRight(callbackfn, initialValue);
   }
@@ -330,9 +331,9 @@ export default class HasMany<R extends EntityObject>
       this: This,
       value: R,
       index: number,
-      array: R[]
+      array: R[],
     ) => ReadonlyArray<U> | U,
-    thisArg?: This
+    thisArg?: This,
   ): U[] {
     return [...this].flatMap(callback, thisArg);
   }

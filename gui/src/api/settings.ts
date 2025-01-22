@@ -1,15 +1,12 @@
 import Store from 'electron-store';
-import { api, is } from 'electron-util';
 import findFreePort from 'find-free-port';
 import { singleton } from 'tsyringe';
 import { ipcRenderer } from 'electron';
 import uniqid from 'uniqid';
-import type {
-  AxiosHeaders,
-  ConfigObjectType,
-  SimpleMapType,
-} from '../interfaces';
+import type { ConfigObjectType } from '../interfaces';
 import { ApiProtocol } from '../interfaces';
+import { is } from './utils';
+import { getPath } from '../electronApi';
 
 type Listener = (config: ConfigObjectType) => void;
 
@@ -36,11 +33,11 @@ export default class Settings {
       apiPort,
       apiPath: '/api/',
       publicPath: '/storage/',
-      dataPath: `${api.app.getPath('home')}/.Oncoreport`,
+      dataPath: `${getPath('home')}/.Oncoreport`,
       socketPath: is.windows
         ? '//./pipe/docker_engine'
         : '/var/run/docker.sock',
-      containerName: 'OncoReport',
+      containerName: 'Oncoreport',
       apiKey: '',
     };
   }
@@ -57,7 +54,7 @@ export default class Settings {
         publicPath: this.configStore.get('publicPath'),
         dataPath: this.configStore.get(
           'dataPath',
-          `${api.app.getPath('home')}/.Oncoreport`
+          `${getPath('home')}/.Oncoreport`,
         ),
         socketPath: this.configStore.get('socketPath'),
         containerName: this.configStore.get('containerName'),
@@ -105,13 +102,13 @@ export default class Settings {
     return `${config.dataPath}/${p ? p.replace(/^\//, '') : ''}`;
   }
 
-  public getAuthHeaders(): SimpleMapType<string> {
+  public getAuthHeaders() {
     return {
       Authorization: `Bearer ${this.getConfig().apiKey}`,
     };
   }
 
-  public getAxiosHeaders(): AxiosHeaders {
+  public getAxiosHeaders() {
     return {
       headers: {
         Accept: 'application/json',

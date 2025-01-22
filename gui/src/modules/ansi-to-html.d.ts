@@ -16,6 +16,7 @@ declare module 'ansi-to-html' {
 
   export default class Convert {
     constructor(options?: ConverterOptions);
+
     toHtml(data: string): string;
   }
 }

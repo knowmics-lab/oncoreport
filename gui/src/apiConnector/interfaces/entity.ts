@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any,no-use-before-define */
 import {
   ExtendedPartialObject,
   MapType,
@@ -27,7 +27,7 @@ export interface EntityObject {
   initialize(
     id: number,
     d?: PartialObject<this>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<this>;
   refresh(): Promise<this>;
   save(): Promise<this>;

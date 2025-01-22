@@ -85,7 +85,7 @@ export interface ResponseType<T> {
 export type UploadProgressFunction = (
   percentage: number,
   bytesUploaded: number,
-  bytesTotal: number
+  bytesTotal: number,
 ) => void;
 
 export type UploadState = {
@@ -105,5 +105,5 @@ export type UploadCallbacks = {
 export type UploadHook = [
   UploadState,
   UploadCallbacks,
-  Dispatch<SetStateAction<UploadState>>
+  Dispatch<SetStateAction<UploadState>>,
 ];

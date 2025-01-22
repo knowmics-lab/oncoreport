@@ -21,12 +21,12 @@ export default class Job extends Adapter<JobEntity> {
     id:
       | number
       | (PartialObject<JobEntity> & { id: number })
-      | (JobEntity & { id: number })
+      | (JobEntity & { id: number }),
   ): Promise<void> {
     const entityId = typeof id === 'number' ? id : id.id;
     const endpoint = sprintf(
       `${this.getEndpointForResource(entityId)}/submit`,
-      this.getParameters(undefined, typeof id === 'object' ? id : undefined)
+      this.getParameters(undefined, typeof id === 'object' ? id : undefined),
     );
     await this.client.patch(endpoint);
   }
@@ -34,7 +34,7 @@ export default class Job extends Adapter<JobEntity> {
   protected postProcessQueryParams(
     queryParams: MapType,
     _queryRequest?: QueryRequest,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): MapType {
     if (has(parameters, 'completed') && get(parameters, 'completed')) {
       queryParams.completed = true;

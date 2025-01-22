@@ -14,13 +14,13 @@ export interface Adapter<T> {
 
   delete(
     id: number | ((T | PartialObject<T>) & { id: number }),
-    parameters?: SimpleMapType<any>
+    parameters?: SimpleMapType<any>,
   ): Promise<void>;
 
   find(id: number, parameters?: SimpleMapType<any>): Promise<PartialObject<T>>;
 
   query(
     queryRequest?: QueryRequest,
-    parameters?: SimpleMapType<any>
+    parameters?: SimpleMapType<any>,
   ): Promise<QueryResponse<T>>;
 }

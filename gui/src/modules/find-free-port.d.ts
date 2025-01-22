@@ -10,6 +10,6 @@ declare module 'find-free-port' {
     portEnd?: number,
     host?: string,
     homany?: number,
-    cb?: T
+    cb?: T,
   ): ReturnType<T>;
 }

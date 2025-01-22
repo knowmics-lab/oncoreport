@@ -12,5 +12,6 @@ export default class SuspensionReason extends Entity {
 
   public constructor(adapter: SuspensionReasonAdapter) {
     super(adapter);
+    this.init();
   }
 }

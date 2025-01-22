@@ -14,7 +14,7 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
 
   constructor(
     relatedRepositoryToken: InjectionToken<RepositoryObject<R>> | number,
-    data: Fillable<R>[] = []
+    data: Fillable<R>[] = [],
   ) {
     super();
     if (typeof relatedRepositoryToken !== 'number') {
@@ -39,7 +39,7 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
           return o as R;
         }
         return this.repository.createEntitySync(o);
-      })
+      }),
     );
     return this;
   }
@@ -72,14 +72,14 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
 
   public map<U>(
     callbackfn: (value: R, index: number, array: R[]) => U,
-    thisArg?: any
+    thisArg?: any,
   ): U[] {
     return [...this].map(callbackfn, thisArg);
   }
 
   public filter<S extends R>(
     predicate: (value: R, index: number, array: R[]) => value is S,
-    thisArg?: any
+    thisArg?: any,
   ): S[] {
     return [...this].filter(predicate, thisArg);
   }
@@ -89,9 +89,9 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
       previousValue: R,
       currentValue: R,
       currentIndex: number,
-      array: R[]
+      array: R[],
     ) => R,
-    initialValue?: any
+    initialValue?: any,
   ): R {
     return [...this].reduce(callbackfn, initialValue);
   }
@@ -101,9 +101,9 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
       previousValue: R,
       currentValue: R,
       currentIndex: number,
-      array: R[]
+      array: R[],
     ) => R,
-    initialValue?: any
+    initialValue?: any,
   ): R {
     return [...this].reduceRight(callbackfn, initialValue);
   }
@@ -113,9 +113,9 @@ export default class HasManyReadonly<R extends EntityObject> extends Array<R> {
       this: This,
       value: R,
       index: number,
-      array: R[]
+      array: R[],
     ) => ReadonlyArray<U> | U,
-    thisArg?: This
+    thisArg?: This,
   ): U[] {
     return [...this].flatMap(callback, thisArg);
   }

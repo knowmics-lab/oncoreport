@@ -19,7 +19,7 @@ export default interface Entity {
   created_at: Dayjs;
 
   /**
-   * The human readable version of the creation date represented as the difference
+   * The human-readable version of the creation date represented as the difference
    * between today and the creation date
    */
   created_at_diff: string;
@@ -30,7 +30,7 @@ export default interface Entity {
   updated_at: Dayjs;
 
   /**
-   * The human readable version of the last update date represented as the difference
+   * The human-readable version of the last update date represented as the difference
    * between today and the date
    */
   updated_at_diff: string;

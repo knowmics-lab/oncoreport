@@ -18,5 +18,6 @@ export default class Drug extends Entity {
 
   public constructor(adapter: DrugAdapter) {
     super(adapter);
+    this.init();
   }
 }

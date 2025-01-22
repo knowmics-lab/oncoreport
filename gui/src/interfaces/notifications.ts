@@ -18,5 +18,5 @@ export interface NotificationsState {
 
 export type PushNotificationFunction = (
   message: string,
-  type?: TypeOfNotification
+  type?: TypeOfNotification,
 ) => unknown;

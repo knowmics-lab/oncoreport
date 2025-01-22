@@ -2,7 +2,7 @@
 import { singleton } from 'tsyringe';
 import { set, get, has, unset } from 'lodash';
 import uniqid from 'uniqid';
-import produce from 'immer';
+import { produce } from 'immer';
 import {
   Notification,
   PushedNotification,

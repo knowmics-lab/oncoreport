@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console,import/no-cycle */
 import { injectable } from 'tsyringe';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import TransferManager from './transferManager';
@@ -16,7 +16,7 @@ export default class MainProcessManager {
   public constructor(
     private dockerManager: DockerManager,
     private settings: Settings,
-    private transferManager: TransferManager
+    private transferManager: TransferManager,
   ) {}
 
   public setWindow(window: BrowserWindow): this {
@@ -53,36 +53,53 @@ export default class MainProcessManager {
 
   private registerNewWindowHandler() {
     if (this.#window) {
-      this.#window.webContents.on(
-        'new-window',
-        (event, url, frameName, _disposition, options) => {
-          event.preventDefault();
-          const forcedOptions = {
-            parent: this.#window,
-            width: 1024,
-            height: 728,
+      this.#window.webContents.setWindowOpenHandler(({ frameName }) => {
+        const isModal = frameName === 'modal';
+        return {
+          action: 'allow',
+          overrideBrowserWindowOptions: {
+            modal: isModal,
             webPreferences: {
               nodeIntegration: false,
-              nativeWindowOpen: true,
               webviewTag: false,
               nodeIntegrationInSubFrames: false,
               nodeIntegrationInWorker: false,
               contextIsolation: true,
               allowRunningInsecureContent: true,
             },
-          };
-          const isModal = frameName === 'modal';
-          const win = new BrowserWindow({
-            ...options,
-            ...forcedOptions,
-            modal: isModal,
-          });
-          win.setMenuBarVisibility(false);
-          win.loadURL(url).catch(console.error);
-          // eslint-disable-next-line no-param-reassign
-          event.newGuest = win;
-        }
-      );
+          },
+        };
+      });
+      // this.#window.webContents.on(
+      //   'new-window',
+      //   (event, url, frameName, _disposition, options) => {
+      //     event.preventDefault();
+      //     const forcedOptions = {
+      //       parent: this.#window,
+      //       width: 1024,
+      //       height: 728,
+      //       webPreferences: {
+      //         nodeIntegration: false,
+      //         nativeWindowOpen: true,
+      //         webviewTag: false,
+      //         nodeIntegrationInSubFrames: false,
+      //         nodeIntegrationInWorker: false,
+      //         contextIsolation: true,
+      //         allowRunningInsecureContent: true,
+      //       },
+      //     };
+      //     const isModal = frameName === 'modal';
+      //     const win = new BrowserWindow({
+      //       ...options,
+      //       ...forcedOptions,
+      //       modal: isModal,
+      //     });
+      //     win.setMenuBarVisibility(false);
+      //     win.loadURL(url).catch(console.error);
+      //     // eslint-disable-next-line no-param-reassign
+      //     event.newGuest = win;
+      //   },
+      // );
     }
   }
 
@@ -132,7 +149,7 @@ export default class MainProcessManager {
                   checkboxLabel: 'Close without asking again?',
                   checkboxChecked: this.settings.autoStopDockerOnClose(),
                   normalizeAccessKeys: true,
-                }
+                },
               );
               if (checkboxChecked) {
                 this.settings.setAutoStopDockerOnClose();
@@ -166,6 +183,12 @@ export default class MainProcessManager {
     });
   }
 
+  private registerPathHandler() {
+    ipcMain.handle('get-path', (_e, args) => {
+      return app.getPath(args);
+    });
+  }
+
   public registerHandlers() {
     if (!this.#registered) {
       this.registerQuitHandler();
@@ -174,6 +197,7 @@ export default class MainProcessManager {
       this.registerNewWindowHandler();
       this.registerConfigChangeHandler();
       this.registerRelaunchHandler();
+      this.registerPathHandler();
       this.#registered = true;
     }
   }

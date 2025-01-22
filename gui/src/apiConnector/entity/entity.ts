@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,no-nested-ternary */
+/* eslint-disable @typescript-eslint/no-explicit-any,class-methods-use-this,no-nested-ternary,no-use-before-define */
 import dayjs from 'dayjs';
 import { get, has, set } from 'lodash';
 import { container, InjectionToken } from 'tsyringe';
-import produce, { Draft } from 'immer';
+import { Draft, produce } from 'immer';
 import EntityError from '../../errors/EntityError';
 import {
   ExtendedPartialObject,
@@ -109,8 +109,8 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
       pushToMetadataMap(RELATIONS, target, key, options.relation);
     if (options.serialize)
       pushToMetadataMap(SERIALIZE, target, key, options.serialize);
-
-    return Object.defineProperty(target, key, {
+    delete target[key];
+    Object.defineProperty(target, key, {
       get() {
         let value = get(this.data, key);
         if (
@@ -121,7 +121,7 @@ export function field<T = any>(options: FieldOptions<T> = {}) {
           value = new HasMany(
             options.relation.repositoryToken,
             this,
-            options.relation.foreignKey as any
+            options.relation.foreignKey as any,
           );
           set(this.data, key, value);
         }
@@ -175,7 +175,7 @@ export default abstract class Entity {
 
   protected adapter: Adapter<this>;
 
-  protected observers = new Array<WeakEntityObserver<this>>();
+  protected observers: WeakEntityObserver<this>[] = [];
 
   @field<number>({
     readonly: true,
@@ -216,7 +216,7 @@ export default abstract class Entity {
 
   protected constructor(
     adapter: any,
-    protected requestParameters?: SimpleMapType
+    protected requestParameters?: SimpleMapType,
   ) {
     this.adapter = adapter;
   }
@@ -252,7 +252,7 @@ export default abstract class Entity {
    */
   public syncInitialize(
     d: PartialObject<this>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): this {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
@@ -268,7 +268,7 @@ export default abstract class Entity {
    */
   public syncReinitialize(
     d: PartialObject<this>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): this {
     this.fillDataArray(d);
     this.requestParameters = {
@@ -285,7 +285,7 @@ export default abstract class Entity {
   public async initialize(
     id: number,
     d?: PartialObject<this>,
-    parameters?: SimpleMapType
+    parameters?: SimpleMapType,
   ): Promise<this> {
     if (this.initialized)
       throw new EntityError('Attempting to reinitialize an entity');
@@ -398,7 +398,7 @@ export default abstract class Entity {
           set(
             o,
             k,
-            this.resolveUserFilledRelationship(r, data, get(this.data, k))
+            this.resolveUserFilledRelationship(r, data, get(this.data, k)),
           );
         }
       } else {
@@ -409,7 +409,7 @@ export default abstract class Entity {
             ? data !== undefined
               ? dayjs(data)
               : undefined
-            : data
+            : data,
         );
       }
     }
@@ -425,7 +425,7 @@ export default abstract class Entity {
     if (this.isDeleted) throw new Error('Attempting to refresh deleted entity');
     if (!this.isNew) {
       this.fillDataArray(
-        await this.adapter.find(this.id, this.getParameters())
+        await this.adapter.find(this.id, this.getParameters()),
       );
       this.dirty = false;
       this.refreshed();
@@ -455,13 +455,13 @@ export default abstract class Entity {
    * Converts this entity to an object that can be used for Formik forms
    */
   public toFormObject(
-    customRelations: CustomRelationConfig = {}
+    customRelations: CustomRelationConfig = {},
   ): PartialWithoutRelations<this, EntityObject> {
     const fillables = getMetadataArray<string>(FILLABLE, this);
     const relations = getMetadataMap<Relation<any>>(RELATIONS, this);
     const dates = getMetadataArray<string>(DATES, this);
     const data: any = Utils.filterByKey(this.data, (k) =>
-      fillables.includes(`${k}`)
+      fillables.includes(`${k}`),
     );
     for (const f of dates) {
       const value = data[f];
@@ -491,7 +491,7 @@ export default abstract class Entity {
   public serialize(): MapType {
     const serializables = getMetadataMap<SerializationConfig<any>>(
       SERIALIZE,
-      this
+      this,
     );
     const result: MapType = {};
     for (const f of Object.keys(this.data)) {
@@ -518,7 +518,7 @@ export default abstract class Entity {
   protected dumpHasOneRelation(
     fieldName: string,
     relation: HasOneRelation<any>,
-    doNotTouch: string[]
+    doNotTouch: string[],
   ) {
     const value = this.data[fieldName];
     if (relation.fullyDumpInFormObject) {
@@ -536,13 +536,13 @@ export default abstract class Entity {
 
   protected dumpHasManyRelation(
     fieldName: string,
-    relation: HasManyRelation<any>
+    relation: HasManyRelation<any>,
   ) {
     const value = this.data[fieldName];
     if (value instanceof HasMany) {
       value.toFormObject(
         relation.fullyDumpInFormObject,
-        relation.dumpAsFormObject
+        relation.dumpAsFormObject,
       );
     }
     return [];
@@ -556,7 +556,7 @@ export default abstract class Entity {
   protected dumpRelation(
     fieldName: string,
     relation: Relation<any>,
-    doNotTouch: string[]
+    doNotTouch: string[],
   ) {
     if (relation.type === RelationsType.ONE) {
       return this.dumpHasOneRelation(fieldName, relation, doNotTouch);
@@ -591,7 +591,7 @@ export default abstract class Entity {
             await related.save();
           }
         }
-      })
+      }),
     );
     const newData = await this.adapter.update(this);
     this.fillDataArray(newData);
@@ -603,7 +603,7 @@ export default abstract class Entity {
 
   protected performNullableSerialization(
     value: any,
-    config: SerializationConfig<any>
+    config: SerializationConfig<any>,
   ) {
     if (config.identifier) {
       const number = +value;
@@ -634,7 +634,7 @@ export default abstract class Entity {
 
   protected performObjectSerialization(
     value: any,
-    config: SerializationConfig<any>
+    config: SerializationConfig<any>,
   ) {
     if (value instanceof Entity) {
       if (config.dumpFullObject) {
@@ -662,7 +662,7 @@ export default abstract class Entity {
 
   protected defaultSerializer(
     value: any,
-    config: SerializationConfig<any>
+    config: SerializationConfig<any>,
   ): MapValueType {
     if (config.leaveAsIs) return value;
     if (
@@ -691,7 +691,7 @@ export default abstract class Entity {
   protected resolveRelationship<E extends Entity>(
     relation: Relation<E>,
     value: any,
-    oldValue: any
+    oldValue: any,
   ) {
     if (relation.type === RelationsType.ONE) {
       return container
@@ -706,7 +706,7 @@ export default abstract class Entity {
         relation.repositoryToken,
         this,
         relation.foreignKey,
-        value
+        value,
       );
     }
     if (relation.type === RelationsType.MANY_READONLY) {
@@ -746,7 +746,7 @@ export default abstract class Entity {
   protected resolveUserFilledRelationship<E extends Entity>(
     relation: Relation<E>,
     value: any,
-    oldValue: any
+    oldValue: any,
   ) {
     if (relation.type === RelationsType.ONE) {
       const repository = container.resolve(relation.repositoryToken);
@@ -776,7 +776,7 @@ export default abstract class Entity {
         relation.repositoryToken,
         this,
         relation.foreignKey,
-        value
+        value,
       );
     }
     if (relation.type === RelationsType.MANY_READONLY) {
@@ -814,5 +814,12 @@ export default abstract class Entity {
       const o = ref.deref();
       if (o && o.refreshed) o.refreshed(this);
     });
+  }
+
+  protected init() {
+    for (const f of getMetadataArray(FIELDS, this)) {
+      // @ts-ignore
+      delete this[f];
+    }
   }
 }

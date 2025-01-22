@@ -10,7 +10,7 @@ import {
   PatientDiseaseRepository,
   PatientDrugRepository,
 } from '../repositories';
-import type { Nullable } from '../../apiConnector/interfaces/common';
+// import type { Nullable } from '../../apiConnector/interfaces/common';
 
 @injectable()
 export default class Patient extends Entity {
@@ -42,34 +42,34 @@ export default class Patient extends Entity {
   })
   gender: Gender = Gender.m;
 
-  @field<string>({
-    fillable: true,
-  })
-  email = '';
-
-  @field<Nullable<string>>({
-    fillable: true,
-    serialize: {
-      nullable: true,
-    },
-  })
-  fiscal_number: Nullable<string> = undefined;
-
-  @field<Nullable<string>>({
-    fillable: true,
-    serialize: {
-      nullable: true,
-    },
-  })
-  telephone: Nullable<string> = undefined;
-
-  @field<Nullable<string>>({
-    fillable: true,
-    serialize: {
-      nullable: true,
-    },
-  })
-  city: Nullable<string> = undefined;
+  // @field<string>({
+  //   fillable: true,
+  // })
+  // email = '';
+  //
+  // @field<Nullable<string>>({
+  //   fillable: true,
+  //   serialize: {
+  //     nullable: true,
+  //   },
+  // })
+  // fiscal_number: Nullable<string> = undefined;
+  //
+  // @field<Nullable<string>>({
+  //   fillable: true,
+  //   serialize: {
+  //     nullable: true,
+  //   },
+  // })
+  // telephone: Nullable<string> = undefined;
+  //
+  // @field<Nullable<string>>({
+  //   fillable: true,
+  //   serialize: {
+  //     nullable: true,
+  //   },
+  // })
+  // city: Nullable<string> = undefined;
 
   @field<PatientDiseaseEntity>({
     fillable: true,
@@ -115,6 +115,7 @@ export default class Patient extends Entity {
 
   public constructor(adapter: PatientAdapter) {
     super(adapter);
+    this.init();
   }
 
   public get fullName() {

@@ -6,6 +6,6 @@ declare module 'check-internet-connected' {
   };
 
   export default function checkInternetConnected(
-    config?: CheckInternetConnectedConfig
+    config?: CheckInternetConnectedConfig,
   ): Promise<boolean>;
 }

@@ -14,7 +14,7 @@ export default class ValidateConfig {
 
   constructor(
     manager: DockerManager,
-    @inject('config') oldConfig: ConfigObjectType
+    @inject('config') oldConfig: ConfigObjectType,
   ) {
     this.#manager = manager;
     this.#oldConfig = oldConfig.configured ? oldConfig : undefined;
@@ -67,7 +67,7 @@ export default class ValidateConfig {
   }
 
   private async tryRemovePreviousContainer(
-    reportStatus?: (message: string) => void
+    reportStatus?: (message: string) => void,
   ) {
     if (this.#oldConfig && this.#oldConfig.configured) {
       if (
@@ -83,7 +83,7 @@ export default class ValidateConfig {
   }
 
   public async validate(
-    reportStatus?: (message: string) => void
+    reportStatus?: (message: string) => void,
   ): Promise<ConfigObjectType> {
     if (this.newConfig.local) {
       await this.tryRemovePreviousContainer(reportStatus);
