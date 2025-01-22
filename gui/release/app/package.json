@@ -1,6 +1,6 @@
 {
   "name": "oncoreport",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
   "license": "MIT",
   "author": {
@@ -8,6 +8,18 @@
     "email": "salvatore.alaimo@unict.it",
     "url": "https://www.medclin.unict.it/docenti/salvatore.alaimo"
   },
+  "contributors": [
+    {
+      "name": "Grete Francesca Privitera",
+      "email": "grete.privitera@unict.it",
+      "url": "https://www.medclin.unict.it/assegnisti-di-ricerca/grete.francesca..privitera"
+    },
+    {
+      "name": "Giovanni Micale",
+      "email": "gmicale@dmi.unict.it",
+      "url": "https://www.medclin.unict.it/docenti/giovanni.micale"
+    }
+  ],
   "main": "./dist/main/main.js",
   "scripts": {
     "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",

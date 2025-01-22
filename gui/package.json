@@ -18,9 +18,14 @@
   },
   "contributors": [
     {
-      "name": "TODO",
-      "email": "TODO",
-      "url": "TODO"
+      "name": "Grete Francesca Privitera",
+      "email": "grete.privitera@unict.it",
+      "url": "https://www.medclin.unict.it/assegnisti-di-ricerca/grete.francesca..privitera"
+    },
+    {
+      "name": "Giovanni Micale",
+      "email": "gmicale@dmi.unict.it",
+      "url": "https://www.medclin.unict.it/docenti/giovanni.micale"
     }
   ],
   "main": "./src/main/main.ts",
