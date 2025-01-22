@@ -114,7 +114,8 @@ In this way OncoReport is able to discover possible drug-drug interactions.
 For each patient it is possible to add more than one analysis. 
 At the end of each analysis we will have as output the logs, the report and an archive of the raw annotated output.
 
-![immagine](https://user-images.githubusercontent.com/57007795/163541322-cf0b1d97-ec07-4e7a-b2e7-12e239ef91f8.png)
+![immagine](https://github.com/user-attachments/assets/92500928-48a8-4eb8-b887-51e687bc8615)
+![immagine](https://github.com/user-attachments/assets/3695861b-5957-4190-84a0-6e6115de2b0f)
 
 
 The user needs to provide analysis sample code, analysis name, the type of analysis, the input type and the number of threads that are gonna be used by the machine. It is possible to upload fastq, bam, ubam or vcf files. The user has also the chance to choose between two human reference genomes: GRCh37 (hg19) and GRCh38 (hg38). The user has also to specify if the samples are paired end. 
@@ -124,12 +125,12 @@ It is possible to make two types of analysis:
 1. **The Tumor vs Normal analysis**
 It takes two inputs, a tumor sample and a normal sample. This analysis compare the two samples to remove all the germline mutation of the tumor sample. In this way the report will annotate only the somatic mutations. It is necessary to specify the "Depth filter" of the analysis.
 
-![immagine](https://user-images.githubusercontent.com/57007795/163542443-6697a1a1-286b-4858-88bd-4857209059e8.png)
+![immagine](https://github.com/user-attachments/assets/351961d9-548f-4405-adf2-fe44d3995573)
 
 2. **The Tumor only analysis** 
 It takes only the tumor sample. This tumor sample can originate both from a solid biopsy or a liquid biopsy. Here is necessary to specify both the "Depth filter" for variant calling and the "Allele Fraction Filter". The latter it is needed to split the somatic mutations from the germline ones since we do not have the normal samples. We suggest to use Less and equal to 0.3 for liquid biopsy and Less and equal to 0.4 for solid biopsy.
 
-![immagine](https://user-images.githubusercontent.com/57007795/163542014-429af5aa-f23d-41ad-bfe5-3035976af255.png)
+![immagine](https://github.com/user-attachments/assets/395faf08-834a-413e-ae89-fd218f97d738)
 
 # The Report
 OncoReport' goal is the automatic generation of a report describing all the possible annotations (both prognostic and therapeutic) associated to the patients' mutations.
