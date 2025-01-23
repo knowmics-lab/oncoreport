@@ -1,6 +1,6 @@
 {
   "name": "oncoreport",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A pipeline for the annotation and clinical reporting of DNA-seq data",
   "license": "MIT",
   "author": {

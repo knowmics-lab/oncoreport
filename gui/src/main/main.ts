@@ -1,3 +1,4 @@
+/* eslint-disable promise/no-nesting */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
@@ -25,7 +26,10 @@ class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater
+      .checkForUpdatesAndNotify()
+      .then(console.log)
+      .catch(console.error);
   }
 }
 
@@ -89,7 +93,10 @@ const createWindow = async () => {
 
   require('@electron/remote/main').enable(mainWindow.webContents);
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow
+    .loadURL(resolveHtmlPath('index.html'))
+    .then(console.log)
+    .catch(console.error);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -119,7 +126,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  // new AppUpdater(); // TODO: enable for release
+  new AppUpdater();
 };
 
 /**
@@ -137,11 +144,11 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
+    createWindow().catch(console.error);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
+      if (mainWindow === null) createWindow().catch(console.error);
     });
   })
   .catch(console.log);
