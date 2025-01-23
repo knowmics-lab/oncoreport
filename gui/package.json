@@ -266,7 +266,9 @@
     "linux": {
       "target": [
         "AppImage",
-        "tar.gz"
+        "tar.gz",
+        "deb",
+        "rpm"
       ],
       "category": "Science"
     },
