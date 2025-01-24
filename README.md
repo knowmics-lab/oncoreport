@@ -5,7 +5,10 @@
 
 **OncoReport** is a user-friendly software system for the analysis of DNA-seq data coming either from solid or liquid biopsy samples. The aim of **OncoReport** to identify the patients' tumor mutations allowing the help in the definition of the most suitable therapy.
 
-![immagine](https://github.com/user-attachments/assets/2cd54267-6e86-46ca-837d-74d6a7b2e12a)
+![immagine](https://github.com/user-attachments/assets/08f18b1f-d55b-413a-8957-e0107e331f20)
+
+![immagine](https://github.com/user-attachments/assets/175b5a5b-f8c2-4747-a812-87781475d65e)
+
 
 The software performs two types of analysis:
 * Tumor vs Normal 
