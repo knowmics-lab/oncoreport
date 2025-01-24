@@ -19,6 +19,9 @@ import ThemeContext from '../themeContext';
 import useCapabilities from '../hooks/useCapabilities';
 import { StartedContext } from '../components/layout/appStartedContext';
 import UNICT_LOGO from '../../../resources/unict.png';
+import IOM_LOGO from '../../../resources/iom.png';
+import THE_LOGO from '../../../resources/the.png';
+import DIONCOGEN_LOGO from '../../../resources/dioncogen.png';
 
 type InternalProps = { capabilities: Capabilities };
 
@@ -160,7 +163,7 @@ export default function Home() {
         sx={{
           marginBottom: (theme) => theme.spacing(1),
           '& img': {
-            filter: darkTheme ? 'invert(1)' : 'invert(0)',
+            filter: darkTheme ? 'sepia(100%) invert(1)' : 'invert(0)',
             transition: (theme) => theme.transitions.create('filter'),
           },
         }}
@@ -168,11 +171,46 @@ export default function Home() {
         <Typography sx={{ py: 2 }} fontSize="small">
           Oncoreport is a joint project by:
         </Typography>
-        <ImageList rowHeight={55} cols={3}>
+        <ImageList rowHeight={55} cols={2}>
           <ImageListItem cols={1}>
             <img
               src={UNICT_LOGO}
-              alt="UNICT"
+              alt="University of Catania"
+              style={{ height: '100%', objectFit: 'contain' }}
+            />
+          </ImageListItem>
+          <ImageListItem cols={1}>
+            <img
+              src={IOM_LOGO}
+              alt="IOM Ricerca"
+              style={{ height: '100%', objectFit: 'contain' }}
+            />
+          </ImageListItem>
+        </ImageList>
+        <Typography sx={{ py: 2 }} fontSize="small">
+          The first release of Oncoreport was funded by the &quot;DiOncoGen
+          Diagnostica Innovativa&quot; project, funded under Action 1.1.5 of the
+          POR FESR Sicilia 2014-2020.
+        </Typography>
+        <ImageList rowHeight={55} cols={3}>
+          <ImageListItem cols={3}>
+            <img
+              src={DIONCOGEN_LOGO}
+              alt="DiOncoGen Diagnostica Innovativa"
+              style={{ height: '100%', objectFit: 'contain' }}
+            />
+          </ImageListItem>
+        </ImageList>
+        <Typography sx={{ py: 2 }} fontSize="small">
+          The current release of Oncoreport is funded by the OMICANCER project,
+          funded under the Tuscany Health Ecosystem (THE) and the Italian
+          National Recovery and Resilience Plan (PNRR).
+        </Typography>
+        <ImageList rowHeight={55} cols={3}>
+          <ImageListItem cols={3}>
+            <img
+              src={THE_LOGO}
+              alt="The Tuscany Health Ecosystem"
               style={{ height: '100%', objectFit: 'contain' }}
             />
           </ImageListItem>
