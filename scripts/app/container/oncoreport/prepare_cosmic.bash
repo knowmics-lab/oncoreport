@@ -67,6 +67,10 @@ download() {
   local COSMIC_FILE="$2"
   local COSMIC_OUTPUT="$3"
   TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$COSMIC_URL")
+  # Check if the response is not a JSON object that is it does not start with '{'
+  if [[ ! "$TMP_OUT" =~ ^\{.* ]]; then
+    exit_abnormal "The COSMIC response is not a JSON object. The content of the response is $TMP_OUT" false 105
+  fi
   if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
     MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
     if [ "${MESSAGE,,}" = "not authorised" ]; then
