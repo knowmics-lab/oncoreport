@@ -62,6 +62,28 @@ cosmic_download() {
     -O "$2" "$URL" || exit_abnormal "Unable to download $2 from $1." false 106
 }
 
+check_cosmic() {
+  COSMIC_URL="https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=GRCh37/actionability/${COSMIC_VERSION}/Actionability_AllData_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads"
+  TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$COSMIC_URL")
+  if [[ "$TMP_OUT" =~ "Unable to log in with provided credentials" ]]; then
+    return 2
+  fi
+  if [[ "$TMP_OUT" =~ "Credentials are not valid" ]]; then
+    return 2
+  fi
+  if [[ ! "$TMP_OUT" =~ ^\{.* ]]; then
+    return 1
+  fi
+  if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
+    MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
+    if [ "${MESSAGE,,}" = "not authorised" ]; then
+      return 3
+    fi
+    return 1
+  fi
+  return 0
+}
+
 download() {
   local COSMIC_URL="$1"
   local COSMIC_FILE="$2"
@@ -91,18 +113,18 @@ download_files() {
   local GENOME_COSMIC="$2"
   local GENOME_SMALL="${GENOME_COSMIC,,}"
   echo " - Downloading ${GENOME_VERSION} Coding Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
   echo " - Downloading ${GENOME_VERSION} Resistance Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz"
   echo " - Downloading ${GENOME_VERSION} COSMIC Complete Mutation Data (Targeted Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} COSMIC Mutation Data (Genome Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Classifications..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Samples..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Cancer Mutation Census..."
   download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
   echo " - Indexing ${GENOME_VERSION} Coding Mutations..."
@@ -166,18 +188,38 @@ cleanup() {
 OLD_PWD=$(pwd)
 cd "$ONCOREPORT_COSMIC_PATH" || exit 107
 echo "Preparing COSMIC hg19 database:"
-download_files "hg19" "GRCh37"
-preprocess_archives "hg19"
-echo " - Processing hg19 database..."
-Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
-echo "Preparing COSMIC hg38 database:"
-download_files "hg38" "GRCh38"
-preprocess_archives "hg38"
-echo " - Processing hg38 database..."
-Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg38" || exit_abnormal "Unable to process hg38 database" false 112
-echo " - Cleaning up..."
-cleanup "hg19"
-cleanup "hg38"
+# Run the check_cosmic function to check if the COSMIC account is valid
+# if the return code is 0, then the COSMIC account is valid
+# if the return code is 2, than the COSMIC credentials are invalid
+# if the return code is 3, than the COSMIC account is not authorized
+# otherwise, perform the fallback procedure
+check_cosmic
+EXIT_CODE=$?
+if [ $EXIT_CODE -eq 0 ]; then
+  echo " - COSMIC account is valid"
+  download_files "hg19" "GRCh37"
+  preprocess_archives "hg19"
+  echo " - Processing hg19 database..."
+  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
+  echo "Preparing COSMIC hg38 database:"
+  download_files "hg38" "GRCh38"
+  preprocess_archives "hg38"
+  echo " - Processing hg38 database..."
+  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg38" || exit_abnormal "Unable to process hg38 database" false 112
+  echo " - Cleaning up..."
+  cleanup "hg19"
+  cleanup "hg38"
+elif [ $EXIT_CODE -eq 2 ]; then
+  exit_abnormal "Unable to validate COSMIC account. Check your username and password!" false 105
+elif [ $EXIT_CODE -eq 3 ]; then
+  exit_abnormal "COSMIC account is not authorized" false 105
+else
+  echo " - An error occurred in the authentication procedure. Fallback procedure is being performed."
+  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
+    -O "processed_cosmic.tar" "https://oncoreport.s3.eu-central-1.amazonaws.com/processed_cosmic_${COSMIC_VERSION}.tgz" || exit_abnormal "Unable to download processed_cosmic_${COSMIC_VERSION}.tgz" false 106
+  tar -zxf "processed_cosmic.tar" || exit_abnormal "Unable to extract processed_cosmic_${COSMIC_VERSION}.tgz" false 107
+  rm "processed_cosmic.tar"
+fi
 cd "$OLD_PWD" || exit 113
 touch "$ONCOREPORT_COSMIC_PATH/completed"
 echo "Done!"
