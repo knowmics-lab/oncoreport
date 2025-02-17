@@ -63,7 +63,7 @@ cosmic_download() {
 }
 
 check_cosmic() {
-  COSMIC_URL="https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=GRCh37/actionability/${COSMIC_VERSION}/Actionability_AllData_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads"
+  COSMIC_URL="https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch37/cosmic/${COSMIC_VERSION}/Cosmic_CancerGeneCensus_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads"
   TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$COSMIC_URL")
   if [[ "$TMP_OUT" =~ "Unable to log in with provided credentials" ]]; then
     return 2
@@ -113,20 +113,20 @@ download_files() {
   local GENOME_COSMIC="$2"
   local GENOME_SMALL="${GENOME_COSMIC,,}"
   echo " - Downloading ${GENOME_VERSION} Coding Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
   echo " - Downloading ${GENOME_VERSION} Resistance Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz"
   echo " - Downloading ${GENOME_VERSION} COSMIC Complete Mutation Data (Targeted Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} COSMIC Mutation Data (Genome Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Classifications..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Samples..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Cancer Mutation Census..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
   echo " - Indexing ${GENOME_VERSION} Coding Mutations..."
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
