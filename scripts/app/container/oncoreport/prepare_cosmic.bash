@@ -126,7 +126,7 @@ download_files() {
   echo " - Downloading ${GENOME_VERSION} Samples..."
   download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Cancer Mutation Census..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
   echo " - Indexing ${GENOME_VERSION} Coding Mutations..."
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
