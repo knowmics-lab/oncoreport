@@ -29,6 +29,10 @@ assertions <- read_tsv(
   col_names = TRUE
 )
 
+if (class(molecular_profiles$variant_ids) == "numeric") {
+  molecular_profiles$variant_ids <- as.character(molecular_profiles$variant_ids)
+}
+
 molecular_profiles <- molecular_profiles %>%
   separate_rows(variant_ids, sep = ",") %>%
   mutate(variant_id = as.numeric(trimws(variant_ids))) %>%

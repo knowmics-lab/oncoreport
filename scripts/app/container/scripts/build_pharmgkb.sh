@@ -6,7 +6,7 @@ SCRIPT_PATH="$(
     pwd -P
 )"
 CURR_DIR="$(pwd)"
-PHARMGKB_VARIANTS_URL="https://api.pharmgkb.org/v1/download/file/data/variantAnnotations.zip"
+PHARMGKB_VARIANTS_URL="https://s3.pgkb.org/data/variantAnnotations.zip"
 DBSNP_BASE="ftp://ftp.ncbi.nih.gov/snp/latest_release/VCF"
 DBSNP_HG19_URL="$DBSNP_BASE/GCF_000001405.25.gz"
 DBSNP_HG38_URL="$DBSNP_BASE/GCF_000001405.40.gz"

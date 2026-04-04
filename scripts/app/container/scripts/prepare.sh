@@ -124,8 +124,8 @@ if [ ! -f "$BASE_PATH/databases/hg19/civic_database.rds" ] || [ ! -f "$BASE_PATH
     download "https://civicdb.org/downloads/nightly/nightly-AssertionSummaries.tsv" \
         "$BASE_PATH/databases/civic/assertions.tsv"
     Rscript "$BASE_PATH/scripts/preprocess_civic.R" "$BASE_PATH/databases"
-    pip3 install cython
-    pip3 install CrossMap
+    pip3 install --break-system-packages cython    # I know what I'm doing this is a temporary container
+    pip3 install --break-system-packages CrossMap  # that is deleted after the build so who cares
     /usr/local/bin/CrossMap bed "$BASE_PATH/databases/hg19ToHg38.over.chain.gz" \
         "$BASE_PATH/databases/civic_hg19_partial_1.bed" "$BASE_PATH/databases/civic_hg38_partial_2.bed"
     /usr/local/bin/CrossMap bed "$BASE_PATH/databases/hg38ToHg19.over.chain.gz" \

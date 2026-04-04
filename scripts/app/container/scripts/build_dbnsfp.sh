@@ -21,7 +21,7 @@ function zip_read_file() {
 
 OUTPUT_DIR="$(realpath $1)"
 [[ -z "$OUTPUT_DIR" ]] && echo "Usage: $0 <output_dir>" && exit 1
-DBNSFP_URL="https://dbnsfp.s3.amazonaws.com/dbNSFP4.4a.zip"
+DBNSFP_URL="https://zenodo.org/api/records/14419644/files-archive"
 # if second argument is given, use it as the DBNSFP_URL
 [[ -n "$2" ]] && DBNSFP_URL="$2"
 # if third argument is given, use it as the temp directory otherwise use CURR_DIR/tmp

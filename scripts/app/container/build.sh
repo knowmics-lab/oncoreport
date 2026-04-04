@@ -45,6 +45,7 @@ DOCKER_BUILDKIT=1 docker build \
   --target=stage1_base \
   --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}" \
   --build-arg="ARCHITECTURE=${CONTAINER_ARCHITECTURE}" \
+  --network=host \
   -t oncoreport_builder_stage_1 . &&
   docker run --rm \
     --mount type=bind,source="/tmp/secret_drugbank",target="/run/secrets/drugbank",readonly \
@@ -56,10 +57,12 @@ DOCKER_BUILDKIT=1 docker build \
     --env CONTAINER_VERSION="$(echo "${CONTAINER_VERSION}" | cut -d'v' -f2)" \
     --env CONTAINER_VERSION_NUMBER="${CONTAINER_VERSION_NUMBER}" \
     --env DO_NOT_BUILD_DB="${DO_NOT_BUILD_DB}" \
+    --network=host \
     oncoreport_builder_stage_1 bash ${CONTAINER_BASE_PATH}/scripts/prepare.sh &&
   DOCKER_BUILDKIT=1 docker build \
     --build-arg="BASE_PATH=${CONTAINER_BASE_PATH}" \
     --build-arg="ARCHITECTURE=${CONTAINER_ARCHITECTURE}" \
+    --network=host \
     -t "${CONTAINER_NAME}:${CONTAINER_VERSION}" . &&
   rm -f /tmp/secret_drugbank &&
   docker rmi oncoreport_builder_stage_1

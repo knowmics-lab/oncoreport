@@ -44,6 +44,7 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
     dbsnp_data <- dbsnp_data %>%
       inner_join(chrs, by = "ChrID") %>%
       inner_join(var_pheno_ann, by = "ID") %>%
+      mutate(Position = as.numeric(Position)) %>%
       separate_rows(Alt_base, sep = ",") %>%
       unique()
   })
@@ -52,11 +53,11 @@ dbsnp_all_data <- lapply(dbsnp_files, function(f) {
   }
   tryCatch(
     {
-      dbsnp_data$Stop <- dbsnp_data$Position +
-        sapply(dbsnp_data$REF, length) - 1
+      dbsnp_data$Stop <- dbsnp_data$Position + nchar(dbsnp_data$REF) - 1
     },
-    error = function(...) {
-      dbsnp_data$Stop <- dbsnp_data$Position
+    error = function(e) {
+      print(e)
+      dbsnp_data$Stop <<- dbsnp_data$Position
     }
   )
   dbsnp_data <- dbsnp_data %>%

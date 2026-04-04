@@ -1,16 +1,21 @@
-FROM ubuntu:jammy as stage1_base
+FROM ubuntu:noble AS stage1_base
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG CONTAINER_TIMEZONE="GMT"
-ENV LANG en_US.UTF-8 
-ENV LC_ALL en_US.UTF-8
+ENV LANG="en_US.UTF-8" 
+ENV LC_ALL="en_US.UTF-8"
 RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
     echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
     apt update --fix-missing && \
     apt install -y perl dialog software-properties-common wget locales && \
     locale-gen "${LC_ALL}" && \
     wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
-    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" && \
-    add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
+    wget -qO- https://eddelbuettel.github.io/r2u/assets/dirk_eddelbuettel_key.asc | tee -a /etc/apt/trusted.gpg.d/cranapt_key.asc && \
+    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu noble-cran40/" && \
+    echo "deb [arch=amd64] https://r2u.stat.illinois.edu/ubuntu noble main" > /etc/apt/sources.list.d/cranapt.list && \
+    echo "Package: *" > /etc/apt/preferences.d/99cranapt && \
+    echo "Pin: release o=CRAN-Apt Project" >> /etc/apt/preferences.d/99cranapt && \
+    echo "Pin: release l=CRAN-Apt Packages" >> /etc/apt/preferences.d/99cranapt && \
+    echo "Pin-Priority: 700"  >> /etc/apt/preferences.d/99cranapt && \
     apt update && \
     apt dist-upgrade -y && \
     apt install -y wget unzip pv git curl tar unixodbc grep cmake apt-utils nano jq pwgen \
@@ -19,13 +24,18 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && \
                    r-cran-dplyr r-cran-readr r-cran-rvest r-cran-readxl r-cran-fuzzyjoin \
                    r-cran-webchem r-cran-dbparser r-cran-googlelanguager r-cran-r.utils \
                    r-cran-ontologyindex python3-pip python3-setuptools python3 && \
+    apt install --yes --no-install-recommends python3-dbus python3-gi python3-apt && \
+    Rscript -e 'install.packages("bspm")' && \
+    RHOME=$(R RHOME) && \
+    echo "suppressMessages(bspm::enable())" >> ${RHOME}/etc/Rprofile.site && \
+    echo "options(bspm.version.check=FALSE)" >> ${RHOME}/etc/Rprofile.site && \
     apt remove -y software-properties-common && \
     apt autoremove --purge -y && \
     apt autoclean && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-FROM stage1_base as stage2_base
+FROM stage1_base AS stage2_base
 ARG TRIM_GALORE_VERSION="0.6.10"
 ARG GATK_VERSION="4.4.0.0"
 ARG PICARD_VERSION="3.1.1"
@@ -33,15 +43,18 @@ ARG PANDOC_VERSION="3.1.9"
 ARG VARSCAN_VERSION="2.4.6"
 ARG SUPERVISOR_VERSION="4.2.5"
 ARG ARCHITECTURE="amd64"
-ENV DOCKER_USER_ID 501
-ENV DOCKER_USER_GID 20
-ENV BOOT2DOCKER_ID 1000
-ENV BOOT2DOCKER_GID 50
-ENV DEBUG false
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-${ARCHITECTURE}/
-ENV DEBIAN_FRONTEND noninteractive
+ARG PIP_BREAK_SYSTEM_PACKAGES=1
+ENV DOCKER_USER_ID="501"
+ENV DOCKER_USER_GID="20"
+ENV BOOT2DOCKER_ID="1000"
+ENV BOOT2DOCKER_GID="50"
+ENV DEBUG="false"
+ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-${ARCHITECTURE}/"
+ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
+RUN (u=$(awk -F: -v uid="$BOOT2DOCKER_ID" '$3==uid{print $1;exit}' /etc/passwd); \
+    [ -n "$u" ] && [ "$u" != www-data ] && userdel -r "$u" || true) && \
+    usermod -u ${BOOT2DOCKER_ID} www-data && \
     usermod -G staff www-data && \
     useradd -r mysql && \
     usermod -G staff mysql && \
@@ -95,16 +108,16 @@ RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
     rm -rf /var/lib/apt/lists/* && \
     ln -s /usr/bin/python3 /usr/bin/python
 
-FROM stage1_base as stage1_support
+FROM stage1_base AS stage1_support
 ARG BASE_PATH="/support"
 ARG ONCOREPORT_ORIGIN="https://github.com/knowmics-lab/oncoreport.git"
 ARG ONCOREPORT_BRANCH="master"
 COPY . ${BASE_PATH}
 RUN --mount=type=secret,id=drugbank --mount=type=secret,id=gltranslate bash ${BASE_PATH}/scripts/prepare.sh
 
-FROM stage2_base as oncoreport_final
+FROM stage2_base AS oncoreport_final
 ARG BASE_PATH="/support"
-ENV ONCO_BASE "/oncoreport"
+ENV ONCO_BASE="/oncoreport"
 COPY . ${BASE_PATH}
 
 RUN mkdir -p "${ONCO_BASE}" && mkdir -p "/etc/supervisor/conf.d/" && \

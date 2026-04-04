@@ -50,31 +50,34 @@ if (!file.exists(cached_db_file)) {
                          references_options = references_node_options(),
                          cett_options       = cett_nodes_options())
   cat("Processing vocabulary...\n")
-  salts_ids      <- unique(drugbank$salts[,c("drugbank-id", "parent_key")])
-  salts_names    <- unique(drugbank$salts[,c("name", "parent_key")])
-  products_names <- unique(drugbank$products[,c("name", "parent_key")])
-  mixtures       <- unique(drugbank$drugs$mixtures[,c("name", "parent_key")])
-  synonyms       <- unique(drugbank$drugs$synonyms[,c("synonym", "drugbank-id")])
-  general_names  <- unique(drugbank$drugs$general_information[,c("name", "primary_key")])
-  general_ids    <- unique(drugbank$drugs$general_information[,c("primary_key", "primary_key")])
+  salts_ids      <- unique(drugbank$salts[, c("db_salt_id", "drugbank_id")])
+  salts_names    <- unique(drugbank$salts[, c("name", "drugbank_id")])
+  products_names <- unique(drugbank$products[, c("name", "drugbank_id")])
+  mixtures       <- unique(drugbank$drugs$mixtures[, c("name", "drugbank_id")])
+  brands         <- unique(drugbank$drugs$international_brands[, c("brand", "drugbank_id")])
+  synonyms       <- unique(drugbank$drugs$synonyms[, c("synonym", "drugbank_id")])
+  general_names  <- unique(drugbank$drugs$general_information[, c("name", "drugbank_id")])
+  general_ids    <- unique(drugbank$drugs$general_information[, c("drugbank_id", "drugbank_id")])
   
   colnames(salts_ids)      <- c("synonym", "common_name")
   colnames(salts_names)    <- c("synonym", "common_name")
   colnames(products_names) <- c("synonym", "common_name")
   colnames(mixtures)       <- c("synonym", "common_name")
+  colnames(brands)         <- c("synonym", "common_name")
   colnames(synonyms)       <- c("synonym", "common_name")
   colnames(general_names)  <- c("synonym", "common_name")
   colnames(general_ids)    <- c("synonym", "common_name")
   drugbank_vocab_map       <- rbind(salts_ids, salts_names, products_names, 
-                                    mixtures, synonyms, general_names, 
+                                    mixtures, brands, synonyms, general_names, 
                                     general_ids) %>% unique()
   rm(salts_ids, salts_names, products_names, mixtures, synonyms, 
      general_names, general_ids)
   cat("Processing approvals...\n")
   drugbank_approvals <- drugbank$products %>% 
     dplyr::filter(approved == "true") %>% 
-    dplyr::group_by(parent_key) %>% 
+    dplyr::group_by(drugbank_id) %>% 
     dplyr::summarise(approved_by=paste(unique(unlist(strsplit(source, " "))), collapse = "/")) %>%
+    dplyr::select(parent_key = drugbank_id, approved_by) %>%
     unique()
   cat("Saving cached data...\n")
   save(drugbank, drugbank_vocab_map, drugbank_approvals, file = cached_db_file)
@@ -93,7 +96,7 @@ to_key <- function(column)(gsub("[^[:alnum:] ]|\\s+", "", tolower(column)))
 
 do_exact_match <- function (df_data, field) {
   df_data$key      <- to_key(df_data[[field]])
-  df_exact_match   <- df_data %>% dplyr::left_join(drugbank_vocab_map)
+  df_exact_match   <- df_data %>% dplyr::left_join(drugbank_vocab_map, relationship = "many-to-many")
   exact_matched    <- complete.cases(df_exact_match)
   df_no_match      <- df_exact_match[!exact_matched, c("Medicine.name", "Active.substance")]
   df_exact_match   <- unique(df_exact_match[exact_matched, c("Medicine.name", "Active.substance", "common_name")])
@@ -297,8 +300,8 @@ if (!file.exists(cached_ema_file)) {
   ema_data <- read_excel("ema_medicines.xlsx", skip = 8)
   ema_report_date <- read_excel("ema_medicines.xlsx", range = "D1", col_names = FALSE)
   unlink("ema_medicines.xlsx")
-  ema_report_date <- ema_report_date$...1
-  ema_report_date <- as.character(as.Date(ema_report_date, tryFormats = "%a, %d/%m/%Y"))
+  ema_report_date <- as.list(ema_report_date[1,1])[[1]]
+  ema_report_date <- as.character(as.Date(sub(".*?(\\d{2}/\\d{2}/\\d{4}).*", "\\1", ema_report_date), format = "%d/%m/%Y"))
 
   colnames(ema_data) <- make.names(colnames(ema_data))
   ema_data <- ema_data[tolower(ema_data$Category) == "human" &
@@ -366,7 +369,7 @@ complete_approvals <- drugbank_approvals %>%
   dplyr::select(parent_key, approvals)
 cat("Saving approvals...\n")
 approved_drug_names <- complete_approvals %>%
-  dplyr::full_join(drugbank$drugs$general_information, by=c("parent_key"="primary_key")) %>%
+  dplyr::full_join(drugbank$drugs$general_information, by=c("parent_key"="drugbank_id")) %>%
   dplyr::select(name, approvals) %>%
   unique()
 approved_drug_names$approvals[is.na(approved_drug_names$approvals)] <- "Not approved"
@@ -406,12 +409,12 @@ cat("Preparing drug general information\n")
 drug_info           <- drugbank$drugs$general_information
 class(drug_info)    <- "data.frame"
 drug_info           <- as.data.frame(
-  cbind(drug_info$primary_key, drug_info$name)
+  cbind(drug_info$drugbank_id, drug_info$name)
 )
 colnames(drug_info) <- c("id", "name")
 atc_codes           <- drugbank$drugs$atc_codes
 drug_info           <- drug_info %>% 
-  dplyr::left_join(atc_codes, by=c("id" = "drugbank-id")) %>%
+  dplyr::left_join(atc_codes, by=c("id" = "drugbank_id")) %>%
   dplyr::select(id, name, atc_code) %>%
   unique()
 
@@ -426,7 +429,7 @@ write_csv(
 cat("Preparing drug-drug interactions\n")
 drug_info_unique  <- drug_info %>% dplyr::select("id", "name") %>% unique()
 drug_interactions <- drugbank$drugs$drug_interactions %>%
-  dplyr::inner_join(drug_info_unique, by = c("parent_key" = "id")) %>%
+  dplyr::inner_join(drug_info_unique, by = c("drugbank_id" = "id")) %>%
   unique() %>%
   na.omit()
 colnames(drug_interactions) <- c(
