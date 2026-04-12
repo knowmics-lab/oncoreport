@@ -84,28 +84,63 @@ check_cosmic() {
   return 0
 }
 
+real_download() {
+  local COSMIC_URL="$1"
+  local COSMIC_FILE="$2"
+  local COSMIC_OUTPUT="$3"
+  local TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$COSMIC_URL") 
+  if [[ ! "$TMP_OUT" =~ ^\{.* ]]; then
+    echo "The COSMIC response is not a JSON object. The content of the response is $TMP_OUT"
+    return 1
+  fi
+  if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
+    local MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
+    if [ "${MESSAGE,,}" = "not authorised" ]; then
+      echo "Unable to validate COSMIC account. Check your username and password!"
+      return 2
+    fi
+    echo "$MESSAGE"
+    return 3
+  fi
+  local URL="$(echo "$TMP_OUT" | jq -M -r ".url" --)"
+  if [[ ! "$URL" =~ ^https?:// ]]; then
+    echo "The URL is not a valid URL. The content of the response is $TMP_OUT"
+    return 4
+  fi
+  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
+    -O "tmp.tar" "$URL" || {
+      echo "Unable to download $COSMIC_FILE from $COSMIC_URL."
+      return 5
+    }
+  tar -xf "tmp.tar" "$COSMIC_FILE" || {
+    echo "Unable to extract $COSMIC_FILE from $COSMIC_URL."
+    return 6
+  }
+  mv "$COSMIC_FILE" "$COSMIC_OUTPUT" || {
+    echo "Unable to move $COSMIC_FILE to $COSMIC_OUTPUT."
+    return 7
+  }
+  [ -f "tmp.tar" ] && rm "tmp.tar"
+  return 0
+}
+
 download() {
   local COSMIC_URL="$1"
   local COSMIC_FILE="$2"
   local COSMIC_OUTPUT="$3"
-  TMP_OUT=$(curl -s -H "Authorization: Basic ${COSMIC_TOKEN}" "$COSMIC_URL")
-  # Check if the response is not a JSON object that is it does not start with '{'
-  if [[ ! "$TMP_OUT" =~ ^\{.* ]]; then
-    exit_abnormal "The COSMIC response is not a JSON object. The content of the response is $TMP_OUT" false 105
-  fi
-  if echo "$TMP_OUT" | jq -e -M -r ".error" -- >/dev/null; then
-    MESSAGE="$(echo "$TMP_OUT" | jq -M -r ".error")"
-    if [ "${MESSAGE,,}" = "not authorised" ]; then
-      exit_abnormal "Unable to validate COSMIC account. Check your username and password!" false 104
+  local MAX_RETRIES="${4:-3}" # Default to 3 retries
+  local RETRY_DELAY="${5:-5}" # Default to 5 seconds
+  local RETRY_COUNT=0
+  while (( RETRY_COUNT < MAX_RETRIES )); do
+    if real_download "$COSMIC_URL" "$COSMIC_FILE" "$COSMIC_OUTPUT"; then
+      return 0
     fi
-    exit_abnormal "$MESSAGE" false 105
-  fi
-  URL="$(echo "$TMP_OUT" | jq -M -r ".url" --)"
-  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
-    -O "tmp.tar" "$URL" || exit_abnormal "Unable to download $COSMIC_FILE from $COSMIC_URL." false 106
-  tar -xf "tmp.tar" "$COSMIC_FILE" || exit_abnormal "Unable to extract $COSMIC_FILE from $COSMIC_URL." false 107
-  mv "$COSMIC_FILE" "$COSMIC_OUTPUT" || exit_abnormal "Unable to move $COSMIC_FILE to $COSMIC_OUTPUT." false 108
-  rm "tmp.tar"
+    echo "Unable to download $COSMIC_FILE from $COSMIC_URL. Retrying in $RETRY_DELAY seconds..."
+    sleep $RETRY_DELAY
+    RETRY_COUNT=$(( RETRY_COUNT + 1 ))
+    RETRY_DELAY=$(( RETRY_DELAY * 2 )) # Exponential backoff
+  done
+  exit_abnormal "Unable to download $COSMIC_FILE from $COSMIC_URL after $MAX_RETRIES retries." false 106
 }
 
 download_files() {
@@ -126,7 +161,9 @@ download_files() {
   echo " - Downloading ${GENOME_VERSION} Samples..."
   download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
   echo " - Downloading ${GENOME_VERSION} Cancer Mutation Census..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_COSMIC}/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
+  # Cancer Mutation Census is always downloaded from GRCh37 because it is the only version available.
+  # However, we are just interested in the "GENOMIC_MUTATION_ID" and "MUTATION_SIGNIFICANCE_TIER" columns that are not dependent on the genome version.
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch37/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_GRCh37.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
   echo " - Indexing ${GENOME_VERSION} Coding Mutations..."
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
   bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
