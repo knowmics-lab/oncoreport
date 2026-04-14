@@ -188,6 +188,15 @@ export default function Home() {
           </ImageListItem>
         </ImageList>
         <Typography sx={{ py: 2 }} fontSize="small">
+          If you use Oncoreport, please cite:
+          <Typography sx={{ py: 2, px: 2 }} fontSize={12}>
+            Privitera, G.F., Alaimo, S., Micale, G. et al. An open-source clinical 
+            bioinformatics pipeline for real-world NGS implementation: translating 
+            genomic variants into actionable treatment strategies in oncology. J 
+            Transl Med 24, 241 (2026). https://doi.org/10.1186/s12967-026-07718-w
+          </Typography>
+        </Typography>
+        <Typography sx={{ py: 2 }} fontSize="small">
           The first release of Oncoreport was funded by the &quot;DiOncoGen
           Diagnostica Innovativa&quot; project, funded under Action 1.1.5 of the
           POR FESR Sicilia 2014-2020.

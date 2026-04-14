@@ -2,19 +2,27 @@
 
 ![immagine](https://github.com/user-attachments/assets/34be6c57-a940-48ad-b6db-2203c6f784a8)
 
-
 **OncoReport** is a user-friendly software system for the analysis of DNA-seq data coming either from solid or liquid biopsy samples. The aim of **OncoReport** to identify the patients' tumor mutations allowing the help in the definition of the most suitable therapy.
 
 ![immagine](https://github.com/user-attachments/assets/08f18b1f-d55b-413a-8957-e0107e331f20)
 
 ![immagine](https://github.com/user-attachments/assets/175b5a5b-f8c2-4747-a812-87781475d65e)
 
-
 The software performs two types of analysis:
-* Tumor vs Normal 
-* Tumor only 
+
+* Tumor vs Normal
+* Tumor only
 
 The user can choose the human reference genome to use between **GRCh37** (hg19) and **GRCh38** (hg38).
+
+## Citation
+
+If you use oncoreport, please cite:
+
+> Privitera, G.F., Alaimo, S., Micale, G. et al. An open-source clinical
+> bioinformatics pipeline for real-world NGS implementation: translating
+> genomic variants into actionable treatment strategies in oncology. J
+> Transl Med 24, 241 (2026). <https://doi.org/10.1186/s12967-026-07718-w>
 
 ## System Requirements
 
@@ -24,38 +32,36 @@ The user can choose the human reference genome to use between **GRCh37** (hg19) 
 * macOS
 * Linux
 
-
-# System Requirements 
-
 **Internet Connection**: internet connection is needed only for the setup process and the download of cosmic database and reference genomes. After the installation has been completed no connection is required.
 
 For WGS analysis:
+
 * Processor 8 core processor
-* RAM 64GB 
+* RAM 64GB
 * Hard Drive 1Tb
 
-
 For WES analysis:
+
 * Processor ?
-* RAM 32GB 
+* RAM 32GB
 * Hard Drive 500GB
 
 For custom panel?
 
 ## Installation
 
-# Installation on Windows Professional
+### Installation on Windows Professional
 
 * Install Docker Desktop in your computer by downloading the installer at this link [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-windows/). When prompted, ensure to enable the Hyper-V Windows Features or WSL2 (available only for Windows 10 2004 or later). For Windows 10, WSL2 option is suggested.
 * Now that Docker Desktop is running, you can install OncoReport by downloading...
 
-# Installation on macOS
+### Installation on macOS
 
 * First check [Docker Desktop system requirements](https://docs.docker.com/desktop/mac/install/).
 * Install Docker Desktop in your computer by downloading the installer at this link [Docker Desktop for mac](https://hub.docker.com/editions/community/docker-ce-desktop-mac/) and following the instructions.
 * Now that Docker Desktop is running, download OncoReport...
 
-# Installation on Linux
+### Installation on Linux
 
 * First install Docker in your computer by following the procedure for your linux distribution.
 * Add your user account to the docker group. In most distribution you can get your username with the whoami command, and add it to the docker group using the following command:
@@ -64,16 +70,18 @@ For custom panel?
 
 * After adding your user account to docker group, you will need to log out and log in to activate the changes.
 * Download the OncoReport package most suited for your distribution from ...
- 
 
-## Usage 
+## Usage
+
 ### Inputs
+
 The pipeline takes several inputs:
--	fastq  
--	bam
--	ubam
--	vcf (it also possible to upload a varianttable sample in this section)
-**OncoReport** allows users to easily generate rich reports to support clinical interpretation of variants and their association to prognosis and therapy. 
+
+* fastq  
+* bam
+* ubam
+* vcf (it also possible to upload a varianttable sample in this section)
+**OncoReport** allows users to easily generate rich reports to support clinical interpretation of variants and their association to prognosis and therapy.
 
 ### Patients creation
 
@@ -81,47 +89,43 @@ After installing the app, it is possible to start immediately the analysis.
 First of all, the user has to create a new patient using the "+" in the patients screen.
 You can see from the image the specific of the patients page.
 
-
 ![immagine](https://github.com/user-attachments/assets/f439b440-c3c2-433f-b37a-e393a8ea7955)
 
-
 The information needed to add a new patient are:
-- The Patient's Code*
-- Patient's First and Last Name*
-- Patient's Age*
-- Patient's Gender*
-- Fiscal Number
-- Email*
-- Telephone
-- City
-- Primary Disease* The disease that the user wants to analyze
-- Disease type
-- Diagnosis Date
-- T, the stage of the patient's tumor
-- N, the lymph node number
-- M, the presence or absence of metastasis
 
+* The Patient's Code*
+* Patient's First and Last Name*
+* Patient's Age*
+* Patient's Gender*
+* Fiscal Number
+* Email*
+* Telephone
+* City
+* Primary Disease* The disease that the user wants to analyze
+* Disease type
+* Diagnosis Date
+* T, the stage of the patient's tumor
+* N, the lymph node number
+* M, the presence or absence of metastasis
 
 The information indicated with the asterisk are mandatory.
 
 ![immagine](https://github.com/user-attachments/assets/f337c326-6754-43ae-89f9-793c7c72831f)
 
-
-After the patient creation, it is also possible to add information about other diseases of the patient and about the drugs already taken. 
+After the patient creation, it is also possible to add information about other diseases of the patient and about the drugs already taken.
 In this way OncoReport is able to discover possible drug-drug interactions.
 
 ![immagine](https://github.com/user-attachments/assets/6e2140e2-a5eb-4ae2-b47f-26f8e1b1687d)
 
 ### Analysis creation
 
-For each patient it is possible to add more than one analysis. 
+For each patient it is possible to add more than one analysis.
 At the end of each analysis we will have as output the logs, the report and an archive of the raw annotated output.
 
 ![immagine](https://github.com/user-attachments/assets/92500928-48a8-4eb8-b887-51e687bc8615)
 ![immagine](https://github.com/user-attachments/assets/3695861b-5957-4190-84a0-6e6115de2b0f)
 
-
-The user needs to provide analysis sample code, analysis name, the type of analysis, the input type and the number of threads that are gonna be used by the machine. It is possible to upload fastq, bam, ubam or vcf files. The user has also the chance to choose between two human reference genomes: GRCh37 (hg19) and GRCh38 (hg38). The user has also to specify if the samples are paired end. 
+The user needs to provide analysis sample code, analysis name, the type of analysis, the input type and the number of threads that are gonna be used by the machine. It is possible to upload fastq, bam, ubam or vcf files. The user has also the chance to choose between two human reference genomes: GRCh37 (hg19) and GRCh38 (hg38). The user has also to specify if the samples are paired end.
 
 It is possible to make two types of analysis:
 
@@ -130,32 +134,33 @@ It takes two inputs, a tumor sample and a normal sample. This analysis compare t
 
 ![immagine](https://github.com/user-attachments/assets/351961d9-548f-4405-adf2-fe44d3995573)
 
-2. **The Tumor only analysis** 
+1. **The Tumor only analysis**
 It takes only the tumor sample. This tumor sample can originate both from a solid biopsy or a liquid biopsy. Here is necessary to specify both the "Depth filter" for variant calling and the "Allele Fraction Filter". The latter it is needed to split the somatic mutations from the germline ones since we do not have the normal samples. We suggest to use Less and equal to 0.3 for liquid biopsy and Less and equal to 0.4 for solid biopsy.
 
 ![immagine](https://github.com/user-attachments/assets/395faf08-834a-413e-ae89-fd218f97d738)
 
-# The Report
+## The Report
+
 OncoReport' goal is the automatic generation of a report describing all the possible annotations (both prognostic and therapeutic) associated to the patients' mutations.
 To reach this purpose, it employees several databases which will allow to synthetize a **precision medicine therapy report** for the patient.
 
 ![immagine](https://user-images.githubusercontent.com/57007795/163543139-4829d077-320b-46d7-b2ed-eaa0ceaf1bfd.png)
 
-When the analysis finish the user can both interactively consult the report from the app or download locally a compressed version of it. 
+When the analysis finish the user can both interactively consult the report from the app or download locally a compressed version of it.
 Once decompressed the report will be available within a folder and the user will be able to consult it by clicking on the "index" file.
 
 The report is composed by four main sections. An additional section named "other details" provides further information on the mutation annotations.
 ![immagine](https://user-images.githubusercontent.com/57007795/163543515-19b9dd0e-055a-45f0-a57d-d58cc3e334e5.png)
 
-## Therapeutic indications
+### Therapeutic indications
 
 ![immagine](https://user-images.githubusercontent.com/57007795/163544477-8e6b3d1c-d7b1-4ff2-a0a6-ffb777da80b2.png)
 
+This section contains two tables providing information on the mutations' clinical impact. The first table reports mutations yielding therapeutic evidence going from Validated association, to clinical evidence and FDA approved drugs. The second table is called ***other evidences*** which are not already used in the clinical context. It includes all the mutations that have been marked as "Case study" evidence level, "Preclinical evidence" and so on.
 
-This section contains two tables providing information on the mutations' clinical impact. The first table reports mutations yielding therapeutic evidence going from Validated association, to clinical evidence and FDA approved drugs. The second table is called ***other evidences*** which are not already used in the clinical context. It includes all the mutations that have been marked as "Case study" evidence level, "Preclinical evidence" and so on. 
-
-In both tables the user will find the **name of the gene and the variants** which have been found mutated in the patient and the **drugs** associated with these specific mutations. The presence of more than one drug per row indicates the usage of such drugs in combination. 
+In both tables the user will find the **name of the gene and the variants** which have been found mutated in the patient and the **drugs** associated with these specific mutations. The presence of more than one drug per row indicates the usage of such drugs in combination.
 The **evidence type**, can be:
+
 * predictive and therefore associated with a drug that can bring a response;
 * Diagnostic, this underlines the impact, positive (e.g. higer incidence of the disease) or negative (e.g. lower incidence of the disease), of the mutation on the patient;
 * Prognostic, the impact of a variant on the patient's disease;
@@ -169,18 +174,18 @@ The **Clinical Significance** changes when the evidence type changes. For our pu
 * Adverse Response to the drug treatment;
 * Reduced Sensitivity when the patients respond to the treatment, but not in the best way possible.
 **Type** of mutation which can be somatic or germline.
-**Details**, when details about that evidence exists the user can click on the plus and reach to the subsection ***Clinical Evidence Details*** where it is possible to find information about the evidence and the study of that evidence. 
+**Details**, when details about that evidence exists the user can click on the plus and reach to the subsection ***Clinical Evidence Details*** where it is possible to find information about the evidence and the study of that evidence.
 ![immagine](https://user-images.githubusercontent.com/57007795/163546083-c46f0124-87f1-481c-941f-d2fed8197b32.png)
 
 **Trials** Clicking on trials the users can reach the "ClinicalTrials.gov" page where they will find all the existing trials for the drug-variant combination.
-**References** Clicking on reference the users reach the Reference Section. Here, they will be able to consult the pubmed paper from which the evidence was taken clicking on the PMID. 
+**References** Clicking on reference the users reach the Reference Section. Here, they will be able to consult the pubmed paper from which the evidence was taken clicking on the PMID.
 ![immagine](https://user-images.githubusercontent.com/57007795/167871106-e3b18b56-f007-4696-9ac5-4d0caf9e366f.png)
 
 **Score**
 The evidence score is calculated using variant's pathogenic information, the repetition of the drug for the same mutation and the evidence publication year.
 
 **AIFA**, **EMA**, **FDA**
-Information about the approval of drugs by the AIFA, EMA and FDA agencies. When there are three ticks it means that the drug or the combination of drugs has been approved by all the agency. 
+Information about the approval of drugs by the AIFA, EMA and FDA agencies. When there are three ticks it means that the drug or the combination of drugs has been approved by all the agency.
 
 ![immagine](https://user-images.githubusercontent.com/57007795/167890613-14092357-2601-4faa-a535-c993d5c78511.png)
 
@@ -190,8 +195,9 @@ When the "x" is found, it means that at least one of the drug has not been appro
 
 **Publication year**
 The year of the evidence publication.
- 
-## Drug-Drug interactions
+
+### Drug-Drug interactions
+
 ![immagine](https://user-images.githubusercontent.com/57007795/167891126-4de6c20f-9ddf-400d-a164-cde590bdd784.png)
 
 Information, taken from drugbank, about the interactions between the drugs already taken by the patient and the drugs recommended by the system.
@@ -202,27 +208,30 @@ Information, taken from drugbank, about the interactions between the drugs.
 
 This section allows to prevent unpleasant side-effects to the patients, understanding the role of a combination of drugs to the organism.
 
-## Drug-Food interactions
+### Drug-Food interactions
+
 This section provides information about the interaction between drugs and food allowing to be aware about side-effects, as nausea, to the patients under a specific therapy.
 ![immagine](https://user-images.githubusercontent.com/57007795/167892488-ce805af4-95f2-49c6-8be5-351ff020b8cf.png)
 
-##ESMO Guidelines
+### ESMO Guidelines
+
 ![immagine](https://user-images.githubusercontent.com/57007795/167892875-faef0dd3-5d10-47f1-abcc-71f1863c96db.png)
 
 These guidelines, commonly consulted by the oncologists, have been added to the report to allow an easy and fast consultation. The guidelines will bring information about the primary disease inserted by the user at the beginning of the analysis.
 
-
-## Drug response
+### Drug response
 
 ![immagine](https://user-images.githubusercontent.com/57007795/167894604-d66652ea-db00-4382-a85e-3bf2c5432cdf.png)
 Evidence taken from PharmGKB database. The user can found information about the gene with the variant indicated with rs code and the drug associated with its clinical significance (toxicity, efficacy). For each evidence also details are provided.
 
-##Mutations Annotations
+### Mutations Annotations
+
 ![immagine](https://user-images.githubusercontent.com/57007795/167895058-2480c923-db34-4f8e-b5c1-33a954d38e93.png)
-Annotation for each mutation which have been found in the analysis. 
+Annotation for each mutation which have been found in the analysis.
 For each mutation the user will find:
+
 * Gene name
-* Chromosome 
+* Chromosome
 * Position
 * Ref Base
 * Var Base
@@ -235,11 +244,13 @@ For each mutation the user will find:
 * Class: SNP or Indel
 * Type of mutation (e.g. Somatic, Germline)
 
-## Off-labels indications
+### Off-labels indications
+
 ![immagine](https://user-images.githubusercontent.com/57007795/167897266-7962cfd4-18a1-4315-82b8-610f84e560d6.png)
 Therapeutic indication concerning a gene-variant couple in disease different from the one studied by the user.
 These information can be essential when no evidence is found in therapeutic indication.
 
-## Known-drug resistance
+### Known-drug resistance
+
 ![immagine](https://user-images.githubusercontent.com/57007795/167897317-7e956b9d-3793-4511-a575-720941b9d7ac.png)
 Information taken from the COSMIC database about the resistance to a drug in specific cancer with that variant mutation.
