@@ -42,7 +42,7 @@
     "package:linux-win-docker": "bash .erb/scripts/docker-build.sh",
     "package:merge": "node .erb/scripts/merge-release.js",
     "package:publish": "node .erb/scripts/publish-github.js",
-    "package": "concurrently \"npm run package:mac\" \"npm run package:linux-win-docker\" && npm run package:merge",
+    "package": "npm run package:mac && npm run package:linux-win-docker && npm run package:merge",
     "release": "npm run package && npm run package:publish",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
