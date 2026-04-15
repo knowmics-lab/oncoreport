@@ -140,7 +140,8 @@ download() {
     RETRY_COUNT=$(( RETRY_COUNT + 1 ))
     RETRY_DELAY=$(( RETRY_DELAY * 2 )) # Exponential backoff
   done
-  exit_abnormal "Unable to download $COSMIC_FILE from $COSMIC_URL after $MAX_RETRIES retries." false 106
+  echo "Unable to download $COSMIC_FILE from $COSMIC_URL after $MAX_RETRIES retries."
+  return 1
 }
 
 download_files() {
@@ -148,35 +149,35 @@ download_files() {
   local GENOME_COSMIC="$2"
   local GENOME_SMALL="${GENOME_COSMIC,,}"
   echo " - Downloading ${GENOME_VERSION} Coding Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_GenomeScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz" || return 1
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/VCF/Cosmic_CompleteTargetedScreensMutant_Vcf_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.vcf.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} Resistance Mutations..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_ResistanceMutations_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_ResistanceMutations_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicResistanceMutations_${GENOME_VERSION}.txt.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} COSMIC Complete Mutation Data (Targeted Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_CompleteTargetedScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_CompleteTargetedScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME_VERSION}.tsv.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} COSMIC Mutation Data (Genome Screens)..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_GenomeScreensMutant_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_GenomeScreensMutant_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME_VERSION}.tsv.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} Classifications..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Classification_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Classification_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicClassification_${GENOME_VERSION}.tsv.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} Samples..."
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=${GENOME_SMALL}/cosmic/${COSMIC_VERSION}/Cosmic_Sample_Tsv_${COSMIC_VERSION}_${GENOME_COSMIC}.tar&bucket=downloads" "Cosmic_Sample_${COSMIC_VERSION}_${GENOME_COSMIC}.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicSamples_${GENOME_VERSION}.tsv.gz" || return 1
   echo " - Downloading ${GENOME_VERSION} Cancer Mutation Census..."
   # Cancer Mutation Census is always downloaded from GRCh37 because it is the only version available.
   # However, we are just interested in the "GENOMIC_MUTATION_ID" and "MUTATION_SIGNIFICANCE_TIER" columns that are not dependent on the genome version.
-  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch37/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_GRCh37.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz"
+  download "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch37/cmc/${COSMIC_VERSION}/CancerMutationCensus_AllData_Tsv_${COSMIC_VERSION}_GRCh37.tar&bucket=downloads" "CancerMutationCensus_AllData_${COSMIC_VERSION}_GRCh37.tsv.gz" "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME_VERSION}.tsv.gz" || return 1
   echo " - Indexing ${GENOME_VERSION} Coding Mutations..."
-  bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz"
-  bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
+  bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz" || return 2
+  bcftools index -f "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz" || return 2
   echo " - Merging ${GENOME_VERSION} Coding Mutations..."
   bcftools concat -a -O z \
     -o "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_${GENOME_VERSION}.vcf.gz" \
     "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz" \
-    "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
+    "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz" || return 3
   [ -f "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_${GENOME_VERSION}.vcf.gz" ] &&
     rm "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutant_${GENOME_VERSION}.vcf.gz" &&
-    rm "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz"
-  [ ! -f "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_${GENOME_VERSION}.vcf.gz" ] &&
-    exit_abnormal "Unable to merge ${GENOME_VERSION} Coding Mutations" false 109
+    rm "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutant_${GENOME_VERSION}.vcf.gz" || return 4
+  [ ! -f "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_${GENOME_VERSION}.vcf.gz" ] && echo "Unable to merge ${GENOME_VERSION} Coding Mutations" && return 5
+  return 0
 }
 
 preprocess_archives() {
@@ -191,35 +192,67 @@ preprocess_archives() {
   echo "   - Extracting coding mutations positions and variations..."
   zcat "$ONCOREPORT_COSMIC_PATH/CosmicCodingMuts_${GENOME}.vcf.gz" |
     cut -f1,2,3,4,5 | grep -v '^#' | sort |
-    uniq >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_${GENOME}.txt" ||
-    exit_abnormal "Unable to prepare coding mutations" false 110
+    uniq >"$ONCOREPORT_COSMIC_PATH/CosmicCodMutDef_${GENOME}.txt" || {
+      echo "Unable to prepare coding mutations"
+      return 1
+    }
 
   echo "   - Extracting all mutations positions and variations (Targeted Screens)..."
   zcat "$ONCOREPORT_COSMIC_PATH/CosmicCompleteTargetedScreensMutantExport_${GENOME}.tsv.gz" | cut -f 1,7,11,15,16,17,19 |
     awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="" && $7!="")' |
     awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); print $2,$1,$3,$4,$5,$6,$7 }' |
-    sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_${GENOME}.tsv.gz"
+    sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_${GENOME}.tsv.gz" || {
+      echo "Unable to prepare complete targeted screens"
+      return 1
+    }
 
   echo "   - Extracting all mutations positions and variations (Genome Screens)..."
   zcat "$ONCOREPORT_COSMIC_PATH/CosmicGenomeScreensMutantExport_${GENOME}.tsv.gz" | cut -f 1,7,11,15,16,17,19 |
     awk '(NR>1 && $1!="" && $2!="" && $3!="" && $4!="" && $5!="" && $6!="" && $7!="")' |
     awk -v OFS='\t' '{ gsub(/_ENST.*/, "", $1); gsub("p.", "", $3); print $2,$1,$3,$4,$5,$6,$7 }' |
-    sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_${GENOME}.tsv.gz"
+    sort | uniq | gzip >"$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_${GENOME}.tsv.gz" || {
+      echo "Unable to prepare genome screens"
+      return 1
+    }
 
   echo "   - Merging all mutations positions and variations..."
   zcat "$ONCOREPORT_COSMIC_PATH/CompleteTargetedScreens_${GENOME}.tsv.gz" \
     "$ONCOREPORT_COSMIC_PATH/GenomeScreensMutant_${GENOME}.tsv.gz" | sort |
-    uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_${GENOME}.tsv.gz"
+    uniq | gzip >"$ONCOREPORT_COSMIC_PATH/CosmicVariantsRaw_${GENOME}.tsv.gz" || {
+      echo "Unable to merge all mutations"
+      return 1
+    }
 
   echo "   - Extracting mutation tiers from COSMIC CMC..."
   zcat "$ONCOREPORT_COSMIC_PATH/CosmicCancerMutationCensus_${GENOME}.tsv.gz" |
     cut -d$'\t' -f 19,58 | awk '(NR>1 && $1!="" && $2!="")' | sort | uniq |
-    gzip >"$ONCOREPORT_COSMIC_PATH/tiers_${GENOME}.tsv.gz"
+    gzip >"$ONCOREPORT_COSMIC_PATH/tiers_${GENOME}.tsv.gz" || {
+      echo "Unable to extract mutation tiers"
+      return 1
+    }
+  return 0
+}
+
+fallback_download() {
+  local COSMIC_VERSION="$1"
+  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
+    -O "processed_cosmic.tar" "https://oncoreport.s3.eu-central-1.amazonaws.com/processed_cosmic_${COSMIC_VERSION}.tgz" || exit_abnormal "Unable to download processed_cosmic_${COSMIC_VERSION}.tgz" 106
+  tar -zxf "processed_cosmic.tar" || exit_abnormal "Unable to extract processed_cosmic_${COSMIC_VERSION}.tgz" false 107
+  rm "processed_cosmic.tar"
+  finalize
+  exit 0
 }
 
 cleanup() {
   local GENOME="$1"
   rm *_${GENOME}.vcf.gz *_${GENOME}.vcf.gz.csi *_${GENOME}.tsv.gz *_${GENOME}.txt *_${GENOME}.txt.gz
+}
+
+finalize() {
+  cd "$OLD_PWD" || exit 113
+  touch "$ONCOREPORT_COSMIC_PATH/completed"
+  echo "Done!"
+  echo -e "COSMIC\t${COSMIC_VERSION}\t$(date +%Y-%m-%d)" >"$ONCOREPORT_COSMIC_PATH/version.txt"
 }
 
 OLD_PWD=$(pwd)
@@ -234,31 +267,24 @@ check_cosmic
 EXIT_CODE=$?
 if [ $EXIT_CODE -eq 0 ]; then
   echo " - COSMIC account is valid"
-  download_files "hg19" "GRCh37"
-  preprocess_archives "hg19"
+  download_files "hg19" "GRCh37" || fallback_download "${COSMIC_VERSION}"
+  preprocess_archives "hg19" || fallback_download "${COSMIC_VERSION}"
   echo " - Processing hg19 database..."
-  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || exit_abnormal "Unable to process hg19 database" false 111
+  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg19" || fallback_download "${COSMIC_VERSION}"
   echo "Preparing COSMIC hg38 database:"
-  download_files "hg38" "GRCh38"
-  preprocess_archives "hg38"
+  download_files "hg38" "GRCh38" || fallback_download "${COSMIC_VERSION}"
+  preprocess_archives "hg38" || fallback_download "${COSMIC_VERSION}"
   echo " - Processing hg38 database..."
-  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg38" || exit_abnormal "Unable to process hg38 database" false 112
+  Rscript "$ONCOREPORT_SCRIPT_PATH/PrepareCOSMIC.R" "$ONCOREPORT_COSMIC_PATH" "hg38" || fallback_download "${COSMIC_VERSION}"
   echo " - Cleaning up..."
-  cleanup "hg19"
-  cleanup "hg38"
+  cleanup "hg19" || fallback_download "${COSMIC_VERSION}"
+  cleanup "hg38" || fallback_download "${COSMIC_VERSION}"
 elif [ $EXIT_CODE -eq 2 ]; then
   exit_abnormal "Unable to validate COSMIC account. Check your username and password!" false 105
 elif [ $EXIT_CODE -eq 3 ]; then
   exit_abnormal "COSMIC account is not authorized" false 105
 else
   echo " - An error occurred in the authentication procedure. Fallback procedure is being performed."
-  wget --no-verbose --show-progress --progress=bar:force:noscroll --tries=0 \
-    -O "processed_cosmic.tar" "https://oncoreport.s3.eu-central-1.amazonaws.com/processed_cosmic_${COSMIC_VERSION}.tgz" || exit_abnormal "Unable to download processed_cosmic_${COSMIC_VERSION}.tgz" false 106
-  tar -zxf "processed_cosmic.tar" || exit_abnormal "Unable to extract processed_cosmic_${COSMIC_VERSION}.tgz" false 107
-  rm "processed_cosmic.tar"
+  fallback_download "${COSMIC_VERSION}"
 fi
-cd "$OLD_PWD" || exit 113
-touch "$ONCOREPORT_COSMIC_PATH/completed"
-echo "Done!"
-
-echo -e "COSMIC\t${COSMIC_VERSION}\t$(date +%Y-%m-%d)" >"$ONCOREPORT_COSMIC_PATH/version.txt"
+finalize
