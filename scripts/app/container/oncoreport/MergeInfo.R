@@ -94,7 +94,7 @@ source(file.path(dirname(this_file()), "Functions.R"))
 
 variants_path <- file.path(project_path, "txt/variants.txt")
 variants <- suppressWarnings(fread(variants_path))
-variants$Chromosome <- as.character(variants$Chromosome)
+variants$Chromosome <- fix_chromosome_names(variants$Chromosome)
 variants$Ref_base <- as.character(variants$Ref_base)
 variants$Var_base <- as.character(variants$Var_base)
 pat <- variants %>% select(
@@ -179,7 +179,8 @@ if (nrow(pat) > 0) {
   tmp_pat$txStart <- tmp_pat$Stop
   tmp_pat$txEnd <- tmp_pat$Stop
   data <- genome_left_join(
-    tmp_pat, data,
+    as.data.frame(tmp_pat),
+    as.data.frame(data),
     by = c("Chromosome", "txStart", "txEnd")
   )
   columns <- c("Chromosome.x", "Stop", "Ref_base", "Var_base", "Gene", "Type")
@@ -192,6 +193,7 @@ if (nrow(pat) > 0) {
     Var_base = character(0), Gene = character(0), Type = character(0)
   )
 }
+cat("Found ", nrow(data), " rows\n")
 write.table(
   data, output_path("refgene"),
   quote = FALSE, row.names = FALSE, na = "NA",
@@ -222,6 +224,7 @@ if (file.exists(output_path("oncokb"))) {
   )) %>%
     tidyr::separate_rows(PMID, Citation, sep = ";;") %>%
     unique()
+  cat("Found ", nrow(oncokb), " rows\n")
   # Fix PMID and Citation columns for the score computation
   # We will use the most recent publication
   # for (i in seq_len(nrow(oncokb))) {
@@ -255,6 +258,8 @@ def$Clinical_significance[
   def$Clinical_significance == "Resistant"
 ] <- "Resistance"
 
+cat("Found ", nrow(def), " evidences in CIVIC, CGI, and OncoKB.\n")
+
 cat("Annotating Agency Approval...\n")
 drug <- readRDS(file.path(database_path, "approved_drugs.rds"))
 drug_map <- setNames(drug[[2]], drug[[1]])
@@ -278,8 +283,8 @@ def$Approved <- sapply(seq_len(nrow(def)), function(i) {
   x1 <- strsplit(def$Drug[i], ",", fixed = TRUE)
   x2 <- strsplit(def$Approved[i], ",", fixed = TRUE)
   if (length(x1) != length(x2)) { # Apply gsub only if the number of elements is
-                                  # different since some spurious commas may
-                                  # appear at the beginning or end of the string
+    # different since some spurious commas may
+    # appear at the beginning or end of the string
     return(gsub("^,*|(?<=,),|,*$", "", def$Approved[i], perl = TRUE))
   }
   return(def$Approved[i])
@@ -298,11 +303,11 @@ dbnsfp <- readRDS(file.path(genome_path, "dbNSFP.rds"))
 colnames(dbnsfp)[1:5] <- c(
   "Chromosome", "Start", "Stop", "Ref_base", "Var_base"
 )
-dbnsfp$Chromosome <- paste0("chr", dbnsfp$Chromosome)
+dbnsfp$Chromosome <- fix_chromosome_names(dbnsfp$Chromosome)
 def$Start <- as.numeric(def$Start)
 def$Stop <- as.numeric(def$Stop)
 if (!is.character(def$Chromosome)) { # This should never happen but just in case
-  def$Chromosome <- paste0("chr", def$Chromosome)
+  def$Chromosome <- fix_chromosome_names(def$Chromosome)
 }
 tot <- def %>% inner_join(dbnsfp)
 if (nrow(tot) != 0) {

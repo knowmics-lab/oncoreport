@@ -31,7 +31,7 @@ a <- fread(resistance_file)
 b <- fread(coding_muts_file, header = FALSE)
 c <- fread(classification_file)
 d <- fread(samples_file)
-colnames(a)[8] <- "ID"
+colnames(a)[9] <- "ID"
 names(b) <- c("Chromosome", "Stop", "ID", "Ref_base", "Alt_base")
 cosm <- a %>%
   inner_join(c, by = "COSMIC_PHENOTYPE_ID", relationship = "many-to-many") %>%

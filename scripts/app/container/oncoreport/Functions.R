@@ -205,9 +205,20 @@ join_and_write_rds <- function(
   data <- data %>%
     trimws_df(.) %>%
     unique()
+  cat("Found ", nrow(data), " rows\n")
   write.table(data, output_file,
     quote = FALSE, row.names = FALSE,
     na = "NA", sep = "\t"
   )
   return(data.frame(data))
+}
+
+fix_chromosome_names <- function(chr_names) {
+  chr_names <- as.character(chr_names)
+  chr_names <- ifelse(
+    !grepl("^chr", chr_names),
+    paste0("chr", chr_names),
+    chr_names
+  )
+  chr_names
 }
